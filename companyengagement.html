@@ -1,0 +1,1047 @@
+<!-- ============================================================
+     companyengagement.html — shell fragment
+     No <html>, <head>, or <body> tags.
+     No Bootstrap. No navbar/footer includes.
+     Fonts loaded lazily in mount().
+     ============================================================ -->
+
+<style>
+  /* ══════════════════════════════════════════════
+     DESIGN TOKENS
+  ══════════════════════════════════════════════ */
+  .ce-page {
+    --ce-font:  'Epilogue', system-ui, sans-serif;
+    --ce-mono:  'IBM Plex Mono', 'Courier New', monospace;
+
+    /* surfaces — warm paper (light default) */
+    --ce-bg:  #f5f2ec;
+    --ce-s1:  #f5f2ec;
+    --ce-s2:  #ede9e1;
+    --ce-s3:  #e4ded4;
+    --ce-s4:  #ddd6ca;
+
+    /* borders */
+    --ce-b0:  rgba(26,24,20,.07);
+    --ce-b1:  rgba(26,24,20,.12);
+    --ce-b2:  rgba(26,24,20,.18);
+    --ce-b3:  rgba(26,24,20,.28);
+
+    /* text */
+    --ce-t1:  rgba(26,24,20,.95);
+    --ce-t2:  rgba(74,71,64,.75);
+    --ce-t3:  rgba(138,134,128,.60);
+
+    /* primary accent — editorial blue */
+    --ce-blue:     #2857a4;
+    --ce-blue-dim: rgba(40,87,164,.10);
+    --ce-blue-bdr: rgba(40,87,164,.30);
+
+    --ce-green:  #16a34a;
+    --ce-amber:  #b45309;
+    --ce-red:    #c94040;
+    --ce-slate:  #64748b;
+    --ce-cyan:   #0e7490;
+
+    --ce-r:      10px;
+    --ce-r-sm:   7px;
+    --ce-r-pill: 999px;
+    --ce-ease:   cubic-bezier(.22,.68,0,1.2);
+    --ce-shadow: 0 1px 3px rgba(26,24,20,.08), 0 4px 16px rgba(26,24,20,.08);
+  }
+
+  /* ── Dark mode ── */
+  html[data-theme="dark"] .ce-page {
+    --ce-bg:  #161410; --ce-s1:  #1a1814;
+    --ce-s2:  #1e1c18; --ce-s3:  #252220; --ce-s4:  #2c2a26;
+    --ce-b0:  rgba(240,236,227,.06); --ce-b1:  rgba(240,236,227,.10);
+    --ce-b2:  rgba(240,236,227,.16); --ce-b3:  rgba(240,236,227,.26);
+    --ce-t1:  rgba(240,236,227,.95); --ce-t2:  rgba(176,169,158,.75); --ce-t3:  rgba(106,100,92,.60);
+    --ce-blue:     #2857a4; --ce-blue-dim: rgba(40,87,164,.16); --ce-blue-bdr: rgba(40,87,164,.40);
+    --ce-green:    #16a34a; --ce-amber:    #b45309; --ce-red:    #c94040;
+    --ce-shadow: 0 1px 3px rgba(0,0,0,.35), 0 4px 16px rgba(0,0,0,.40);
+  }
+
+  .ce-page *, .ce-page *::before, .ce-page *::after {
+    box-sizing: border-box; margin: 0; padding: 0;
+  }
+
+  .ce-page {
+    font-family: var(--ce-font);
+    color: var(--ce-t1);
+    min-height: 100vh;
+    background: var(--ce-bg);
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  .ce-page::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 50% 35% at 6% 4%,   rgba(40,87,164,.04) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 30% at 94% 92%,  rgba(40,87,164,.03) 0%, transparent 55%);
+  }
+
+  .ce-page > * { position: relative; z-index: 1; }
+
+  /* ══ LAYOUT ══ */
+  .ce-wrap {
+    max-width: 1400px; margin: 0 auto;
+    padding: 96px 28px 68px;
+    animation: ce-up .42s var(--ce-ease) both;
+  }
+
+  @keyframes ce-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ══ PAGE HEADER ══ */
+  .ce-page-head {
+    display: flex; align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px; flex-wrap: wrap; margin-bottom: 24px;
+  }
+
+  .ce-eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px; border-radius: var(--ce-r-pill);
+    border: 1px solid var(--ce-b1); background: var(--ce-s3);
+    color: var(--ce-t3); font-family: var(--ce-mono);
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    margin-bottom: 9px;
+  }
+
+  .ce-page-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(22px, 2.8vw, 32px);
+    font-weight: 400; letter-spacing: -.02em;
+    color: var(--ce-t1); line-height: 1.1; margin-bottom: 4px;
+  }
+
+  .ce-page-sub {
+    font-size: 12.5px; font-family: var(--ce-mono);
+    color: var(--ce-t3); line-height: 1.58; letter-spacing: .01em;
+  }
+
+  .ce-head-actions { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+
+  /* ══ BUTTONS ══ */
+  .ce-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 13px;
+    border-radius: var(--ce-r-sm);
+    border: 1px solid var(--ce-b1); background: var(--ce-s2);
+    color: var(--ce-t2); font-family: var(--ce-mono);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: .04em;
+    cursor: pointer; white-space: nowrap;
+    transition: border-color .13s, background .13s, color .13s;
+    line-height: 1;
+  }
+
+  .ce-btn i { font-size: 10px; }
+  .ce-btn:hover { border-color: var(--ce-b2); color: var(--ce-t1); background: var(--ce-s3); }
+  .ce-btn:active { transform: scale(.98); }
+  .ce-btn:disabled { opacity: .38; cursor: not-allowed; pointer-events: none; }
+
+  .ce-btn--primary {
+    background: var(--ce-blue-dim); border-color: var(--ce-blue-bdr); color: var(--ce-blue);
+  }
+  .ce-btn--primary:hover { background: rgba(40,87,164,.16); color: var(--ce-blue); }
+  html[data-theme="dark"] .ce-btn--primary { color: #5b85c8; }
+
+  .ce-btn--danger {
+    background: rgba(201,64,64,.09); border-color: rgba(201,64,64,.22); color: var(--ce-red);
+  }
+  .ce-btn--danger:hover { background: rgba(201,64,64,.16); border-color: rgba(201,64,64,.35); }
+  html[data-theme="dark"] .ce-btn--danger { color: #f87171; }
+
+  .ce-btn--ghost {
+    background: transparent; border-color: transparent; color: var(--ce-t3);
+    padding: 6px 9px;
+  }
+  .ce-btn--ghost:hover { background: var(--ce-b0); border-color: var(--ce-b1); color: var(--ce-t2); }
+
+  /* ══ CARD ══ */
+  .ce-card {
+    border-radius: var(--ce-r);
+    border: 1px solid var(--ce-b1);
+    background: var(--ce-s1);
+    box-shadow: var(--ce-shadow);
+    overflow: hidden;
+  }
+
+  /* ══ TOOLBAR ══ */
+  .ce-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 11px; flex-wrap: wrap; padding: 12px 16px;
+    border-bottom: 1px solid var(--ce-b0);
+    background: var(--ce-bg);
+  }
+
+  html[data-theme="dark"] .ce-toolbar { background: rgba(0,0,0,.08); }
+
+  .ce-toolbar-left  { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  .ce-toolbar-right { display: flex; align-items: center; gap: 7px; }
+
+  .ce-search-wrap { position: relative; }
+  .ce-search-wrap i {
+    position: absolute; left: 9px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--ce-t3); font-size: 10px; pointer-events: none;
+  }
+
+  #ce-search {
+    width: 225px; height: 31px;
+    padding: 0 11px 0 27px;
+    border-radius: var(--ce-r-sm);
+    border: 1px solid var(--ce-b1); background: var(--ce-s2);
+    color: var(--ce-t1); font-family: var(--ce-mono); font-size: 11.5px;
+    outline: none;
+    transition: width .18s ease, border-color .13s, background .13s;
+  }
+
+  #ce-search:focus {
+    width: 272px; border-color: var(--ce-blue-bdr);
+    background: var(--ce-s1);
+  }
+
+  #ce-search::placeholder { color: var(--ce-t3); }
+
+  .ce-row-count {
+    font-family: var(--ce-mono); font-size: 10.5px;
+    color: var(--ce-t3); white-space: nowrap; padding: 0 3px;
+  }
+
+  /* ══ TABLE ══ */
+  .ce-table-scroll { overflow-x: auto; }
+  .ce-table-scroll::-webkit-scrollbar { height: 3px; }
+  .ce-table-scroll::-webkit-scrollbar-thumb { background: var(--ce-b2); border-radius: 4px; }
+
+  .ce-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+  .ce-table thead th {
+    padding: 9px 16px;
+    font-family: var(--ce-mono); font-size: 9px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ce-t3);
+    background: var(--ce-bg);
+    border-bottom: 1px solid var(--ce-b1);
+    text-align: left; white-space: nowrap; user-select: none;
+  }
+
+  html[data-theme="dark"] .ce-table thead th { background: rgba(0,0,0,.08); }
+
+  .ce-table tbody td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--ce-b0);
+    color: var(--ce-t1); vertical-align: middle;
+  }
+
+  .ce-table tbody tr:last-child td { border-bottom: none; }
+  .ce-table tbody tr:hover td { background: rgba(40,87,164,.03); }
+  html[data-theme="dark"] .ce-table tbody tr:hover td { background: rgba(40,87,164,.06); }
+
+  .ce-table-state {
+    text-align: center; padding: 48px 20px;
+    color: var(--ce-t3); font-family: var(--ce-mono); font-size: 12px;
+  }
+
+  .ce-cell-name    { font-weight: 700; color: var(--ce-t1); }
+  .ce-cell-date    { font-family: var(--ce-mono); font-size: 11.5px; color: var(--ce-t2); white-space: nowrap; }
+  .ce-cell-event   { font-weight: 600; color: var(--ce-t1); }
+  .ce-cell-comment { font-size: 12px; color: var(--ce-t2); max-width: 230px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+  /* ══ STATUS BADGES ══ */
+  .ce-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px; border-radius: var(--ce-r-pill);
+    font-family: var(--ce-mono); font-size: 9.5px; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase;
+    white-space: nowrap; border: 1px solid transparent;
+  }
+
+  .ce-badge i { font-size: 8px; }
+
+  /* light mode — muted ink-friendly */
+  .ce-badge--ontime { background: rgba(40,87,164,.09);  color: #2857a4; border-color: rgba(40,87,164,.20); }
+  .ce-badge--early  { background: rgba(22,163,74,.09);  color: #16a34a; border-color: rgba(22,163,74,.20); }
+  .ce-badge--late   { background: rgba(180,83,9,.09);   color: #b45309; border-color: rgba(180,83,9,.20); }
+  .ce-badge--missed { background: rgba(201,64,64,.09);  color: #c94040; border-color: rgba(201,64,64,.20); }
+  .ce-badge--host   { background: rgba(100,116,139,.09);color: #64748b; border-color: rgba(100,116,139,.18); }
+
+  /* dark mode — vivid */
+  html[data-theme="dark"] .ce-badge--ontime { background: rgba(59,130,246,.12);  color: #60a5fa; border-color: rgba(59,130,246,.24); }
+  html[data-theme="dark"] .ce-badge--early  { background: rgba(74,222,128,.11);  color: #4ade80; border-color: rgba(74,222,128,.22); }
+  html[data-theme="dark"] .ce-badge--late   { background: rgba(245,158,11,.11);  color: #fbbf24; border-color: rgba(245,158,11,.22); }
+  html[data-theme="dark"] .ce-badge--missed { background: rgba(248,113,113,.11); color: #f87171; border-color: rgba(248,113,113,.22); }
+  html[data-theme="dark"] .ce-badge--host   { background: rgba(100,116,139,.12); color: #94a3b8; border-color: rgba(100,116,139,.20); }
+
+  .ce-badge--missed i { animation: ce-blink 1.5s ease infinite; }
+  @keyframes ce-blink { 0%,100%{opacity:1} 50%{opacity:.22} }
+
+  /* ══ ACTION BUTTONS ══ */
+  .ce-action-row { display: flex; align-items: center; gap: 3px; }
+
+  .ce-act {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: var(--ce-r-sm);
+    border: 1px solid var(--ce-b1); background: transparent;
+    color: var(--ce-t3); font-size: 10px;
+    cursor: pointer; transition: all .11s ease;
+  }
+
+  .ce-act:hover { border-color: var(--ce-b2); color: var(--ce-t1); background: var(--ce-b0); }
+  .ce-act--edit:hover {
+    color: var(--ce-blue); border-color: rgba(40,87,164,.28);
+    background: rgba(40,87,164,.08);
+  }
+  html[data-theme="dark"] .ce-act--edit:hover { color: #5b85c8; }
+  .ce-act--del:hover {
+    color: var(--ce-red); border-color: rgba(201,64,64,.26);
+    background: rgba(201,64,64,.08);
+  }
+  html[data-theme="dark"] .ce-act--del:hover { color: #f87171; }
+
+  /* ══ MODALS ══ */
+  .ce-backdrop {
+    display: none;
+    position: fixed; inset: 0; z-index: 1060;
+    background: rgba(26,24,20,.45);
+    backdrop-filter: blur(4px);
+    align-items: center; justify-content: center; padding: 20px;
+
+    /* token fallbacks for when modal lives outside .ce-page */
+    --ce-font:     'Epilogue', system-ui, sans-serif;
+    --ce-mono:     'IBM Plex Mono', 'Courier New', monospace;
+    --ce-s1:       #f5f2ec;
+    --ce-s2:       #ede9e1;
+    --ce-s3:       #e4ded4;
+    --ce-s4:       #ddd6ca;
+    --ce-b0:       rgba(26,24,20,.07);
+    --ce-b1:       rgba(26,24,20,.12);
+    --ce-b2:       rgba(26,24,20,.18);
+    --ce-b3:       rgba(26,24,20,.28);
+    --ce-t1:       rgba(26,24,20,.95);
+    --ce-t2:       rgba(74,71,64,.75);
+    --ce-t3:       rgba(138,134,128,.60);
+    --ce-blue:     #2857a4;
+    --ce-blue-dim: rgba(40,87,164,.10);
+    --ce-blue-bdr: rgba(40,87,164,.30);
+    --ce-red:      #c94040;
+    --ce-r:        10px;
+    --ce-r-sm:     7px;
+    --ce-r-pill:   999px;
+    --ce-ease:     cubic-bezier(.22,.68,0,1.2);
+  }
+
+  html[data-theme="dark"] .ce-backdrop {
+    background: rgba(0,0,0,.60); backdrop-filter: blur(7px);
+    --ce-s1:       #1a1814; --ce-s2:       #1e1c18;
+    --ce-s3:       #252220; --ce-s4:       #2c2a26;
+    --ce-b0:       rgba(240,236,227,.06); --ce-b1: rgba(240,236,227,.10);
+    --ce-b2:       rgba(240,236,227,.16); --ce-b3: rgba(240,236,227,.26);
+    --ce-t1:       rgba(240,236,227,.95); --ce-t2: rgba(176,169,158,.75); --ce-t3: rgba(106,100,92,.60);
+    --ce-blue-dim: rgba(40,87,164,.16);   --ce-blue-bdr: rgba(40,87,164,.40);
+    --ce-red:      #c94040;
+  }
+
+  .ce-backdrop.open { display: flex; }
+
+  .ce-modal {
+    background: var(--ce-s1);
+    border: 1px solid var(--ce-b2);
+    border-radius: var(--ce-r);
+    width: 100%; max-width: 460px; max-height: 90vh;
+    display: flex; flex-direction: column;
+    box-shadow: 0 16px 52px rgba(26,24,20,.16);
+    animation: ce-modal-in .20s var(--ce-ease);
+  }
+
+  html[data-theme="dark"] .ce-modal {
+    box-shadow: 0 16px 52px rgba(0,0,0,.55);
+  }
+
+  @keyframes ce-modal-in {
+    from { opacity: 0; transform: scale(.97) translateY(8px); }
+    to   { opacity: 1; transform: scale(1)   translateY(0); }
+  }
+
+  .ce-modal--sm { max-width: 400px; }
+
+  .ce-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--ce-b1); flex-shrink: 0;
+    background: var(--ce-bg, var(--ce-s2));
+  }
+
+  html[data-theme="dark"] .ce-modal-header { background: rgba(0,0,0,.08); }
+
+  .ce-modal-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 15px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--ce-t1);
+  }
+
+  .ce-modal-x {
+    width: 26px; height: 26px; border-radius: 6px;
+    border: 1px solid var(--ce-b1); background: transparent;
+    color: var(--ce-t3); font-size: 11px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .11s ease;
+  }
+
+  .ce-modal-x:hover { color: var(--ce-t1); background: var(--ce-b1); border-color: var(--ce-b2); }
+
+  .ce-modal-body   { padding: 18px 20px; overflow-y: auto; flex: 1; }
+
+  .ce-modal-footer {
+    display: flex; justify-content: flex-end; gap: 7px;
+    padding: 12px 20px 16px;
+    border-top: 1px solid var(--ce-b1); flex-shrink: 0;
+  }
+
+  /* ══ FORM ══ */
+  .ce-field { margin-bottom: 14px; }
+  .ce-field:last-child { margin-bottom: 0; }
+
+  .ce-label {
+    display: block;
+    font-family: var(--ce-mono); font-size: 9.5px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ce-t3); margin-bottom: 6px;
+  }
+
+  .ce-input, .ce-select {
+    width: 100%;
+    background: var(--ce-s2); border: 1px solid var(--ce-b1);
+    border-radius: var(--ce-r-sm); color: var(--ce-t1);
+    font-family: var(--ce-font); font-size: 13px;
+    padding: 8px 11px; outline: none; appearance: none;
+    transition: border-color .13s ease, background .13s ease;
+  }
+
+  .ce-input:focus, .ce-select:focus {
+    border-color: var(--ce-blue-bdr); background: var(--ce-s1);
+  }
+
+  .ce-input::placeholder { color: var(--ce-t3); }
+
+  .ce-select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='rgba(26,24,20,.40)' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+    padding-right: 28px;
+  }
+
+  html[data-theme="dark"] .ce-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='rgba(240,236,227,.32)' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  }
+
+  .ce-select[multiple] { background-image: none; padding-right: 11px; height: auto; }
+  .ce-select option { background: var(--ce-s2); color: var(--ce-t1); }
+
+  .ce-hint { font-family: var(--ce-mono); font-size: 10px; color: var(--ce-t3); margin-top: 4px; }
+
+  /* Mode chips */
+  .ce-chips { display: flex; gap: 7px; }
+
+  .ce-chip {
+    display: flex; align-items: center; gap: 5px;
+    padding: 6px 12px; border-radius: var(--ce-r-sm);
+    border: 1px solid var(--ce-b1); background: var(--ce-s2);
+    color: var(--ce-t2); font-family: var(--ce-mono);
+    font-size: 11px; font-weight: 500; letter-spacing: .04em;
+    cursor: pointer; transition: all .13s ease; user-select: none;
+  }
+
+  .ce-chip input[type="radio"] { display: none; }
+
+  .ce-chip.selected {
+    border-color: var(--ce-blue-bdr); background: var(--ce-blue-dim);
+    color: var(--ce-blue);
+  }
+  html[data-theme="dark"] .ce-chip.selected { color: #5b85c8; }
+  .ce-chip:hover:not(.selected) { border-color: var(--ce-b2); color: var(--ce-t1); }
+
+  /* Delete confirm */
+  .ce-del-layout { display: flex; align-items: flex-start; gap: 13px; }
+
+  .ce-del-icon {
+    width: 38px; height: 38px; flex-shrink: 0;
+    border-radius: var(--ce-r-sm);
+    background: rgba(201,64,64,.09); border: 1px solid rgba(201,64,64,.20);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--ce-red);
+  }
+  html[data-theme="dark"] .ce-del-icon { color: #f87171; }
+
+  .ce-del-title { font-size: 13px; font-weight: 700; color: var(--ce-t1); margin-bottom: 4px; }
+  .ce-del-sub   { font-size: 12px; font-family: var(--ce-mono); color: var(--ce-t3); line-height: 1.55; }
+
+  /* Util */
+  .ce-hidden { display: none !important; }
+  @keyframes ce-spin { to { transform: rotate(360deg); } }
+  .ce-spin { display: inline-block; animation: ce-spin .7s linear infinite; }
+</style>
+
+
+<!-- ═══════════════ PAGE ═══════════════ -->
+<div class="ce-page">
+  <div class="ce-wrap">
+
+    <div class="ce-page-head">
+      <div>
+        <div class="ce-eyebrow">
+          <i class="fa-solid fa-calendar-check"></i>
+          Engagement Tracker
+        </div>
+        <h1 class="ce-page-title">Company Engagement</h1>
+        <p class="ce-page-sub">Live attendance and participation data from your engagement sheet.</p>
+      </div>
+      <div class="ce-head-actions">
+        <button class="ce-btn ce-btn--danger ce-hidden" id="ce-btn-bulk-del" type="button">
+          <i class="fa-solid fa-trash-can"></i> Bulk Delete
+        </button>
+        <button class="ce-btn ce-btn--primary ce-hidden" id="ce-btn-add" type="button">
+          <i class="fa-solid fa-plus"></i> Add Record
+        </button>
+      </div>
+    </div>
+
+    <div class="ce-card">
+      <div class="ce-toolbar">
+        <div class="ce-toolbar-left">
+          <div class="ce-search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="ce-search" placeholder="Search records…">
+          </div>
+          <button class="ce-btn ce-btn--ghost" id="ce-btn-refresh" type="button" title="Refresh">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
+        <div class="ce-toolbar-right">
+          <span class="ce-row-count" id="ce-row-count"></span>
+        </div>
+      </div>
+
+      <div class="ce-table-scroll">
+        <table class="ce-table">
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Date</th>
+              <th>Event</th>
+              <th>Status</th>
+              <th>Comment</th>
+              <th id="ce-th-actions" class="ce-hidden">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ce-tbody">
+            <tr><td colspan="6" class="ce-table-state">
+              <i class="fa-solid fa-circle-notch ce-spin" style="margin-right:7px;"></i>Loading…
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ ADD / EDIT MODAL ═══════════════ -->
+<div class="ce-backdrop" id="ce-form-backdrop">
+  <div class="ce-modal">
+    <div class="ce-modal-header">
+      <div class="ce-modal-title" id="ce-form-title">Add Record</div>
+      <button class="ce-modal-x" id="ce-form-x" type="button"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="ce-modal-body">
+      <input type="hidden" id="ce-row-id">
+
+      <div class="ce-field">
+        <label class="ce-label">Employee Mode</label>
+        <div class="ce-chips">
+          <label class="ce-chip selected" id="ce-chip-single">
+            <input type="radio" name="ceMode" value="single" checked>
+            <i class="fa-solid fa-user"></i> Single
+          </label>
+          <label class="ce-chip ce-hidden" id="ce-chip-bulk">
+            <input type="radio" name="ceMode" value="bulk">
+            <i class="fa-solid fa-users"></i> Bulk
+          </label>
+        </div>
+      </div>
+
+      <div class="ce-field" id="ce-wrap-single">
+        <label class="ce-label" for="ce-emp-single">Employee</label>
+        <select class="ce-select" id="ce-emp-single">
+          <option value="">Select employee…</option>
+        </select>
+      </div>
+
+      <div class="ce-field ce-hidden" id="ce-wrap-bulk">
+        <label class="ce-label" for="ce-emp-bulk">Employees</label>
+        <select class="ce-select" id="ce-emp-bulk" multiple size="5"></select>
+        <div class="ce-hint">Hold Ctrl / Cmd to select multiple.</div>
+      </div>
+
+      <div class="ce-field">
+        <label class="ce-label" for="ce-f-date">Date</label>
+        <input class="ce-input" type="date" id="ce-f-date">
+      </div>
+
+      <div class="ce-field">
+        <label class="ce-label" for="ce-f-event">Event</label>
+        <input class="ce-input" type="text" id="ce-f-event" placeholder="e.g. Town Hall Q2 2025">
+      </div>
+
+      <div class="ce-field">
+        <label class="ce-label" for="ce-f-status">Status</label>
+        <select class="ce-select" id="ce-f-status">
+          <option value="On Time">On Time</option>
+          <option value="Early/Assisted">Early / Assisted</option>
+          <option value="Late">Late</option>
+          <option value="Missed">Missed</option>
+          <option value="Host">Host</option>
+        </select>
+      </div>
+
+      <div class="ce-field">
+        <label class="ce-label" for="ce-f-comment">Comment</label>
+        <input class="ce-input" type="text" id="ce-f-comment" placeholder="Optional note…">
+      </div>
+    </div>
+    <div class="ce-modal-footer">
+      <button class="ce-btn" id="ce-form-cancel" type="button">Cancel</button>
+      <button class="ce-btn ce-btn--primary" id="ce-form-save" type="button">
+        <i class="fa-solid fa-check"></i>
+        <span id="ce-save-lbl">Save</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ DELETE MODAL ═══════════════ -->
+<div class="ce-backdrop" id="ce-del-backdrop">
+  <div class="ce-modal ce-modal--sm">
+    <div class="ce-modal-header">
+      <div class="ce-modal-title">Delete Record</div>
+      <button class="ce-modal-x" id="ce-del-x" type="button"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="ce-modal-body">
+      <div class="ce-del-layout">
+        <div class="ce-del-icon"><i class="fa-solid fa-trash"></i></div>
+        <div>
+          <div class="ce-del-title">This cannot be undone.</div>
+          <div class="ce-del-sub">The selected record will be permanently removed from the sheet.</div>
+        </div>
+      </div>
+      <input type="hidden" id="ce-del-id">
+    </div>
+    <div class="ce-modal-footer">
+      <button class="ce-btn" id="ce-del-cancel" type="button">Cancel</button>
+      <button class="ce-btn ce-btn--danger" id="ce-del-confirm" type="button">
+        <i class="fa-solid fa-trash"></i> Delete
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ BULK DELETE MODAL ═══════════════ -->
+<div class="ce-backdrop" id="ce-bulk-backdrop">
+  <div class="ce-modal ce-modal--sm">
+    <div class="ce-modal-header">
+      <div class="ce-modal-title">Bulk Delete by Event</div>
+      <button class="ce-modal-x" id="ce-bulk-x" type="button"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="ce-modal-body">
+      <div class="ce-field">
+        <label class="ce-label" for="ce-bulk-event">Event</label>
+        <select class="ce-select" id="ce-bulk-event"></select>
+      </div>
+      <p style="font-size:12.5px;color:var(--ce-t2);line-height:1.55;margin-bottom:16px;">
+        This will permanently delete <strong style="color:var(--ce-t1);">all records</strong> under the selected event.
+      </p>
+      <div class="ce-field">
+        <label class="ce-label" for="ce-bulk-confirm-input">Type DELETE to confirm</label>
+        <input class="ce-input" type="text" id="ce-bulk-confirm-input" placeholder="DELETE">
+      </div>
+    </div>
+    <div class="ce-modal-footer">
+      <button class="ce-btn" id="ce-bulk-cancel" type="button">Cancel</button>
+      <button class="ce-btn ce-btn--danger" id="ce-bulk-confirm-btn" type="button">
+        <i class="fa-solid fa-trash-can"></i> Delete All
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SCRIPT ═══════════════ -->
+<script>
+(() => {
+  'use strict';
+
+  const S = { mounted: false };
+  let CAN_VIEW   = false;
+  let CAN_MANAGE = false;
+  let CAN_BULK   = false;
+  let CACHE      = [];
+  let ACTOR      = '';
+
+  const $  = id => document.getElementById(id);
+  const on = (id, ev, fn) => $(id)?.addEventListener(ev, fn);
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function gas() { return !!(window.google && google.script && google.script.run); }
+
+  function email() {
+    return (ACTOR ||
+      sessionStorage.getItem('user_email') ||
+      localStorage.getItem('user_email') || '').trim();
+  }
+
+  function openBackdrop(id)  { $(id)?.classList.add('open'); }
+  function closeBackdrop(id) { $(id)?.classList.remove('open'); }
+
+  function fmtDate(v) {
+    const s = String(v || '').trim();
+    if (!s) return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) { const [y,m,d] = s.split('-'); return `${m}/${d}/${y}`; }
+    return s;
+  }
+
+  function toInputDate(v) {
+    const s = String(v || '').trim();
+    if (!s) return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+    const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m) return `${m[3]}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;
+    return '';
+  }
+
+  function badge(status) {
+    const raw = String(status || '').trim();
+    const s   = raw.toLowerCase();
+    let cls = 'ce-badge--ontime', icon = 'fa-circle-check';
+    if      (s === 'early/assisted') { cls = 'ce-badge--early';  icon = 'fa-circle-up'; }
+    else if (s === 'late')           { cls = 'ce-badge--late';   icon = 'fa-clock'; }
+    else if (s === 'missed')         { cls = 'ce-badge--missed'; icon = 'fa-circle-xmark'; }
+    else if (s === 'host')           { cls = 'ce-badge--host';   icon = 'fa-star'; }
+    return `<span class="ce-badge ${cls}"><i class="fa-solid ${icon}"></i>${esc(raw || 'On Time')}</span>`;
+  }
+
+  /* ── Permissions ── */
+  function applyPermUI() {
+    $('ce-btn-add')?.classList.toggle('ce-hidden',      !CAN_MANAGE);
+    $('ce-btn-bulk-del')?.classList.toggle('ce-hidden', !CAN_BULK);
+    $('ce-th-actions')?.classList.toggle('ce-hidden',   !CAN_MANAGE);
+    $('ce-chip-bulk')?.classList.toggle('ce-hidden',    !CAN_BULK);
+    if (!CAN_VIEW) {
+      $('ce-tbody').innerHTML = `<tr><td colspan="6" class="ce-table-state" style="color:var(--ce-red);">
+        You do not have permission to access this page.
+      </td></tr>`;
+    }
+  }
+
+  function initPerms() {
+    return new Promise(resolve => {
+      ACTOR = email();
+      if (!gas()) { CAN_VIEW = true; applyPermUI(); resolve(); return; }
+      google.script.run
+        .withSuccessHandler(res => {
+          if (!S.mounted) return resolve();
+          const p       = (res && res.data) ? res.data : (res || {});
+          const pages   = p.pages   || {};
+          const actions = p.actions || {};
+          ACTOR      = p.email || ACTOR;
+          CAN_VIEW   = !!(pages['companyengagement'] || pages.companyengagement);
+          CAN_MANAGE = !!(actions['companyengagement.manage'] ||
+                         (actions.companyengagement && actions.companyengagement.manage));
+          CAN_BULK   = CAN_MANAGE;
+          applyPermUI();
+          resolve();
+        })
+        .withFailureHandler(() => {
+          if (!S.mounted) return resolve();
+          CAN_VIEW = true; applyPermUI(); resolve();
+        })
+        .getMyPermissions();
+    });
+  }
+
+  /* ── Data ── */
+  function loadData() {
+    if (!CAN_VIEW) return;
+    const cols = CAN_MANAGE ? 6 : 5;
+    $('ce-tbody').innerHTML = `<tr><td colspan="${cols}" class="ce-table-state">
+      <i class="fa-solid fa-circle-notch ce-spin" style="margin-right:7px;"></i>Loading…
+    </td></tr>`;
+    $('ce-row-count').textContent = '';
+    if (!gas()) return;
+    google.script.run
+      .withSuccessHandler(data => {
+        if (!S.mounted) return;
+        CACHE = Array.isArray(data) ? data : [];
+        applyFilter();
+      })
+      .withFailureHandler(err => {
+        if (!S.mounted) return;
+        $('ce-tbody').innerHTML = `<tr><td colspan="${CAN_MANAGE ? 6 : 5}" class="ce-table-state" style="color:var(--ce-red);">
+          Error: ${esc(err?.message || String(err))}
+        </td></tr>`;
+      })
+      .getCompanyEngagementData(email());
+  }
+
+  function applyFilter() {
+    const q = ($('ce-search')?.value || '').trim().toLowerCase();
+    const rows = q
+      ? CACHE.filter(r => `${r.employee} ${r.date} ${r.event} ${r.status} ${r.comment}`.toLowerCase().includes(q))
+      : CACHE;
+    renderTable(rows);
+  }
+
+  function renderTable(rows) {
+    const cols = CAN_MANAGE ? 6 : 5;
+    if (!rows.length) {
+      $('ce-tbody').innerHTML = `<tr><td colspan="${cols}" class="ce-table-state">
+        <i class="fa-solid fa-inbox" style="opacity:.3;margin-right:8px;"></i>No records found.
+      </td></tr>`;
+      $('ce-row-count').textContent = ''; return;
+    }
+    $('ce-tbody').innerHTML = rows.map(r => `
+      <tr>
+        <td><span class="ce-cell-name">${esc(r.employee)}</span></td>
+        <td><span class="ce-cell-date">${esc(fmtDate(r.date))}</span></td>
+        <td><span class="ce-cell-event">${esc(r.event)}</span></td>
+        <td>${badge(r.status)}</td>
+        <td><span class="ce-cell-comment" title="${esc(r.comment)}">${esc(r.comment || '—')}</span></td>
+        ${CAN_MANAGE ? `<td><div class="ce-action-row">
+          <button class="ce-act ce-act--edit" data-id="${Number(r.id)}" title="Edit"><i class="fa-solid fa-pen"></i></button>
+          <button class="ce-act ce-act--del"  data-id="${Number(r.id)}" title="Delete"><i class="fa-solid fa-trash"></i></button>
+        </div></td>` : ''}
+      </tr>`).join('');
+    $('ce-row-count').textContent = `${rows.length} record${rows.length !== 1 ? 's' : ''}`;
+    $('ce-tbody').querySelectorAll('.ce-act--edit').forEach(b =>
+      b.addEventListener('click', () => openEdit(Number(b.dataset.id))));
+    $('ce-tbody').querySelectorAll('.ce-act--del').forEach(b =>
+      b.addEventListener('click', () => openDeleteModal(Number(b.dataset.id))));
+  }
+
+  /* ── Employee dropdown ── */
+  function loadEmpDropdown() {
+    if (!gas()) return;
+    google.script.run
+      .withSuccessHandler(names => {
+        if (!S.mounted) return;
+        const opts = (names || []).map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
+        $('ce-emp-single').innerHTML = `<option value="">Select employee…</option>` + opts;
+        $('ce-emp-bulk').innerHTML   = opts;
+      })
+      .getUsernamesForDropdown();
+  }
+
+  /* ── Mode chips ── */
+  function syncMode() {
+    const bulk = document.querySelector('input[name="ceMode"]:checked')?.value === 'bulk';
+    $('ce-wrap-single').classList.toggle('ce-hidden',  bulk);
+    $('ce-wrap-bulk').classList.toggle('ce-hidden',   !bulk);
+    $('ce-chip-single').classList.toggle('selected',  !bulk);
+    $('ce-chip-bulk').classList.toggle('selected',     bulk);
+  }
+
+  /* ── Form modal ── */
+  function openAdd() {
+    if (!CAN_MANAGE) return;
+    $('ce-form-title').textContent = 'Add Record';
+    $('ce-row-id').value = ''; $('ce-f-date').value = '';
+    $('ce-f-event').value = ''; $('ce-f-status').value = 'On Time'; $('ce-f-comment').value = '';
+    $('ce-save-lbl').textContent = 'Save'; $('ce-form-save').disabled = false;
+    const single = document.querySelector('input[value="single"]');
+    if (single) single.checked = true;
+    syncMode(); loadEmpDropdown();
+    openBackdrop('ce-form-backdrop');
+  }
+
+  function openEdit(id) {
+    if (!CAN_MANAGE) return;
+    const rec = CACHE.find(r => Number(r.id) === id);
+    if (!rec) return;
+    $('ce-form-title').textContent = 'Edit Record';
+    $('ce-row-id').value    = String(rec.id);
+    $('ce-f-date').value    = toInputDate(rec.date);
+    $('ce-f-event').value   = rec.event   || '';
+    $('ce-f-status').value  = rec.status  || 'On Time';
+    $('ce-f-comment').value = rec.comment || '';
+    $('ce-save-lbl').textContent = 'Update'; $('ce-form-save').disabled = false;
+    const single = document.querySelector('input[value="single"]');
+    if (single) single.checked = true;
+    syncMode(); loadEmpDropdown();
+    setTimeout(() => { if (S.mounted) $('ce-emp-single').value = rec.employee || ''; }, 450);
+    openBackdrop('ce-form-backdrop');
+  }
+
+  function closeFormModal() { closeBackdrop('ce-form-backdrop'); }
+
+  function saveRecord() {
+    const btn   = $('ce-form-save');
+    const lbl   = $('ce-save-lbl');
+    const idRaw = $('ce-row-id').value;
+    const isEdit = !!idRaw;
+    const isBulk = document.querySelector('input[name="ceMode"]:checked')?.value === 'bulk';
+    const dateVal    = $('ce-f-date').value;
+    const eventVal   = $('ce-f-event').value.trim();
+    const statusVal  = $('ce-f-status').value;
+    const commentVal = $('ce-f-comment').value.trim();
+    let employees = [];
+    if (isBulk) {
+      const sel = $('ce-emp-bulk');
+      employees = sel ? [...sel.selectedOptions].map(o => o.value.trim()).filter(Boolean) : [];
+    } else {
+      const v = $('ce-emp-single').value.trim();
+      if (v) employees = [v];
+    }
+    if (!employees.length || !dateVal || !eventVal || !statusVal) {
+      alert('Please fill Employee(s), Date, Event, and Status.'); return;
+    }
+    btn.disabled = true; lbl.textContent = 'Saving…';
+    const actor = email();
+    const done = () => { btn.disabled = false; lbl.textContent = isEdit ? 'Update' : 'Save'; closeFormModal(); loadData(); };
+    const fail = err => { btn.disabled = false; lbl.textContent = isEdit ? 'Update' : 'Save'; alert('Save failed: ' + (err?.message || err)); };
+    if (!gas()) { fail('Server not available.'); return; }
+    const run = google.script.run.withSuccessHandler(done).withFailureHandler(fail);
+    if (isEdit) {
+      run.updateCompanyEngagement({ id: Number(idRaw), employee: employees[0], date: dateVal, event: eventVal, status: statusVal, comment: commentVal, actorEmail: actor });
+    } else if (isBulk) {
+      run.addCompanyEngagementBulk(employees.map(employee => ({ employee, date: dateVal, event: eventVal, status: statusVal, comment: commentVal, actorEmail: actor })), actor);
+    } else {
+      run.addCompanyEngagement({ id: null, employee: employees[0], date: dateVal, event: eventVal, status: statusVal, comment: commentVal, actorEmail: actor });
+    }
+  }
+
+  /* ── Delete modal ── */
+  function openDeleteModal(id) {
+    if (!CAN_MANAGE) return;
+    $('ce-del-id').value = String(id);
+    $('ce-del-confirm').disabled = false;
+    $('ce-del-confirm').innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
+    openBackdrop('ce-del-backdrop');
+  }
+  function closeDeleteModal() { closeBackdrop('ce-del-backdrop'); }
+  function confirmDelete() {
+    const id  = Number($('ce-del-id').value);
+    const btn = $('ce-del-confirm');
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa-solid fa-circle-notch ce-spin"></i> Deleting…`;
+    if (!gas()) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete'; alert('Server not available.'); return; }
+    google.script.run
+      .withSuccessHandler(() => { closeDeleteModal(); loadData(); })
+      .withFailureHandler(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete'; alert('Delete failed: ' + (err?.message || err)); })
+      .deleteCompanyEngagement(id, email());
+  }
+
+  /* ── Bulk delete modal ── */
+  function openBulkDeleteModal() {
+    if (!CAN_BULK) { alert('Bulk delete is restricted to authorized users only.'); return; }
+    const events = [...new Set(CACHE.map(r => (r.event || '').trim()).filter(Boolean))].sort();
+    if (!events.length) { alert('No events found.'); return; }
+    $('ce-bulk-event').innerHTML = events.map(e => `<option value="${esc(e)}">${esc(e)}</option>`).join('');
+    $('ce-bulk-confirm-input').value = '';
+    $('ce-bulk-confirm-btn').disabled = false;
+    $('ce-bulk-confirm-btn').innerHTML = '<i class="fa-solid fa-trash-can"></i> Delete All';
+    openBackdrop('ce-bulk-backdrop');
+  }
+  function closeBulkModal() { closeBackdrop('ce-bulk-backdrop'); }
+  function confirmBulkDelete() {
+    const eventName = $('ce-bulk-event').value.trim();
+    const typed     = $('ce-bulk-confirm-input').value.trim();
+    if (!eventName) { alert('Please select an event.'); return; }
+    if (typed !== 'DELETE') { alert('Type DELETE to confirm.'); return; }
+    const btn = $('ce-bulk-confirm-btn');
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa-solid fa-circle-notch ce-spin"></i> Deleting…`;
+    if (!gas()) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-trash-can"></i> Delete All'; alert('Server not available.'); return; }
+    google.script.run
+      .withSuccessHandler(() => { closeBulkModal(); loadData(); })
+      .withFailureHandler(err => { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-trash-can"></i> Delete All'; alert('Bulk delete failed: ' + (err?.message || err)); })
+      .deleteCompanyEngagementByEvent(eventName, email());
+  }
+
+  /* ── Lifecycle ── */
+  async function mount() {
+    if (S.mounted) return;
+    S.mounted = true;
+
+    if (!document.getElementById('ce-fonts')) {
+      const l = document.createElement('link');
+      l.id = 'ce-fonts'; l.rel = 'stylesheet';
+      l.href = 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap';
+      document.head.appendChild(l);
+    }
+
+    on('ce-search',         'input',  applyFilter);
+    on('ce-btn-refresh',    'click',  loadData);
+    on('ce-btn-add',        'click',  openAdd);
+    on('ce-btn-bulk-del',   'click',  openBulkDeleteModal);
+
+    on('ce-form-x',         'click',  closeFormModal);
+    on('ce-form-cancel',    'click',  closeFormModal);
+    on('ce-form-save',      'click',  saveRecord);
+    $('ce-form-backdrop')?.addEventListener('click', e => { if (e.target === $('ce-form-backdrop')) closeFormModal(); });
+
+    on('ce-del-x',          'click',  closeDeleteModal);
+    on('ce-del-cancel',     'click',  closeDeleteModal);
+    on('ce-del-confirm',    'click',  confirmDelete);
+    $('ce-del-backdrop')?.addEventListener('click', e => { if (e.target === $('ce-del-backdrop')) closeDeleteModal(); });
+
+    on('ce-bulk-x',         'click',  closeBulkModal);
+    on('ce-bulk-cancel',    'click',  closeBulkModal);
+    on('ce-bulk-confirm-btn','click', confirmBulkDelete);
+    $('ce-bulk-backdrop')?.addEventListener('click', e => { if (e.target === $('ce-bulk-backdrop')) closeBulkModal(); });
+
+    document.querySelectorAll('.ce-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const radio = chip.querySelector('input[type="radio"]');
+        if (radio) { radio.checked = true; syncMode(); }
+      });
+    });
+
+    await initPerms();
+    if (!S.mounted || !CAN_VIEW) return;
+    loadEmpDropdown();
+    loadData();
+  }
+
+  function unmount() {
+    S.mounted = false;
+    ['ce-form-backdrop','ce-del-backdrop','ce-bulk-backdrop'].forEach(closeBackdrop);
+  }
+
+  function refresh() {
+    if (!S.mounted || !CAN_VIEW) return;
+    loadData();
+  }
+
+  window.CompanyEngagementPage = { mount, unmount, refresh };
+
+  if (typeof window.registerPageModule === 'function') {
+    window.registerPageModule('companyengagement', { mount, unmount, refresh });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mount, { once: true });
+  } else {
+    mount();
+  }
+
+})();
+</script>

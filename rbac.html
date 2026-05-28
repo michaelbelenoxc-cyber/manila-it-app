@@ -1,0 +1,1858 @@
+<style>
+  /* ============================================================
+   * FONTS
+   * ============================================================ */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  /* ═══════════════════════════════════════
+     TOKENS
+  ═══════════════════════════════════════ */
+  :root {
+    --font-ui:   'Epilogue', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    /* surfaces — warm paper (light default) */
+    --bg-base: #f5f2ec;
+    --bg-1:    #f5f2ec;
+    --bg-2:    #ede9e1;
+    --bg-3:    #e4ded4;
+    --bg-4:    #ddd6ca;
+    --bg-5:    #d4cbbe;
+
+    /* borders */
+    --b-0: rgba(26,24,20,.07);
+    --b-1: rgba(26,24,20,.12);
+    --b-2: rgba(26,24,20,.18);
+    --b-3: rgba(26,24,20,.28);
+
+    /* text */
+    --t-1: rgba(26,24,20,.95);
+    --t-2: rgba(74,71,64,.75);
+    --t-3: rgba(138,134,128,.60);
+
+    /* primary accent — editorial blue (replaces amber) */
+    --amber:      #2857a4;
+    --amber-d:    rgba(40,87,164,.10);
+    --amber-b:    rgba(40,87,164,.30);
+    --amber-glow: 0 0 0 1px rgba(40,87,164,.22), 0 4px 16px rgba(40,87,164,.12);
+
+    /* supporting */
+    --blue:    #2857a4;
+    --blue-d:  rgba(40,87,164,.10);
+    --blue-b:  rgba(40,87,164,.30);
+    --green:   #16a34a;
+    --red:     #c94040;
+    --red-d:   rgba(201,64,64,.09);
+    --red-b:   rgba(201,64,64,.24);
+
+    /* geometry */
+    --r-xl:  16px;
+    --r-lg:  10px;
+    --r-md:   7px;
+    --r-sm:   5px;
+    --r-pill: 999px;
+
+    /* shadows */
+    --sh-1: 0 1px 4px rgba(26,24,20,.08);
+    --sh-2: 0 4px 16px rgba(26,24,20,.10);
+    --sh-3: 0 12px 40px rgba(26,24,20,.14);
+  }
+
+  /* ── Dark mode ─────────────────────────────── */
+  html[data-theme="dark"] {
+    --bg-base: #161410; --bg-1: #1a1814; --bg-2: #1e1c18;
+    --bg-3: #252220; --bg-4: #2c2a26; --bg-5: #33302b;
+    --b-0: rgba(240,236,227,.06); --b-1: rgba(240,236,227,.10);
+    --b-2: rgba(240,236,227,.16); --b-3: rgba(240,236,227,.26);
+    --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.75); --t-3: rgba(106,100,92,.60);
+    --amber:      #2857a4;
+    --amber-d:    rgba(40,87,164,.16);
+    --amber-b:    rgba(40,87,164,.40);
+    --amber-glow: 0 0 0 1px rgba(40,87,164,.32), 0 4px 16px rgba(40,87,164,.18);
+    --red-d:  rgba(201,64,64,.12);
+    --red-b:  rgba(201,64,64,.30);
+    --sh-1: 0 1px 4px rgba(0,0,0,.35);
+    --sh-2: 0 4px 16px rgba(0,0,0,.45);
+    --sh-3: 0 12px 40px rgba(0,0,0,.55);
+  }
+
+  /* ═══════════════════════════════════════
+     BASE
+  ═══════════════════════════════════════ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    min-height: 100vh;
+    padding-top: 84px;
+    overflow-x: hidden;
+    font-family: var(--font-ui);
+    font-size: 14px;
+    color: var(--t-1);
+    background: var(--bg-base);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 55% 40% at 10% 0%, rgba(40,87,164,.04) 0%, transparent 55%),
+      radial-gradient(ellipse 45% 35% at 92% 100%, rgba(40,87,164,.03) 0%, transparent 55%);
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  /* ═══════════════════════════════════════
+     PAGE
+  ═══════════════════════════════════════ */
+  .page {
+    width: min(100%, 1480px);
+    margin: 0 auto;
+    padding: 36px 28px 68px;
+    animation: fadeUp .36s ease-out both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Hero ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 22px; align-items: end; margin-bottom: 24px;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 4px 11px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--amber-b);
+    background: var(--amber-d);
+    color: var(--amber);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    font-family: var(--font-mono); margin-bottom: 12px;
+  }
+
+  html[data-theme="dark"] .hero-eyebrow { color: #5b85c8; }
+
+  .hero-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400;
+    letter-spacing: -.02em; line-height: 1.06;
+    color: var(--t-1); margin-bottom: 8px;
+  }
+
+  .hero-sub {
+    font-size: 13px; font-family: var(--font-mono);
+    color: var(--t-3); line-height: 1.65;
+    max-width: 620px; letter-spacing: .01em;
+  }
+
+  /* ── Stat cards ── */
+  .stat-row {
+    display: flex; gap: 9px; flex-wrap: wrap;
+    justify-content: flex-end; align-self: flex-end;
+  }
+
+  .stat-card {
+    min-width: 136px; padding: 14px 16px 12px;
+    border-radius: var(--r-lg);
+    background: var(--bg-2); border: 1px solid var(--b-1);
+    box-shadow: var(--sh-0, var(--sh-1));
+    transition: transform .16s, border-color .16s;
+  }
+
+  .stat-card:hover { transform: translateY(-1px); border-color: var(--b-2); }
+
+  .stat-label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 9.5px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--t-3);
+    font-family: var(--font-mono); margin-bottom: 8px;
+  }
+
+  .stat-label i { color: var(--amber); }
+  html[data-theme="dark"] .stat-label i { color: #5b85c8; }
+
+  .stat-value {
+    font-size: 30px; font-weight: 700;
+    letter-spacing: -.04em; line-height: 1;
+    color: var(--t-1); font-family: var(--font-mono);
+  }
+
+  /* ═══════════════════════════════════════
+     MAIN CARD
+  ═══════════════════════════════════════ */
+  .main-card {
+    background: var(--bg-1);
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-xl);
+    box-shadow: var(--sh-1);
+    overflow: hidden;
+  }
+
+  /* ── Command bar ── */
+  .cmd-bar {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--b-0);
+    background: var(--bg-base);
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 18px; flex-wrap: wrap;
+  }
+
+  html[data-theme="dark"] .cmd-bar { background: rgba(0,0,0,.10); }
+
+  .cmd-left { flex: 1; min-width: 0; }
+
+  .cmd-identity {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  }
+
+  .cmd-icon {
+    width: 42px; height: 42px;
+    border-radius: var(--r-md);
+    display: flex; align-items: center; justify-content: center;
+    background: var(--amber-d); border: 1px solid var(--amber-b);
+    color: var(--amber); font-size: 16px; flex-shrink: 0;
+  }
+
+  html[data-theme="dark"] .cmd-icon { color: #5b85c8; }
+
+  .cmd-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 16px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1);
+  }
+
+  .cmd-desc {
+    font-size: 11.5px; font-family: var(--font-mono);
+    color: var(--t-3); margin-top: 3px; line-height: 1.5;
+    letter-spacing: .01em;
+  }
+
+  /* controls row */
+  .controls-row {
+    display: flex; align-items: flex-end; gap: 9px; flex-wrap: wrap;
+  }
+
+  .field-group { display: flex; flex-direction: column; gap: 4px; }
+
+  .field-label {
+    font-size: 9px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--t-3);
+    font-family: var(--font-mono);
+  }
+
+  .form-input,
+  .form-select {
+    height: 34px; min-width: 190px;
+    padding: 0 10px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--b-1);
+    background: var(--bg-2);
+    color: var(--t-1);
+    font-family: var(--font-mono);
+    font-size: 12.5px; font-weight: 500;
+    outline: none;
+    transition: border-color .13s, box-shadow .13s, background .13s;
+  }
+
+  .form-input:focus,
+  .form-select:focus {
+    border-color: var(--amber-b);
+    background: var(--bg-1);
+    box-shadow: var(--amber-glow);
+  }
+
+  .form-input::placeholder { color: var(--t-3); }
+  .form-select option { background: var(--bg-2); color: var(--t-1); }
+
+  /* cmd-right */
+  .cmd-right {
+    display: flex; align-items: center;
+    gap: 7px; flex-wrap: wrap; padding-top: 4px;
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 34px; padding: 0 13px;
+    border-radius: var(--r-md);
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: .04em;
+    cursor: pointer; border: none; white-space: nowrap;
+    transition: background .13s, border-color .13s, opacity .13s;
+  }
+
+  .btn:disabled { opacity: .40; cursor: not-allowed; }
+  .btn i { font-size: 10px; }
+
+  .btn-amber {
+    background: var(--amber-d);
+    border: 1px solid var(--amber-b);
+    color: var(--amber);
+  }
+  html[data-theme="dark"] .btn-amber { color: #5b85c8; }
+  .btn-amber:hover:not(:disabled) { background: rgba(40,87,164,.16); border-color: rgba(40,87,164,.45); }
+
+  .btn-ghost {
+    background: var(--bg-2); border: 1px solid var(--b-1); color: var(--t-2);
+  }
+  .btn-ghost:hover:not(:disabled) { background: var(--bg-3); border-color: var(--b-2); color: var(--t-1); }
+
+  .btn-danger {
+    background: var(--red-d); border: 1px solid var(--red-b); color: var(--red);
+  }
+  html[data-theme="dark"] .btn-danger { color: #f87171; }
+  .btn-danger:hover:not(:disabled) { background: rgba(201,64,64,.16); }
+
+  .btn-sm { height: 29px; padding: 0 10px; font-size: 10.5px; border-radius: var(--r-sm); }
+
+  /* ── Summary bar ── */
+  .summary-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 14px; flex-wrap: wrap;
+    padding: 12px 22px;
+    border-bottom: 1px solid var(--b-0);
+    background: rgba(40,87,164,.03);
+  }
+
+  html[data-theme="dark"] .summary-bar { background: rgba(40,87,164,.05); }
+
+  .summary-role-name {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 19px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1);
+  }
+
+  .summary-role-kicker {
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .12em; color: var(--t-3);
+    font-family: var(--font-mono); margin-bottom: 3px;
+  }
+
+  .summary-pills { display: flex; gap: 7px; flex-wrap: wrap; }
+
+  .summary-pill {
+    display: flex; align-items: center; gap: 5px;
+    padding: 6px 11px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--b-1); background: var(--bg-3);
+    font-size: 11.5px; font-weight: 500; color: var(--t-2);
+    font-family: var(--font-mono); white-space: nowrap;
+  }
+
+  .summary-pill b { font-weight: 700; color: var(--amber); }
+  html[data-theme="dark"] .summary-pill b { color: #5b85c8; }
+
+  /* ── Matrix grid ── */
+  .matrix { display: grid; gap: 14px; padding: 18px 22px 22px; }
+
+  .section-block {
+    border-radius: var(--r-lg); border: 1px solid var(--b-0);
+    background: var(--bg-2); overflow: hidden;
+  }
+
+  .section-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 11px; flex-wrap: wrap;
+    padding: 11px 14px; border-bottom: 1px solid var(--b-0);
+    background: var(--bg-base);
+  }
+
+  html[data-theme="dark"] .section-head { background: rgba(0,0,0,.08); }
+
+  .section-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 10px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--t-2);
+    font-family: var(--font-mono);
+  }
+
+  .section-label i { color: var(--amber); font-size: 11px; }
+  html[data-theme="dark"] .section-label i { color: #5b85c8; }
+
+  .section-tools { display: flex; gap: 5px; flex-wrap: wrap; }
+
+  /* ── Permission grid ── */
+  .perm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 8px; padding: 12px;
+  }
+
+  .perm-item {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 11px; padding: 11px 13px;
+    border-radius: var(--r-md);
+    background: var(--bg-3); border: 1px solid var(--b-0);
+    min-height: 56px;
+    transition: background .13s, border-color .13s, transform .11s;
+  }
+
+  .perm-item:hover { background: var(--bg-4); border-color: var(--b-1); transform: translateY(-1px); }
+
+  .perm-key {
+    font-size: 12.5px; font-weight: 600;
+    color: var(--t-1); font-family: var(--font-mono);
+    line-height: 1.3; word-break: break-word;
+  }
+
+  .perm-type {
+    font-size: 10.5px; color: var(--t-3); margin-top: 3px; font-weight: 500;
+  }
+
+  /* ── Toggle switch ── */
+  .switch {
+    position: relative; display: inline-block;
+    width: 42px; height: 22px; flex-shrink: 0;
+  }
+
+  .switch input { opacity: 0; width: 0; height: 0; }
+
+  .switch-track {
+    position: absolute; inset: 0;
+    border-radius: var(--r-pill);
+    background: var(--b-1); border: 1px solid var(--b-2);
+    transition: background .18s, border-color .18s, box-shadow .18s;
+    cursor: pointer;
+  }
+
+  .switch-track::after {
+    content: '';
+    position: absolute; top: 3px; left: 3px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--t-3);
+    transition: transform .18s, background .18s;
+    box-shadow: 0 1px 4px rgba(26,24,20,.18);
+  }
+
+  html[data-theme="dark"] .switch-track::after { background: rgba(240,236,227,.40); }
+
+  .switch input:checked + .switch-track {
+    background: var(--amber); border-color: transparent;
+    box-shadow: 0 0 0 3px rgba(40,87,164,.18);
+  }
+
+  .switch input:checked + .switch-track::after {
+    transform: translateX(20px); background: #fff;
+  }
+
+  .switch input:disabled + .switch-track { opacity: .40; cursor: not-allowed; }
+
+  .perm-toggle-wrap { display: flex; align-items: center; }
+
+  /* ── User cards ── */
+  .user-card {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 11px; padding: 11px 13px;
+    border-radius: var(--r-md);
+    background: var(--bg-3); border: 1px solid var(--b-0);
+    transition: background .13s, border-color .13s;
+  }
+
+  .user-card:hover { background: var(--bg-4); border-color: var(--b-1); }
+
+  .user-info { display: flex; align-items: center; gap: 11px; min-width: 0; }
+
+  .user-avatar {
+    width: 36px; height: 36px;
+    border-radius: var(--r-sm);
+    display: flex; align-items: center; justify-content: center;
+    background: var(--amber-d); border: 1px solid var(--amber-b);
+    color: var(--amber);
+    font-size: 12px; font-weight: 700;
+    font-family: var(--font-mono); flex-shrink: 0;
+  }
+
+  html[data-theme="dark"] .user-avatar { color: #5b85c8; }
+
+  .user-name {
+    font-size: 13px; font-weight: 700; color: var(--t-1); line-height: 1.2;
+  }
+
+  .user-email {
+    font-size: 11px; color: var(--t-3); margin-top: 3px;
+    font-family: var(--font-mono); word-break: break-all;
+  }
+
+  /* ── Empty states ── */
+  .empty-state {
+    padding: 26px 14px; text-align: center;
+    color: var(--t-3); font-size: 12.5px; font-weight: 500;
+    font-family: var(--font-mono);
+    border: 1px dashed var(--b-1); border-radius: var(--r-md); margin: 12px;
+  }
+
+  .empty-state i { display: block; font-size: 18px; margin-bottom: 7px; opacity: .4; }
+
+  /* ═══════════════════════════════════════
+     MODAL
+  ═══════════════════════════════════════ */
+  .modal {
+    position: fixed; inset: 0;
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+    background: rgba(26,24,20,.45);
+    backdrop-filter: blur(5px);
+    z-index: 5000;
+  }
+
+  html[data-theme="dark"] .modal { background: rgba(0,0,0,.60); backdrop-filter: blur(8px); }
+  .modal.open { display: flex; }
+
+  .modal-card {
+    width: min(800px, 96vw); max-height: 88vh;
+    display: flex; flex-direction: column;
+    background: var(--bg-1);
+    border: 1px solid var(--b-2);
+    border-radius: var(--r-xl);
+    box-shadow: var(--sh-3);
+    overflow: hidden;
+  }
+
+  .modal-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 11px; padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--b-0); flex-shrink: 0;
+    background: var(--bg-base);
+  }
+
+  html[data-theme="dark"] .modal-head { background: rgba(0,0,0,.08); }
+
+  .modal-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 16px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1);
+  }
+
+  .modal-sub {
+    font-size: 11.5px; font-family: var(--font-mono);
+    color: var(--t-3); margin-top: 4px; line-height: 1.55;
+    letter-spacing: .01em;
+  }
+
+  .modal-close {
+    width: 30px; height: 30px;
+    border-radius: var(--r-sm); border: 1px solid var(--b-1);
+    background: var(--bg-2); color: var(--t-3);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 12px;
+    transition: background .13s, color .13s; flex-shrink: 0;
+  }
+
+  .modal-close:hover { background: var(--bg-3); color: var(--t-1); }
+
+  .modal-search {
+    padding: 12px 20px 9px;
+    border-bottom: 1px solid var(--b-0); flex-shrink: 0;
+    background: var(--bg-2);
+  }
+
+  html[data-theme="dark"] .modal-search { background: rgba(0,0,0,.08); }
+
+  .modal-search-wrap { position: relative; }
+  .modal-search-wrap i {
+    position: absolute; left: 10px; top: 50%;
+    transform: translateY(-50%); color: var(--t-3); font-size: 11px;
+    pointer-events: none;
+  }
+
+  .modal-search-input {
+    width: 100%; height: 34px; padding: 0 12px 0 30px;
+    border-radius: var(--r-md); border: 1px solid var(--b-1);
+    background: var(--bg-1); color: var(--t-1);
+    font-family: var(--font-mono); font-size: 12.5px; outline: none;
+    transition: border-color .13s, box-shadow .13s;
+  }
+
+  .modal-search-input:focus { border-color: var(--amber-b); box-shadow: var(--amber-glow); }
+  .modal-search-input::placeholder { color: var(--t-3); }
+
+  .modal-body {
+    padding: 12px 20px; overflow-y: auto; flex: 1;
+    display: flex; flex-direction: column; gap: 7px;
+  }
+
+  .modal-body::-webkit-scrollbar { width: 3px; }
+  .modal-body::-webkit-scrollbar-thumb { background: var(--b-2); border-radius: 4px; }
+
+  .modal-footer {
+    display: flex; justify-content: flex-end;
+    gap: 7px; flex-wrap: wrap;
+    padding: 12px 20px 16px;
+    border-top: 1px solid var(--b-0); flex-shrink: 0;
+  }
+
+  /* assign user row */
+  .assign-row {
+    display: flex; align-items: center; gap: 11px;
+    padding: 10px 12px; border-radius: var(--r-md);
+    border: 1px solid var(--b-0); background: var(--bg-3);
+    cursor: pointer; transition: background .13s, border-color .13s;
+  }
+
+  .assign-row:hover { background: var(--bg-4); border-color: var(--b-1); }
+
+  .assign-row input[type="checkbox"] {
+    width: 14px; height: 14px;
+    accent-color: var(--amber); flex-shrink: 0; cursor: pointer;
+  }
+
+  .assign-name {
+    font-size: 13px; font-weight: 700; color: var(--t-1); line-height: 1.2;
+  }
+
+  .assign-meta {
+    font-size: 11px; color: var(--t-3); margin-top: 2px;
+    font-family: var(--font-mono);
+  }
+
+  /* ═══════════════════════════════════════
+     TOAST
+  ═══════════════════════════════════════ */
+  #toast {
+    position: fixed; right: 18px; bottom: 18px;
+    padding: 10px 16px; border-radius: var(--r-lg);
+    background: var(--bg-2); border: 1px solid var(--b-2);
+    color: var(--t-1); font-size: 12.5px; font-weight: 600;
+    font-family: var(--font-mono); letter-spacing: .02em;
+    box-shadow: var(--sh-2); z-index: 9999; display: none;
+    max-width: min(92vw, 340px);
+  }
+
+  html[data-theme="dark"] #toast { background: var(--bg-3); }
+
+  /* ═══════════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════════ */
+  @media (max-width: 1100px) {
+    .hero { grid-template-columns: 1fr; }
+    .stat-row { justify-content: flex-start; }
+  }
+
+  @media (max-width: 760px) {
+    .page { padding: 24px 14px 52px; }
+    .cmd-bar { flex-direction: column; }
+    .cmd-right { flex-wrap: wrap; }
+    .form-input, .form-select { min-width: 0; width: 100%; }
+    .controls-row { flex-direction: column; align-items: stretch; }
+    .perm-grid { grid-template-columns: 1fr; }
+    .summary-bar { flex-direction: column; align-items: flex-start; }
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fa-spin { animation: spin .85s linear infinite; }
+</style>
+
+<div class="page">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div>
+      <div class="hero-eyebrow">
+        <i class="fas fa-shield-halved"></i> Access Governance
+      </div>
+      <h1 class="hero-title">RBAC</h1>
+      <p class="hero-sub">Manage role-based page access, action permissions, and user assignment from one central workspace.</p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-label"><i class="fas fa-user-tag"></i> Roles</div>
+        <div class="stat-value" id="statRoles">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><i class="fas fa-window-maximize"></i> Pages</div>
+        <div class="stat-value" id="statPages">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><i class="fas fa-key"></i> Actions</div>
+        <div class="stat-value" id="statActions">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main card ── -->
+  <div class="main-card">
+
+    <!-- Command bar -->
+    <div class="cmd-bar">
+      <div class="cmd-left">
+        <div class="cmd-identity">
+          <div class="cmd-icon"><i class="fas fa-sitemap"></i></div>
+          <div>
+            <div class="cmd-title">Role Matrix</div>
+            <div class="cmd-desc">Create roles, clone permissions, manage page visibility and action-level access by role.</div>
+          </div>
+        </div>
+
+        <div class="controls-row">
+          <div class="field-group">
+            <div class="field-label">Selected Role</div>
+            <select id="roleSelect" class="form-select" aria-label="Selected role"></select>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Create New Role</div>
+            <input id="newRoleInput" class="form-input" placeholder="e.g. manager" aria-label="Create new role">
+          </div>
+
+          <button class="btn btn-amber" id="createRoleBtn" type="button" style="margin-top:15px;">
+            <i class="fas fa-plus"></i> Create
+          </button>
+
+          <button class="btn btn-ghost btn-sm" id="refreshUsersBtn" type="button" style="margin-top:15px;">
+            <i class="fas fa-rotate"></i> Refresh Users
+          </button>
+        </div>
+      </div>
+
+      <div class="cmd-right">
+        <button class="btn btn-ghost" id="cloneRoleBtn" type="button">
+          <i class="fas fa-copy"></i> Clone
+        </button>
+        <button class="btn btn-danger" id="deleteRoleBtn" type="button">
+          <i class="fas fa-trash"></i> Delete
+        </button>
+        <button class="btn btn-amber" id="saveBtn" type="button">
+          <i class="fas fa-floppy-disk"></i> Save Permissions
+        </button>
+      </div>
+    </div>
+
+    <!-- Summary bar -->
+    <div class="summary-bar">
+      <div>
+        <div class="summary-role-kicker">Current Role</div>
+        <div class="summary-role-name" id="selectedRoleLabel">—</div>
+      </div>
+      <div class="summary-pills">
+        <div class="summary-pill">Pages Allowed&ensp;<b id="pageAllowedCount">0</b></div>
+        <div class="summary-pill">Actions Allowed&ensp;<b id="actionAllowedCount">0</b></div>
+        <div class="summary-pill">Users Assigned&ensp;<b id="usersAssignedCount">0</b></div>
+      </div>
+    </div>
+
+    <!-- Matrix -->
+    <div class="matrix">
+
+      <!-- Page Access -->
+      <div class="section-block">
+        <div class="section-head">
+          <div class="section-label"><i class="fas fa-window-maximize"></i> Page Access</div>
+          <div class="section-tools">
+            <button class="btn btn-ghost btn-sm" id="allowAllPagesBtn" type="button">
+              <i class="fas fa-check"></i> Allow all
+            </button>
+            <button class="btn btn-ghost btn-sm" id="clearAllPagesBtn" type="button">
+              <i class="fas fa-ban"></i> Clear all
+            </button>
+          </div>
+        </div>
+        <div id="pageGrid" class="perm-grid" aria-live="polite"></div>
+      </div>
+
+      <!-- Action Access -->
+      <div class="section-block">
+        <div class="section-head">
+          <div class="section-label"><i class="fas fa-key"></i> Action Access</div>
+          <div class="section-tools">
+            <button class="btn btn-ghost btn-sm" id="allowAllActionsBtn" type="button">
+              <i class="fas fa-check"></i> Allow all
+            </button>
+            <button class="btn btn-ghost btn-sm" id="clearAllActionsBtn" type="button">
+              <i class="fas fa-ban"></i> Clear all
+            </button>
+          </div>
+        </div>
+        <div id="actionGrid" class="perm-grid" aria-live="polite"></div>
+      </div>
+
+      <!-- Users -->
+      <div class="section-block">
+        <div class="section-head">
+          <div class="section-label"><i class="fas fa-users"></i> Users with this Role</div>
+          <div class="section-tools">
+            <button class="btn btn-amber btn-sm" id="assignUsersBtn" type="button">
+              <i class="fas fa-user-plus"></i> Assign Users
+            </button>
+            <button class="btn btn-ghost btn-sm" id="refreshUsersInlineBtn" type="button">
+              <i class="fas fa-arrows-rotate"></i> Refresh
+            </button>
+          </div>
+        </div>
+        <div id="roleUsersGrid" class="perm-grid" aria-live="polite"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── Assign Users Modal ── -->
+<div id="assignUsersModal" class="modal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="assignUsersTitle">
+
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="assignUsersTitle">Assign Users to Role</div>
+        <div class="modal-sub">Select users to assign to the currently selected role. Unchecked users will keep their current role.</div>
+      </div>
+      <button class="modal-close" id="closeAssignModalBtn" type="button" aria-label="Close">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="modal-search">
+      <div class="modal-search-wrap">
+        <i class="fas fa-magnifying-glass"></i>
+        <input id="assignUsersSearch" class="modal-search-input" type="text"
+               placeholder="Search by name, email, or current role…">
+      </div>
+    </div>
+
+    <div class="modal-body" id="assignUsersList" aria-live="polite">
+      <div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i>Loading users…</div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="cancelAssignBtn" type="button">Cancel</button>
+      <button class="btn btn-amber" id="saveAssignBtn" type="button">
+        <i class="fas fa-user-check"></i> Assign Selected
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Confirm / Prompt modal -->
+<div id="dialogModal" class="modal" aria-hidden="true" role="dialog">
+  <div class="modal-card" tabindex="-1" style="max-width:420px;width:100%;min-width:0;max-height:86vh;display:flex;flex-direction:column;">
+
+    <div class="modal-head">
+      <div style="min-width:0;">
+        <div class="modal-title" id="dialogTitle"></div>
+        <div class="modal-sub" id="dialogMessage"></div>
+      </div>
+      <button class="modal-close" id="dialogCloseBtn" type="button" aria-label="Close">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="modal-search" id="dialogInputWrap" style="display:none;">
+      <input
+        id="dialogInput"
+        type="text"
+        class="modal-search-input"
+        placeholder=""
+      />
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="dialogCancelBtn" type="button">Cancel</button>
+      <button class="btn btn-danger btn-sm" id="dialogConfirmBtn" type="button">Confirm</button>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+(() => {
+  "use strict";
+
+  const DEFAULT_RBAC = Object.freeze({
+    roles: [],
+    pages: [],
+    actions: [],
+    rules: []
+  });
+
+  const BTN_HTML = Object.freeze({
+    save:   `<i class="fas fa-floppy-disk"></i> Save Permissions`,
+    create: `<i class="fas fa-plus"></i> Create`,
+    clone:  `<i class="fas fa-copy"></i> Clone`,
+    delete: `<i class="fas fa-trash"></i> Delete`,
+    assign: `<i class="fas fa-user-check"></i> Assign Selected`
+  });
+
+  const state = {
+    rbac: cloneDefaultRbac_(),
+    ruleSet: new Set(),
+    roleUsers: [],
+    assignableUsers: [],
+    assignSearch: "",
+    isDirty: false,
+    selectedRole: "",
+    reloadUsersSeq: 0,
+    dialogResolve: null,
+    eventsBound: false,
+    dialogEventsBound: false,
+    lastFocusedEl: null,
+    isInitDone: false
+  };
+
+  const el = {
+    roleSelect:            document.getElementById("roleSelect"),
+    newRoleInput:          document.getElementById("newRoleInput"),
+    createRoleBtn:         document.getElementById("createRoleBtn"),
+    cloneRoleBtn:          document.getElementById("cloneRoleBtn"),
+    deleteRoleBtn:         document.getElementById("deleteRoleBtn"),
+    saveBtn:               document.getElementById("saveBtn"),
+    refreshUsersBtn:       document.getElementById("refreshUsersBtn"),
+    refreshUsersInlineBtn: document.getElementById("refreshUsersInlineBtn"),
+    assignUsersBtn:        document.getElementById("assignUsersBtn"),
+    allowAllPagesBtn:      document.getElementById("allowAllPagesBtn"),
+    clearAllPagesBtn:      document.getElementById("clearAllPagesBtn"),
+    allowAllActionsBtn:    document.getElementById("allowAllActionsBtn"),
+    clearAllActionsBtn:    document.getElementById("clearAllActionsBtn"),
+
+    pageGrid:              document.getElementById("pageGrid"),
+    actionGrid:            document.getElementById("actionGrid"),
+    roleUsersGrid:         document.getElementById("roleUsersGrid"),
+
+    selectedRoleLabel:     document.getElementById("selectedRoleLabel"),
+    pageAllowedCount:      document.getElementById("pageAllowedCount"),
+    actionAllowedCount:    document.getElementById("actionAllowedCount"),
+    usersAssignedCount:    document.getElementById("usersAssignedCount"),
+
+    statRoles:             document.getElementById("statRoles"),
+    statPages:             document.getElementById("statPages"),
+    statActions:           document.getElementById("statActions"),
+
+    assignUsersModal:      document.getElementById("assignUsersModal"),
+    assignUsersList:       document.getElementById("assignUsersList"),
+    assignUsersSearch:     document.getElementById("assignUsersSearch"),
+    closeAssignModalBtn:   document.getElementById("closeAssignModalBtn"),
+    cancelAssignBtn:       document.getElementById("cancelAssignBtn"),
+    saveAssignBtn:         document.getElementById("saveAssignBtn"),
+
+    dialogModal:           document.getElementById("dialogModal"),
+    dialogTitle:           document.getElementById("dialogTitle"),
+    dialogMessage:         document.getElementById("dialogMessage"),
+    dialogInputWrap:       document.getElementById("dialogInputWrap"),
+    dialogCloseBtn:        document.getElementById("dialogCloseBtn"),
+    dialogCancelBtn:       document.getElementById("dialogCancelBtn"),
+    dialogConfirmBtn:      document.getElementById("dialogConfirmBtn"),
+    dialogInput:           document.getElementById("dialogInput"),
+
+    toast:                 document.getElementById("toast")
+  };
+
+  function cloneDefaultRbac_() {
+    return {
+      roles: [],
+      pages: [],
+      actions: [],
+      rules: []
+    };
+  }
+
+  function normalize(v) {
+    return String(v || "").trim().toLowerCase();
+  }
+
+  function escapeHtml(v) {
+    return String(v || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function debounce(fn, wait = 180) {
+    let timer = null;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn(...args), wait);
+    };
+  }
+
+  function initials(v) {
+    const parts = String(v || "").trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return "U";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  }
+
+  function showToast(message) {
+    if (!el.toast) return;
+    el.toast.textContent = String(message || "");
+    el.toast.style.display = "block";
+    clearTimeout(el.toast._timer);
+    el.toast._timer = setTimeout(() => {
+      el.toast.style.display = "none";
+    }, 2600);
+  }
+
+  function setBusy(btn, busy, htmlWhenIdle) {
+    if (!btn) return;
+    btn.disabled = !!busy;
+    if (!busy && typeof htmlWhenIdle === "string") {
+      btn.innerHTML = htmlWhenIdle;
+    }
+  }
+
+  function setButtonLoading(btn, html) {
+    if (!btn) return;
+    btn.disabled = true;
+    btn.innerHTML = html;
+  }
+
+  function gsRun(method, payload) {
+    return new Promise((resolve, reject) => {
+      if (!(window.google && google.script && google.script.run)) {
+        reject(new Error("Google Apps Script bridge is not available."));
+        return;
+      }
+
+      const runner = google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(reject);
+
+      if (typeof runner[method] !== "function") {
+        reject(new Error(`Method not found: ${method}`));
+        return;
+      }
+
+      if (typeof payload === "undefined") runner[method]();
+      else runner[method](payload);
+    });
+  }
+
+  function markDirty() {
+    state.isDirty = true;
+  }
+
+  function clearDirty() {
+    state.isDirty = false;
+  }
+
+  function getSelectedRole() {
+    return normalize(el.roleSelect?.value || state.selectedRole || "");
+  }
+
+  function rebuildRuleSet() {
+    const set = new Set();
+
+    (state.rbac.rules || []).forEach(rule => {
+      if (!rule || !rule.allowed) return;
+      set.add(`${normalize(rule.role)}|${normalize(rule.type)}|${normalize(rule.key)}`);
+    });
+
+    state.ruleSet = set;
+  }
+
+  function getRuleAllowed(role, type, key) {
+    return state.ruleSet.has(`${normalize(role)}|${normalize(type)}|${normalize(key)}`);
+  }
+
+  function updateHeaderStats() {
+    if (el.statRoles) el.statRoles.textContent = String((state.rbac.roles || []).length);
+    if (el.statPages) el.statPages.textContent = String((state.rbac.pages || []).length);
+    if (el.statActions) el.statActions.textContent = String((state.rbac.actions || []).length);
+  }
+
+  function updateSummaryCounts() {
+    const pageCount = el.pageGrid
+      ? el.pageGrid.querySelectorAll('.perm-toggle[data-type="page"]:checked').length
+      : 0;
+
+    const actionCount = el.actionGrid
+      ? el.actionGrid.querySelectorAll('.perm-toggle[data-type="action"]:checked').length
+      : 0;
+
+    if (el.pageAllowedCount) el.pageAllowedCount.textContent = String(pageCount);
+    if (el.actionAllowedCount) el.actionAllowedCount.textContent = String(actionCount);
+    if (el.usersAssignedCount) el.usersAssignedCount.textContent = String((state.roleUsers || []).length);
+  }
+
+  function updateDeleteRoleState() {
+    const role = getSelectedRole();
+    if (el.deleteRoleBtn) {
+      el.deleteRoleBtn.disabled = !role || role === "admin";
+    }
+  }
+
+  function renderRoleOptions(preferred = "") {
+    if (!el.roleSelect) return;
+
+    const roles = [...(state.rbac.roles || [])].sort((a, b) => a.localeCompare(b));
+    el.roleSelect.innerHTML = roles.map(role =>
+      `<option value="${escapeHtml(role)}">${escapeHtml(role)}</option>`
+    ).join("");
+
+    const normalizedPreferred = normalize(preferred);
+
+    if (normalizedPreferred && roles.includes(normalizedPreferred)) {
+      el.roleSelect.value = normalizedPreferred;
+    } else if (roles.length) {
+      el.roleSelect.value = roles[0];
+    } else {
+      el.roleSelect.value = "";
+    }
+
+    state.selectedRole = getSelectedRole();
+  }
+
+  function attachPermissionToggleListeners() {
+    document.querySelectorAll(".perm-toggle").forEach(toggle => {
+      toggle.addEventListener("change", () => {
+        markDirty();
+        updateSummaryCounts();
+      });
+    });
+  }
+
+  function renderPermItems(type, items) {
+    if (!Array.isArray(items) || !items.length) {
+      return `<div class="empty-state"><i class="fas fa-circle-info"></i>No ${escapeHtml(type)} permissions defined.</div>`;
+    }
+
+    const role = getSelectedRole();
+    const label = type === "page" ? "Page visibility" : "Action permission";
+
+    return items.map(key => {
+      const checked = getRuleAllowed(role, type, key);
+
+      return `
+        <div class="perm-item">
+          <div>
+            <div class="perm-key">${escapeHtml(key)}</div>
+            <div class="perm-type">${escapeHtml(label)}</div>
+          </div>
+          <div class="perm-toggle-wrap">
+            <label class="switch" aria-label="${escapeHtml(`${type} ${key}`)}">
+              <input
+                type="checkbox"
+                class="perm-toggle"
+                data-type="${escapeHtml(type)}"
+                data-key="${escapeHtml(key)}"
+                ${checked ? "checked" : ""}
+              >
+              <span class="switch-track"></span>
+            </label>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function renderPermissionGrid() {
+    const role = getSelectedRole();
+
+    if (el.selectedRoleLabel) {
+      el.selectedRoleLabel.textContent = role || "—";
+    }
+
+    if (!role) {
+      const msg = `<div class="empty-state"><i class="fas fa-user-tag"></i>No roles available yet.</div>`;
+      if (el.pageGrid) el.pageGrid.innerHTML = msg;
+      if (el.actionGrid) el.actionGrid.innerHTML = msg;
+      updateSummaryCounts();
+      updateDeleteRoleState();
+      renderRoleUsers();
+      return;
+    }
+
+    if (el.pageGrid) {
+      el.pageGrid.innerHTML = renderPermItems("page", state.rbac.pages || []);
+    }
+
+    if (el.actionGrid) {
+      el.actionGrid.innerHTML = renderPermItems("action", state.rbac.actions || []);
+    }
+
+    attachPermissionToggleListeners();
+    updateSummaryCounts();
+    updateDeleteRoleState();
+  }
+
+  function renderRoleUsers() {
+    if (!el.roleUsersGrid) return;
+
+    if (!Array.isArray(state.roleUsers) || !state.roleUsers.length) {
+      el.roleUsersGrid.innerHTML = `<div class="empty-state"><i class="fas fa-users-slash"></i>No users assigned to this role.</div>`;
+      updateSummaryCounts();
+      return;
+    }
+
+    el.roleUsersGrid.innerHTML = state.roleUsers.map(user => `
+      <div class="user-card">
+        <div class="user-info">
+          <div class="user-avatar">${escapeHtml(initials(user.username || user.email || "U"))}</div>
+          <div>
+            <div class="user-name">${escapeHtml(user.username || user.email || "Unknown User")}</div>
+            <div class="user-email">${escapeHtml(user.email || "")}</div>
+          </div>
+        </div>
+        <button
+          class="btn btn-danger btn-sm role-remove-btn"
+          type="button"
+          data-email="${escapeHtml(user.email || "")}"
+        >
+          <i class="fas fa-user-minus"></i> Remove
+        </button>
+      </div>
+    `).join("");
+
+    el.roleUsersGrid.querySelectorAll(".role-remove-btn").forEach(btn => {
+      btn.addEventListener("click", () => removeUserFromCurrentRole(btn.dataset.email || ""));
+    });
+
+    updateSummaryCounts();
+  }
+
+  function setAllByType(type, allowed) {
+    document.querySelectorAll(`.perm-toggle[data-type="${type}"]`).forEach(toggle => {
+      toggle.checked = !!allowed;
+    });
+    markDirty();
+    updateSummaryCounts();
+  }
+
+  function buildEntriesForSelectedRole() {
+    const role = getSelectedRole();
+    const toggles = Array.from(document.querySelectorAll(".perm-toggle"));
+
+    const otherEntries = (state.rbac.rules || [])
+      .filter(rule => normalize(rule.role) !== role)
+      .map(rule => ({
+        role: normalize(rule.role),
+        type: normalize(rule.type),
+        key: normalize(rule.key),
+        allowed: !!rule.allowed
+      }));
+
+    const currentEntries = toggles.map(toggle => ({
+      role,
+      type: normalize(toggle.dataset.type),
+      key: normalize(toggle.dataset.key),
+      allowed: !!toggle.checked
+    }));
+
+    return otherEntries.concat(currentEntries);
+  }
+
+  async function refreshRbac(preferred = "") {
+    const data = await gsRun("getRbacMatrix");
+    state.rbac = data || cloneDefaultRbac_();
+    rebuildRuleSet();
+    updateHeaderStats();
+    renderRoleOptions(preferred || state.selectedRole || "");
+    renderPermissionGrid();
+    await reloadUsersForRole();
+    clearDirty();
+  }
+
+  async function saveRolePermissions() {
+    const role = getSelectedRole();
+    if (!role) {
+      showToast("Select a role first");
+      return;
+    }
+
+    try {
+      setButtonLoading(el.saveBtn, `<i class="fas fa-circle-notch fa-spin"></i> Saving...`);
+
+      const entries = buildEntriesForSelectedRole();
+      await gsRun("saveRbacMatrix", { entries });
+
+      try {
+        await gsRun("auditWrite", {
+          action: "rbac.save_permissions",
+          entity: "RBAC",
+          field: "role",
+          oldValue: "",
+          newValue: role,
+          details: { role, entryCount: entries.length }
+        });
+      } catch (_) {}
+
+      setBusy(el.saveBtn, false, BTN_HTML.save);
+      showToast("Permissions saved");
+      clearDirty();
+
+      if (typeof window.invalidatePageCache === "function") {
+        window.invalidatePageCache();
+      }
+
+      if (window.google?.script?.run) {
+        google.script.run
+          .withSuccessHandler(() => {})
+          .withFailureHandler(() => {})
+          .invalidateShellCache("rbac");
+
+        google.script.run
+          .withSuccessHandler(perms => {
+            if (typeof window.applyNavbarPermissions === "function") {
+              window.applyNavbarPermissions(perms);
+            }
+          })
+          .withFailureHandler(() => {})
+          .getMyPermissions();
+      }
+
+      await refreshRbac(role);
+    } catch (err) {
+      setBusy(el.saveBtn, false, BTN_HTML.save);
+      showToast("Error: " + (err?.message || err || "Failed to save"));
+    }
+  }
+
+  async function createRole() {
+    const role = normalize(el.newRoleInput?.value || "");
+
+    if (!role) {
+      showToast("Enter a role name");
+      return;
+    }
+
+    if (!/^[a-z0-9 _-]+$/.test(role)) {
+      showToast("Use letters, numbers, spaces, _ or - only");
+      return;
+    }
+
+    if ((state.rbac.roles || []).includes(role)) {
+      showToast("Role already exists");
+      return;
+    }
+
+    const entries = [...(state.rbac.rules || [])];
+    (state.rbac.pages || []).forEach(page => entries.push({ role, type: "page", key: page, allowed: false }));
+    (state.rbac.actions || []).forEach(action => entries.push({ role, type: "action", key: action, allowed: false }));
+
+    try {
+      setButtonLoading(el.createRoleBtn, `<i class="fas fa-circle-notch fa-spin"></i> Creating...`);
+      await gsRun("saveRbacMatrix", { entries });
+
+      try {
+        await gsRun("auditWrite", {
+          action: "rbac.create_role",
+          entity: "RBAC",
+          field: "role",
+          oldValue: "",
+          newValue: role,
+          details: { role }
+        });
+      } catch (_) {}
+
+      if (el.newRoleInput) el.newRoleInput.value = "";
+      setBusy(el.createRoleBtn, false, BTN_HTML.create);
+      showToast("Role created");
+      clearDirty();
+      await refreshRbac(role);
+    } catch (err) {
+      setBusy(el.createRoleBtn, false, BTN_HTML.create);
+      showToast("Error: " + (err?.message || err || "Failed to create role"));
+    }
+  }
+
+  async function cloneRole() {
+    const base = getSelectedRole();
+
+    if (!base) {
+      showToast("Select a role to clone");
+      return;
+    }
+
+    const input = await showPrompt(`Clone "${base}" as:`, {
+      title: "Clone Role",
+      placeholder: "new-role-name",
+      confirmLabel: "Clone"
+    });
+
+    if (input == null) return;
+
+    const role = normalize(input);
+    if (!role) return;
+
+    if (!/^[a-z0-9 _-]+$/.test(role)) {
+      showToast("Use letters, numbers, spaces, _ or - only");
+      return;
+    }
+
+    if ((state.rbac.roles || []).includes(role)) {
+      showToast("Role already exists");
+      return;
+    }
+
+    const cloned = (state.rbac.rules || [])
+      .filter(rule => normalize(rule.role) === base)
+      .map(rule => ({
+        role,
+        type: normalize(rule.type),
+        key: normalize(rule.key),
+        allowed: !!rule.allowed
+      }));
+
+    try {
+      setButtonLoading(el.cloneRoleBtn, `<i class="fas fa-circle-notch fa-spin"></i> Cloning...`);
+      await gsRun("saveRbacMatrix", { entries: [...(state.rbac.rules || []), ...cloned] });
+
+      try {
+        await gsRun("auditWrite", {
+          action: "rbac.clone_role",
+          entity: "RBAC",
+          field: "role",
+          oldValue: base,
+          newValue: role,
+          details: { clonedFrom: base, newRole: role, entryCount: cloned.length }
+        });
+      } catch (_) {}
+
+      setBusy(el.cloneRoleBtn, false, BTN_HTML.clone);
+      showToast("Role cloned");
+      clearDirty();
+      await refreshRbac(role);
+    } catch (err) {
+      setBusy(el.cloneRoleBtn, false, BTN_HTML.clone);
+      showToast("Error: " + (err?.message || err || "Failed to clone role"));
+    }
+  }
+
+  async function deleteRole() {
+    const role = getSelectedRole();
+
+    if (!role) {
+      showToast("Select a role first");
+      return;
+    }
+
+    if (role === "admin") {
+      showToast("Admin role cannot be deleted");
+      return;
+    }
+
+    const confirmed = await showConfirm(
+      `Delete role "${role}"? Users currently assigned to it will no longer receive permissions from this role.`,
+      { title: "Delete Role", confirmLabel: "Delete", danger: true }
+    );
+    if (!confirmed) return;
+
+    const remaining = (state.rbac.rules || []).filter(rule => normalize(rule.role) !== role);
+    const removedCount = (state.rbac.rules || []).length - remaining.length;
+
+    try {
+      setButtonLoading(el.deleteRoleBtn, `<i class="fas fa-circle-notch fa-spin"></i> Deleting...`);
+      await gsRun("saveRbacMatrix", { entries: remaining });
+
+      try {
+        await gsRun("auditWrite", {
+          action: "rbac.delete_role",
+          entity: "RBAC",
+          field: "role",
+          oldValue: role,
+          newValue: "",
+          details: { role, removedEntries: removedCount }
+        });
+      } catch (_) {}
+
+      state.roleUsers = [];
+      setBusy(el.deleteRoleBtn, false, BTN_HTML.delete);
+      showToast("Role deleted");
+      clearDirty();
+      await refreshRbac();
+    } catch (err) {
+      setBusy(el.deleteRoleBtn, false, BTN_HTML.delete);
+      showToast("Error: " + (err?.message || err || "Failed to delete role"));
+    }
+  }
+
+  async function reloadUsersForRole() {
+    const role = getSelectedRole();
+
+    if (!role) {
+      state.roleUsers = [];
+      renderRoleUsers();
+      return;
+    }
+
+    const seq = ++state.reloadUsersSeq;
+
+    if (el.roleUsersGrid) {
+      el.roleUsersGrid.innerHTML = `<div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i>Loading users...</div>`;
+    }
+
+    try {
+      const users = await gsRun("getUsersByRole", role);
+      if (seq !== state.reloadUsersSeq) return;
+
+      state.roleUsers = Array.isArray(users) ? users : [];
+      renderRoleUsers();
+    } catch (err) {
+      if (seq !== state.reloadUsersSeq) return;
+
+      state.roleUsers = [];
+      renderRoleUsers();
+      showToast("Error: " + (err?.message || err || "Failed to load users"));
+    }
+  }
+
+  function openAssignUsersModal() {
+    state.assignSearch = "";
+    state.lastFocusedEl = document.activeElement || null;
+
+    if (el.assignUsersSearch) el.assignUsersSearch.value = "";
+    if (el.assignUsersList) {
+      el.assignUsersList.innerHTML = `<div class="empty-state"><i class="fas fa-circle-notch fa-spin"></i>Loading users...</div>`;
+    }
+
+    if (el.assignUsersModal) {
+      el.assignUsersModal.style.display = "flex";
+      el.assignUsersModal.setAttribute("aria-hidden", "false");
+    }
+
+    gsRun("getUsersForRoleAssignment")
+      .then(users => {
+        state.assignableUsers = Array.isArray(users) ? users : [];
+        renderAssignableUsersList();
+        setTimeout(() => {
+          if (el.assignUsersSearch) el.assignUsersSearch.focus();
+        }, 30);
+      })
+      .catch(err => {
+        if (el.assignUsersList) {
+          el.assignUsersList.innerHTML = `<div class="empty-state"><i class="fas fa-triangle-exclamation"></i>Failed to load users.</div>`;
+        }
+        showToast("Error: " + (err?.message || err || "Failed to load users"));
+      });
+  }
+
+  function closeAssignUsersModal() {
+    if (el.assignUsersModal) {
+      el.assignUsersModal.style.display = "none";
+      el.assignUsersModal.setAttribute("aria-hidden", "true");
+    }
+
+    if (state.lastFocusedEl && typeof state.lastFocusedEl.focus === "function") {
+      state.lastFocusedEl.focus();
+    }
+  }
+
+  function renderAssignableUsersList() {
+    const role = getSelectedRole();
+    const query = normalize(state.assignSearch);
+
+    const items = (state.assignableUsers || []).filter(user => {
+      if (!query) return true;
+      const haystack = `${user.username || ""} ${user.email || ""} ${user.role || ""}`.toLowerCase();
+      return haystack.includes(query);
+    });
+
+    if (!el.assignUsersList) return;
+
+    if (!items.length) {
+      el.assignUsersList.innerHTML = `<div class="empty-state"><i class="fas fa-user-slash"></i>No users matched your search.</div>`;
+      return;
+    }
+
+    el.assignUsersList.innerHTML = items.map(user => {
+      const checked = normalize(user.role) === role;
+      return `
+        <label class="assign-row">
+          <input
+            type="checkbox"
+            class="assign-role-pick"
+            value="${escapeHtml(user.email || "")}"
+            ${checked ? "checked" : ""}
+          >
+          <div>
+            <div class="assign-name">${escapeHtml(user.username || user.email || "Unknown User")}</div>
+            <div class="assign-meta">${escapeHtml(user.email || "")} · current: ${escapeHtml(user.role || "viewer")}</div>
+          </div>
+        </label>
+      `;
+    }).join("");
+  }
+
+  async function saveAssignedUsersToRole() {
+    const role = getSelectedRole();
+    if (!role) {
+      showToast("Select a role first");
+      return;
+    }
+
+    const emails = Array.from(document.querySelectorAll(".assign-role-pick:checked"))
+      .map(node => String(node.value || "").trim())
+      .filter(Boolean);
+
+    try {
+      setButtonLoading(el.saveAssignBtn, `<i class="fas fa-circle-notch fa-spin"></i> Assigning...`);
+      const result = await gsRun("bulkAssignRoleToUsers", { emails, role });
+
+      try {
+        await gsRun("auditWrite", {
+          action: "rbac.bulk_assign_role",
+          entity: "RBAC",
+          field: "role",
+          oldValue: "",
+          newValue: role,
+          details: { role, emails, updated: result?.updated || 0 }
+        });
+      } catch (_) {}
+
+      setBusy(el.saveAssignBtn, false, BTN_HTML.assign);
+      showToast(`Assigned ${result?.updated || 0} user(s) to ${role}`);
+      closeAssignUsersModal();
+      await reloadUsersForRole();
+    } catch (err) {
+      setBusy(el.saveAssignBtn, false, BTN_HTML.assign);
+      showToast("Error: " + (err?.message || err || "Failed to assign users"));
+    }
+  }
+
+  async function removeUserFromCurrentRole(email) {
+    if (!email) return;
+
+    const confirmed = await showConfirm(
+      "Remove this user from the current role? They will be set back to viewer.",
+      { title: "Remove User", confirmLabel: "Remove", danger: true }
+    );
+    if (!confirmed) return;
+
+    const oldRole = getSelectedRole();
+
+    try {
+      await gsRun("assignRoleToUser", { email, role: "viewer" });
+
+      try {
+        await gsRun("auditWrite", {
+          action: "rbac.remove_user_role",
+          entity: "RBAC",
+          field: "role",
+          oldValue: oldRole,
+          newValue: "viewer",
+          details: { email, removedFrom: oldRole }
+        });
+      } catch (_) {}
+
+      showToast("User role updated");
+      await reloadUsersForRole();
+    } catch (err) {
+      showToast("Error: " + (err?.message || err || "Failed to update user"));
+    }
+  }
+
+  function closeDialog(resolveValue) {
+    if (el.dialogModal) {
+      el.dialogModal.style.display = "none";
+      el.dialogModal.setAttribute("aria-hidden", "true");
+    }
+
+    if (el.dialogInputWrap) el.dialogInputWrap.style.display = "none";
+    if (el.dialogInput) el.dialogInput.value = "";
+
+    const resolve = state.dialogResolve;
+    state.dialogResolve = null;
+
+    if (typeof resolve === "function") {
+      resolve(resolveValue);
+    }
+
+    if (state.lastFocusedEl && typeof state.lastFocusedEl.focus === "function") {
+      state.lastFocusedEl.focus();
+    }
+  }
+
+  function showConfirm(message, { title = "Confirm", confirmLabel = "Confirm", danger = true } = {}) {
+    return new Promise(resolve => {
+      state.dialogResolve = resolve;
+      state.lastFocusedEl = document.activeElement || null;
+
+      if (el.dialogTitle) el.dialogTitle.textContent = title;
+      if (el.dialogMessage) el.dialogMessage.textContent = message;
+      if (el.dialogInputWrap) el.dialogInputWrap.style.display = "none";
+
+      if (el.dialogConfirmBtn) {
+        el.dialogConfirmBtn.textContent = confirmLabel;
+        el.dialogConfirmBtn.className = `btn btn-sm ${danger ? "btn-danger" : "btn-amber"}`;
+      }
+
+      if (el.dialogModal) {
+        el.dialogModal.style.display = "flex";
+        el.dialogModal.setAttribute("aria-hidden", "false");
+      }
+
+      setTimeout(() => {
+        if (el.dialogConfirmBtn) el.dialogConfirmBtn.focus();
+      }, 30);
+    });
+  }
+
+  function showPrompt(message, { title = "Input", placeholder = "", confirmLabel = "OK" } = {}) {
+    return new Promise(resolve => {
+      state.dialogResolve = resolve;
+      state.lastFocusedEl = document.activeElement || null;
+
+      if (el.dialogTitle) el.dialogTitle.textContent = title;
+      if (el.dialogMessage) el.dialogMessage.textContent = message;
+
+      if (el.dialogInputWrap) el.dialogInputWrap.style.display = "block";
+      if (el.dialogInput) {
+        el.dialogInput.placeholder = placeholder;
+        el.dialogInput.value = "";
+      }
+
+      if (el.dialogConfirmBtn) {
+        el.dialogConfirmBtn.textContent = confirmLabel;
+        el.dialogConfirmBtn.className = "btn btn-amber btn-sm";
+      }
+
+      if (el.dialogModal) {
+        el.dialogModal.style.display = "flex";
+        el.dialogModal.setAttribute("aria-hidden", "false");
+      }
+
+      setTimeout(() => {
+        if (el.dialogInput) el.dialogInput.focus();
+      }, 30);
+    });
+  }
+
+  function bindDialogEvents() {
+    if (state.dialogEventsBound) return;
+    state.dialogEventsBound = true;
+
+    const isPromptMode = () => el.dialogInputWrap?.style.display !== "none";
+
+    el.dialogConfirmBtn?.addEventListener("click", () => {
+      const value = isPromptMode()
+        ? String(el.dialogInput?.value || "").trim()
+        : true;
+      closeDialog(value);
+    });
+
+    el.dialogCancelBtn?.addEventListener("click", () => {
+      closeDialog(isPromptMode() ? null : false);
+    });
+
+    el.dialogCloseBtn?.addEventListener("click", () => {
+      closeDialog(isPromptMode() ? null : false);
+    });
+
+    el.dialogModal?.addEventListener("click", e => {
+      if (e.target === el.dialogModal) {
+        closeDialog(isPromptMode() ? null : false);
+      }
+    });
+
+    el.dialogInput?.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        el.dialogConfirmBtn?.click();
+      }
+    });
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && el.dialogModal?.style.display === "flex") {
+        closeDialog(isPromptMode() ? null : false);
+      }
+    });
+  }
+
+  async function handleRoleChange(e) {
+  const previousRole = state.selectedRole;
+  const nextRole = normalize(e?.target?.value || "");
+
+  if (state.isDirty) {
+    const confirmed = await showConfirm(
+      "Discard unsaved permission changes for the current role?",
+      { title: "Unsaved Changes", confirmLabel: "Discard", danger: true }
+    );
+
+    if (!confirmed) {
+      if (el.roleSelect) el.roleSelect.value = previousRole || "";
+      return;
+    }
+  }
+
+  state.selectedRole = nextRole;
+  clearDirty();
+  renderPermissionGrid();
+  await reloadUsersForRole();
+}
+
+  function bindEvents() {
+    if (state.eventsBound) return;
+    state.eventsBound = true;
+
+    bindDialogEvents();
+
+    el.roleSelect?.addEventListener("change", handleRoleChange);
+    el.createRoleBtn?.addEventListener("click", createRole);
+    el.cloneRoleBtn?.addEventListener("click", cloneRole);
+    el.deleteRoleBtn?.addEventListener("click", deleteRole);
+    el.saveBtn?.addEventListener("click", saveRolePermissions);
+
+    el.allowAllPagesBtn?.addEventListener("click", () => setAllByType("page", true));
+    el.clearAllPagesBtn?.addEventListener("click", () => setAllByType("page", false));
+    el.allowAllActionsBtn?.addEventListener("click", () => setAllByType("action", true));
+    el.clearAllActionsBtn?.addEventListener("click", () => setAllByType("action", false));
+
+    el.refreshUsersBtn?.addEventListener("click", reloadUsersForRole);
+    el.refreshUsersInlineBtn?.addEventListener("click", reloadUsersForRole);
+
+    el.assignUsersBtn?.addEventListener("click", openAssignUsersModal);
+    el.closeAssignModalBtn?.addEventListener("click", closeAssignUsersModal);
+    el.cancelAssignBtn?.addEventListener("click", closeAssignUsersModal);
+    el.saveAssignBtn?.addEventListener("click", saveAssignedUsersToRole);
+
+    el.assignUsersSearch?.addEventListener("input", debounce(e => {
+      state.assignSearch = e.target.value || "";
+      renderAssignableUsersList();
+    }, 150));
+
+    el.assignUsersModal?.addEventListener("click", e => {
+      if (e.target === el.assignUsersModal) {
+        closeAssignUsersModal();
+      }
+    });
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && el.assignUsersModal?.style.display === "flex") {
+        closeAssignUsersModal();
+      }
+    });
+  }
+
+  function renderAccessDenied(err) {
+    const container = document.querySelector(".page") || document.getElementById("pageContent");
+    if (!container) return;
+
+    container.innerHTML = `
+      <div style="padding:48px 32px;font-family:system-ui;color:#f87171;">
+        <h2 style="margin-bottom:10px;">Access denied</h2>
+        <p style="color:#94a3b8;">${escapeHtml(err?.message || "Unable to load RBAC page.")}</p>
+      </div>
+    `;
+  }
+
+  async function initRbacPage() {
+    if (state.isInitDone) return;
+    state.isInitDone = true;
+
+    bindEvents();
+
+    try {
+      await refreshRbac();
+      state.selectedRole = getSelectedRole();
+    } catch (err) {
+      renderAccessDenied(err);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initRbacPage, { once: true });
+  } else {
+    initRbacPage();
+  }
+})();
+</script>

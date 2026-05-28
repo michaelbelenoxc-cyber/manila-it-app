@@ -1,0 +1,80 @@
+  <style>
+    /* keep your global design tokens in each page OR move them here */
+    :root {
+      --bg-body: #000000;
+      --bg-surface: #1c1c1e;
+      --text-primary: #F5F5F7;
+      --text-secondary: #86868b;
+      --accent-blue: #2997FF;
+      --accent-red: #FF453A;
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --blur-strength: 20px;
+      --shadow-soft: 0 10px 30px rgba(0,0,0,0.5);
+      --radius-md: 12px;
+      --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    }
+
+    body{
+      font-family: var(--font-stack);
+      background:
+        linear-gradient(135deg, rgba(0,0,0,.90), rgba(45,45,45,0.60), rgba(0,0,0,0.85)),
+        url("https://i.imgur.com/29ZW8SV.png") center/cover fixed no-repeat;
+      color: var(--text-primary);
+      margin: 0;
+      min-height: 100vh;
+    }
+    body::before{
+      content:"";position:fixed;inset:0;z-index:-2;
+      background:radial-gradient(circle at center, rgba(0,0,0,.35) 0%, rgba(0,0,0,.70) 80%);
+    }
+    body::after{
+      content:"";position:fixed;inset:0;z-index:-3;
+      background:radial-gradient(circle at 60% 30%, rgba(255,255,255,.08) 0%, transparent 55%);
+      filter:blur(70px);
+    }
+
+    /* page container offset for navbar */
+    .page-wrap{ padding-top: 60px; }
+  </style>
+
+
+  <main class="page-wrap">
+    <!-- page content -->
+    <?!= content ?>
+  </main>
+
+  <script>
+
+    function doGet(e) {
+  const allowed = ["login","home","register","profile","settings","admin","users","schedule","reports","inventory","masterlist","events","aboutus"];
+  const page = (e?.parameter?.page || "login").toLowerCase();
+  const safe = allowed.includes(page) ? page : "login";
+
+  // If you want login/register WITHOUT navbar, keep them as standalone:
+  if (safe === "login" || safe === "register") {
+    return HtmlService.createTemplateFromFile(safe)
+      .evaluate()
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+      .setTitle("Manila IT Inventory");
+  }
+
+  // Everything else uses BASE wrapper
+  const t = HtmlService.createTemplateFromFile("base");
+  t.content = HtmlService.createHtmlOutputFromFile(`${safe}_content`).getContent();
+
+  return t.evaluate()
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+    .setTitle("Manila IT Inventory");
+}
+
+
+    
+    function openModule(m) {
+      if (typeof google !== 'undefined' && google.script) {
+        google.script.run
+          .withSuccessHandler(url => window.top.location = url + `?page=${m}`)
+          .getAppUrl();
+      }
+    }
+  </script>
+

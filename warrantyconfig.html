@@ -1,0 +1,937 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+ 
+:root {
+  --wc-font-ui:   'Epilogue', system-ui, sans-serif;
+  --wc-font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+ 
+  --wc-bg-0: #f5f2ec;
+  --wc-bg-1: #ede9e1;
+  --wc-bg-2: #e4ded4;
+  --wc-bg-3: #ddd6ca;
+  --wc-bg-4: #d5cdc0;
+ 
+  --wc-b-0: rgba(26,24,20,.07);
+  --wc-b-1: rgba(26,24,20,.12);
+  --wc-b-2: rgba(26,24,20,.18);
+ 
+  --wc-t-1: rgba(26,24,20,.95);
+  --wc-t-2: rgba(74,71,64,.75);
+  --wc-t-3: rgba(138,134,128,.60);
+ 
+  --wc-v:    #2857a4;
+  --wc-v-d:  rgba(40,87,164,.10);
+  --wc-v-b:  rgba(40,87,164,.30);
+  --wc-v-glow: 0 0 0 1px rgba(40,87,164,.20), 0 4px 14px rgba(40,87,164,.08);
+ 
+  --wc-green:  #16a34a;
+  --wc-amber:  #b45309;
+  --wc-red:    #c94040;
+  --wc-blue:   #2857a4;
+ 
+  --wc-r-xl:   10px;
+  --wc-r-lg:   10px;
+  --wc-r-md:    7px;
+  --wc-r-sm:    5px;
+  --wc-r-pill:  999px;
+}
+ 
+html[data-theme="dark"] {
+  --wc-bg-0: #1a1814; --wc-bg-1: #1e1c18; --wc-bg-2: #252220; --wc-bg-3: #2c2a26; --wc-bg-4: #333028;
+  --wc-b-0: rgba(240,236,227,.07); --wc-b-1: rgba(240,236,227,.10); --wc-b-2: rgba(240,236,227,.16);
+  --wc-t-1: rgba(240,236,227,.95); --wc-t-2: rgba(176,169,158,.75); --wc-t-3: rgba(106,100,92,.60);
+  --wc-v-d: rgba(40,87,164,.16); --wc-v-b: rgba(40,87,164,.40);
+}
+ 
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+body {
+  font-family: var(--wc-font-ui); color: var(--wc-t-1);
+  background: transparent; -webkit-font-smoothing: antialiased;
+  padding-top: 80px;
+}
+ 
+.wc-wrap {
+  width: 100%; max-width: 860px;
+  margin: 0 auto; padding: 0 0 60px;
+  font-family: var(--wc-font-ui); color: var(--wc-t-1);
+}
+ 
+.wc-title {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 20px; font-weight: 400; letter-spacing: -.02em;
+  margin: 0; text-align: left; padding: 16px 20px 2px;
+}
+ 
+.wc-sub {
+  font-size: 12px; color: var(--wc-t-3);
+  font-family: var(--wc-font-mono); letter-spacing: .02em;
+  margin: 0 0 12px; text-align: left; padding: 0 20px 8px;
+  max-width: none; line-height: 1.5;
+}
+ 
+/* ── Banner (info box) ── */
+.wc-banner {
+  margin: 0 20px 18px;
+  background: var(--wc-v-d); border: 1px solid var(--wc-v-b);
+  border-radius: var(--wc-r-lg); padding: 10px 14px;
+  font-size: 12px; color: var(--wc-t-2); line-height: 1.6;
+  display: flex; align-items: flex-start; gap: 9px;
+}
+.wc-banner i { color: var(--wc-v); flex-shrink: 0; margin-top: 1px; font-size: 11px; }
+html[data-theme="dark"] .wc-banner i { color: #5b85c8; }
+ 
+/* ── Card ── */
+.wc-card {
+  margin: 0 20px 14px;
+  background: var(--wc-bg-1); border: 1px solid var(--wc-b-1);
+  border-radius: var(--wc-r-xl); overflow: hidden;
+  box-shadow: none;
+}
+ 
+.wc-card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 12px 16px; flex-wrap: wrap;
+  border-bottom: 1px solid var(--wc-b-1); background: var(--wc-bg-0);
+}
+html[data-theme="dark"] .wc-card-head { background: rgba(0,0,0,.08); }
+ 
+.wc-card-head-title { display: flex; align-items: center; gap: 9px; }
+ 
+.wc-card-head-icon {
+  width: 28px; height: 28px; border-radius: var(--wc-r-sm);
+  background: var(--wc-v-d); border: 1px solid var(--wc-v-b);
+  color: var(--wc-v); display: grid; place-items: center;
+  font-size: 11px; flex-shrink: 0;
+}
+html[data-theme="dark"] .wc-card-head-icon { color: #5b85c8; }
+ 
+.wc-card-head h3 {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 15px; font-weight: 400; letter-spacing: -.01em; margin: 0;
+  color: var(--wc-t-1);
+}
+ 
+.wc-card-head-sub {
+  font-size: 10.5px; color: var(--wc-t-3); font-family: var(--wc-font-mono); margin-top: 1px;
+}
+ 
+.wc-card-body { padding: 14px 16px; }
+ 
+/* ── KV grid ── */
+.wc-kv-grid {
+  display: grid; grid-template-columns: 110px 1fr auto;
+  gap: 9px 14px; align-items: center;
+}
+@media (max-width: 640px) {
+  .wc-kv-grid { grid-template-columns: 1fr; gap: 4px 0; }
+  .wc-src-badge { justify-self: start; }
+}
+ 
+.wc-kv-label {
+  font-size: 8.5px; font-weight: 700; letter-spacing: .10em;
+  text-transform: uppercase; color: var(--wc-t-3); font-family: var(--wc-font-mono);
+}
+.wc-kv-value {
+  font-size: 12px; color: var(--wc-t-1); font-family: var(--wc-font-mono); word-break: break-all;
+}
+.wc-kv-value.muted, .wc-muted { color: var(--wc-t-3); font-style: italic; }
+ 
+.wc-src-badge {
+  font-size: 9px; font-weight: 700; font-family: var(--wc-font-mono);
+  padding: 1px 7px; border-radius: var(--wc-r-pill); white-space: nowrap;
+}
+.wc-src-badge.property {
+  background: rgba(22,163,74,.09); color: var(--wc-green); border: 1px solid rgba(22,163,74,.22);
+}
+html[data-theme="dark"] .wc-src-badge.property { color: #4ade80; }
+.wc-src-badge.default {
+  background: var(--wc-bg-2); color: var(--wc-t-3); border: 1px solid var(--wc-b-1);
+}
+ 
+/* ── Form fields ── */
+.wc-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+.wc-field:last-of-type { margin-bottom: 0; }
+ 
+.wc-field-label {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.wc-field-label span {
+  font-size: 8.5px; font-weight: 700; letter-spacing: .10em;
+  text-transform: uppercase; color: var(--wc-t-3); font-family: var(--wc-font-mono);
+}
+ 
+.wc-field-clear {
+  background: transparent; border: 1px solid transparent; color: var(--wc-t-3);
+  font-size: 9.5px; font-family: var(--wc-font-mono); cursor: pointer;
+  padding: 2px 7px; border-radius: var(--wc-r-sm);
+  display: inline-flex; align-items: center; gap: 4px; transition: all .13s;
+}
+.wc-field-clear:hover {
+  color: var(--wc-red); background: rgba(201,64,64,.08); border-color: rgba(201,64,64,.22);
+}
+html[data-theme="dark"] .wc-field-clear:hover { color: #f87171; }
+ 
+.wc-field input[type="text"],
+.wc-field input[type="number"] {
+  width: 100%; height: 31px; padding: 0 9px;
+  background: var(--wc-bg-0); border: 1px solid var(--wc-b-1);
+  border-radius: var(--wc-r-md); color: var(--wc-t-1);
+  font-family: var(--wc-font-mono); font-size: 12px; font-weight: 500;
+  outline: none; caret-color: var(--wc-v);
+  transition: border-color .13s, background .13s;
+}
+.wc-field input::placeholder { color: var(--wc-t-3); font-style: normal; }
+.wc-field input:focus { border-color: var(--wc-v-b); background: var(--wc-bg-1); box-shadow: var(--wc-v-glow); }
+ 
+.wc-field-help { font-size: 11px; color: var(--wc-t-3); line-height: 1.5; font-family: var(--wc-font-mono); }
+.wc-field-help code {
+  font-family: var(--wc-font-mono); font-size: 10.5px;
+  padding: 1px 5px; border-radius: 3px; background: var(--wc-bg-2); color: var(--wc-t-2);
+}
+ 
+/* ── Actions footer ── */
+.wc-actions {
+  display: flex; justify-content: flex-end; gap: 8px;
+  padding: 10px 16px; border-top: 1px solid var(--wc-b-1);
+  background: var(--wc-bg-0); flex-wrap: wrap;
+}
+html[data-theme="dark"] .wc-actions { background: rgba(0,0,0,.06); }
+ 
+/* ── Buttons ── */
+.wc-btn-primary, .wc-btn-ghost {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 6px 12px; border-radius: var(--wc-r-lg);
+  font-family: var(--wc-font-mono); font-size: 11px; font-weight: 500;
+  letter-spacing: .04em; cursor: pointer; white-space: nowrap;
+  min-height: unset; border: none; transition: background .13s;
+}
+.wc-btn-primary:disabled, .wc-btn-ghost:disabled { opacity: .40; cursor: not-allowed; }
+ 
+.wc-btn-ghost {
+  background: var(--wc-bg-1); border: 1px solid var(--wc-b-1); color: var(--wc-t-2);
+}
+.wc-btn-ghost:hover:not(:disabled) { background: var(--wc-bg-2); border-color: var(--wc-b-2); color: var(--wc-t-1); }
+ 
+.wc-btn-primary {
+  background: var(--wc-v-d); border: 1px solid var(--wc-v-b);
+  color: var(--wc-v); font-weight: 600; box-shadow: none;
+}
+html[data-theme="dark"] .wc-btn-primary { color: #5b85c8; }
+.wc-btn-primary:hover:not(:disabled) { background: rgba(40,87,164,.16); }
+ 
+.wc-btn-sm { padding: 4px 9px; font-size: 10.5px; }
+ 
+/* ── Dirty badge ── */
+.wc-dirty {
+  display: none; font-size: 9.5px; font-weight: 600;
+  color: var(--wc-amber); font-family: var(--wc-font-mono);
+  padding: 2px 8px; border-radius: var(--wc-r-pill);
+  background: rgba(180,83,9,.09); border: 1px solid rgba(180,83,9,.24);
+}
+.wc-dirty.show { display: inline-flex; align-items: center; gap: 5px; }
+html[data-theme="dark"] .wc-dirty { color: #fbbf24; }
+.wc-dot-xs { font-size: 6px; }
+ 
+/* ── Preview stats ── */
+.wc-preview-meta {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px; margin-bottom: 12px;
+}
+.wc-preview-stat {
+  padding: 10px 12px; background: var(--wc-bg-0);
+  border: 1px solid var(--wc-b-1); border-radius: var(--wc-r-md);
+}
+.wc-preview-stat-label {
+  font-family: var(--wc-font-mono); font-size: 8.5px; font-weight: 700;
+  letter-spacing: .10em; text-transform: uppercase; color: var(--wc-t-3); margin-bottom: 3px;
+}
+.wc-preview-stat-value {
+  font-size: 13px; font-weight: 700; font-family: var(--wc-font-mono); color: var(--wc-t-1);
+}
+.wc-preview-stat-value.muted { color: var(--wc-t-3); font-style: italic; font-weight: 400; font-size: 12px; }
+ 
+.wc-preview-subject {
+  font-family: var(--wc-font-mono); font-size: 11px; color: var(--wc-t-2);
+  padding: 8px 12px; background: var(--wc-bg-2); border: 1px solid var(--wc-b-1);
+  border-radius: var(--wc-r-md); margin-bottom: 10px; word-break: break-word;
+}
+.wc-preview-subject b { color: var(--wc-t-1); }
+ 
+.wc-preview-iframe-wrap {
+  border: 1px solid var(--wc-b-1); border-radius: var(--wc-r-md);
+  background: #fff; overflow: hidden; min-height: 200px;
+}
+.wc-preview-iframe { width: 100%; min-height: 520px; border: 0; display: block; }
+.wc-preview-empty {
+  text-align: center; padding: 32px 20px;
+  color: var(--wc-t-3); font-family: var(--wc-font-mono); font-size: 11.5px;
+}
+ 
+/* ── Toast ── */
+#wcToastContainer {
+  position: fixed; bottom: 16px; right: 16px;
+  z-index: 999999; display: flex; flex-direction: column; gap: 5px;
+  max-width: min(360px, calc(100vw - 32px));
+}
+.wc-toast {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 12px; border-radius: var(--wc-r-lg);
+  background: var(--wc-bg-1); border: 1px solid var(--wc-b-2);
+  font-size: 11.5px; font-weight: 600; font-family: var(--wc-font-mono);
+  box-shadow: 0 4px 16px rgba(26,24,20,.10);
+  opacity: 0; transform: translateY(4px); transition: all .13s;
+}
+html[data-theme="dark"] .wc-toast { background: var(--wc-bg-2); }
+.wc-toast.on { opacity: 1; transform: none; }
+</style>
+
+
+<div class="wc-wrap">
+  <h1 class="wc-title">Warranty Reminder</h1>
+  <p class="wc-sub">Configure who receives the monthly warranty expiry email and how far ahead it looks.</p>
+
+  <div class="wc-banner">
+    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+    <div>
+      Changes are saved to Script Properties and take effect on the next monthly run.
+      Use <b>Preview email</b> to see exactly what the next scheduled email would contain.
+    </div>
+  </div>
+
+  <div class="wc-card">
+    <div class="wc-card-head">
+      <div class="wc-card-head-title">
+        <div class="wc-card-head-icon"><i class="fa-solid fa-sliders"></i></div>
+        <div>
+          <h3>Current config</h3>
+          <div class="wc-card-head-sub">what the next run will use</div>
+        </div>
+      </div>
+      <button class="wc-btn-ghost wc-btn-sm" id="wcBtnRefresh" type="button">
+        <i class="fa-solid fa-rotate"></i> Refresh
+      </button>
+    </div>
+    <div class="wc-card-body">
+      <div class="wc-kv-grid" id="wcCurrentGrid" aria-live="polite">
+        <div class="wc-kv-label">Loading</div>
+        <div class="wc-kv-value muted">&mdash;</div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wc-card">
+    <div class="wc-card-head">
+      <div class="wc-card-head-title">
+        <div class="wc-card-head-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+        <div>
+          <h3>Edit configuration</h3>
+          <div class="wc-card-head-sub">update recipients and window</div>
+        </div>
+      </div>
+      <span class="wc-dirty" id="wcDirty">
+        <i class="fa-solid fa-circle-dot wc-dot-xs" aria-hidden="true"></i>&nbsp;Unsaved changes
+      </span>
+    </div>
+
+    <div class="wc-card-body">
+      <div class="wc-field">
+        <div class="wc-field-label">
+          <span>To (recipients)</span>
+          <button class="wc-field-clear" type="button" data-clear="to" title="Revert to default">
+            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Revert
+          </button>
+        </div>
+        <input
+          type="text"
+          id="wcFieldTo"
+          aria-label="To recipients"
+          placeholder="manila-it@fbgphilippines.com"
+          autocomplete="off"
+          spellcheck="false"
+        >
+        <div class="wc-field-help">
+          One or more email addresses separated by commas.
+          Example: <code>alice@fbg.com, bob@fbg.com</code>
+        </div>
+      </div>
+
+      <div class="wc-field">
+        <div class="wc-field-label">
+          <span>CC (optional)</span>
+          <button class="wc-field-clear" type="button" data-clear="cc" title="Clear CC">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i> Clear
+          </button>
+        </div>
+        <input
+          type="text"
+          id="wcFieldCc"
+          aria-label="CC recipients"
+          placeholder="(leave blank for no CC)"
+          autocomplete="off"
+          spellcheck="false"
+        >
+        <div class="wc-field-help">Leave empty to skip CC.</div>
+      </div>
+
+      <div class="wc-field">
+        <div class="wc-field-label">
+          <span>Window (days)</span>
+          <button class="wc-field-clear" type="button" data-clear="days" title="Revert to default">
+            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Default
+          </button>
+        </div>
+        <input
+          type="number"
+          id="wcFieldDays"
+          aria-label="Window in days"
+          min="1"
+          max="730"
+          step="1"
+          placeholder="180"
+          autocomplete="off"
+        >
+        <div class="wc-field-help">
+          Assets whose warranty ends within this many days are included.
+          Default is <code>180</code> (6 months). Range: 1&ndash;730.
+        </div>
+      </div>
+    </div>
+
+    <div class="wc-actions">
+      <button class="wc-btn-ghost" id="wcBtnPreview" type="button">
+        <i class="fa-solid fa-eye" aria-hidden="true"></i> Preview email
+      </button>
+      <button class="wc-btn-primary" id="wcBtnSave" type="button" disabled>
+        <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Save
+      </button>
+    </div>
+  </div>
+
+  <div class="wc-card">
+    <div class="wc-card-head">
+      <div class="wc-card-head-title">
+        <div class="wc-card-head-icon"><i class="fa-solid fa-envelope"></i></div>
+        <div>
+          <h3>Preview</h3>
+          <div class="wc-card-head-sub" id="wcPreviewSubHead">no preview generated yet</div>
+        </div>
+      </div>
+    </div>
+    <div class="wc-card-body">
+      <div class="wc-preview-meta">
+        <div class="wc-preview-stat">
+          <div class="wc-preview-stat-label">Recipient</div>
+          <div class="wc-preview-stat-value muted" id="wcStatTo">&mdash;</div>
+        </div>
+        <div class="wc-preview-stat">
+          <div class="wc-preview-stat-label">CC</div>
+          <div class="wc-preview-stat-value muted" id="wcStatCc">&mdash;</div>
+        </div>
+        <div class="wc-preview-stat">
+          <div class="wc-preview-stat-label">Window</div>
+          <div class="wc-preview-stat-value muted" id="wcStatDays">&mdash;</div>
+        </div>
+        <div class="wc-preview-stat">
+          <div class="wc-preview-stat-label">Assets</div>
+          <div class="wc-preview-stat-value muted" id="wcStatCount">&mdash;</div>
+        </div>
+      </div>
+
+      <div class="wc-preview-subject" id="wcPreviewSubject" style="display:none;">
+        <b>Subject:</b> <span id="wcPreviewSubjectText"></span>
+      </div>
+
+      <div class="wc-preview-iframe-wrap">
+        <div class="wc-preview-empty" id="wcPreviewEmpty" aria-live="polite">
+          Click <b>Preview email</b> above to see the next reminder.
+        </div>
+        <iframe
+          id="wcPreviewFrame"
+          class="wc-preview-iframe"
+          sandbox="allow-same-origin"
+          title="Warranty reminder email preview"
+          style="display:none;"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="wcToastContainer" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  if (typeof window.__WARRANTYCONFIG_CLEANUP__ === 'function') {
+    window.__WARRANTYCONFIG_CLEANUP__();
+  }
+
+  var disposers = [];
+
+  function on(node, eventName, handler, options) {
+    if (!node) return;
+    node.addEventListener(eventName, handler, options || false);
+    disposers.push(function() {
+      node.removeEventListener(eventName, handler, options || false);
+    });
+  }
+
+  function $(id) {
+    return document.getElementById(id);
+  }
+
+  var el = {
+    currentGrid:       $('wcCurrentGrid'),
+    fieldTo:           $('wcFieldTo'),
+    fieldCc:           $('wcFieldCc'),
+    fieldDays:         $('wcFieldDays'),
+    btnRefresh:        $('wcBtnRefresh'),
+    btnPreview:        $('wcBtnPreview'),
+    btnSave:           $('wcBtnSave'),
+    dirty:             $('wcDirty'),
+    toasts:            $('wcToastContainer'),
+    statTo:            $('wcStatTo'),
+    statCc:            $('wcStatCc'),
+    statDays:          $('wcStatDays'),
+    statCount:         $('wcStatCount'),
+    previewSubHead:    $('wcPreviewSubHead'),
+    previewSubject:    $('wcPreviewSubject'),
+    previewSubjectText:$('wcPreviewSubjectText'),
+    previewFrame:      $('wcPreviewFrame'),
+    previewEmpty:      $('wcPreviewEmpty')
+  };
+
+  var state = {
+    config: null,
+    originalFormValues: { to: '', cc: '', days: '' },
+    isLoadingConfig: false,
+    isSavingConfig: false,
+    isPreviewing: false
+  };
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function hasGas() {
+    return !!(window.google && google.script && google.script.run);
+  }
+
+  function parseEmails(value) {
+    return String(value || '')
+      .split(',')
+      .map(function(v) { return v.trim(); })
+      .filter(Boolean);
+  }
+
+  function isValidEmailList(value) {
+    var emails = parseEmails(value);
+    if (!emails.length) return false;
+
+    return emails.every(function(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    });
+  }
+
+  function showToast(message, type) {
+    type = type || 'success';
+    if (!el.toasts) return;
+
+    var iconClass = 'fa-check-circle';
+    var iconColor = '#22c55e';
+
+    if (type === 'danger') {
+      iconClass = 'fa-triangle-exclamation';
+      iconColor = '#ef4444';
+    } else if (type === 'warning') {
+      iconClass = 'fa-circle-exclamation';
+      iconColor = '#f59e0b';
+    } else if (type === 'info') {
+      iconClass = 'fa-circle-info';
+      iconColor = '#60a5fa';
+    }
+
+    var t = document.createElement('div');
+    t.className = 'wc-toast';
+    t.innerHTML =
+      '<i class="fas ' + iconClass + '" style="color:' + iconColor + '" aria-hidden="true"></i>' +
+      '<span>' + escapeHtml(String(message || '')) + '</span>';
+
+    el.toasts.appendChild(t);
+
+    var removeTimer = setTimeout(function() {
+      t.style.opacity = '0';
+      t.style.transition = 'opacity .3s';
+      setTimeout(function() {
+        if (t && t.parentNode) t.parentNode.removeChild(t);
+      }, 300);
+    }, 3000);
+
+    disposers.push(function() {
+      clearTimeout(removeTimer);
+      if (t && t.parentNode) t.parentNode.removeChild(t);
+    });
+  }
+
+  function setButtonBusy(btn, busy) {
+    if (!btn) return;
+    btn.disabled = !!busy;
+    btn.style.opacity = busy ? '.7' : '';
+  }
+
+  function setPreviewLoading() {
+    if (el.previewSubHead) el.previewSubHead.textContent = 'generating preview...';
+    if (el.previewSubject) el.previewSubject.style.display = 'none';
+    if (el.previewFrame) {
+      el.previewFrame.style.display = 'none';
+      el.previewFrame.srcdoc = '';
+    }
+    if (el.previewEmpty) {
+      el.previewEmpty.textContent = 'Generating preview...';
+      el.previewEmpty.style.display = 'block';
+    }
+  }
+
+  function renderCurrentConfig(cfg) {
+    if (!el.currentGrid) return;
+
+    if (!cfg) {
+      el.currentGrid.innerHTML =
+        '<div class="wc-kv-label">&mdash;</div>' +
+        '<div class="wc-kv-value muted">Failed to load</div>' +
+        '<div></div>';
+      return;
+    }
+
+    var ccDisplay = cfg.cc ? escapeHtml(cfg.cc) : '<span class="wc-muted">(none)</span>';
+    var daysDisplay = escapeHtml(String(cfg.days)) + ' day(s)';
+    var toDisplay = escapeHtml(cfg.to || '—');
+
+    function badge(src) {
+      var label = src === 'property' ? 'set' : 'default';
+      var cls = src === 'property' ? 'property' : 'default';
+      return '<span class="wc-src-badge ' + cls + '">' + label + '</span>';
+    }
+
+    el.currentGrid.innerHTML =
+      '<div class="wc-kv-label">To</div>' +
+      '<div class="wc-kv-value">' + toDisplay + '</div>' +
+      badge(cfg._toSource) +
+
+      '<div class="wc-kv-label">CC</div>' +
+      '<div class="wc-kv-value">' + ccDisplay + '</div>' +
+      badge(cfg._ccSource) +
+
+      '<div class="wc-kv-label">Window</div>' +
+      '<div class="wc-kv-value">' + daysDisplay + '</div>' +
+      badge(cfg._daysSource) +
+
+      '<div class="wc-kv-label">From</div>' +
+      '<div class="wc-kv-value">' + escapeHtml(cfg.from || '—') + '</div>' +
+      '<span class="wc-src-badge default">hardcoded</span>' +
+
+      '<div class="wc-kv-label">Sender name</div>' +
+      '<div class="wc-kv-value">' + escapeHtml(cfg.senderName || '—') + '</div>' +
+      '<span class="wc-src-badge default">hardcoded</span>';
+  }
+
+  function populateForm(cfg) {
+    if (!cfg) return;
+    if (el.fieldTo)   el.fieldTo.value   = cfg._toSource === 'property' ? cfg.to : '';
+    if (el.fieldCc)   el.fieldCc.value   = cfg._ccSource === 'property' ? cfg.cc : '';
+    if (el.fieldDays) el.fieldDays.value = cfg._daysSource === 'property' ? String(cfg.days) : '';
+
+    state.originalFormValues = {
+      to: el.fieldTo ? el.fieldTo.value : '',
+      cc: el.fieldCc ? el.fieldCc.value : '',
+      days: el.fieldDays ? el.fieldDays.value : ''
+    };
+
+    updateDirty();
+  }
+
+  function getFormValues() {
+    return {
+      to: el.fieldTo ? el.fieldTo.value.trim() : '',
+      cc: el.fieldCc ? el.fieldCc.value.trim() : '',
+      days: el.fieldDays ? el.fieldDays.value.trim() : ''
+    };
+  }
+
+  function isDirty() {
+    var now = getFormValues();
+    var was = state.originalFormValues;
+    return now.to !== was.to || now.cc !== was.cc || now.days !== was.days;
+  }
+
+  function updateDirty() {
+    var dirty = isDirty();
+    if (el.dirty) {
+      if (dirty) el.dirty.classList.add('show');
+      else el.dirty.classList.remove('show');
+    }
+    if (el.btnSave) el.btnSave.disabled = !dirty || state.isSavingConfig;
+  }
+
+  function clearField(which) {
+    if (which === 'to' && el.fieldTo) el.fieldTo.value = '';
+    if (which === 'cc' && el.fieldCc) el.fieldCc.value = '';
+    if (which === 'days' && el.fieldDays) el.fieldDays.value = '';
+    updateDirty();
+  }
+
+  function loadConfig(isRefresh) {
+    if (state.isLoadingConfig) return;
+    if (!hasGas()) {
+      showToast('Google Apps Script bridge is not available.', 'danger');
+      renderCurrentConfig(null);
+      return;
+    }
+
+    state.isLoadingConfig = true;
+    setButtonBusy(el.btnRefresh, true);
+
+    google.script.run
+      .withSuccessHandler(function(res) {
+        state.isLoadingConfig = false;
+        setButtonBusy(el.btnRefresh, false);
+
+        if (!res || !res.ok) {
+          showToast((res && res.error) || 'Failed to load config', 'danger');
+          renderCurrentConfig(null);
+          return;
+        }
+
+        state.config = res.data;
+        renderCurrentConfig(state.config);
+        populateForm(state.config);
+
+        if (isRefresh) showToast('Reloaded from server', 'success');
+      })
+      .withFailureHandler(function(err) {
+        state.isLoadingConfig = false;
+        setButtonBusy(el.btnRefresh, false);
+        renderCurrentConfig(null);
+        showToast((err && err.message) || 'Network error', 'danger');
+      })
+      .getWarrantyReminderConfigClient();
+  }
+
+  function saveConfig() {
+    if (state.isSavingConfig) return;
+    if (!hasGas()) {
+      showToast('Google Apps Script bridge is not available.', 'danger');
+      return;
+    }
+
+    var vals = getFormValues();
+    var patch = {};
+
+    if (vals.to !== state.originalFormValues.to) {
+      patch.to = vals.to === '' ? null : vals.to;
+    }
+
+    if (vals.cc !== state.originalFormValues.cc) {
+      patch.cc = vals.cc === '' ? null : vals.cc;
+    }
+
+    if (vals.days !== state.originalFormValues.days) {
+      if (vals.days === '') {
+        patch.days = null;
+      } else {
+        var n = parseInt(vals.days, 10);
+        if (!isFinite(n) || n <= 0 || n > 730) {
+          showToast('Days must be a number between 1 and 730.', 'danger');
+          if (el.fieldDays) el.fieldDays.focus();
+          return;
+        }
+        patch.days = n;
+      }
+    }
+
+    if (!Object.keys(patch).length) {
+      showToast('Nothing to save.', 'warning');
+      return;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(patch, 'to') && patch.to !== null && !isValidEmailList(patch.to)) {
+      showToast('Enter valid email address(es) in To.', 'danger');
+      if (el.fieldTo) el.fieldTo.focus();
+      return;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(patch, 'cc') && patch.cc !== null && patch.cc !== '' && !isValidEmailList(patch.cc)) {
+      showToast('Enter valid email address(es) in CC.', 'danger');
+      if (el.fieldCc) el.fieldCc.focus();
+      return;
+    }
+
+    state.isSavingConfig = true;
+    setButtonBusy(el.btnSave, true);
+
+    google.script.run
+      .withSuccessHandler(function(res) {
+        state.isSavingConfig = false;
+        setButtonBusy(el.btnSave, false);
+
+        if (!res || !res.ok) {
+          showToast((res && res.error) || 'Save failed.', 'danger');
+          updateDirty();
+          return;
+        }
+
+        state.config = res.data;
+        renderCurrentConfig(state.config);
+        populateForm(state.config);
+        showToast('Configuration saved', 'success');
+      })
+      .withFailureHandler(function(err) {
+        state.isSavingConfig = false;
+        setButtonBusy(el.btnSave, false);
+        updateDirty();
+        showToast((err && err.message) || 'Save failed.', 'danger');
+      })
+      .setWarrantyReminderConfigClient(patch);
+  }
+
+  function previewEmail() {
+    if (state.isPreviewing) return;
+    if (!hasGas()) {
+      showToast('Google Apps Script bridge is not available.', 'danger');
+      return;
+    }
+
+    if (isDirty()) {
+      showToast('Preview uses the saved config, not your unsaved edits.', 'warning');
+    }
+
+    state.isPreviewing = true;
+    setButtonBusy(el.btnPreview, true);
+    setPreviewLoading();
+
+    google.script.run
+      .withSuccessHandler(function(res) {
+        state.isPreviewing = false;
+        setButtonBusy(el.btnPreview, false);
+
+        if (!res || !res.ok) {
+          showToast((res && res.error) || 'Preview failed.', 'danger');
+          return;
+        }
+
+        renderPreview(res.data || {});
+      })
+      .withFailureHandler(function(err) {
+        state.isPreviewing = false;
+        setButtonBusy(el.btnPreview, false);
+
+        if (el.previewSubHead) el.previewSubHead.textContent = 'preview failed';
+        if (el.previewFrame) {
+          el.previewFrame.style.display = 'none';
+          el.previewFrame.srcdoc = '';
+        }
+        if (el.previewEmpty) {
+          el.previewEmpty.textContent = 'Unable to generate preview.';
+          el.previewEmpty.style.display = 'block';
+        }
+
+        showToast((err && err.message) || 'Preview failed.', 'danger');
+      })
+      .previewWarrantyReminderClient();
+  }
+
+  function renderPreview(p) {
+    if (!el.previewFrame || !el.previewEmpty) return;
+
+    el.statTo.textContent = p.to || '—';
+    if (p.to) el.statTo.classList.remove('muted');
+    else el.statTo.classList.add('muted');
+
+    el.statCc.textContent = p.cc || '(none)';
+    if (p.cc) el.statCc.classList.remove('muted');
+    else el.statCc.classList.add('muted');
+
+    el.statDays.textContent = (p.days != null) ? (p.days + ' day(s)') : '—';
+    if (p.days != null) el.statDays.classList.remove('muted');
+    else el.statDays.classList.add('muted');
+
+    el.statCount.textContent = (typeof p.count === 'number') ? String(p.count) : '—';
+    if (typeof p.count === 'number') el.statCount.classList.remove('muted');
+    else el.statCount.classList.add('muted');
+
+    if (p.previewed && el.previewSubHead) {
+      el.previewSubHead.textContent = p.count
+        ? (p.count + ' asset(s) · ' + p.days + '-day window')
+        : 'no matching assets';
+    }
+
+    if (p.subject && el.previewSubject && el.previewSubjectText) {
+      el.previewSubjectText.textContent = p.subject;
+      el.previewSubject.style.display = 'block';
+    } else if (el.previewSubject) {
+      el.previewSubject.style.display = 'none';
+    }
+
+    if (p.htmlBody) {
+      var doc = '<!doctype html><html><head><meta charset="utf-8">' +
+                '<style>body{margin:16px;font-family:Arial,sans-serif;}<\/style>' +
+                '<\/head><body>' + p.htmlBody + '<\/body><\/html>';
+
+      el.previewFrame.srcdoc = doc;
+      el.previewFrame.style.display = 'block';
+      el.previewEmpty.style.display = 'none';
+      return;
+    }
+
+    el.previewFrame.style.display = 'none';
+    el.previewFrame.srcdoc = '';
+
+    if (p.reason === 'empty_sheet' || p.reason === 'no_matches') {
+      var msg = p.reason === 'empty_sheet'
+        ? 'Masterlist is empty — nothing to report.'
+        : 'No assets expiring within ' + p.days + ' day(s). No email would be sent.';
+      el.previewEmpty.textContent = msg;
+      el.previewEmpty.style.display = 'block';
+      return;
+    }
+
+    el.previewEmpty.textContent = 'Nothing to preview.';
+    el.previewEmpty.style.display = 'block';
+  }
+
+  on(el.btnRefresh, 'click', function() {
+    loadConfig(true);
+  });
+
+  on(el.btnSave, 'click', saveConfig);
+  on(el.btnPreview, 'click', previewEmail);
+
+  [el.fieldTo, el.fieldCc, el.fieldDays].forEach(function(input) {
+    on(input, 'input', updateDirty);
+  });
+
+  Array.prototype.slice.call(document.querySelectorAll('.wc-field-clear')).forEach(function(btn) {
+    on(btn, 'click', function() {
+      clearField(btn.getAttribute('data-clear'));
+    });
+  });
+
+  window.__WARRANTYCONFIG_CLEANUP__ = function() {
+    for (var i = 0; i < disposers.length; i++) {
+      try { disposers[i](); } catch (_) {}
+    }
+    disposers = [];
+    window.__WARRANTYCONFIG_CLEANUP__ = null;
+  };
+
+  loadConfig(false);
+})();
+</script>

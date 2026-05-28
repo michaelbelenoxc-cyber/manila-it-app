@@ -1,0 +1,564 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --font-ui:   'Epilogue', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+  --bg-1: #f5f2ec;
+  --bg-2: #ede9e1;
+  --bg-3: #e4ded4;
+  --bg-4: #ddd6ca;
+
+  --b-1: rgba(26,24,20,.12);
+  --b-2: rgba(26,24,20,.18);
+  --b-3: rgba(26,24,20,.28);
+
+  --t-1: rgba(26,24,20,.95);
+  --t-2: rgba(74,71,64,.75);
+  --t-3: rgba(138,134,128,.60);
+
+  --blue:   #2857a4;
+  --blue-d: rgba(40,87,164,.10);
+  --blue-b: rgba(40,87,164,.30);
+  --green:  #16a34a;
+  --amber:  #b45309;
+  --red:    #c94040;
+
+  --r-lg:  10px;
+  --r-md:   7px;
+  --r-sm:   5px;
+  --r-pill: 999px;
+
+  --sh-0: 0 1px 3px rgba(26,24,20,.08);
+  --sh-1: 0 4px 16px rgba(26,24,20,.10);
+  --sh-2: 0 8px 32px rgba(26,24,20,.12);
+}
+
+html[data-theme="dark"] {
+  --bg-1: #1a1814; --bg-2: #1e1c18; --bg-3: #252220; --bg-4: #2c2a26;
+  --b-1: rgba(240,236,227,.10); --b-2: rgba(240,236,227,.16); --b-3: rgba(240,236,227,.26);
+  --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.75); --t-3: rgba(106,100,92,.60);
+  --blue-d: rgba(40,87,164,.16); --blue-b: rgba(40,87,164,.40);
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-ui);
+  color: var(--t-1);
+  background: transparent;
+  -webkit-font-smoothing: antialiased;
+  padding-top: 80px;
+}
+
+/* ── Page header ── */
+.ph {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; flex-wrap: wrap;
+  gap: 12px; padding: 16px 20px 12px;
+}
+
+.ph-title {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 20px; font-weight: 400;
+  letter-spacing: -.02em; margin-bottom: 2px;
+}
+
+.ph-sub {
+  font-size: 12px; color: var(--t-3);
+  font-family: var(--font-mono); margin-bottom: 8px;
+  letter-spacing: .02em;
+}
+
+/* ── Section label ── */
+.section-label {
+  font-family: var(--font-mono); font-size: 8.5px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--t-3);
+  margin: 0 20px 10px; display: flex; align-items: center; gap: 10px;
+}
+.section-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--b-1);
+}
+
+/* ── Info box ── */
+.info-box {
+  margin: 0 20px 18px;
+  background: var(--blue-d); border: 1px solid var(--blue-b);
+  border-radius: var(--r-lg); padding: 10px 14px;
+  font-size: 12px; color: var(--t-2); line-height: 1.6;
+  display: flex; align-items: flex-start; gap: 9px;
+}
+.info-box i { color: var(--blue); flex-shrink: 0; margin-top: 1px; font-size: 11px; }
+html[data-theme="dark"] .info-box i { color: #5b85c8; }
+
+/* ── Preview strip ── */
+.preview-strip {
+  margin: 0 20px 18px;
+  background: var(--bg-2); border: 1px solid var(--b-1);
+  border-radius: var(--r-lg); padding: 12px 16px;
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+}
+.preview-label {
+  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: .10em; text-transform: uppercase; color: var(--t-3);
+  flex-shrink: 0; white-space: nowrap;
+}
+.preview-chips { display: flex; gap: 7px; flex-wrap: wrap; flex: 1; }
+
+.preview-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 10px; border-radius: var(--r-pill);
+  background: var(--bg-3); border: 1px solid var(--b-1);
+  font-size: 11.5px; font-weight: 600; color: var(--t-2);
+  transition: border-color .13s;
+}
+.preview-chip.filled { color: var(--t-1); border-color: var(--b-2); }
+.preview-chip-rank { font-size: 14px; line-height: 1; }
+.preview-chip-info { display: flex; flex-direction: column; gap: 1px; }
+.preview-chip-name { font-size: 11.5px; font-weight: 700; color: var(--t-1); }
+.preview-chip-role { font-size: 9.5px; color: var(--t-3); font-family: var(--font-mono); }
+
+/* ── Performer cards ── */
+.tp-cards { margin: 0 20px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+
+.tp-card {
+  background: var(--bg-2); border: 1px solid var(--b-1);
+  border-radius: var(--r-lg); padding: 14px 16px;
+  display: grid;
+  grid-template-columns: 36px 1fr 1fr 110px 50px 30px;
+  gap: 12px; align-items: center;
+  transition: border-color .13s, box-shadow .13s;
+}
+.tp-card:hover { border-color: var(--b-2); box-shadow: var(--sh-0); }
+
+@media (max-width: 680px) {
+  .tp-card {
+    grid-template-columns: 36px 1fr 30px;
+    grid-template-rows: auto auto auto;
+  }
+  .tp-card .tc-field:nth-child(3) { grid-column: 1 / -1; }
+  .tp-card .tc-field:nth-child(4) { grid-column: 1 / -1; }
+  .tp-card .tc-toggle             { grid-column: 2; }
+}
+
+.tc-rank {
+  font-size: 22px; line-height: 1;
+  text-align: center; flex-shrink: 0;
+}
+
+.tc-field { display: flex; flex-direction: column; gap: 3px; }
+
+.tc-label {
+  font-family: var(--font-mono); font-size: 8.5px; font-weight: 700;
+  letter-spacing: .10em; text-transform: uppercase; color: var(--t-3);
+}
+
+.tc-input {
+  height: 31px; padding: 0 9px;
+  background: var(--bg-1); border: 1px solid var(--b-1);
+  border-radius: var(--r-md); color: var(--t-1);
+  font-family: var(--font-ui); font-size: 12.5px; font-weight: 500;
+  outline: none; width: 100%;
+  transition: border-color .13s, background .13s;
+}
+.tc-input:focus { border-color: var(--blue-b); background: var(--bg-2); }
+.tc-input::placeholder { color: var(--t-3); }
+
+/* toggle */
+.tc-toggle { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
+.tc-toggle-label {
+  font-family: var(--font-mono); font-size: 8.5px; font-weight: 700;
+  letter-spacing: .10em; text-transform: uppercase; color: var(--t-3);
+}
+.tc-switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+.tc-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.tc-track {
+  position: absolute; inset: 0; border-radius: var(--r-pill);
+  background: var(--b-2); cursor: pointer;
+  border: 1px solid var(--b-2);
+  transition: background .13s, border-color .13s;
+}
+.tc-switch input:checked + .tc-track {
+  background: rgba(22,163,74,.25);
+  border-color: rgba(22,163,74,.40);
+}
+html[data-theme="dark"] .tc-switch input:checked + .tc-track {
+  background: rgba(74,222,128,.20);
+  border-color: rgba(74,222,128,.35);
+}
+.tc-thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--t-3); pointer-events: none;
+  transition: transform .13s, background .13s;
+}
+.tc-switch input:checked ~ .tc-thumb {
+  transform: translateX(16px);
+  background: var(--green);
+}
+html[data-theme="dark"] .tc-switch input:checked ~ .tc-thumb {
+  background: #4ade80;
+}
+
+/* remove button */
+.tc-remove {
+  width: 28px; height: 28px; border-radius: var(--r-md);
+  border: 1px solid var(--b-1); background: transparent;
+  color: var(--t-3); cursor: pointer; font-size: 10px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: all .13s;
+}
+.tc-remove:hover {
+  background: rgba(201,64,64,.09);
+  border-color: rgba(201,64,64,.22);
+  color: var(--red);
+}
+html[data-theme="dark"] .tc-remove:hover { color: #f87171; }
+
+/* ── Empty state ── */
+.tp-empty {
+  border: 1px dashed var(--b-1); border-radius: var(--r-lg);
+  padding: 32px 24px; text-align: center;
+  color: var(--t-3); font-family: var(--font-mono); font-size: 11.5px;
+}
+.tp-empty i { display: block; font-size: 20px; margin-bottom: 8px; opacity: .3; }
+
+/* ── Footer ── */
+.tp-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; flex-wrap: wrap;
+  padding: 10px 20px;
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: var(--r-lg);
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 500;
+  letter-spacing: .04em;
+  cursor: pointer; white-space: nowrap;
+  border: none; transition: background .13s;
+}
+.btn:disabled { opacity: .40; cursor: not-allowed; }
+.btn i { font-size: 10px; }
+
+.btn-ghost {
+  background: var(--bg-2); border: 1px solid var(--b-1); color: var(--t-2);
+}
+.btn-ghost:hover:not(:disabled) { background: var(--bg-3); border-color: var(--b-2); color: var(--t-1); }
+
+.btn-primary {
+  background: var(--blue-d); border: 1px solid var(--blue-b);
+  color: var(--blue); font-weight: 600;
+}
+html[data-theme="dark"] .btn-primary { color: #5b85c8; }
+.btn-primary:hover:not(:disabled) { background: rgba(40,87,164,.16); }
+
+/* ── Status toast ── */
+.tp-status {
+  margin: 0 20px 12px;
+  padding: 9px 13px; border-radius: var(--r-lg);
+  font-size: 11.5px; font-family: var(--font-mono);
+  display: none; align-items: center; gap: 7px;
+}
+.tp-status.success {
+  display: flex;
+  background: rgba(22,163,74,.09); border: 1px solid rgba(22,163,74,.22); color: var(--green);
+}
+html[data-theme="dark"] .tp-status.success { color: #4ade80; }
+.tp-status.error {
+  display: flex;
+  background: rgba(201,64,64,.08); border: 1px solid rgba(201,64,64,.26); color: var(--red);
+}
+html[data-theme="dark"] .tp-status.error { color: #f87171; }
+
+/* ── Spinner ── */
+.spin {
+  display: inline-block; width: 12px; height: 12px;
+  border: 2px solid var(--b-2); border-top-color: var(--blue);
+  border-radius: 50%; animation: sp .6s linear infinite;
+}
+@keyframes sp { to { transform: rotate(360deg); } }
+</style>
+
+<div class="ph">
+  <div>
+    <div class="ph-title">Top Performers</div>
+    <div class="ph-sub">Recognise your team — up to 3 performers shown on the home page sidebar.</div>
+  </div>
+</div>
+
+<div id="tpMain">
+
+  <div class="info-box">
+    <i class="fa-solid fa-circle-info"></i>
+    <span>
+      Changes are written to the <strong>TopPerformers</strong> sheet and appear on the home page immediately after saving.
+      Toggle <strong>Active</strong> off to hide a performer without deleting them.
+    </span>
+  </div>
+
+  <div class="section-label">Current Preview</div>
+  <div class="preview-strip">
+    <span class="preview-label">Home sidebar →</span>
+    <div class="preview-chips" id="tpPreviewChips">
+      <span class="preview-chip" style="color:var(--t-3);font-size:11.5px;">No active performers yet.</span>
+    </div>
+  </div>
+
+  <div class="section-label">Edit Performers</div>
+
+  <div class="tp-cards" id="tpCards">
+    <div class="tp-empty">
+      <i class="fa-solid fa-circle-notch" style="animation:sp .6s linear infinite;display:inline-block;"></i>
+      Loading…
+    </div>
+  </div>
+
+  <div class="tp-footer">
+    <button class="btn btn-ghost" type="button" id="tpAddBtn">
+      <i class="fa-solid fa-plus"></i> Add Performer
+    </button>
+    <button class="btn btn-primary" type="button" id="tpSaveBtn">
+      <i class="fa-solid fa-floppy-disk"></i> Save Changes
+    </button>
+  </div>
+
+  <div class="tp-status" id="tpStatus"></div>
+
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const PAGE_KEY   = 'topperformer';
+  const RANK_EMOJI = ['🥇', '🥈', '🥉'];
+  const MAX_ROWS   = 3;
+
+  const state = { mounted: false };
+  let tpRows = [];
+  let isBusy = false;
+  let toastTimer = null;
+
+  const EL = {};
+
+  function cacheDom() {
+    EL.cardsEl   = document.getElementById('tpCards');
+    EL.addBtn    = document.getElementById('tpAddBtn');
+    EL.saveBtn   = document.getElementById('tpSaveBtn');
+    EL.statusEl  = document.getElementById('tpStatus');
+    EL.mainEl    = document.getElementById('tpMain');
+    EL.previewEl = document.getElementById('tpPreviewChips');
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function showStatus(msg, type) {
+    if (!EL.statusEl) return;
+    EL.statusEl.innerHTML = '<i class="fa-solid ' + (type === 'success' ? 'fa-check-circle' : 'fa-circle-exclamation') + '"></i><span>' + esc(msg) + '</span>';
+    EL.statusEl.className = 'tp-status ' + (type || 'success');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      if (EL.statusEl) EL.statusEl.className = 'tp-status';
+    }, 4000);
+  }
+
+  function setBusy(v) {
+    isBusy = !!v;
+    if (EL.addBtn)  EL.addBtn.disabled  = isBusy || tpRows.length >= MAX_ROWS;
+    if (EL.saveBtn) EL.saveBtn.disabled = isBusy;
+  }
+
+  function renderPreview() {
+    if (!EL.previewEl) return;
+    const active = tpRows.filter(r => r.active !== false && r.name.trim());
+    if (!active.length) {
+      EL.previewEl.innerHTML = '<span class="preview-chip" style="color:var(--t-3);font-size:11.5px;">No active performers yet.</span>';
+      return;
+    }
+    EL.previewEl.innerHTML = active.map((r, i) => `
+      <div class="preview-chip filled">
+        <span class="preview-chip-rank">${RANK_EMOJI[i] || '🏅'}</span>
+        <div class="preview-chip-info">
+          <div class="preview-chip-name">${esc(r.name)}</div>
+          ${r.role ? `<div class="preview-chip-role">${esc(r.role)}</div>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderCards() {
+    if (!EL.cardsEl) return;
+    if (EL.addBtn) EL.addBtn.disabled = isBusy || tpRows.length >= MAX_ROWS;
+
+    if (!tpRows.length) {
+      EL.cardsEl.innerHTML = `
+        <div class="tp-empty">
+          <i class="fa-solid fa-trophy"></i>
+          No performers added yet.<br>
+          Click <strong>Add Performer</strong> to get started.
+        </div>`;
+      renderPreview();
+      return;
+    }
+
+    EL.cardsEl.innerHTML = tpRows.map((row, i) => `
+      <div class="tp-card" data-idx="${i}">
+        <div class="tc-rank">${RANK_EMOJI[i] || '🏅'}</div>
+
+        <div class="tc-field">
+          <div class="tc-label">Name</div>
+          <input class="tc-input tc-name" type="text" placeholder="Full name"
+                 value="${esc(row.name)}" data-idx="${i}">
+        </div>
+
+        <div class="tc-field">
+          <div class="tc-label">Note / Role</div>
+          <input class="tc-input tc-role" type="text" placeholder="e.g. Most tickets resolved"
+                 value="${esc(row.role)}" data-idx="${i}">
+        </div>
+
+        <div class="tc-field">
+          <div class="tc-label">Period</div>
+          <input class="tc-input tc-period" type="text" placeholder="e.g. April 2026"
+                 value="${esc(row.period)}" data-idx="${i}">
+        </div>
+
+        <div class="tc-toggle">
+          <div class="tc-toggle-label">Active</div>
+          <label class="tc-switch">
+            <input type="checkbox" class="tc-active" data-idx="${i}" ${row.active !== false ? 'checked' : ''}>
+            <div class="tc-track"></div>
+            <div class="tc-thumb"></div>
+          </label>
+        </div>
+
+        <button class="tc-remove" type="button" data-idx="${i}" title="Remove">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    `).join('');
+
+    EL.cardsEl.querySelectorAll('.tc-name').forEach(el => {
+      el.addEventListener('input', () => { tpRows[Number(el.dataset.idx)].name = el.value; renderPreview(); });
+    });
+    EL.cardsEl.querySelectorAll('.tc-role').forEach(el => {
+      el.addEventListener('input', () => { tpRows[Number(el.dataset.idx)].role = el.value; renderPreview(); });
+    });
+    EL.cardsEl.querySelectorAll('.tc-period').forEach(el => {
+      el.addEventListener('input', () => { tpRows[Number(el.dataset.idx)].period = el.value; });
+    });
+    EL.cardsEl.querySelectorAll('.tc-active').forEach(el => {
+      el.addEventListener('change', () => { tpRows[Number(el.dataset.idx)].active = el.checked; renderPreview(); });
+    });
+    EL.cardsEl.querySelectorAll('.tc-remove').forEach(el => {
+      el.addEventListener('click', () => {
+        tpRows.splice(Number(el.dataset.idx), 1);
+        tpRows.forEach((r, i) => { r.order = i + 1; });
+        renderCards();
+      });
+    });
+
+    renderPreview();
+  }
+
+  function addRow() {
+    if (tpRows.length >= MAX_ROWS || isBusy) return;
+    tpRows.push({ name: '', role: '', badge: '', period: '', active: true, order: tpRows.length + 1 });
+    renderCards();
+  }
+
+  function loadPerformersFromSheet() {
+    if (!EL.cardsEl) return;
+    EL.cardsEl.innerHTML = `<div class="tp-empty"><span class="spin" style="display:inline-block;vertical-align:middle;margin-right:6px;"></span> Loading…</div>`;
+
+    google.script.run
+      .withSuccessHandler(res => {
+        if (!res || !res.ok) {
+          showStatus(res?.error || 'Could not load performers.', 'error');
+          tpRows = []; renderCards(); return;
+        }
+        tpRows = Array.isArray(res.data) ? res.data : [];
+        renderCards();
+      })
+      .withFailureHandler(err => {
+        showStatus(err?.message || 'Could not load performers.', 'error');
+        tpRows = []; renderCards();
+      })
+      .getTopPerformersForAdmin();
+  }
+
+  function handleSave() {
+    if (isBusy) return;
+    for (let i = 0; i < tpRows.length; i++) {
+      if (!String(tpRows[i].name || '').trim()) {
+        showStatus(`Row ${i + 1}: Name is required.`, 'error');
+        return;
+      }
+    }
+    setBusy(true);
+    EL.saveBtn.innerHTML = '<span class="spin" style="display:inline-block;vertical-align:middle;margin-right:5px;"></span> Saving…';
+
+    const payload = tpRows.map((r, i) => ({
+      name:   String(r.name   || '').trim(),
+      role:   String(r.role   || '').trim(),
+      badge:  String(r.badge  || '').trim(),
+      period: String(r.period || '').trim(),
+      active: r.active !== false,
+      order:  i + 1
+    }));
+
+    google.script.run
+      .withSuccessHandler(res => {
+        setBusy(false);
+        EL.saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+        if (!res || !res.ok) { showStatus(res?.error || 'Save failed.', 'error'); return; }
+        showStatus('Top performers saved successfully.', 'success');
+      })
+      .withFailureHandler(err => {
+        setBusy(false);
+        EL.saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+        showStatus(err?.message || 'Save failed.', 'error');
+      })
+      .saveTopPerformers(payload);
+  }
+
+  function bindEvents() {
+    EL.addBtn?.addEventListener('click', addRow);
+    EL.saveBtn?.addEventListener('click', handleSave);
+  }
+
+  function mount() {
+    if (state.mounted) return;
+    state.mounted = true;
+    cacheDom();
+    bindEvents();
+    loadPerformersFromSheet();
+  }
+
+  function unmount() { state.mounted = false; }
+  function refresh() { if (!state.mounted) return; loadPerformersFromSheet(); }
+
+  window.__TOPPERFORMERS_CLEANUP__ = function() {
+    if (toastTimer) clearTimeout(toastTimer);
+    state.mounted = false;
+  };
+
+  window.TopPerformerPage = { mount, unmount, refresh };
+  if (typeof window.registerPageModule === 'function') {
+    window.registerPageModule(PAGE_KEY, { mount, unmount, refresh });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mount, { once: true });
+  } else {
+    mount();
+  }
+})();
+</script>

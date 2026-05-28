@@ -1,0 +1,761 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --font-ui:   'Epilogue', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+  --bg-1: #f5f2ec; --bg-2: #ede9e1; --bg-3: #e4ded4; --bg-4: #ddd6ca;
+  --b-1: rgba(26,24,20,.12); --b-2: rgba(26,24,20,.18); --b-3: rgba(26,24,20,.28);
+  --t-1: rgba(26,24,20,.95); --t-2: rgba(74,71,64,.75); --t-3: rgba(138,134,128,.60);
+  --blue:   #2857a4; --blue-d: rgba(40,87,164,.10); --blue-b: rgba(40,87,164,.30);
+  --green:  #16a34a; --amber:  #b45309; --red:    #c94040;
+  --r-lg: 10px; --r-md: 7px; --r-sm: 5px; --r-pill: 999px;
+  --sh-0: 0 1px 3px rgba(26,24,20,.08); --sh-1: 0 4px 16px rgba(26,24,20,.10);
+
+  /* KPI table palette — pastel, warm-paper tinted */
+  --kra-bg:    #c8dfc0;
+  --kpi-bg:    #f5e8a0;
+  --def-bg:    #f0d4b0;
+  --weight-bg: #e8d0dc;
+  --rate-hd:   #d9b8c8;
+  --rate-5:    #0b57d0;
+  --rate-4:    #4f7fd9;
+  --rate-3:    #7ea6f2;
+  --rate-2:    #a9c2f6;
+  --rate-1:    #d5e3ff;
+  --highlight: #fff176;
+  --divider:   #1a1814;
+}
+
+html[data-theme="dark"] {
+  --bg-1: #1a1814; --bg-2: #1e1c18; --bg-3: #252220; --bg-4: #2c2a26;
+  --b-1: rgba(240,236,227,.10); --b-2: rgba(240,236,227,.16); --b-3: rgba(240,236,227,.26);
+  --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.75); --t-3: rgba(106,100,92,.60);
+  --blue-d: rgba(40,87,164,.16); --blue-b: rgba(40,87,164,.40);
+  --kra-bg: #2a3d26; --kpi-bg: #3d3810; --def-bg: #3d2e14;
+  --weight-bg: #3d2535; --rate-hd: #3d2535;
+  --highlight: #3d3400;
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-ui); color: var(--t-1);
+  background: transparent; -webkit-font-smoothing: antialiased; padding-top: 80px;
+}
+
+/* ── Page header ── */
+.ph {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px; padding: 16px 20px 12px;
+}
+.ph-title {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 20px; font-weight: 400; letter-spacing: -.02em; margin-bottom: 2px;
+}
+.ph-sub { font-size: 12px; color: var(--t-3); font-family: var(--font-mono); letter-spacing: .02em; }
+.ph-right { display: flex; gap: 7px; flex-wrap: wrap; align-items: flex-start; }
+
+/* ── Section label ── */
+.section-label {
+  font-family: var(--font-mono); font-size: 8.5px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--t-3);
+  margin: 0 20px 10px; display: flex; align-items: center; gap: 10px;
+}
+.section-label::after { content:''; flex:1; height:1px; background: var(--b-1); }
+
+/* ── Shift segment toggle ── */
+.shift-seg {
+  display: inline-flex; height: 31px; padding: 2px;
+  background: var(--bg-2); border: 1px solid var(--b-1);
+  border-radius: var(--r-lg); gap: 2px; margin: 0 20px 14px;
+}
+.shift-btn {
+  padding: 0 14px; height: 25px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent; color: var(--t-3);
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+  border-radius: calc(var(--r-lg) - 2px); cursor: pointer; transition: all .13s;
+  white-space: nowrap;
+}
+.shift-btn:hover { color: var(--t-1); }
+.shift-btn.active { background: var(--blue-d); color: var(--blue); }
+html[data-theme="dark"] .shift-btn.active { color: #5b85c8; }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: var(--r-lg);
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+  letter-spacing: .04em; cursor: pointer; white-space: nowrap;
+  border: none; transition: background .13s;
+}
+.btn:disabled { opacity: .40; cursor: not-allowed; }
+.btn i { font-size: 10px; }
+.btn-ghost { background: var(--bg-2); border: 1px solid var(--b-1); color: var(--t-2); }
+.btn-ghost:hover:not(:disabled) { background: var(--bg-3); border-color: var(--b-2); color: var(--t-1); }
+.btn-primary { background: var(--blue-d); border: 1px solid var(--blue-b); color: var(--blue); font-weight: 600; }
+html[data-theme="dark"] .btn-primary { color: #5b85c8; }
+.btn-primary:hover:not(:disabled) { background: rgba(40,87,164,.16); }
+.btn-danger { background: rgba(201,64,64,.09); border: 1px solid rgba(201,64,64,.22); color: var(--red); }
+html[data-theme="dark"] .btn-danger { color: #f87171; }
+.btn-danger:hover:not(:disabled) { background: rgba(201,64,64,.16); }
+.btn-sm { padding: 4px 9px; font-size: 10.5px; }
+
+/* ── Status banner ── */
+#statusBanner {
+  display: none; margin: 0 20px 10px; padding: 9px 13px;
+  border-radius: var(--r-lg); font-size: 11.5px; font-family: var(--font-mono);
+}
+#statusBanner.show { display: block; }
+#statusBanner.info  { background: var(--blue-d); border: 1px solid var(--blue-b); color: var(--blue); }
+html[data-theme="dark"] #statusBanner.info { color: #5b85c8; }
+#statusBanner.error { background: rgba(201,64,64,.08); border: 1px solid rgba(201,64,64,.26); color: var(--red); }
+html[data-theme="dark"] #statusBanner.error { color: #f87171; }
+
+/* ── Table wrapper ── */
+.tw {
+  margin: 0 20px 5px; border-radius: var(--r-lg);
+  border: 1px solid var(--b-1); overflow-x: auto; background: var(--bg-2);
+}
+
+.kpi-table {
+  width: 100%; min-width: 1400px; border-collapse: collapse;
+  font-size: 12px; table-layout: fixed;
+}
+
+.kpi-table th, .kpi-table td {
+  border: 1px solid var(--b-2); padding: 8px 10px;
+  vertical-align: top; font-size: 12px; line-height: 1.4;
+}
+html[data-theme="dark"] .kpi-table th,
+html[data-theme="dark"] .kpi-table td { border-color: var(--b-1); }
+
+.kpi-table th { text-align: center; font-weight: 700; white-space: nowrap; }
+
+/* Column widths */
+.col-kra    { width: 130px; }
+.col-kpi    { width: 240px; }
+.col-def    { width: 270px; }
+.col-weight { width: 68px; }
+.col-rate   { width: 200px; }
+.col-act    { width: 54px; }
+
+/* Header colors */
+.hd-kra    { background: var(--kra-bg); }
+.hd-kpi    { background: var(--kpi-bg); }
+.hd-def    { background: var(--def-bg); }
+.hd-weight { background: var(--weight-bg); }
+.hd-rating { background: var(--rate-hd); }
+.hd-5 { background: var(--rate-5); color: #fff; }
+.hd-4 { background: var(--rate-4); color: #fff; }
+.hd-3 { background: var(--rate-3); color: #111; }
+.hd-2 { background: var(--rate-2); color: #111; }
+.hd-1 { background: var(--rate-1); color: #111; }
+
+/* Row styles */
+.kpi-table td.center { text-align: center; }
+.kpi-table td.middle { vertical-align: middle; }
+.row-highlight td { background: var(--highlight) !important; }
+
+.total-row td {
+  font-weight: 700; background: var(--bg-3) !important;
+  font-family: var(--font-mono); font-size: 11px;
+}
+
+/* Shift divider */
+.shift-divider td {
+  height: 12px; background: var(--divider) !important;
+  border-color: var(--divider) !important; padding: 0;
+}
+
+/* Action cell */
+.act-cell { text-align: center; vertical-align: middle; }
+.btn-row-del {
+  width: 24px; height: 24px; border-radius: var(--r-sm);
+  border: 1px solid var(--b-1); background: transparent;
+  color: var(--t-3); cursor: pointer; font-size: 9px;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: all .13s;
+}
+.btn-row-del:hover { background: rgba(201,64,64,.09); border-color: rgba(201,64,64,.22); color: var(--red); }
+html[data-theme="dark"] .btn-row-del:hover { color: #f87171; }
+
+/* Inline edit inputs */
+.kpi-table td input.cell-input,
+.kpi-table td textarea.cell-input {
+  width: 100%; background: var(--bg-1); border: 1px solid var(--blue-b);
+  border-radius: var(--r-sm); padding: 4px 6px; color: var(--t-1);
+  font-family: var(--font-ui); font-size: 11.5px; outline: none;
+  resize: vertical; min-height: 28px;
+}
+.kpi-table td textarea.cell-input { min-height: 60px; }
+
+/* Highlight toggle in edit mode */
+.hl-toggle { cursor: pointer; font-size: 10px; color: var(--t-3); }
+.hl-toggle.on { color: var(--amber); }
+html[data-theme="dark"] .hl-toggle.on { color: #fbbf24; }
+
+/* Empty / loading state */
+.ec {
+  text-align: center; padding: 34px 16px; color: var(--t-3);
+  font-size: 11.5px; font-family: var(--font-mono);
+}
+
+/* ── Add-row modal ── */
+.mo {
+  display: none; position: fixed; inset: 0;
+  background: rgba(26,24,20,.45); backdrop-filter: blur(5px);
+  z-index: 99999; align-items: center; justify-content: center; padding: 20px;
+}
+html[data-theme="dark"] .mo { background: rgba(0,0,0,.60); }
+.mo.open { display: flex; }
+
+.md {
+  background: var(--bg-1); border: 1px solid var(--b-2);
+  border-radius: var(--r-lg); width: 100%; max-width: 720px;
+  max-height: 92vh; overflow-y: auto;
+}
+.md-hd {
+  padding: 14px 18px 10px; display: flex; justify-content: space-between;
+  border-bottom: 1px solid var(--b-1); background: var(--bg-2);
+}
+html[data-theme="dark"] .md-hd { background: rgba(0,0,0,.08); }
+.md-title {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 16px; font-weight: 400; letter-spacing: -.01em;
+}
+.md-sub { font-size: 10.5px; color: var(--t-3); margin-top: 2px; font-family: var(--font-mono); }
+.md-x {
+  width: 26px; height: 26px; border-radius: var(--r-md); border: 1px solid var(--b-1);
+  background: transparent; color: var(--t-3); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 11px;
+}
+.md-x:hover { background: var(--bg-3); color: var(--t-1); }
+.md-body { padding: 14px 18px; }
+.md-foot {
+  padding: 10px 18px; border-top: 1px solid var(--b-1);
+  display: flex; justify-content: flex-end; gap: 7px;
+}
+
+.fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.fg1 { margin-bottom: 10px; }
+.fg  { display: flex; flex-direction: column; gap: 4px; }
+@media (max-width: 520px) { .fg2 { grid-template-columns: 1fr; } }
+.fl {
+  font-size: 9px; font-weight: 700; color: var(--t-3);
+  letter-spacing: .12em; text-transform: uppercase; font-family: var(--font-mono);
+}
+.fl .req { color: var(--red); }
+html[data-theme="dark"] .fl .req { color: #f87171; }
+.fc {
+  width: 100%; padding: 6px 9px; border-radius: var(--r-md);
+  border: 1px solid var(--b-1); background: var(--bg-2);
+  color: var(--t-1); font-family: var(--font-ui); font-size: 12.5px; outline: none;
+  transition: border-color .13s;
+}
+.fc:focus { border-color: var(--blue-b); }
+.fc option { background: var(--bg-2); color: var(--t-1); }
+textarea.fc { min-height: 56px; resize: vertical; }
+.ftip { font-size: 11px; font-family: var(--font-mono); color: var(--red); min-height: 14px; margin-top: 7px; }
+html[data-theme="dark"] .ftip { color: #f87171; }
+
+/* ── Toast ── */
+#th {
+  position: fixed; bottom: 16px; right: 16px;
+  z-index: 999999; display: flex; flex-direction: column; gap: 5px;
+}
+.ti {
+  padding: 8px 12px; border-radius: var(--r-lg); background: var(--bg-2);
+  border: 1px solid var(--b-2); font-size: 11.5px; font-weight: 600;
+  font-family: var(--font-mono); display: flex; align-items: center; gap: 7px;
+  opacity: 0; transform: translateY(4px); transition: all .13s;
+  box-shadow: var(--sh-1);
+}
+html[data-theme="dark"] .ti { background: var(--bg-3); }
+.ti.on { opacity: 1; transform: none; }
+.ti.success i { color: var(--green); }
+html[data-theme="dark"] .ti.success i { color: #4ade80; }
+.ti.error i   { color: var(--red); }
+html[data-theme="dark"] .ti.error i { color: #f87171; }
+.ti.info i    { color: var(--blue); }
+html[data-theme="dark"] .ti.info i { color: #5b85c8; }
+
+/* ── Spinner ── */
+.spin {
+  display: inline-block; width: 12px; height: 12px;
+  border: 2px solid var(--b-2); border-top-color: var(--blue);
+  border-radius: 50%; animation: sp .6s linear infinite;
+}
+@keyframes sp { to { transform: rotate(360deg); } }
+
+.hidden { display: none !important; }
+</style>
+
+<!-- PAGE HEADER -->
+<div class="ph">
+  <div>
+    <div class="ph-title">KPI Metrics</div>
+    <div class="ph-sub">IT ServiceDesk performance indicators by shift.</div>
+  </div>
+  <div class="ph-right" id="phRight">
+    <button class="btn btn-ghost" id="btnReload" type="button"><i class="fa-solid fa-rotate"></i> Reload</button>
+    <button class="btn btn-primary hidden" id="btnEdit" type="button"><i class="fa-solid fa-pen"></i> Edit</button>
+    <button class="btn btn-ghost hidden" id="btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>
+    <button class="btn btn-primary hidden" id="btnSave" type="button"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+    <button class="btn btn-ghost hidden" id="btnCancel" type="button"><i class="fa-solid fa-xmark"></i> Cancel</button>
+  </div>
+</div>
+
+<div id="statusBanner"></div>
+
+<!-- SHIFT TABS -->
+<div class="shift-seg" id="shiftSeg">
+  <button class="shift-btn active" data-shift="all" type="button">All Shifts</button>
+  <button class="shift-btn" data-shift="Morning" type="button">Morning</button>
+  <button class="shift-btn" data-shift="GY" type="button">GY</button>
+</div>
+
+<div class="section-label" id="tableLabel">Scorecard</div>
+
+<div class="tw">
+  <table class="kpi-table" id="kpiTable">
+    <tbody id="kpiTbody">
+      <tr><td colspan="11" class="ec"><span class="spin" style="vertical-align:middle;margin-right:8px;"></span>Loading…</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ADD ROW MODAL -->
+<div class="mo" id="mAdd" style="display:none;">
+  <div class="md">
+    <div class="md-hd">
+      <div><div class="md-title">Add KPI Row</div><div class="md-sub">New row will be appended to the active shift.</div></div>
+      <button class="md-x" id="mAddClose" type="button"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="md-body">
+      <div class="fg2">
+        <div class="fg">
+          <label class="fl">Shift <span class="req">*</span></label>
+          <select class="fc" id="nShift"><option value="Morning">Morning</option><option value="GY">GY</option></select>
+        </div>
+        <div class="fg">
+          <label class="fl">KRA <span class="req">*</span></label>
+          <input class="fc" id="nKra" placeholder="e.g. Quality of Service Delivery">
+        </div>
+      </div>
+      <div class="fg2">
+        <div class="fg">
+          <label class="fl">KPI <span class="req">*</span></label>
+          <input class="fc" id="nKpi" placeholder="e.g. Jira Ticket count">
+        </div>
+        <div class="fg">
+          <label class="fl">Weight</label>
+          <input class="fc" id="nWeight" placeholder="e.g. 15%">
+        </div>
+      </div>
+      <div class="fg1"><div class="fg">
+        <label class="fl">Definition</label>
+        <textarea class="fc" id="nDef" placeholder="Describe what this KPI measures…"></textarea>
+      </div></div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Rating 5</label><textarea class="fc" id="nR5" placeholder="Best performance…"></textarea></div>
+        <div class="fg"><label class="fl">Rating 4</label><textarea class="fc" id="nR4"></textarea></div>
+      </div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Rating 3</label><textarea class="fc" id="nR3"></textarea></div>
+        <div class="fg"><label class="fl">Rating 2</label><textarea class="fc" id="nR2"></textarea></div>
+      </div>
+      <div class="fg1"><div class="fg">
+        <label class="fl">Rating 1</label><textarea class="fc" id="nR1" placeholder="Lowest performance…"></textarea>
+      </div></div>
+      <div class="fg1"><div class="fg">
+        <label class="fl">Highlight row? <span style="color:var(--t-3);font-weight:400;">(yellow)</span></label>
+        <select class="fc" id="nHl"><option value="">No</option><option value="yes">Yes</option></select>
+      </div></div>
+      <div class="ftip" id="addTip"></div>
+    </div>
+    <div class="md-foot">
+      <button class="btn btn-ghost" id="mAddCancel" type="button">Cancel</button>
+      <button class="btn btn-primary" id="mAddOk" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>
+    </div>
+  </div>
+</div>
+
+<div id="th"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ── state ── */
+var rows       = [];   // full data from server
+var editMode   = false;
+var canManage  = false;
+var curShift   = 'all';
+var dirty      = false;
+
+/* ── helpers ── */
+function $(id){ return document.getElementById(id); }
+
+function esc(s){
+  return String(s==null?'':s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function isGas(){
+  try{ return !!(window.google && google.script && google.script.run); }catch(e){ return false; }
+}
+
+function toast(msg, type){
+  var h = $('th');
+  var el = document.createElement('div');
+  el.className = 'ti ' + (type||'info');
+  var icon = type==='success'?'fa-check-circle':type==='error'?'fa-circle-xmark':'fa-circle-info';
+  el.innerHTML = '<i class="fa-solid '+icon+'"></i><span>'+esc(msg)+'</span>';
+  h.appendChild(el);
+  setTimeout(function(){ el.classList.add('on'); }, 10);
+  setTimeout(function(){ el.classList.remove('on'); setTimeout(function(){ el.remove(); },200); }, 3200);
+}
+
+function setBanner(type, msg){
+  var b = $('statusBanner');
+  if (!msg){ b.classList.remove('show'); return; }
+  b.className = 'show ' + type; b.innerHTML = msg;
+}
+
+function openModal(id){
+  var el = $(id); if(!el) return;
+  if(el.parentNode !== document.body) document.body.appendChild(el);
+  el.classList.add('open'); el.style.display = 'flex';
+}
+function closeModal(id){
+  var el = $(id); if(!el) return;
+  el.classList.remove('open'); el.style.display = 'none';
+}
+
+/* ── permissions ── */
+function initPermissions(){
+  if(!isGas()){ canManage = false; syncUi(); return; }
+  google.script.run
+    .withSuccessHandler(function(perms){
+      perms = perms || { pages:{}, actions:{} };
+      var norm = function(s){ return String(s||'').trim().toLowerCase(); };
+      var canView = !!(perms.pages && perms.pages[norm('kpi')]);
+      canManage   = canView && !!(perms.actions && perms.actions[norm('kpi.manage')]);
+      if (!canView){
+        $('kpiTbody').innerHTML = '<tr><td colspan="11" class="ec"><i class="fa-solid fa-lock" style="display:block;font-size:18px;margin-bottom:6px;opacity:.4;"></i>You do not have permission to access KPI Metrics.</td></tr>';
+        return;
+      }
+      syncUi();
+      loadData();
+    })
+    .withFailureHandler(function(){
+      canManage = false; syncUi(); loadData();
+    })
+    .getMyPermissions();
+}
+
+function syncUi(){
+  $('btnEdit').classList.toggle('hidden', !canManage || editMode);
+  $('btnAddRow').classList.toggle('hidden', !canManage || !editMode);
+  $('btnSave').classList.toggle('hidden', !editMode);
+  $('btnCancel').classList.toggle('hidden', !editMode);
+}
+
+/* ── data load ── */
+function loadData(){
+  $('kpiTbody').innerHTML = '<tr><td colspan="11" class="ec"><span class="spin" style="vertical-align:middle;margin-right:8px;"></span>Loading…</td></tr>';
+  if(!isGas()){
+    // sample data so the page is useful in non-GAS preview
+    rows = sampleRows();
+    setBanner('info','<i class="fa-solid fa-circle-info"></i> Preview mode — showing sample data.');
+    render(); return;
+  }
+  google.script.run
+    .withSuccessHandler(function(res){
+      if(!res || !res.ok){ setBanner('error','<i class="fa-solid fa-circle-exclamation"></i> '+(res&&res.error||'Load failed.')); $('kpiTbody').innerHTML='<tr><td colspan="11" class="ec err">'+esc(res&&res.error||'Load failed.')+'</td></tr>'; return; }
+      rows = res.data || [];
+      setBanner('','');
+      render();
+    })
+    .withFailureHandler(function(err){
+      var msg = err&&err.message?err.message:'Load failed.';
+      setBanner('error','<i class="fa-solid fa-circle-exclamation"></i> '+esc(msg));
+      $('kpiTbody').innerHTML='<tr><td colspan="11" class="ec">'+esc(msg)+'</td></tr>';
+    })
+    .kpi_getAll();
+}
+
+/* ── render ── */
+function render(){
+  var filtered = curShift === 'all' ? rows : rows.filter(function(r){ return r.shift === curShift; });
+
+  // Build thead
+  var colSpan = editMode ? 11 : 10;
+  var thead = '<thead>' +
+    '<tr>' +
+      '<th class="col-kra hd-kra" rowspan="2">KRA</th>' +
+      '<th class="col-kpi hd-kpi" rowspan="2">KPI</th>' +
+      '<th class="col-def hd-def" rowspan="2">Definition</th>' +
+      '<th class="col-weight hd-weight" rowspan="2">Weight</th>' +
+      '<th class="hd-rating" colspan="5">Rating Defined</th>' +
+      (editMode ? '<th class="col-act hd-weight" rowspan="2">Del</th>' : '') +
+    '</tr>' +
+    '<tr>' +
+      '<th class="col-rate hd-5">5</th>' +
+      '<th class="col-rate hd-4">4</th>' +
+      '<th class="col-rate hd-3">3</th>' +
+      '<th class="col-rate hd-2">2</th>' +
+      '<th class="col-rate hd-1">1</th>' +
+    '</tr></thead>';
+
+  // Group by shift for dividers
+  var shifts = [];
+  var shiftMap = {};
+  filtered.forEach(function(r){
+    if (!shiftMap[r.shift]){ shiftMap[r.shift] = []; shifts.push(r.shift); }
+    shiftMap[r.shift].push(r);
+  });
+
+  var tbody = '<tbody id="kpiTbody">';
+
+  if (!filtered.length){
+    tbody += '<tr><td colspan="'+(editMode?11:10)+'" class="ec"><i class="fa-solid fa-table" style="font-size:18px;display:block;margin-bottom:6px;opacity:.3;"></i>No rows. Add some KPI data.</td></tr>';
+  } else {
+    var first = true;
+    shifts.forEach(function(shift){
+      if (!first) tbody += '<tr class="shift-divider"><td colspan="'+(editMode?11:10)+'"></td></tr>';
+      first = false;
+
+      // Shift header row (sub-label inside table)
+      tbody += '<tr><td colspan="'+(editMode?11:10)+'" style="background:var(--bg-3);font-family:var(--font-mono);font-size:9.5px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--t-3);padding:6px 10px;">'+esc(shift)+'</td></tr>';
+
+      var shiftRows = shiftMap[shift];
+      // Group by KRA for rowspans
+      var kraGroups = [];
+      var kraMap = {};
+      shiftRows.forEach(function(r){
+        var k = r.kra;
+        if (!kraMap[k]){ kraMap[k] = []; kraGroups.push(k); }
+        kraMap[k].push(r);
+      });
+
+      kraGroups.forEach(function(kra){
+        var group = kraMap[kra];
+        group.forEach(function(r, gi){
+          var hl = r.highlight ? ' row-highlight' : '';
+          tbody += '<tr data-id="'+esc(r.id)+'" class="'+hl+'">';
+
+          // KRA cell — rowspan on first row of group
+          if (gi === 0){
+            tbody += '<td class="middle center col-kra" rowspan="'+group.length+'">'+
+              (editMode ? '<input class="cell-input" data-field="kra" value="'+esc(r.kra)+'"/>' : esc(r.kra))+
+              '</td>';
+          }
+
+          // KPI, Def, Weight, Rates
+          var fields = [
+            { f:'kpi',        cls:'col-kpi',    type:'textarea' },
+            { f:'definition', cls:'col-def',    type:'textarea' },
+            { f:'weight',     cls:'col-weight center', type:'input'  },
+            { f:'rate5',      cls:'col-rate',   type:'textarea' },
+            { f:'rate4',      cls:'col-rate',   type:'textarea' },
+            { f:'rate3',      cls:'col-rate',   type:'textarea' },
+            { f:'rate2',      cls:'col-rate',   type:'textarea' },
+            { f:'rate1',      cls:'col-rate',   type:'textarea' },
+          ];
+
+          fields.forEach(function(fi){
+            var val = r[fi.f];
+            if (editMode){
+              tbody += '<td class="'+fi.cls+'">';
+              if (fi.type === 'textarea'){
+                tbody += '<textarea class="cell-input" data-field="'+fi.f+'">'+esc(val)+'</textarea>';
+              } else {
+                tbody += '<input class="cell-input" data-field="'+fi.f+'" value="'+esc(val)+'"/>';
+              }
+              tbody += '</td>';
+            } else {
+              tbody += '<td class="'+fi.cls+'">'+esc(val)+'</td>';
+            }
+          });
+
+          if (editMode){
+            tbody += '<td class="act-cell col-act">'+
+              '<button class="btn-row-del" data-del="'+esc(r.id)+'" title="Delete row"><i class="fa-solid fa-xmark"></i></button>'+
+              '</td>';
+          }
+
+          tbody += '</tr>';
+        });
+      });
+
+      // Total row per shift
+      var totalWeight = 0;
+      shiftRows.forEach(function(r){
+        var w = parseFloat(String(r.weight||'').replace('%',''));
+        if (!isNaN(w)) totalWeight += w;
+      });
+      tbody += '<tr class="total-row"><td></td><td>Total</td><td></td><td class="center">'+(totalWeight?totalWeight+'%':'')+'</td><td></td><td></td><td></td><td></td><td></td>'+(editMode?'<td></td>':'')+'</tr>';
+    });
+  }
+
+  tbody += '</tbody>';
+
+  var table = $('kpiTable');
+  table.innerHTML = thead + tbody;
+
+  // Wire edit handlers
+  if (editMode){
+    table.querySelectorAll('.cell-input').forEach(function(inp){
+      inp.addEventListener('input', function(){
+        var tr = inp.closest('tr[data-id]');
+        if (!tr) return;
+        var id = tr.getAttribute('data-id');
+        var field = inp.getAttribute('data-field');
+        var r = rows.find(function(x){ return x.id === id; });
+        if (r) { r[field] = inp.value; dirty = true; }
+      });
+    });
+
+    table.querySelectorAll('.btn-row-del').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var id = btn.getAttribute('data-del');
+        if (!confirm('Delete this row?')) return;
+        rows = rows.filter(function(r){ return r.id !== id; });
+        dirty = true;
+        render();
+      });
+    });
+  }
+}
+
+/* ── shift filter ── */
+function setShift(s){
+  curShift = s;
+  document.querySelectorAll('.shift-btn').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-shift') === s);
+  });
+  render();
+}
+
+/* ── edit mode ── */
+function enterEdit(){
+  editMode = true; dirty = false; syncUi(); render();
+  toast('Edit mode on. Make changes then click Save.', 'info');
+}
+
+function cancelEdit(){
+  if (dirty && !confirm('Discard unsaved changes?')) return;
+  editMode = false; dirty = false; syncUi(); loadData();
+}
+
+/* ── save ── */
+function saveData(){
+  if (!isGas()){ toast('Preview mode — save not available.','info'); return; }
+  var btn = $('btnSave');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin" style="display:inline-block;vertical-align:middle;margin-right:4px;"></span> Saving…';
+
+  google.script.run
+    .withSuccessHandler(function(res){
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
+      if (!res||!res.ok){ toast((res&&res.error)||'Save failed.','error'); return; }
+      editMode = false; dirty = false; syncUi();
+      toast('KPI data saved.','success');
+      loadData();
+    })
+    .withFailureHandler(function(err){
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
+      toast(err&&err.message?err.message:'Save failed.','error');
+    })
+    .kpi_save(rows);
+}
+
+/* ── add row modal ── */
+function openAddModal(){
+  $('addTip').textContent='';
+  // Pre-select shift matching current filter
+  if (curShift !== 'all') $('nShift').value = curShift;
+  ['nKra','nKpi','nDef','nWeight','nR5','nR4','nR3','nR2','nR1'].forEach(function(id){ $(id).value=''; });
+  $('nHl').value='';
+  openModal('mAdd');
+}
+
+function doAddRow(){
+  var kra = $('nKra').value.trim();
+  var kpi = $('nKpi').value.trim();
+  if (!kra || !kpi){ $('addTip').textContent='⚠ KRA and KPI are required.'; return; }
+  var newRow = {
+    id: 'NEW-' + Date.now(),
+    shift:      $('nShift').value,
+    kra:        kra,
+    kpi:        kpi,
+    definition: $('nDef').value.trim(),
+    weight:     $('nWeight').value.trim(),
+    rate5:      $('nR5').value.trim(),
+    rate4:      $('nR4').value.trim(),
+    rate3:      $('nR3').value.trim(),
+    rate2:      $('nR2').value.trim(),
+    rate1:      $('nR1').value.trim(),
+    highlight:  $('nHl').value === 'yes',
+  };
+  rows.push(newRow);
+  dirty = true;
+  closeModal('mAdd');
+  render();
+  toast('Row added. Click Save to persist.','info');
+}
+
+/* ── sample rows (preview only) ── */
+function sampleRows(){
+  return [
+    { id:'1', shift:'Morning', kra:'Asset Management',            kpi:'WS1 and Oomnitza',              definition:'Updating assets on WS1 and Oomnitza', weight:'10%', rate5:'No missed updates', rate4:'1 missed on either',     rate3:'1 missed on both',              rate2:'2 missed on either',        rate1:'3+ missed',                  highlight:false },
+    { id:'2', shift:'Morning', kra:'Quality of Service Delivery', kpi:'Jira Ticket count',             definition:'Total number of tickets resolved',    weight:'15%', rate5:'≥70 tickets',        rate4:'≥55 tickets',           rate3:'≥30 tickets',                  rate2:'≥25 tickets',               rate1:'≤24 tickets',                highlight:true  },
+    { id:'3', shift:'Morning', kra:'Quality of Service Delivery', kpi:'Mean Time to Resolved (MTTR)',  definition:'Average time to resolve Jira tickets.',weight:'5%',  rate5:'≤5 days',            rate4:'≤10 days',              rate3:'≤15 days',                     rate2:'≤25 days',                  rate1:'≥26 days',                   highlight:true  },
+    { id:'4', shift:'Morning', kra:'Quality of Service Delivery', kpi:'First Contact Resolution (FCR)',definition:'Tickets resolved within 1 hour.',      weight:'15%', rate5:'≥25 FCR',            rate4:'≥20 FCR',               rate3:'≥10 FCR',                      rate2:'≥7 FCR',                    rate1:'≤5 FCR',                     highlight:true  },
+    { id:'5', shift:'GY',      kra:'Asset Management',            kpi:'WS1 and Oomnitza',              definition:'Updating assets on WS1 and Oomnitza', weight:'10%', rate5:'No missed updates', rate4:'1 missed on either',     rate3:'1 missed on both',              rate2:'2 missed on either',        rate1:'3+ missed',                  highlight:false },
+    { id:'6', shift:'GY',      kra:'Quality of Service Delivery', kpi:'Jira Ticket count',             definition:'Total number of tickets resolved',    weight:'15%', rate5:'≥200 tickets',       rate4:'≥150 tickets',          rate3:'≥120 tickets',                 rate2:'≥100 tickets',              rate1:'≤99 tickets',                highlight:true  },
+    { id:'7', shift:'GY',      kra:'Quality of Service Delivery', kpi:'Mean Time to Resolved (MTTR)',  definition:'Average time to resolve Jira tickets.',weight:'5%',  rate5:'≤4 days',            rate4:'≤7 days',               rate3:'≤10 days',                     rate2:'≤15 days',                  rate1:'≥16 days',                   highlight:true  },
+  ];
+}
+
+/* ── wire events ── */
+$('btnReload').onclick = function(){ editMode=false; dirty=false; syncUi(); loadData(); };
+$('btnEdit').onclick   = enterEdit;
+$('btnSave').onclick   = saveData;
+$('btnCancel').onclick = cancelEdit;
+$('btnAddRow').onclick = openAddModal;
+$('mAddClose').onclick = function(){ closeModal('mAdd'); };
+$('mAddCancel').onclick= function(){ closeModal('mAdd'); };
+$('mAddOk').onclick    = doAddRow;
+
+document.querySelectorAll('.shift-btn').forEach(function(b){
+  b.onclick = function(){ setShift(b.getAttribute('data-shift')); };
+});
+
+// Move modal to body
+['mAdd','th'].forEach(function(id){
+  var el = $(id);
+  if (el && el.parentNode !== document.body) document.body.appendChild(el);
+});
+
+/* ── init ── */
+initPermissions();
+
+// Expose cleanup hook for shell
+window.__KPI_CLEANUP__ = function(){
+  ['mAdd','th'].forEach(function(id){
+    var el = $(id);
+    if (el && el.parentNode === document.body) el.remove();
+  });
+  window.__KPI_CLEANUP__ = null;
+};
+
+})();
+</script>

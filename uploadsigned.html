@@ -1,0 +1,782 @@
+<!-- uploadsigned.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base target="_top" />
+
+
+
+  <title>Upload Signed AF — Manila IT</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Tokens matching the Manila IT shell ── */
+    :root {
+      --font-ui:   'DM Sans',  system-ui, sans-serif;
+      --font-mono: 'DM Mono',  'Courier New', monospace;
+
+      --bg-0: #09090b;
+      --bg-1: #0e0e11;
+      --bg-2: #131316;
+      --bg-3: #191920;
+      --bg-4: #1f1f28;
+
+      --b-0: rgba(255,255,255,.040);
+      --b-1: rgba(255,255,255,.075);
+      --b-2: rgba(255,255,255,.13);
+      --b-3: rgba(255,255,255,.22);
+
+      --t-1: rgba(255,255,255,.93);
+      --t-2: rgba(255,255,255,.52);
+      --t-3: rgba(255,255,255,.28);
+
+      --blue:    #3b82f6;
+      --blue-d:  rgba(59,130,246,.13);
+      --blue-b:  rgba(59,130,246,.32);
+      --blue-glow: 0 0 0 1px rgba(59,130,246,.28), 0 6px 20px rgba(59,130,246,.14);
+
+      --green:  #22c55e;
+      --red:    #ef4444;
+      --amber:  #f59e0b;
+
+      --r-xl:   20px;
+      --r-lg:   13px;
+      --r-md:   9px;
+      --r-sm:   6px;
+      --r-pill: 999px;
+
+      --sh-1: 0 4px 16px rgba(0,0,0,.55);
+      --sh-2: 0 12px 40px rgba(0,0,0,.65);
+      --sh-3: 0 24px 64px rgba(0,0,0,.75);
+
+      --t-fast: .14s ease;
+      --t-med:  .24s ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg-0);
+      color: var(--t-1);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background mesh */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 65% 45% at 10% 0%,   rgba(59,130,246,.08) 0%, transparent 55%),
+        radial-gradient(ellipse 55% 40% at 90% 100%,  rgba(59,130,246,.05) 0%, transparent 55%);
+    }
+
+    body > * { position: relative; z-index: 1; }
+
+    /* ── Card ── */
+    .card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--bg-1);
+      border: 1px solid var(--b-1);
+      border-radius: var(--r-xl);
+      box-shadow: var(--sh-3);
+      overflow: hidden;
+      animation: cardIn .42s cubic-bezier(0.22, 0.68, 0, 1.2) both;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(20px) scale(.98); }
+      to   { opacity: 1; transform: translateY(0)    scale(1); }
+    }
+
+    /* ── Card header ── */
+    .card-header {
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid var(--b-0);
+      background: rgba(0,0,0,.12);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .brand-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--r-md);
+      background: var(--blue-d);
+      border: 1px solid var(--blue-b);
+      display: flex; align-items: center; justify-content: center;
+      color: #60a5fa;
+      font-size: 15px;
+    }
+
+    .brand-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--t-2);
+      letter-spacing: -.01em;
+    }
+
+    .card-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.035em;
+      color: var(--t-1);
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .card-sub {
+      font-size: 13px;
+      color: var(--t-2);
+      line-height: 1.55;
+    }
+
+    /* ── Serial tag chip ── */
+    .tag-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      padding: 7px 13px;
+      border-radius: var(--r-pill);
+      background: var(--blue-d);
+      border: 1px solid var(--blue-b);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: #60a5fa;
+    }
+
+    .tag-chip .label {
+      color: var(--t-3);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .tag-chip .value {
+      color: var(--t-1);
+      font-weight: 700;
+    }
+
+    /* ── Card body ── */
+    .card-body {
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── Drop zone ── */
+    .drop-zone {
+      position: relative;
+      border: 1.5px dashed var(--b-2);
+      border-radius: var(--r-lg);
+      background: var(--bg-3);
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+      overflow: hidden;
+    }
+
+    .drop-zone:hover,
+    .drop-zone.drag-over {
+      border-color: var(--blue-b);
+      border-style: solid;
+      background: rgba(59,130,246,.05);
+      box-shadow: var(--blue-glow);
+    }
+
+    .drop-zone.has-file {
+      border-style: solid;
+      border-color: rgba(34,197,94,.35);
+      background: rgba(34,197,94,.05);
+    }
+
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .drop-icon {
+      font-size: 28px;
+      color: var(--t-3);
+      margin-bottom: 10px;
+      transition: color var(--t-fast), transform var(--t-fast);
+      display: block;
+    }
+
+    .drop-zone:hover .drop-icon,
+    .drop-zone.drag-over .drop-icon {
+      color: #60a5fa;
+      transform: translateY(-3px);
+    }
+
+    .drop-zone.has-file .drop-icon {
+      color: var(--green);
+    }
+
+    .drop-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--t-1);
+      margin-bottom: 4px;
+    }
+
+    .drop-hint {
+      font-size: 12px;
+      color: var(--t-3);
+      font-family: var(--font-mono);
+    }
+
+    /* File selected state */
+    .file-selected {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--r-md);
+      background: rgba(34,197,94,.08);
+      border: 1px solid rgba(34,197,94,.22);
+    }
+
+    .file-selected.show { display: flex; }
+
+    .file-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--r-sm);
+      background: rgba(34,197,94,.12);
+      border: 1px solid rgba(34,197,94,.22);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--green);
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .file-info { flex: 1; min-width: 0; }
+
+    .file-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--t-1);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .file-size {
+      font-size: 11px;
+      color: var(--t-3);
+      font-family: var(--font-mono);
+      margin-top: 2px;
+    }
+
+    .file-remove {
+      width: 26px; height: 26px;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--b-1);
+      background: var(--bg-4);
+      color: var(--t-2);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 11px;
+      flex-shrink: 0;
+      transition: background var(--t-fast), color var(--t-fast);
+    }
+
+    .file-remove:hover {
+      background: rgba(239,68,68,.14);
+      color: #f87171;
+      border-color: rgba(239,68,68,.28);
+    }
+
+    /* ── Upload button ── */
+    .upload-btn {
+      width: 100%;
+      height: 48px;
+      border: none;
+      border-radius: var(--r-lg);
+      background: var(--blue);
+      color: #fff;
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(59,130,246,.35);
+      transition: filter var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast), opacity var(--t-fast);
+    }
+
+    .upload-btn:hover:not(:disabled) {
+      filter: brightness(1.10);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(59,130,246,.45);
+    }
+
+    .upload-btn:active:not(:disabled) { transform: translateY(0); }
+
+    .upload-btn:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+      filter: none !important;
+    }
+
+    .upload-btn.loading {
+      opacity: .8;
+      pointer-events: none;
+    }
+
+    /* ── Alerts ── */
+    .alert {
+      display: none;
+      padding: 12px 14px;
+      border-radius: var(--r-md);
+      border: 1px solid;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.5;
+      animation: alertIn .2s ease;
+    }
+
+    .alert.show { display: flex; align-items: flex-start; gap: 10px; }
+
+    @keyframes alertIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .alert i { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+
+    .alert.error   { background: rgba(239,68,68,.10);   border-color: rgba(239,68,68,.28);   color: #f87171; }
+    .alert.success { background: rgba(34,197,94,.10);   border-color: rgba(34,197,94,.26);   color: #4ade80; }
+    .alert.warn    { background: rgba(245,158,11,.10);  border-color: rgba(245,158,11,.26);  color: #fbbf24; }
+
+    /* ── Result link ── */
+    .result-link {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: var(--r-md);
+      background: var(--blue-d);
+      border: 1px solid var(--blue-b);
+      font-size: 13px;
+      font-weight: 600;
+      color: #60a5fa;
+      text-decoration: none;
+      transition: background var(--t-fast);
+    }
+
+    .result-link.show { display: flex; }
+    .result-link:hover { background: rgba(59,130,246,.20); }
+
+    /* ── Helper note ── */
+    .helper-note {
+      font-size: 11.5px;
+      color: var(--t-3);
+      font-family: var(--font-mono);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ── Footer ── */
+    .page-footer {
+      margin-top: 20px;
+      font-size: 11px;
+      color: var(--t-3);
+      font-family: var(--font-mono);
+      text-align: center;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .fa-spin { animation: spin .85s linear infinite; }
+
+    @media (max-width: 520px) {
+      .card-header, .card-body { padding: 20px; }
+      .card-title { font-size: 20px; }
+    }
+  </style>
+
+  <div class="card">
+
+    <!-- Header -->
+    <div class="card-header">
+      <div class="brand">
+        <div class="brand-icon"><i class="fas fa-file-signature"></i></div>
+        <span class="brand-name">Manila IT Inventory</span>
+      </div>
+      <div class="card-title">Upload Signed Form</div>
+      <div class="card-sub">
+        Upload the signed PDF you received via email. The serial tag must match an item in the Masterlist.
+      </div>
+      <div class="tag-chip" id="tagChip" style="display:none;">
+        <span class="label">Serial Tag</span>
+        <span class="value" id="tagValue">—</span>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body">
+
+      <!-- Drop zone -->
+      <label class="drop-zone" id="dropZone" for="fileInput">
+        <input type="file" id="fileInput" accept="application/pdf" />
+        <i class="fas fa-cloud-arrow-up drop-icon" id="dropIcon"></i>
+        <div class="drop-title" id="dropTitle">Drop your PDF here or click to browse</div>
+        <div class="drop-hint" id="dropHint">Only PDF files are accepted</div>
+      </label>
+
+      <!-- File selected -->
+      <div class="file-selected" id="fileSelected">
+        <div class="file-icon"><i class="fas fa-file-pdf"></i></div>
+        <div class="file-info">
+          <div class="file-name" id="fileName">—</div>
+          <div class="file-size" id="fileSize">—</div>
+        </div>
+        <button type="button" class="file-remove" id="fileRemoveBtn" title="Remove file">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert" id="alertBox">
+        <i id="alertIcon"></i>
+        <span id="alertText"></span>
+      </div>
+
+      <!-- Result link -->
+      <a class="result-link" id="resultLink" href="#" target="_blank" rel="noopener">
+        <i class="fas fa-external-link-alt"></i>
+        <span>View uploaded file</span>
+      </a>
+
+      <!-- Helper -->
+      <div class="helper-note" id="helperNote">
+        Make sure the file is the signed version before uploading.
+      </div>
+
+      <!-- Submit -->
+      <button type="button" class="upload-btn" id="uploadBtn" disabled onclick="startUpload()">
+        <i class="fas fa-arrow-up-from-bracket"></i>
+        Upload Signed PDF
+      </button>
+
+    </div>
+  </div>
+
+  <div class="page-footer">Manila IT Inventory &nbsp;·&nbsp; Accountability Form Upload</div>
+
+  <script>
+    window.__SERVER_TAG__ = <?= JSON.stringify(SERIAL_TAG || "") ?>;
+  </script>
+
+  <script>
+  (function() {
+    "use strict";
+
+    /* ── Helpers ── */
+    function qs(name) {
+      return new URLSearchParams(window.location.search).get(name) || "";
+    }
+
+    function normalizeTag(tag) {
+      return String(tag || "").trim().replace(/^"+|"+$/g, "");
+    }
+
+    function getTag() {
+      var fromUrl = normalizeTag(qs("tag"));
+      var fromSrv = normalizeTag(window.__SERVER_TAG__ || "");
+      return fromUrl || fromSrv;
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes || bytes < 1) return "";
+      if (bytes < 1024)        return bytes + " B";
+      if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + " KB";
+      return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+    }
+
+    function isPdf(file) {
+      if (!file) return false;
+      var name = (file.name || "").toLowerCase();
+      return file.type === "application/pdf" || name.slice(-4) === ".pdf";
+    }
+
+    function isGas() {
+      return !!(window.google && google.script && google.script.run);
+    }
+
+    /* ── DOM refs ── */
+    var dropZone     = document.getElementById("dropZone");
+    var fileInput    = document.getElementById("fileInput");
+    var dropIcon     = document.getElementById("dropIcon");
+    var dropTitle    = document.getElementById("dropTitle");
+    var dropHint     = document.getElementById("dropHint");
+    var fileSelected = document.getElementById("fileSelected");
+    var fileName     = document.getElementById("fileName");
+    var fileSize     = document.getElementById("fileSize");
+    var fileRemove   = document.getElementById("fileRemoveBtn");
+    var alertBox     = document.getElementById("alertBox");
+    var alertIcon    = document.getElementById("alertIcon");
+    var alertText    = document.getElementById("alertText");
+    var resultLink   = document.getElementById("resultLink");
+    var helperNote   = document.getElementById("helperNote");
+    var uploadBtn    = document.getElementById("uploadBtn");
+    var tagChip      = document.getElementById("tagChip");
+    var tagValue     = document.getElementById("tagValue");
+
+    var currentFile = null;
+
+    /* ── Alert ── */
+    function showAlert(kind, text) {
+      alertBox.className = "alert show " + kind;
+      alertIcon.className =
+        kind === "error"   ? "fas fa-circle-xmark" :
+        kind === "success" ? "fas fa-circle-check" :
+                             "fas fa-triangle-exclamation";
+      alertText.textContent = text;
+    }
+
+    function clearAlert() {
+      alertBox.className = "alert";
+      alertText.textContent = "";
+    }
+
+    /* ── File state ── */
+    function setFile(file) {
+      currentFile = file;
+      clearAlert();
+      resultLink.className = "result-link";
+
+      if (!file) {
+        // Reset drop zone
+        dropZone.classList.remove("has-file");
+        dropIcon.className = "fas fa-cloud-arrow-up drop-icon";
+        dropTitle.textContent = "Drop your PDF here or click to browse";
+        dropHint.textContent  = "Only PDF files are accepted";
+        fileSelected.className = "file-selected";
+        uploadBtn.disabled = true;
+        return;
+      }
+
+      // Show file info
+      dropZone.classList.add("has-file");
+      dropIcon.className = "fas fa-circle-check drop-icon";
+      dropTitle.textContent = "File selected";
+      dropHint.textContent  = "Click to change file";
+
+      fileSelected.className = "file-selected show";
+      fileName.textContent   = file.name;
+      fileSize.textContent   = formatBytes(file.size);
+
+      var tag = getTag();
+      uploadBtn.disabled = !tag;
+
+      if (!tag) {
+        showAlert("warn", "Missing Serial Tag. Please open this page from the link in your email.");
+      }
+    }
+
+    /* ── File input change ── */
+    fileInput.addEventListener("change", function() {
+      var file = fileInput.files[0];
+      if (!file) { setFile(null); return; }
+
+      if (!isPdf(file)) {
+        showAlert("error", "Please select a PDF file.");
+        fileInput.value = "";
+        setFile(null);
+        return;
+      }
+
+      setFile(file);
+    });
+
+    /* ── Remove file ── */
+    fileRemove.addEventListener("click", function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      fileInput.value = "";
+      setFile(null);
+    });
+
+    /* ── Drag and drop ── */
+    dropZone.addEventListener("dragover", function(e) {
+      e.preventDefault();
+      dropZone.classList.add("drag-over");
+    });
+
+    dropZone.addEventListener("dragleave", function(e) {
+      if (!dropZone.contains(e.relatedTarget)) {
+        dropZone.classList.remove("drag-over");
+      }
+    });
+
+    dropZone.addEventListener("drop", function(e) {
+      e.preventDefault();
+      dropZone.classList.remove("drag-over");
+
+      var file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (!file) return;
+
+      if (!isPdf(file)) {
+        showAlert("error", "Please select a PDF file.");
+        return;
+      }
+
+      // Assign to input (best-effort for GAS)
+      try {
+        var dt = new DataTransfer();
+        dt.items.add(file);
+        fileInput.files = dt.files;
+      } catch (ex) {}
+
+      setFile(file);
+    });
+
+    /* ── Upload ── */
+    function setBtnLoading(loading) {
+      if (loading) {
+        uploadBtn.classList.add("loading");
+        uploadBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Uploading…';
+      } else {
+        uploadBtn.classList.remove("loading");
+        uploadBtn.innerHTML = '<i class="fas fa-arrow-up-from-bracket"></i> Upload Signed PDF';
+        uploadBtn.disabled = !currentFile || !getTag();
+      }
+    }
+
+    function fileToBase64(file) {
+      return new Promise(function(resolve, reject) {
+        var reader = new FileReader();
+        reader.onerror = function() { reject(new Error("Failed to read file.")); };
+        reader.onload = function() {
+          var dataUrl = String(reader.result || "");
+          var base64  = dataUrl.split(",")[1] || "";
+          resolve(base64);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    window.startUpload = function() {
+      clearAlert();
+
+      var tag  = getTag();
+      var file = currentFile;
+
+      if (!tag) {
+        showAlert("warn", "Missing Serial Tag. Please open this page from the link in your email.");
+        return;
+      }
+
+      if (!file) {
+        showAlert("error", "Please choose a PDF file first.");
+        return;
+      }
+
+      if (!isPdf(file)) {
+        showAlert("error", "Please select a valid PDF file.");
+        return;
+      }
+
+      if (!isGas()) {
+        showAlert("error", "google.script.run not available. Please open this page through the web app.");
+        return;
+      }
+
+      setBtnLoading(true);
+      helperNote.style.display = "none";
+
+      fileToBase64(file).then(function(base64) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            setBtnLoading(false);
+
+            if (!res || res.ok !== true) {
+              showAlert("error", (res && res.error) ? res.error : "Upload failed. Please try again.");
+              helperNote.style.display = "";
+              return;
+            }
+
+            showAlert("success", "Signed PDF uploaded successfully. Thank you!");
+            helperNote.style.display = "none";
+
+            if (res.url) {
+              resultLink.href        = res.url;
+              resultLink.className   = "result-link show";
+            }
+
+            // Lock UI after success
+            fileInput.disabled  = true;
+            uploadBtn.disabled  = true;
+            fileRemove.style.display = "none";
+            dropZone.style.pointerEvents = "none";
+          })
+          .withFailureHandler(function(err) {
+            setBtnLoading(false);
+            helperNote.style.display = "";
+            showAlert("error", (err && err.message) ? err.message : String(err));
+          })
+          .uploadSignedAccountabilityPdf(tag, base64, file.name);
+
+      }).catch(function(e) {
+        setBtnLoading(false);
+        helperNote.style.display = "";
+        showAlert("error", (e && e.message) ? e.message : String(e));
+      });
+    };
+
+    /* ── Init ── */
+    (function init() {
+      var tag = getTag();
+
+      if (tag) {
+        tagChip.style.display = "inline-flex";
+        tagValue.textContent  = tag;
+      } else {
+        tagChip.style.display = "none";
+        showAlert("warn", "Missing Serial Tag. Please open this page from the link in your email.");
+      }
+
+      uploadBtn.disabled = true;
+    })();
+
+  })();
+  </script>

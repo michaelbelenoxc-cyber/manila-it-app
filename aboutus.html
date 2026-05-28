@@ -1,0 +1,840 @@
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      media="print"
+      onload="this.media='all'">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap');
+
+/* ============================================================
+ * TOKENS
+ * ============================================================ */
+:root {
+  --font-display: 'Clash Display', 'Manrope', system-ui, sans-serif;
+  --font-body:    'Manrope', system-ui, sans-serif;
+
+  --t-1: rgba(255,255,255,.95);
+  --t-2: rgba(255,255,255,.52);
+  --t-3: rgba(255,255,255,.28);
+
+  --b-0: rgba(255,255,255,.04);
+  --b-1: rgba(255,255,255,.09);
+  --b-2: rgba(255,255,255,.14);
+
+  --blue:   #3b82f6;
+  --r-xl:   24px;
+  --r-pill: 999px;
+
+  --ease:     cubic-bezier(.22,1,.36,1);
+  --ease-out: cubic-bezier(0.0,0.0,0.2,1);
+}
+
+/* ============================================================
+ * BASE
+ * ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #000; overflow-x: hidden; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--t-1);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (min-width: 900px) {
+  html { scroll-snap-type: y proximity; }
+  section { scroll-snap-align: start; }
+}
+
+/* ============================================================
+ * SCROLL PROGRESS BAR
+ * ============================================================ */
+#scrollBar {
+  position: fixed; top: 0; left: 0;
+  height: 2px; width: 0%;
+  background: linear-gradient(90deg, rgba(59,130,246,.80), rgba(255,255,255,.60));
+  z-index: 9999; pointer-events: none;
+  transition: width .1s linear;
+}
+
+/* ============================================================
+ * SECTIONS
+ * ============================================================ */
+section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 100px 20px 56px;
+  background: #000;
+}
+
+/* ============================================================
+ * REVEAL ANIMATIONS
+ * ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+.is-revealed .reveal {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity .80s var(--ease), transform .80s var(--ease);
+}
+
+.reveal-delay-1 { transition-delay: .10s !important; }
+.reveal-delay-2 { transition-delay: .22s !important; }
+
+/* ============================================================
+ * BACKGROUND IMAGE PANELS
+ * ============================================================ */
+.bg-img {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.06);
+  filter: grayscale(100%) brightness(.9);
+  transition: opacity 1.1s var(--ease), filter 1.1s var(--ease), transform 1.2s var(--ease);
+  will-change: transform, opacity;
+  z-index: 1;
+}
+
+.is-revealed .bg-img {
+  opacity: .38;
+  filter: grayscale(0%) brightness(.85);
+  transform: scale(1);
+}
+
+/* deep vignette over bg */
+.bg-vignette {
+  position: absolute; inset: 0; z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 100% 60% at 50% 100%, rgba(0,0,0,.85) 0%, transparent 70%),
+    radial-gradient(ellipse 100% 40% at 50% 0%,   rgba(0,0,0,.55) 0%, transparent 60%);
+}
+
+/* ============================================================
+ * CONTENT BOX
+ * ============================================================ */
+.content-box {
+  max-width: 860px;
+  text-align: center;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ── Eyebrow label ── */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-body);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--t-3);
+  border: 1px solid var(--b-1);
+  background: rgba(255,255,255,.04);
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.eyebrow i { font-size: 9px; color: var(--blue); }
+
+/* ── Display heading ── */
+.display-title {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 700;
+  line-height: .98;
+  letter-spacing: -.04em;
+  margin: 0;
+  /* Fallback for browsers that don't support background-clip: text */
+  color: #fff;
+  background: linear-gradient(165deg, #ffffff 20%, rgba(255,255,255,.50) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+p.lead {
+  font-size: clamp(15px, 2vw, 20px);
+  color: var(--t-2);
+  line-height: 1.60;
+  margin: 0;
+  max-width: 560px;
+  font-weight: 400;
+}
+
+/* section number ornament */
+.section-num {
+  position: absolute;
+  bottom: 36px; right: 40px;
+  font-family: var(--font-display);
+  font-size: 120px; font-weight: 700;
+  letter-spacing: -.05em;
+  color: rgba(255,255,255,.03);
+  z-index: 3;
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ============================================================
+ * SLIDER
+ * ============================================================ */
+.slider-viewport {
+  position: absolute; inset: 0;
+  overflow: hidden; z-index: 1;
+}
+
+.slider-track {
+  display: flex;
+  width: 100%; height: 100%;
+  transition: transform .85s var(--ease);
+  will-change: transform;
+}
+
+.slide {
+  min-width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: .42;
+  filter: grayscale(100%);
+  transition: filter 1s var(--ease), opacity 1s;
+}
+
+.slide.active { filter: grayscale(0%); opacity: .40; }
+
+/* slider controls */
+.slider-controls {
+  position: absolute; bottom: 40px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(0,0,0,.45);
+  padding: 10px 16px;
+  border-radius: var(--r-pill);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--b-1);
+  z-index: 100;
+  opacity: 0;
+  transition: opacity .4s;
+}
+
+.is-revealed .slider-controls { opacity: 1; }
+
+.nav-btn {
+  cursor: pointer;
+  color: rgba(255,255,255,.75);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--b-1);
+  background: rgba(255,255,255,.06);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  transition: background var(--ease), color var(--ease), transform var(--ease);
+}
+
+.nav-btn:hover { background: rgba(255,255,255,.12); color: #fff; transform: scale(1.06); }
+
+.dots { display: flex; gap: 7px; align-items: center; }
+
+.dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.28);
+  border: 0; padding: 0; cursor: pointer;
+  transition: background .25s, transform .25s, width .25s;
+}
+
+.dot.active {
+  background: #fff;
+  transform: scale(1.2);
+  width: 18px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+ * PRESENTATION EMBED
+ * ============================================================ */
+.presentation-wrap {
+  width: min(1100px, 92vw);
+  display: flex; flex-direction: column;
+  align-items: center; gap: 20px;
+  z-index: 20;
+}
+
+.pres-label {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-body);
+  font-size: 13px; font-weight: 600;
+  color: var(--t-2);
+  letter-spacing: .02em;
+}
+
+.pres-label i { color: var(--blue); font-size: 12px; }
+
+.glass-frame {
+  width: 100%;
+  background: rgba(255,255,255,.025);
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-xl);
+  padding: 8px;
+  box-shadow: 0 40px 100px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.04);
+}
+
+.aspect-box {
+  position: relative; width: 100%;
+  padding-bottom: 56.25%;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #000;
+}
+
+.aspect-box iframe {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border: 0;
+}
+
+.pres-title {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 700;
+  letter-spacing: -.03em;
+  color: var(--t-1);
+  margin: 0;
+  text-align: center;
+}
+
+/* ============================================================
+ * NEWS / UPDATES SECTION
+ * ============================================================ */
+.news-wrap {
+  width: min(940px, 92vw);
+  display: flex; flex-direction: column;
+  gap: 16px; z-index: 20;
+}
+
+.news-section-header {
+  display: flex; align-items: flex-end;
+  justify-content: space-between; gap: 16px;
+  flex-wrap: wrap;
+}
+
+.news-section-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700; letter-spacing: -.04em;
+  /* Fallback */
+  color: #fff;
+  background: linear-gradient(165deg, #ffffff 20%, rgba(255,255,255,.50) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.news-card {
+  background: rgba(255,255,255,.025);
+  border: 1px solid var(--b-1);
+  border-radius: var(--r-xl);
+  padding: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.60);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.news-list {
+  display: grid; gap: 10px;
+  max-height: min(52vh, 480px);
+  overflow-y: auto; padding-right: 4px;
+}
+
+.news-list::-webkit-scrollbar { width: 3px; }
+.news-list::-webkit-scrollbar-track { background: transparent; }
+.news-list::-webkit-scrollbar-thumb { background: var(--b-2); border-radius: 3px; }
+
+.news-item {
+  border: 1px solid var(--b-0);
+  background: rgba(0,0,0,.30);
+  border-radius: 16px; padding: 13px;
+  transition: background var(--ease), border-color var(--ease);
+}
+
+.news-item:hover {
+  background: rgba(255,255,255,.04);
+  border-color: var(--b-1);
+}
+
+.news-topline {
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 10px;
+  margin-bottom: 6px; flex-wrap: wrap;
+}
+
+.news-title-text {
+  font-family: var(--font-body);
+  font-weight: 700; letter-spacing: -.01em;
+  font-size: 14px; color: var(--t-1);
+}
+
+.news-date {
+  color: var(--t-3);
+  font-size: 12px; white-space: nowrap;
+  font-weight: 500;
+}
+
+.news-body {
+  color: var(--t-2); font-size: 13px;
+  line-height: 1.5; margin: 0;
+}
+
+.badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 700; padding: 5px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--b-1);
+  background: rgba(255,255,255,.05);
+  color: var(--t-2);
+  letter-spacing: .04em;
+}
+
+.badge-update  { border-color: rgba(59,130,246,.30);  background: rgba(59,130,246,.08);  color: #93c5fd; }
+.badge-feature { border-color: rgba(74,222,128,.30);  background: rgba(74,222,128,.08);  color: #86efac; }
+.badge-reminder{ border-color: rgba(251,191,36,.30);  background: rgba(251,191,36,.08);  color: #fde68a; }
+
+/* news empty state */
+.news-empty {
+  text-align: center; padding: 32px 16px;
+  color: var(--t-3); font-size: 13px;
+  font-family: var(--font-body);
+}
+
+/* ============================================================
+ * UTILITIES
+ * ============================================================ */
+.skip-link {
+  position: absolute; left: -9999px; top: auto;
+  width: 1px; height: 1px; overflow: hidden;
+}
+
+.skip-link:focus {
+  left: 16px; top: 16px;
+  width: auto; height: auto;
+  padding: 10px 14px; border-radius: 12px;
+  background: rgba(0,0,0,.85);
+  border: 1px solid var(--b-2);
+  color: var(--t-1); text-decoration: none; z-index: 99999;
+}
+
+:focus { outline: none; }
+:focus-visible { outline: 3px solid rgba(59,130,246,.45); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .bg-img, .slide, .slider-track, .slider-controls {
+    transition: none !important;
+  }
+  .is-revealed .reveal { opacity: 1; transform: none; }
+}
+
+@media (max-width: 720px) {
+  .slider-controls { bottom: 20px; padding: 8px 12px; gap: 8px; }
+  .section-num { font-size: 80px; bottom: 20px; right: 20px; }
+}
+</style>
+
+
+<a class="skip-link" href="#section-news">Skip to updates</a>
+<div id="scrollBar" aria-hidden="true"></div>
+
+<main>
+
+  <!-- ── 01 Hero ── -->
+  <section id="section-hero" aria-label="Hero">
+    <div class="bg-img" data-bg="https://i.imgur.com/jfzs4Bj.jpeg" aria-hidden="true"></div>
+    <div class="bg-vignette" aria-hidden="true"></div>
+    <div class="section-num" aria-hidden="true">01</div>
+
+    <div class="content-box reveal">
+      <div class="eyebrow reveal reveal-delay-1">
+        <i class="fas fa-circle-dot"></i> Manila IT · Inventory System
+      </div>
+      <h1 class="display-title reveal reveal-delay-2">Infinite<br>Precision.</h1>
+      <p class="lead reveal reveal-delay-2">Tracking every bit with uncompromising detail.</p>
+    </div>
+  </section>
+
+  <!-- ── 02 About / Slider ── -->
+  <section id="section-about" aria-label="About">
+    <div class="slider-viewport"
+         aria-label="Photo slideshow"
+         role="region"
+         aria-roledescription="carousel">
+      <div class="slider-track" id="sliderTrack" aria-live="polite">
+        <div class="slide active" data-bg="https://i.imgur.com/ofwcSXU.jpeg" role="img" aria-label="Slide 1"></div>
+        <div class="slide"        data-bg="https://i.imgur.com/mnpLect.jpeg" role="img" aria-label="Slide 2"></div>
+        <div class="slide"        data-bg="https://i.imgur.com/jfzs4Bj.jpeg" role="img" aria-label="Slide 3"></div>
+      </div>
+    </div>
+    <div class="bg-vignette" aria-hidden="true"></div>
+    <div class="section-num" aria-hidden="true">02</div>
+
+    <div class="content-box reveal">
+      <div class="eyebrow">
+        <i class="fas fa-cloud"></i> Infrastructure
+      </div>
+      <h2 class="display-title">Cloud<br>Native.</h2>
+      <p class="lead">Real-time collaboration across the globe.</p>
+    </div>
+
+    <div class="slider-controls" role="group" aria-label="Slide controls">
+      <button class="nav-btn" id="prevBtn" aria-label="Previous slide">
+        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+      </button>
+      <div class="dots" id="dotContainer" role="tablist" aria-label="Slide navigation"></div>
+      <button class="nav-btn" id="nextBtn" aria-label="Next slide">
+        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </section>
+
+  <!-- ── 03 Team ── -->
+  <section id="section-team" aria-label="Team">
+    <div class="bg-img" data-bg="https://i.imgur.com/mnpLect.jpeg" aria-hidden="true"></div>
+    <div class="bg-vignette" aria-hidden="true"></div>
+    <div class="section-num" aria-hidden="true">03</div>
+
+    <div class="content-box reveal">
+      <div class="eyebrow">
+        <i class="fas fa-users"></i> Our People
+      </div>
+      <h2 class="display-title">Team<br>Driven.</h2>
+      <p class="lead">Empowering IT managers to focus on innovation.</p>
+    </div>
+  </section>
+
+  <!-- ── 04 Presentation ── -->
+  <section id="section-presentation" aria-label="Presentation">
+    <div class="section-num" aria-hidden="true">04</div>
+
+    <div class="presentation-wrap reveal">
+      <div class="pres-label">
+        <i class="fas fa-presentation-screen"></i>
+        IT Strategy Deck
+      </div>
+      <div class="glass-frame">
+        <div class="aspect-box">
+          <iframe
+            title="IT Strategy 2026"
+            data-src="https://docs.google.com/presentation/d/e/2PACX-1vRsHDT9oIrSrKC4FN4CkWJAuYcjHCbUk50XCaCquRJnquL3nYPsqazMoDUvME0da9OO1vKEIx1T_yjd/pubembed?start=false&loop=false&delayms=3000"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+            sandbox="allow-same-origin allow-scripts allow-presentation"
+          ></iframe>
+        </div>
+      </div>
+      <h2 class="pres-title">IT Strategy 2026</h2>
+    </div>
+  </section>
+
+  <!-- ── 05 News / Updates ── -->
+  <section id="section-news" aria-label="Updates">
+    <div class="section-num" aria-hidden="true">05</div>
+
+    <div class="news-wrap reveal">
+      <div class="news-section-header">
+        <h2 class="news-section-title">Latest<br>Updates.</h2>
+        <div class="eyebrow">
+          <i class="fas fa-newspaper"></i> IT Announcements
+        </div>
+      </div>
+      <div class="news-card">
+        <div class="news-list" id="newsList" role="feed" aria-label="IT announcements"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ── News data ── */
+  const NEWS = [
+    { date: '2025-12-20', title: 'Inventory sync improved',  tag: 'Update',   body: 'Reduced duplicate entries during spreadsheet imports. Report any mismatches to IT Ops.' },
+    { date: '2025-12-08', title: 'New asset fields added',   tag: 'Feature',  body: 'Added Warranty Expiry and Device Condition for better lifecycle tracking.' },
+    { date: '2025-11-30', title: 'Policy reminder',          tag: 'Reminder', body: 'All loaner devices must be returned within 7 days unless extended by approval.' },
+  ];
+
+  /* ── Constants ── */
+  const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── Utils ── */
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  const fmtDate = iso => new Date(iso + 'T00:00:00')
+    .toLocaleDateString(undefined, { year:'numeric', month:'short', day:'2-digit' });
+
+  /* ── Scroll progress bar ── */
+  const scrollBar = $('scrollBar');
+  function updateScrollBar() {
+    if (!scrollBar) return;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    scrollBar.style.width = (max > 0 ? (scrollY / max) * 100 : 0).toFixed(2) + '%';
+  }
+
+  /* ── Parallax — cache active bg-img elements ── */
+  let cachedParallaxEls = null;
+  function updateParallax() {
+    if (!cachedParallaxEls) {
+      cachedParallaxEls = document.querySelectorAll('section.is-active .bg-img');
+    }
+    cachedParallaxEls.forEach(el => {
+      const sec = el.closest('section');
+      const { top, height } = sec.getBoundingClientRect();
+      const t = Math.max(-1, Math.min(1, (top + height / 2 - innerHeight / 2) / (innerHeight / 2)));
+      el.style.transform = `scale(1.04) translate3d(${(t * 6).toFixed(1)}px, ${(-t * 14).toFixed(1)}px, 0)`;
+    });
+  }
+
+  /* ── Throttled scroll handler (registered ONCE) ── */
+  let ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      updateScrollBar();
+      updateParallax();
+      ticking = false;
+    });
+  }
+
+  /* ── Reveal + lazy load ── */
+  function initReveal() {
+    const revealObs = new IntersectionObserver((entries, obs) => {
+      entries.forEach(({ isIntersecting, target }) => {
+        if (!isIntersecting) return;
+        target.classList.add('is-revealed');
+
+        // Lazy backgrounds
+        target.querySelectorAll('[data-bg]').forEach(el => {
+          el.style.backgroundImage = `url('${el.dataset.bg}')`;
+          delete el.dataset.bg;
+        });
+
+        // Lazy iframes
+        target.querySelectorAll('iframe[data-src]').forEach(iframe => {
+          iframe.src = iframe.dataset.src;
+          delete iframe.dataset.src;
+        });
+
+        obs.unobserve(target);
+      });
+    }, { threshold: 0.18 });
+
+    document.querySelectorAll('section').forEach(s => revealObs.observe(s));
+  }
+
+  /* ── Active section observer ─────────────────────────────────
+   * Also invalidates the parallax cache whenever active changes
+   * ----------------------------------------------------------- */
+  function initActiveSection() {
+    const activeObs = new IntersectionObserver(entries => {
+      entries.forEach(({ target, isIntersecting }) => {
+        target.classList.toggle('is-active', isIntersecting);
+        cachedParallaxEls = null; // bust cache so next frame re-queries
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('section').forEach(s => activeObs.observe(s));
+  }
+
+  /* ── Slider ──────────────────────────────────────────────────
+   * Fixes:
+   *  - Auto-advances only after section is revealed
+   *  - Touch / swipe support
+   *  - Keyboard only active when slider section is in view
+   * ----------------------------------------------------------- */
+  function initSlider() {
+    const track   = $('sliderTrack');
+    const dotWrap = $('dotContainer');
+    if (!track || !dotWrap) return;
+
+    const slides = [...track.querySelectorAll('.slide')];
+    const n      = slides.length;
+    const DELAY  = 5500;
+
+    const state = { idx: 0, locked: false, timer: null, sectionVisible: false };
+
+    // Build dots
+    slides.forEach((_, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'dot' + (i === 0 ? ' active' : '');
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `Go to slide ${i + 1}`);
+      btn.setAttribute('role', 'tab');
+      btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+      btn.addEventListener('click', () => goTo(i));
+      dotWrap.appendChild(btn);
+    });
+
+    function syncUI() {
+      track.style.transform = `translateX(-${state.idx * 100}%)`;
+      slides.forEach((s, i) => s.classList.toggle('active', i === state.idx));
+      [...dotWrap.querySelectorAll('.dot')].forEach((d, i) => {
+        const active = i === state.idx;
+        d.classList.toggle('active', active);
+        d.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+    }
+
+    function goTo(i, fromAuto = false) {
+      if (state.locked || i < 0 || i >= n) return;
+      state.locked = true;
+      state.idx = i;
+      syncUI();
+      setTimeout(() => { state.locked = false; }, 650);
+      if (!fromAuto) restartAuto();
+    }
+
+    function move(dir) { goTo((state.idx + dir + n) % n); }
+
+    function startAuto() {
+      if (prefersReducedMotion || !state.sectionVisible) return;
+      state.timer = setInterval(() => goTo((state.idx + 1) % n, true), DELAY);
+    }
+    function stopAuto()    { clearInterval(state.timer); state.timer = null; }
+    function restartAuto() { stopAuto(); startAuto(); }
+
+    // Start/stop auto based on section visibility
+    const sliderSection = document.querySelector('#section-about');
+    if (sliderSection) {
+      new IntersectionObserver(([entry]) => {
+        state.sectionVisible = entry.isIntersecting;
+        state.sectionVisible ? startAuto() : stopAuto();
+      }, { threshold: 0.4 }).observe(sliderSection);
+    }
+
+    // Controls
+    $('prevBtn')?.addEventListener('click', () => move(-1));
+    $('nextBtn')?.addEventListener('click', () => move(1));
+
+    // Keyboard — only fires when slider section is visible
+    document.addEventListener('keydown', e => {
+      if (!state.sectionVisible) return;
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); move(-1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); move(1); }
+    });
+
+    // Touch / swipe support
+    let touchStartX = 0;
+    const vp = document.querySelector('.slider-viewport');
+    if (vp) {
+      vp.addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].clientX;
+      }, { passive: true });
+
+      vp.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 40) move(dx < 0 ? 1 : -1);
+      }, { passive: true });
+
+      vp.addEventListener('mouseenter', stopAuto,  { passive: true });
+      vp.addEventListener('mouseleave', startAuto, { passive: true });
+      vp.addEventListener('focusin',    stopAuto);
+      vp.addEventListener('focusout',   startAuto);
+    }
+
+    document.addEventListener('visibilitychange', () =>
+      document.hidden ? stopAuto() : startAuto());
+  }
+
+  /* ── News renderer ── */
+  function renderNews() {
+    const list = $('newsList');
+    if (!list) return;
+
+    if (!NEWS.length) {
+      list.innerHTML = '<div class="news-empty"><i class="fas fa-inbox" style="display:block;font-size:22px;margin-bottom:8px;opacity:.3;"></i>No updates yet.</div>';
+      return;
+    }
+
+    const tagClass = tag => ({
+      Update:   'badge-update',
+      Feature:  'badge-feature',
+      Reminder: 'badge-reminder',
+    }[tag] || '');
+
+    list.innerHTML = NEWS.map(item => `
+      <article class="news-item" aria-label="${esc(item.title)}">
+        <div class="news-topline">
+          <span class="news-title-text">${esc(item.title)}</span>
+          <span class="news-date">${fmtDate(item.date)}</span>
+        </div>
+        <div style="margin-bottom:7px;">
+          <span class="badge ${tagClass(item.tag)}">${esc(item.tag)}</span>
+        </div>
+        <p class="news-body">${esc(item.body)}</p>
+      </article>
+    `).join('');
+  }
+
+  /* ── Activity log ── */
+  function logActivity() {
+    if (!window.google?.script?.run) return;
+    const email = sessionStorage.getItem('user_email') || 'anonymous';
+    try {
+      google.script.run.logActivity(email, 'Page View', 'About Us', 'Info');
+    } catch (err) {
+      console.warn('[About] logActivity failed:', err);
+    }
+  }
+
+  /* ── Init ── */
+  let __pageInitialized = false;
+
+  function init() {
+    if (__pageInitialized) return;
+    __pageInitialized = true;
+
+    initReveal();
+    initActiveSection();
+    initSlider();
+    renderNews();
+
+    // Single scroll listener registration
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+
+    // Run once on load
+    onScroll();
+
+    setTimeout(() => { logActivity(); }, 1200);
+  }
+
+  /* Exposed for SPA re-navigation */
+  window.__ABOUT_REINIT__ = function() {
+    __pageInitialized = false;
+    cachedParallaxEls = null;
+    init();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+</script>

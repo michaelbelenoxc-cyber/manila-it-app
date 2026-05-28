@@ -1,0 +1,4036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procurement Tracker</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+// Load Chart.js with proper onload/onerror handling and diagnostic logs.
+// Exposes window.__chartJsReady as a Promise that resolves with the loaded
+// Chart constructor, or rejects if all CDNs fail.
+(function loadChartJs(){
+  var urls = [
+    'https://cdn.jsdelivr.net/npm/chart.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
+    'https://unpkg.com/chart.js@4.4.1/dist/chart.umd.min.js'
+  ];
+
+  window.__chartJsReady = new Promise(function(resolve, reject){
+    var i = 0;
+    var tryNext = function(){
+      if (window.Chart) { console.log('[PROCUREMENT] Chart.js ready'); return resolve(window.Chart); }
+      if (i >= urls.length){
+        console.error('[PROCUREMENT] Chart.js failed from all CDNs:', urls);
+        return reject(new Error('All Chart.js CDNs failed'));
+      }
+      var url = urls[i++];
+      console.log('[PROCUREMENT] Attempting Chart.js from:', url);
+      var s = document.createElement('script');
+      s.src = url;
+      s.onload  = function(){
+        if (window.Chart) {
+          console.log('[PROCUREMENT] Chart.js loaded successfully from:', url);
+          resolve(window.Chart);
+        } else {
+          console.warn('[PROCUREMENT] Script loaded but window.Chart undefined:', url);
+          tryNext();
+        }
+      };
+      s.onerror = function(e){
+        console.warn('[PROCUREMENT] Failed to load from:', url, e);
+        tryNext();
+      };
+      document.head.appendChild(s);
+    };
+    tryNext();
+  });
+
+  window.__chartJsReady.catch(function(){ /* swallow — analytics has fallback */ });
+})();
+</script>
+<style>
+/* ============================================================
+ * FONTS
+ * ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --font-ui:   'Epilogue', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+  /* surfaces — warm paper (light default) */
+  --bg-1: #f5f2ec;
+  --bg-2: #ede9e1;
+  --bg-3: #e4ded4;
+  --bg-4: #ddd6ca;
+
+  /* borders */
+  --b-1: rgba(26,24,20,.12);
+  --b-2: rgba(26,24,20,.18);
+  --b-3: rgba(26,24,20,.28);
+
+  /* text */
+  --t-1: rgba(26,24,20,.95);
+  --t-2: rgba(74,71,64,.75);
+  --t-3: rgba(138,134,128,.60);
+
+  /* accents */
+  --blue:   #2857a4;
+  --blue-d: rgba(40,87,164,.10);
+  --blue-b: rgba(40,87,164,.30);
+  --green:  #16a34a;
+  --amber:  #b45309;
+  --red:    #c94040;
+
+  /* geometry */
+  --r-lg:  10px;
+  --r-md:   7px;
+  --r-sm:   5px;
+  --r-pill: 999px;
+
+  /* status badge vars — light mode */
+  --s1: #5046e4; --s1-bg: rgba(80,70,228,.09); --s1-b: rgba(80,70,228,.22);
+  --s2: #b45309; --s2-bg: rgba(180,83,9,.09);  --s2-b: rgba(180,83,9,.22);
+  --s3: #16a34a; --s3-bg: rgba(22,163,74,.09); --s3-b: rgba(22,163,74,.22);
+  --s4: #2857a4; --s4-bg: rgba(40,87,164,.09); --s4-b: rgba(40,87,164,.22);
+  --s5: #6d28d9; --s5-bg: rgba(109,40,217,.09);--s5-b: rgba(109,40,217,.22);
+  --s6: #be185d; --s6-bg: rgba(190,24,93,.09); --s6-b: rgba(190,24,93,.22);
+
+  /* shadows */
+  --sh-0: 0 1px 3px rgba(26,24,20,.08);
+  --sh-1: 0 4px 16px rgba(26,24,20,.10);
+  --sh-2: 0 8px 32px rgba(26,24,20,.12);
+}
+
+/* ── Dark mode ─────────────────────────────── */
+html[data-theme="dark"] {
+  --bg-1: #1a1814; --bg-2: #1e1c18; --bg-3: #252220; --bg-4: #2c2a26;
+  --b-1: rgba(240,236,227,.10); --b-2: rgba(240,236,227,.16); --b-3: rgba(240,236,227,.26);
+  --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.75); --t-3: rgba(106,100,92,.60);
+  --blue-d: rgba(40,87,164,.16); --blue-b: rgba(40,87,164,.40);
+  --s1: #7c74f5; --s1-bg: rgba(124,116,245,.12); --s1-b: rgba(124,116,245,.28);
+  --s2: #fbbf24; --s2-bg: rgba(245,158,11,.12);  --s2-b: rgba(245,158,11,.28);
+  --s3: #4ade80; --s3-bg: rgba(74,222,128,.11);  --s3-b: rgba(74,222,128,.26);
+  --s4: #5b85c8; --s4-bg: rgba(40,87,164,.14);   --s4-b: rgba(40,87,164,.32);
+  --s5: #a78bfa; --s5-bg: rgba(167,139,250,.12); --s5-b: rgba(167,139,250,.28);
+  --s6: #f472b6; --s6-bg: rgba(244,114,182,.12); --s6-b: rgba(244,114,182,.28);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-ui);
+  color: var(--t-1);
+  background: transparent;
+  -webkit-font-smoothing: antialiased;
+  padding-top: 80px;
+}
+
+/* ── PAGE HEADER ── */
+.ph {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; flex-wrap: wrap;
+  gap: 12px; padding: 16px 20px 12px;
+}
+
+.ph-title {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 20px; font-weight: 400;
+  letter-spacing: -.02em; margin-bottom: 2px;
+}
+
+.ph-sub {
+  font-size: 12px; color: var(--t-3);
+  font-family: var(--font-mono); margin-bottom: 8px;
+  letter-spacing: .02em;
+}
+
+.ph-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 2px 9px; border-radius: var(--r-pill);
+  border: 1px solid var(--b-1); background: var(--bg-3);
+  color: var(--t-3); font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: .04em;
+}
+
+.ph-right { display: flex; gap: 7px; flex-wrap: wrap; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: var(--r-lg);
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 500;
+  letter-spacing: .04em;
+  cursor: pointer; white-space: nowrap;
+  border: none; transition: background .13s;
+}
+
+.btn:disabled { opacity: .40; cursor: not-allowed; }
+.btn i { font-size: 10px; }
+
+.btn-ghost {
+  background: var(--bg-2); border: 1px solid var(--b-1); color: var(--t-2);
+}
+.btn-ghost:hover:not(:disabled) { background: var(--bg-3); border-color: var(--b-2); color: var(--t-1); }
+
+.btn-primary {
+  background: var(--blue-d); border: 1px solid var(--blue-b);
+  color: var(--blue); font-weight: 600;
+}
+html[data-theme="dark"] .btn-primary { color: #5b85c8; }
+.btn-primary:hover:not(:disabled) { background: rgba(40,87,164,.16); }
+
+.btn-danger {
+  background: rgba(201,64,64,.09); border: 1px solid rgba(201,64,64,.22);
+  color: var(--red);
+}
+html[data-theme="dark"] .btn-danger { color: #f87171; }
+.btn-danger:hover:not(:disabled) { background: rgba(201,64,64,.16); }
+
+.btn-sm { padding: 4px 9px; font-size: 10.5px; }
+
+/* ── KPI GRID ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 7px; padding: 12px 20px;
+}
+
+@media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 640px)  { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.kpi {
+  border-radius: var(--r-lg); padding: 10px 11px;
+  border: 1px solid var(--b-1); background: var(--bg-2);
+  position: relative; overflow: hidden;
+}
+
+.kpi::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 0;
+  width: 3px; background: var(--kc, #2857a4);
+}
+
+.kpi-ico {
+  width: 22px; height: 22px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; margin-bottom: 7px;
+  background: color-mix(in srgb, var(--kc, #2857a4) 12%, transparent);
+  color: var(--kc, #2857a4);
+}
+
+.kpi-lbl {
+  color: var(--t-3); font-size: 8.5px; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: 3px; font-family: var(--font-mono);
+}
+
+.kpi-val {
+  font-size: 20px; font-weight: 700;
+  line-height: 1; font-family: var(--font-mono);
+}
+
+.kpi-sub {
+  font-size: 9px; color: var(--t-3);
+  font-family: var(--font-mono); margin-top: 2px;
+}
+
+/* ── STATUS BANNER ── */
+#statusBanner {
+  display: none; margin: 0 20px 10px;
+  padding: 9px 13px; border-radius: var(--r-lg);
+  font-size: 11.5px; font-family: var(--font-mono);
+}
+
+#statusBanner.show { display: block; }
+#statusBanner.info  { background: rgba(40,87,164,.08); border: 1px solid var(--blue-b); color: var(--blue); }
+html[data-theme="dark"] #statusBanner.info { color: #5b85c8; }
+#statusBanner.warn  { background: rgba(180,83,9,.08); border: 1px solid rgba(180,83,9,.28); color: var(--amber); }
+html[data-theme="dark"] #statusBanner.warn { color: #fbbf24; }
+#statusBanner.error { background: rgba(201,64,64,.08); border: 1px solid rgba(201,64,64,.26); color: var(--red); }
+html[data-theme="dark"] #statusBanner.error { color: #f87171; }
+
+/* ── BULK BAR ── */
+.bulkbar {
+  display: none; align-items: center; gap: 9px;
+  padding: 9px 13px; margin: 0 20px 7px;
+  border-radius: var(--r-lg);
+  background: var(--blue-d); border: 1px solid var(--blue-b);
+}
+
+.bulkbar.show { display: flex; }
+.bulkbar-count {
+  font-size: 11px; font-weight: 700; color: var(--blue);
+  font-family: var(--font-mono); margin-right: auto;
+}
+html[data-theme="dark"] .bulkbar-count { color: #5b85c8; }
+.bulkbar select.ci { height: 26px; font-size: 10.5px; }
+
+/* ── FILTER BAR ── */
+.fbar {
+  display: flex; flex-wrap: wrap; gap: 7px;
+  padding: 10px 20px; align-items: center;
+}
+
+.sw { position: relative; }
+.sw i { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--t-3); font-size: 10px; }
+
+.ci {
+  height: 31px; padding: 0 9px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--b-1);
+  background: var(--bg-2);
+  color: var(--t-1);
+  font-family: var(--font-mono);
+  font-size: 11px; outline: none;
+}
+
+.ci:focus { border-color: var(--blue-b); }
+.sw input.ci { padding-left: 26px; min-width: 190px; }
+select.ci { cursor: pointer; }
+.ci option { background: var(--bg-2); color: var(--t-1); }
+
+/* ── TABLE ── */
+.tw {
+  margin: 0 20px 5px; border-radius: var(--r-lg);
+  border: 1px solid var(--b-1); background: var(--bg-2); overflow-x: auto;
+  overflow-y: visible;
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; overflow: visible; }
+
+thead th {
+  padding: 9px 11px; font-size: 8.5px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--t-3); background: var(--bg-1);
+  border-bottom: 1px solid var(--b-1);
+  text-align: left; font-family: var(--font-mono); white-space: nowrap;
+}
+
+html[data-theme="dark"] thead th { background: var(--bg-1); }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: rgba(40,87,164,.04); }
+html[data-theme="dark"] tbody tr:hover td { background: rgba(40,87,164,.07); }
+
+tbody tr.overdue td:first-child { border-left: 2px solid var(--amber); }
+html[data-theme="dark"] tbody tr.overdue td:first-child { border-left-color: #fbbf24; }
+
+.mono   { font-family: var(--font-mono); font-size: 11px; }
+.muted  { color: var(--t-2); }
+.fw7    { font-weight: 700; }
+.amt    { font-family: var(--font-mono); font-weight: 700; }
+.amt0   { color: var(--t-3); font-family: var(--font-mono); }
+
+.ec {
+  text-align: center; padding: 34px 16px !important;
+  color: var(--t-3) !important;
+  font-size: 11.5px !important; font-family: var(--font-mono);
+}
+
+.ec.err { color: var(--red) !important; }
+html[data-theme="dark"] .ec.err { color: #f87171 !important; }
+
+/* ── STATUS BADGES ── */
+.sb {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 2px 8px; border-radius: var(--r-pill);
+  font-size: 9.5px; font-weight: 700;
+  font-family: var(--font-mono); border: 1px solid transparent;
+  white-space: nowrap; letter-spacing: .04em;
+}
+
+.sb .dot { width: 5px; height: 5px; border-radius: 50%; }
+
+.s1-b { background: var(--s1-bg); color: var(--s1); border-color: var(--s1-b); }
+.s2-b { background: var(--s2-bg); color: var(--s2); border-color: var(--s2-b); }
+.s3-b { background: var(--s3-bg); color: var(--s3); border-color: var(--s3-b); }
+.s4-b { background: var(--s4-bg); color: var(--s4); border-color: var(--s4-b); }
+.s5-b { background: var(--s5-bg); color: var(--s5); border-color: var(--s5-b); }
+.s6-b { background: var(--s6-bg); color: var(--s6); border-color: var(--s6-b); }
+
+/* ── PRIORITY BADGES ── */
+.pb {
+  display: inline-flex; padding: 2px 7px; border-radius: var(--r-pill);
+  font-size: 9px; font-weight: 700;
+  font-family: var(--font-mono); border: 1px solid transparent;
+}
+
+.pph {
+  background: rgba(201,64,64,.09); color: var(--red);
+  border-color: rgba(201,64,64,.20);
+}
+.ppm {
+  background: rgba(180,83,9,.09); color: var(--amber);
+  border-color: rgba(180,83,9,.20);
+}
+.ppl {
+  background: rgba(107,114,128,.09); color: var(--t-3);
+  border-color: rgba(107,114,128,.18);
+}
+html[data-theme="dark"] .pph { color: #f87171; }
+html[data-theme="dark"] .ppm { color: #fbbf24; }
+
+/* ── ACTION BUTTONS ── */
+.ra { display: flex; gap: 4px; }
+
+.ab {
+  width: 26px; height: 26px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--b-1); background: transparent;
+  color: var(--t-3); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; transition: all .13s;
+}
+
+.ab:hover { background: var(--bg-3); color: var(--t-1); }
+.ab.edit:hover  { color: var(--blue); border-color: var(--blue-b); background: var(--blue-d); }
+.ab.del:hover   { color: var(--red);  border-color: rgba(201,64,64,.22); background: rgba(201,64,64,.08); }
+html[data-theme="dark"] .ab.edit:hover { color: #5b85c8; }
+html[data-theme="dark"] .ab.del:hover  { color: #f87171; }
+
+/* ── PAGINATION ── */
+.pager {
+  display: flex; align-items: center; gap: 6px;
+  padding: 9px 20px; border-top: 1px solid var(--b-1);
+  flex-wrap: wrap; justify-content: flex-end;
+}
+
+.pager-info {
+  font-size: 10.5px; color: var(--t-3);
+  font-family: var(--font-mono); margin-right: auto;
+}
+
+/* ── QUICK STATUS MENU ── */
+.qs-wrap { position: relative; display: inline-block; }
+.qs-btn  { cursor: pointer; transition: filter .13s; }
+.qs-btn:hover { filter: brightness(1.18); }
+
+.qs-menu {
+  display: none; position: fixed; top: 0; left: 0;
+  z-index: 2147483647; background: var(--bg-3);
+  border: 1px solid var(--b-2); border-radius: var(--r-md);
+  padding: 4px; min-width: 195px;
+  box-shadow: var(--sh-2);
+}
+
+.qs-menu.open { display: block; }
+
+.qs-item {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px 9px; border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 500; cursor: pointer;
+  color: var(--t-2); transition: all .13s;
+}
+
+.qs-item:hover { background: var(--b-1); color: var(--t-1); }
+.qs-item .qdot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* ── VIEW TOGGLE ── */
+.view-seg {
+  display: inline-flex; height: 31px; padding: 2px;
+  background: var(--bg-2); border: 1px solid var(--b-1);
+  border-radius: var(--r-lg); gap: 2px;
+}
+
+.vsb {
+  width: 30px; height: 25px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent; color: var(--t-3);
+  font-size: 11px; border-radius: calc(var(--r-lg) - 2px);
+  cursor: pointer; transition: all .13s;
+}
+
+.vsb:hover { color: var(--t-1); }
+.vsb.active { background: var(--blue-d); color: var(--blue); }
+html[data-theme="dark"] .vsb.active { color: #5b85c8; }
+
+/* ── PIPELINE VIEW ── */
+#pv { display: none; padding: 10px 20px 18px; overflow-x: auto; }
+#pv.show { display: block; }
+#tvWrap.hide { display: none; }
+
+.pb-board { display: flex; gap: 9px; min-width: max-content; }
+.pc { width: 230px; flex-shrink: 0; }
+
+.pc-hd {
+  padding: 7px 10px;
+  border-radius: var(--r-md) var(--r-md) 0 0; margin-bottom: 4px;
+  display: flex; justify-content: space-between;
+  font-size: 9px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .12em;
+  font-family: var(--font-mono);
+}
+
+.pc-cnt {
+  background: rgba(26,24,20,.18); border-radius: var(--r-pill);
+  padding: 1px 7px; font-size: 9.5px;
+}
+
+html[data-theme="dark"] .pc-cnt { background: rgba(255,255,255,.16); }
+
+.pk {
+  background: var(--bg-2); border: 1px solid var(--b-1);
+  border-radius: var(--r-md); padding: 9px 10px;
+  margin-bottom: 4px; cursor: pointer; transition: all .13s;
+}
+
+.pk:hover { background: var(--bg-3); border-color: var(--b-2); transform: translateY(-1px); }
+.pk.overdue-card { border-left: 2px solid var(--amber); }
+html[data-theme="dark"] .pk.overdue-card { border-left-color: #fbbf24; }
+
+.pk-v { font-size: 11.5px; font-weight: 700; margin-bottom: 2px; }
+.pk-i { font-size: 10.5px; color: var(--t-2); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pk-a { font-size: 11.5px; font-weight: 700; color: var(--blue); font-family: var(--font-mono); }
+html[data-theme="dark"] .pk-a { color: #5b85c8; }
+.pk-m { font-size: 9px; color: var(--t-3); margin-top: 5px; display: flex; justify-content: space-between; font-family: var(--font-mono); }
+
+/* ── MODAL ── */
+.mo {
+  display: none; position: fixed; inset: 0;
+  background: rgba(26,24,20,.45);
+  backdrop-filter: blur(5px);
+  z-index: 99999; align-items: center; justify-content: center; padding: 20px;
+}
+
+html[data-theme="dark"] .mo { background: rgba(0,0,0,.60); backdrop-filter: blur(8px); }
+.mo.open { display: flex; }
+
+.md {
+  background: var(--bg-1);
+  border: 1px solid var(--b-2); border-radius: var(--r-lg);
+  width: 100%; max-width: 660px; max-height: 92vh; overflow-y: auto;
+}
+
+.md.sm { max-width: 420px; }
+.md.lg { max-width: 960px; }
+.md.xl { max-width: 1160px; }
+
+.md-hd {
+  padding: 16px 18px 12px;
+  display: flex; justify-content: space-between;
+  border-bottom: 1px solid var(--b-1);
+  background: var(--bg-0, var(--bg-2));
+}
+
+html[data-theme="dark"] .md-hd { background: rgba(0,0,0,.08); }
+
+.md-title {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 16px; font-weight: 400; letter-spacing: -.01em;
+}
+
+.md-sub { font-size: 10.5px; color: var(--t-3); margin-top: 2px; font-family: var(--font-mono); }
+
+.md-x {
+  width: 26px; height: 26px; border-radius: var(--r-md);
+  border: 1px solid var(--b-1); background: transparent;
+  color: var(--t-3); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px;
+}
+.md-x:hover { background: var(--bg-3); color: var(--t-1); }
+
+.md-body { padding: 14px 18px; }
+
+.md-foot {
+  padding: 11px 18px; border-top: 1px solid var(--b-1);
+  display: flex; justify-content: flex-end; gap: 7px;
+}
+
+/* form */
+.fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.fg3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.fg1 { margin-bottom: 10px; }
+.fg  { display: flex; flex-direction: column; gap: 4px; }
+
+@media (max-width: 520px) { .fg2, .fg3 { grid-template-columns: 1fr; } }
+
+.fl {
+  font-size: 9px; font-weight: 700; color: var(--t-3);
+  letter-spacing: .12em; text-transform: uppercase;
+  font-family: var(--font-mono);
+}
+
+.fl .req { color: var(--red); }
+html[data-theme="dark"] .fl .req { color: #f87171; }
+
+.fc {
+  width: 100%; height: 32px; padding: 0 9px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--b-1); background: var(--bg-2);
+  color: var(--t-1); font-family: var(--font-ui); font-size: 12.5px; outline: none;
+  transition: border-color .13s;
+}
+
+.fc:focus { border-color: var(--blue-b); }
+.fc option { background: var(--bg-2); color: var(--t-1); }
+textarea.fc { height: auto; padding: 7px 9px; min-height: 64px; resize: vertical; }
+
+.ftip { font-size: 11px; font-family: var(--font-mono); color: var(--red); min-height: 14px; margin-top: 7px; }
+html[data-theme="dark"] .ftip { color: #f87171; }
+
+/* kv details */
+.kv {
+  display: flex; justify-content: space-between;
+  padding: 6px 0; border-bottom: 1px solid var(--b-1); gap: 13px;
+}
+
+.kv:last-child { border-bottom: none; }
+.kvl { font-size: 9px; font-weight: 700; color: var(--t-3); font-family: var(--font-mono); letter-spacing: .10em; text-transform: uppercase; }
+.kvv { font-size: 12.5px; font-weight: 600; text-align: right; }
+
+/* ── TOAST ── */
+#th {
+  position: fixed; bottom: 16px; right: 16px;
+  z-index: 999999; display: flex; flex-direction: column; gap: 5px;
+}
+
+.ti {
+  padding: 8px 12px; border-radius: var(--r-lg);
+  background: var(--bg-2); border: 1px solid var(--b-2);
+  font-size: 11.5px; font-weight: 600;
+  font-family: var(--font-mono); letter-spacing: .02em;
+  display: flex; align-items: center; gap: 7px;
+  opacity: 0; transform: translateY(4px); transition: all .13s;
+}
+
+html[data-theme="dark"] .ti { background: var(--bg-3); }
+.ti.on { opacity: 1; transform: none; }
+.ti.success i { color: var(--green); }
+html[data-theme="dark"] .ti.success i { color: #4ade80; }
+.ti.error i   { color: var(--red); }
+html[data-theme="dark"] .ti.error i { color: #f87171; }
+.ti.info i    { color: var(--blue); }
+html[data-theme="dark"] .ti.info i { color: #5b85c8; }
+
+/* ── SPINNER ── */
+.spin {
+  display: inline-block; width: 12px; height: 12px;
+  border: 2px solid var(--b-2); border-top-color: var(--blue);
+  border-radius: 50%; animation: sp .6s linear infinite;
+}
+
+@keyframes sp { to { transform: rotate(360deg); } }
+
+/* ── MODAL TABS ── */
+.md-tabs {
+  display: flex; gap: 2px; padding: 0 18px;
+  border-bottom: 1px solid var(--b-1);
+  background: var(--bg-2);
+}
+
+html[data-theme="dark"] .md-tabs { background: rgba(0,0,0,.06); }
+
+.md-tab {
+  padding: 9px 13px;
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 500;
+  letter-spacing: .04em;
+  color: var(--t-3); cursor: pointer;
+  border: none; background: none;
+  border-bottom: 2px solid transparent;
+  transition: all .13s;
+}
+
+.md-tab:hover { color: var(--t-2); }
+.md-tab.active { color: var(--t-1); border-bottom-color: var(--blue); }
+
+.md-tab .att-count {
+  font-size: 8.5px; background: var(--blue-d); color: var(--blue);
+  border: 1px solid var(--blue-b);
+  border-radius: var(--r-pill); padding: 1px 5px;
+  margin-left: 4px; display: none;
+}
+html[data-theme="dark"] .md-tab .att-count { color: #5b85c8; }
+.md-tab .att-count.show { display: inline; }
+
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* ── ATTACHMENTS ── */
+.drop-zone {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  border: 1px dashed var(--b-2); border-radius: var(--r-lg);
+  padding: 20px 14px; cursor: pointer; transition: all .13s; text-align: center;
+}
+
+.drop-zone:hover, .drop-zone.drag {
+  border-color: var(--blue-b); background: var(--blue-d);
+}
+
+.drop-zone i { font-size: 20px; color: var(--t-3); margin-bottom: 5px; }
+.drop-zone-txt  { font-size: 11.5px; font-weight: 600; color: var(--t-2); }
+.drop-zone-sub  { font-size: 10px; color: var(--t-3); margin-top: 2px; font-family: var(--font-mono); }
+
+.att-file {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 11px; border-radius: var(--r-md);
+  background: var(--bg-3); border: 1px solid var(--b-1);
+  transition: all .13s;
+}
+.att-file:hover { background: var(--bg-4); border-color: var(--b-2); }
+
+.att-icon {
+  width: 32px; height: 32px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; background: var(--b-1); overflow: hidden; flex-shrink: 0;
+}
+.att-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+.att-file-info { flex: 1; min-width: 0; }
+.att-file-name { font-size: 11.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.att-file-meta { font-size: 9.5px; color: var(--t-3); font-family: var(--font-mono); margin-top: 1px; }
+
+.att-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.att-actions .ab-prev { color: #6d28d9;  border-color: rgba(109,40,217,.22); }
+.att-actions .ab-prev:hover { background: rgba(109,40,217,.09); }
+html[data-theme="dark"] .att-actions .ab-prev { color: #a78bfa; border-color: rgba(167,139,250,.22); }
+html[data-theme="dark"] .att-actions .ab-prev:hover { background: rgba(167,139,250,.10); }
+.att-actions .ab-open { color: var(--blue); border-color: var(--blue-b); }
+.att-actions .ab-open:hover { background: var(--blue-d); }
+html[data-theme="dark"] .att-actions .ab-open { color: #5b85c8; }
+.att-actions .ab-del  { color: var(--red); border-color: rgba(201,64,64,.22); }
+.att-actions .ab-del:hover { background: rgba(201,64,64,.09); }
+html[data-theme="dark"] .att-actions .ab-del  { color: #f87171; }
+
+.att-list    { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
+.att-empty, .att-loading { text-align: center; padding: 22px; color: var(--t-3); font-size: 11.5px; font-family: var(--font-mono); }
+.att-empty i { font-size: 18px; display: block; margin-bottom: 5px; opacity: .3; }
+
+/* ── ANALYTICS ── */
+.an-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px; margin-bottom: 12px;
+}
+@media (max-width: 900px) { .an-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.an-stat {
+  padding: 10px 11px; border-radius: var(--r-md);
+  background: var(--bg-3); border: 1px solid var(--b-1);
+}
+.an-stat-lbl {
+  font-size: 8.5px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--t-3);
+  font-family: var(--font-mono); margin-bottom: 3px;
+}
+.an-stat-val { font-size: 18px; font-weight: 700; font-family: var(--font-mono); }
+.an-stat-sub { font-size: 9.5px; color: var(--t-3); font-family: var(--font-mono); margin-top: 1px; }
+
+.an-charts {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 9px;
+}
+@media (max-width: 780px) { .an-charts { grid-template-columns: 1fr; } }
+
+.an-chart {
+  padding: 11px; border-radius: var(--r-md);
+  background: var(--bg-3); border: 1px solid var(--b-1);
+  position: relative;
+}
+.an-chart-title {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .10em;
+  text-transform: uppercase; color: var(--t-2);
+  font-family: var(--font-mono); margin-bottom: 9px;
+}
+.an-chart canvas { max-height: 230px; }
+.an-chart.wide { grid-column: 1 / -1; }
+.an-chart.wide canvas { max-height: 190px; }
+.an-empty {
+  text-align: center; padding: 38px; color: var(--t-3);
+  font-size: 11.5px; font-family: var(--font-mono);
+}
+
+/* ── COMMENTS ── */
+.cm-list {
+  display: flex; flex-direction: column; gap: 7px;
+  margin-top: 9px; max-height: 320px; overflow-y: auto; padding-right: 3px;
+}
+
+.cm {
+  padding: 9px 11px; border-radius: var(--r-md);
+  background: var(--bg-3); border: 1px solid var(--b-1);
+}
+
+.cm-hd {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 4px; gap: 7px;
+}
+.cm-author { font-size: 11.5px; font-weight: 700; color: var(--t-1); }
+.cm-ts { font-size: 9.5px; color: var(--t-3); font-family: var(--font-mono); }
+.cm-body {
+  font-size: 12px; color: var(--t-2);
+  line-height: 1.5; white-space: pre-wrap; word-break: break-word;
+}
+
+.cm-del {
+  background: transparent; border: none; color: var(--t-3);
+  cursor: pointer; font-size: 10px; padding: 2px 4px; border-radius: 4px;
+}
+.cm-del:hover { color: var(--red); background: rgba(201,64,64,.09); }
+html[data-theme="dark"] .cm-del:hover { color: #f87171; }
+
+.cm-empty { text-align: center; padding: 22px; color: var(--t-3); font-size: 11.5px; font-family: var(--font-mono); }
+
+.cm-input { display: flex; gap: 5px; margin-top: 10px; }
+.cm-input textarea {
+  flex: 1; min-height: 56px; resize: vertical; padding: 7px 9px;
+  border-radius: var(--r-md); border: 1px solid var(--b-1);
+  background: var(--bg-3); color: var(--t-1);
+  font-size: 12px; font-family: var(--font-ui); outline: none;
+}
+.cm-input textarea:focus { border-color: var(--blue-b); }
+
+/* ── CSV IMPORT ── */
+.imp-step {
+  padding: 11px 13px; border-radius: var(--r-md);
+  background: var(--bg-3); border: 1px solid var(--b-1); margin-bottom: 9px;
+}
+.imp-step-title {
+  font-size: 10px; font-weight: 700; letter-spacing: .10em;
+  text-transform: uppercase; color: var(--t-2);
+  font-family: var(--font-mono); margin-bottom: 7px;
+}
+.imp-step pre {
+  background: var(--bg-1); padding: 7px 9px; border-radius: var(--r-sm);
+  font-size: 10px; color: var(--t-2); font-family: var(--font-mono); overflow-x: auto;
+}
+
+.imp-csv {
+  width: 100%; min-height: 130px; padding: 7px 9px;
+  border-radius: var(--r-md); border: 1px solid var(--b-1);
+  background: var(--bg-1); color: var(--t-1);
+  font-size: 11px; font-family: var(--font-mono); outline: none; resize: vertical;
+}
+.imp-csv:focus { border-color: var(--blue-b); }
+
+.imp-preview {
+  max-height: 190px; overflow: auto; font-size: 10.5px;
+  font-family: var(--font-mono); border-radius: var(--r-md);
+  border: 1px solid var(--b-1);
+}
+.imp-preview table { width: 100%; border-collapse: collapse; }
+.imp-preview th {
+  background: var(--bg-1); padding: 5px 7px; text-align: left;
+  font-size: 8.5px; color: var(--t-3); text-transform: uppercase; letter-spacing: .07em;
+}
+.imp-preview td {
+  padding: 5px 7px; border-top: 1px solid var(--b-1); color: var(--t-2);
+}
+.imp-preview tr.bad td { color: var(--red); }
+html[data-theme="dark"] .imp-preview tr.bad td { color: #f87171; }
+
+.imp-summary { font-size: 11px; color: var(--t-2); font-family: var(--font-mono); margin-top: 7px; }
+
+/* ── ROW CHECKBOXES ── */
+.rowchk { width: 13px; height: 13px; cursor: pointer; accent-color: var(--blue); }
+.chkcell { width: 30px; padding-right: 0 !important; }
+
+/* ── SUPPLIER SIDEBAR ── */
+.sup-sidebar {
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: 300px; z-index: 9000;
+  background: var(--bg-1);
+  border-left: 1px solid var(--b-2);
+  box-shadow: -8px 0 32px rgba(26,24,20,.14);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform .22s cubic-bezier(.22,.68,0,1.2);
+}
+
+html[data-theme="dark"] .sup-sidebar {
+  box-shadow: -8px 0 32px rgba(0,0,0,.45);
+}
+
+.sup-sidebar.open { transform: translateX(0); }
+
+.sup-overlay {
+  display: none; position: fixed; inset: 0;
+  z-index: 8999; background: rgba(26,24,20,.32);
+  backdrop-filter: blur(3px);
+}
+
+html[data-theme="dark"] .sup-overlay { background: rgba(0,0,0,.48); }
+.sup-overlay.open { display: block; }
+
+.sup-hd {
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--b-1);
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 10px;
+  background: var(--bg-0, var(--bg-2));
+  flex-shrink: 0;
+}
+
+html[data-theme="dark"] .sup-hd { background: rgba(0,0,0,.08); }
+
+.sup-hd-left {
+  display: flex; align-items: center; gap: 8px;
+}
+
+.sup-hd-title {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 15px; font-weight: 400;
+  letter-spacing: -.01em;
+}
+
+.sup-count {
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 1px 7px; border-radius: var(--r-pill);
+  background: var(--bg-3); border: 1px solid var(--b-1);
+  color: var(--t-3);
+}
+
+.sup-search-wrap {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--b-1);
+  flex-shrink: 0;
+}
+
+.sup-search {
+  width: 100%; height: 30px;
+  padding: 0 9px 0 28px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--b-1);
+  background: var(--bg-2);
+  color: var(--t-1);
+  font-family: var(--font-mono); font-size: 11px;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(138,134,128,.60)' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 8px center;
+  transition: border-color .13s;
+}
+
+.sup-search:focus { border-color: var(--blue-b); }
+
+.sup-cats {
+  display: flex; gap: 5px; flex-wrap: wrap;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--b-1);
+  flex-shrink: 0;
+}
+
+.sup-cat {
+  font-family: var(--font-mono); font-size: 9.5px;
+  padding: 2px 8px; border-radius: var(--r-pill);
+  border: 1px solid var(--b-1);
+  background: var(--bg-3); color: var(--t-3);
+  cursor: pointer; transition: all .12s;
+}
+
+.sup-cat:hover { border-color: var(--b-2); color: var(--t-2); }
+.sup-cat.active {
+  background: var(--blue-d); border-color: var(--blue-b);
+  color: var(--blue);
+}
+html[data-theme="dark"] .sup-cat.active { color: #5b85c8; }
+
+.sup-list {
+  flex: 1; overflow-y: auto; padding: 9px 11px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.sup-list::-webkit-scrollbar { width: 3px; }
+.sup-list::-webkit-scrollbar-thumb { background: var(--b-2); border-radius: 4px; }
+
+.sup-card {
+  background: var(--bg-2); border: 1px solid var(--b-1);
+  border-radius: var(--r-md); padding: 10px 11px;
+  transition: background .12s, border-color .12s;
+}
+
+.sup-card:hover { background: var(--bg-3); border-color: var(--b-2); }
+
+.sup-card-top {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 8px; margin-bottom: 7px;
+}
+
+.sup-avatar {
+  width: 32px; height: 32px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  flex-shrink: 0;
+  background: var(--blue-d); border: 1px solid var(--blue-b); color: var(--blue);
+}
+
+html[data-theme="dark"] .sup-avatar { color: #5b85c8; }
+
+.sup-name {
+  font-size: 12.5px; font-weight: 700; color: var(--t-1);
+  line-height: 1.2; margin-bottom: 1px;
+}
+
+.sup-category {
+  font-family: var(--font-mono); font-size: 10px; color: var(--t-3);
+}
+
+.sup-status-pill {
+  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+  padding: 2px 7px; border-radius: var(--r-pill);
+  border: 1px solid; white-space: nowrap; flex-shrink: 0;
+}
+
+.sup-status-pill.active {
+  background: rgba(22,163,74,.09); color: #16a34a;
+  border-color: rgba(22,163,74,.22);
+}
+
+html[data-theme="dark"] .sup-status-pill.active {
+  background: rgba(74,222,128,.10); color: #4ade80;
+  border-color: rgba(74,222,128,.22);
+}
+
+.sup-status-pill.inactive {
+  background: var(--bg-3); color: var(--t-3); border-color: var(--b-1);
+}
+
+.sup-contact-row {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--t-2); margin-bottom: 3px;
+  font-family: var(--font-mono);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.sup-contact-row i { font-size: 10px; color: var(--t-3); flex-shrink: 0; }
+
+.sup-contact-row a {
+  color: var(--blue); text-decoration: none;
+  overflow: hidden; text-overflow: ellipsis;
+}
+html[data-theme="dark"] .sup-contact-row a { color: #5b85c8; }
+.sup-contact-row a:hover { text-decoration: underline; }
+
+.sup-stats {
+  font-family: var(--font-mono); font-size: 10px; color: var(--t-3);
+  margin: 6px 0 8px; padding: 5px 8px;
+  background: var(--bg-1); border-radius: var(--r-sm);
+  display: flex; gap: 10px;
+}
+
+.sup-stat-val { color: var(--t-1); font-weight: 600; }
+
+.sup-actions { display: flex; gap: 5px; }
+
+.sup-btn-use {
+  flex: 1; height: 27px;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+  background: var(--blue-d); border: 1px solid var(--blue-b);
+  color: var(--blue); border-radius: var(--r-sm); cursor: pointer;
+  transition: background .12s;
+}
+
+html[data-theme="dark"] .sup-btn-use { color: #5b85c8; }
+.sup-btn-use:hover { background: rgba(40,87,164,.18); }
+
+.sup-btn-icon {
+  width: 27px; height: 27px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; border-radius: var(--r-sm);
+  border: 1px solid var(--b-1); background: transparent;
+  color: var(--t-3); cursor: pointer; transition: all .12s;
+}
+
+.sup-btn-icon:hover { background: var(--bg-3); color: var(--t-1); border-color: var(--b-2); }
+.sup-btn-icon.edit:hover  { color: var(--blue); border-color: var(--blue-b); background: var(--blue-d); }
+html[data-theme="dark"] .sup-btn-icon.edit:hover { color: #5b85c8; }
+.sup-btn-icon.del:hover   { color: var(--red);  border-color: rgba(201,64,64,.22); background: rgba(201,64,64,.08); }
+html[data-theme="dark"] .sup-btn-icon.del:hover  { color: #f87171; }
+
+.sup-empty {
+  text-align: center; padding: 32px 16px;
+  color: var(--t-3); font-family: var(--font-mono); font-size: 11.5px;
+}
+
+.sup-empty i { display: block; font-size: 22px; margin-bottom: 7px; opacity: .3; }
+
+.sup-footer {
+  padding: 9px 12px; border-top: 1px solid var(--b-1);
+  font-family: var(--font-mono); font-size: 10px; color: var(--t-3);
+  text-align: center; flex-shrink: 0;
+}
+
+/* ADD this new rule */
+.qs-wrap {
+  position: relative;
+  display: inline-block;
+  overflow: visible;   /* ← add this */
+}
+
+/* Also ensure the table cell doesn't clip it */
+tbody td {
+  padding: 9px 11px;
+  border-bottom: 1px solid var(--b-1);
+  vertical-align: middle;
+  overflow: visible;   /* ← add this */
+}
+
+/* ── ATTACHMENT TAGS ── */
+.att-tag {
+  display: inline-flex; align-items: center;
+  padding: 1px 6px; border-radius: var(--r-pill);
+  font-size: 9px; font-weight: 700;
+  font-family: var(--font-mono); letter-spacing: .04em;
+  white-space: nowrap; border: 1px solid transparent;
+}
+.att-tag.po   { background: rgba(40,87,164,.10); color: var(--blue); border-color: var(--blue-b); }
+.att-tag.si   { background: rgba(22,163,74,.09); color: #16a34a; border-color: rgba(22,163,74,.22); }
+.att-tag.pq   { background: rgba(180,83,9,.09); color: var(--amber); border-color: rgba(180,83,9,.22); }
+.att-tag.aq   { background: rgba(109,40,217,.09); color: #6d28d9; border-color: rgba(109,40,217,.22); }
+.att-tag.dr   { background: rgba(244,114,182,.09); color: #be185d; border-color: rgba(190,24,93,.22); }
+.att-tag.none { background: var(--bg-3); color: var(--t-3); border-color: var(--b-1); }
+html[data-theme="dark"] .att-tag.po { color: #5b85c8; }
+html[data-theme="dark"] .att-tag.si { color: #4ade80; }
+html[data-theme="dark"] .att-tag.pq { color: #fbbf24; }
+html[data-theme="dark"] .att-tag.aq { color: #a78bfa; }
+html[data-theme="dark"] .att-tag.dr { color: #f472b6; }
+
+</style>
+</head>
+<body>
+
+<div class="ph">
+  <div>
+    <div class="ph-title">Procurement Tracker</div>
+    <div class="ph-sub">Track purchase requests from quotation through to delivery.</div>
+    <div class="ph-pills">
+      <span class="pill"><i class="fa-solid fa-clipboard-list"></i> Source: Procurement Sheet</span>
+      <span class="pill" id="pillTotal"><i class="fa-solid fa-database"></i> 0 records</span>
+      <span class="pill" id="pillSpend"><i class="fa-solid fa-peso-sign"></i> ₱0 total</span>
+    </div>
+  </div>
+  <div class="ph-right">
+    <div class="view-seg">
+      <button class="vsb active" id="btnTV" type="button" title="Table view"><i class="fa-solid fa-table-list"></i></button>
+      <button class="vsb" id="btnPV" type="button" title="Pipeline view"><i class="fa-solid fa-columns"></i></button>
+    </div>
+    <button class="btn btn-ghost" id="btnReload" type="button"><i class="fa-solid fa-rotate"></i> Reload</button>
+    <button class="btn btn-ghost" id="btnAnalytics" type="button"><i class="fa-solid fa-chart-pie"></i> Analytics</button>
+    <button class="btn btn-ghost" id="btnSuppliers" type="button">
+  <i class="fa-solid fa-building-user"></i> Suppliers
+</button>
+    <button class="btn btn-ghost" id="btnImport" type="button"><i class="fa-solid fa-file-import"></i> Import</button>
+    <button class="btn btn-ghost" id="btnExport" type="button"><i class="fa-solid fa-file-export"></i> Export</button>
+    <button class="btn btn-primary" id="btnNew" type="button"><i class="fa-solid fa-plus"></i> New Request</button>
+  </div>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi" style="--kc:#3b82f6;"><div class="kpi-ico"><i class="fa-solid fa-layer-group"></i></div><div class="kpi-lbl">Total Spend</div><div class="kpi-val" id="kSpend">₱0</div><div class="kpi-sub" id="kSpendSub">0 requests</div></div>
+  <div class="kpi" style="--kc:#6366f1;"><div class="kpi-ico"><i class="fa-solid fa-file-invoice"></i></div><div class="kpi-lbl">Quotation</div><div class="kpi-val" id="k0">0</div></div>
+  <div class="kpi" style="--kc:#f59e0b;"><div class="kpi-ico"><i class="fa-solid fa-hourglass-half"></i></div><div class="kpi-lbl">For Approval</div><div class="kpi-val" id="k1">0</div></div>
+  <div class="kpi" style="--kc:#22c55e;"><div class="kpi-ico"><i class="fa-solid fa-circle-check"></i></div><div class="kpi-lbl">PR Approved</div><div class="kpi-val" id="k2">0</div></div>
+  <div class="kpi" style="--kc:#3b82f6;"><div class="kpi-ico"><i class="fa-solid fa-file-contract"></i></div><div class="kpi-lbl">PO Requested</div><div class="kpi-val" id="k3">0</div></div>
+  <div class="kpi" style="--kc:#a855f7;"><div class="kpi-ico"><i class="fa-solid fa-money-bill-wave"></i></div><div class="kpi-lbl">Payment Rcvd</div><div class="kpi-val" id="k4">0</div></div>
+  <div class="kpi" style="--kc:#f43f5e;"><div class="kpi-ico"><i class="fa-solid fa-truck-fast"></i></div><div class="kpi-lbl">In Transit</div><div class="kpi-val" id="k5">0</div></div>
+  <div class="kpi" style="--kc:#f59e0b;"><div class="kpi-ico"><i class="fa-solid fa-triangle-exclamation"></i></div><div class="kpi-lbl">Overdue</div><div class="kpi-val" id="kOv">0</div></div>
+</div>
+
+<div id="statusBanner"></div>
+
+<div class="bulkbar" id="bulkbar">
+  <span class="bulkbar-count" id="bulkCount">0 selected</span>
+  <select class="ci" id="bulkStatus" style="min-width:160px;">
+    <option value="">Change status to…</option>
+    <option>Quotation Requested</option><option>PR for Approval</option><option>PR Approved</option>
+    <option>PO Requested</option><option>Payment Received</option><option>Order In Transit</option><option>Completed</option>
+  </select>
+  <button class="btn btn-danger btn-sm" id="bulkDel" type="button"><i class="fa-solid fa-trash"></i> Delete selected</button>
+  <button class="btn btn-ghost btn-sm" id="bulkClear" type="button"><i class="fa-solid fa-xmark"></i> Clear</button>
+</div>
+
+<div class="fbar">
+  <div class="sw"><i class="fa-solid fa-magnifying-glass"></i><input class="ci" id="srch" type="search" placeholder="Search vendor, item…"></div>
+  <select class="ci" id="sf" style="min-width:150px;">
+    <option value="">All Statuses</option>
+    <option>Quotation Requested</option><option>PR for Approval</option><option>PR Approved</option>
+    <option>PO Requested</option><option>Payment Received</option><option>Order In Transit</option><option>Completed</option>
+  </select>
+  <select class="ci" id="pf" style="min-width:118px;">
+    <option value="">All Priorities</option><option>High</option><option>Medium</option><option>Low</option>
+  </select>
+  <select class="ci" id="df" style="min-width:135px;"><option value="">All Departments</option></select>
+  <button class="btn btn-ghost" id="btnClear" type="button"><i class="fa-solid fa-broom"></i> Clear</button>
+</div>
+
+<div id="tvWrap">
+<div class="tw">
+  <table>
+    <thead>
+      <tr>
+        <th class="chkcell"><input type="checkbox" class="rowchk" id="chkAll" title="Select all on this page"></th>
+        <th>Request No</th><th>Vendor</th><th>Item</th><th>Dept</th><th>Status</th>
+        <th>Priority</th><th>Qty</th><th>Amount</th><th>Date</th><th>Expected</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="tb"><tr><td colspan="12" class="ec"><span class="spin" style="vertical-align:middle;margin-right:8px;"></span>Loading…</td></tr></tbody>
+  </table>
+</div>
+<div class="pager">
+  <div class="pager-info" id="pi">—</div>
+  <select class="ci" id="ps"><option value="25">25 / page</option><option value="50" selected>50 / page</option><option value="100">100 / page</option></select>
+  <button class="btn btn-ghost btn-sm" id="bPrev" type="button"><i class="fa-solid fa-chevron-left"></i></button>
+  <button class="btn btn-ghost btn-sm" id="bNext" type="button"><i class="fa-solid fa-chevron-right"></i></button>
+</div>
+</div>
+
+<!-- Pipeline View -->
+<div id="pv"><div class="pb-board" id="pboard"></div></div>
+
+<!-- Add/Edit Modal -->
+<div class="mo" id="mAdd" style="display:none;">
+  <div class="md">
+    <div class="md-hd">
+      <div><div class="md-title" id="mTitle">New Procurement Request</div><div class="md-sub" id="mSub">Fill in the details</div></div>
+      <button class="md-x" id="mAddClose" type="button"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="md-body">
+      <input type="hidden" id="eId">
+      <div class="fg2">
+        <div class="fg"><label class="fl">Vendor <span class="req">*</span></label><input class="fc" id="fV" placeholder="e.g., Dell Philippines"></div>
+        <div class="fg"><label class="fl">Department <span class="req">*</span></label><input class="fc" id="fD" placeholder="e.g., IT"></div>
+      </div>
+      <div class="fg1"><div class="fg"><label class="fl">Item / Description <span class="req">*</span></label><input class="fc" id="fI" placeholder="e.g., 5× Laptop"></div></div>
+       <div class="fg3">
+        <div class="fg"><label class="fl">Status</label><select class="fc" id="fSt">
+          <option>Quotation Requested</option><option>PR for Approval</option><option>PR Approved</option>
+          <option>PO Requested</option><option>Payment Received</option><option>Order In Transit</option><option>Completed</option>
+        </select></div>
+        <div class="fg"><label class="fl">Priority</label><select class="fc" id="fPr"><option>Medium</option><option>High</option><option>Low</option></select></div>
+        <div class="fg"><label class="fl">Amount (₱)</label><input class="fc" id="fAm" type="number" min="0" step="0.01" placeholder="0.00"></div>
+      </div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Quantity</label><input class="fc" id="fQty" type="number" min="0" step="1" placeholder="e.g. 5"></div>
+        <div class="fg"></div>
+      </div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Request Date</label><input class="fc" id="fRd" type="date"></div>
+        <div class="fg"><label class="fl">Expected Delivery</label><input class="fc" id="fEd" type="date"></div>
+      </div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Requested By</label><input class="fc" id="fRb" placeholder="Full name"></div>
+        <div class="fg"><label class="fl">PO Number</label><input class="fc" id="fPo" placeholder="e.g., PO-2025-001"></div>
+      </div>
+     <div class="fg1">
+  <div class="fg">
+    <label class="fl">Ticket URL</label>
+    <input class="fc" id="fTk" placeholder="e.g., https://fbgphilippines.atlassian.net/browse/IT-123">
+  </div>
+</div>
+<div class="fg1">
+  <div class="fg">
+    <label class="fl">Linked Asset Serial Tags</label>
+    <textarea class="fc" id="fLst" rows="2"
+      placeholder="e.g. SN-2025-001, SN-2025-002, SN-2025-003 — comma-separated"></textarea>
+    <div style="display:flex;justify-content:space-between;margin-top:4px;">
+      <span style="font-size:10px;color:var(--t-3);font-family:var(--font-mono);">
+        <i class="fa-solid fa-circle-info"></i> Separate multiple serial tags with commas.
+      </span>
+      <span class="fLst-count" style="font-size:10px;font-weight:700;color:var(--blue);font-family:var(--font-mono);"></span>
+    </div>
+  </div>
+</div>
+<div class="fg1">
+  <div class="fg">
+    <label class="fl">Notes</label>
+    <textarea class="fc" id="fNo" placeholder="Additional details…"></textarea>
+  </div>
+</div>
+<div class="ftip" id="mTip"></div>
+</div>
+<div class="md-foot">
+  <button class="btn btn-ghost" id="mAddCancel" type="button">Cancel</button>
+  <button class="btn btn-primary" id="saveBtn" type="button"><i class="fa-solid fa-check"></i> Save</button>
+</div>
+</div>
+</div>
+
+<!-- View Modal -->
+<div class="mo" id="mView" style="display:none;">
+  <div class="md">
+    <div class="md-hd">
+      <div><div class="md-title" id="vTitle">Details</div><div class="md-sub" id="vSub"></div></div>
+      <button class="md-x" id="mViewClose" type="button"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="md-tabs">
+      <button class="md-tab active" id="vtabDetailsBtn" type="button">Details</button>
+      <button class="md-tab" id="vtabAttBtn" type="button">Attachments <span class="att-count" id="attCount"></span></button>
+      <button class="md-tab" id="vtabCmBtn" type="button">Discussion <span class="att-count" id="cmCount"></span></button>
+    </div>
+    <div class="md-body">
+      <div class="tab-pane active" id="vtab-details"></div>
+      <div class="tab-pane" id="vtab-attachments">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <label class="fl" style="white-space:nowrap;margin:0;">Tag</label>
+          <select class="ci" id="attTag" style="flex:1;height:30px;font-size:11px;">
+            <option value="">— No tag —</option>
+            <option value="[PO]">Purchase Order</option>
+            <option value="[SI]">Sales Invoice</option>
+            <option value="[PQ]">Proposed Quotation</option>
+            <option value="[AQ]">Approved &amp; Signed Quotation</option>
+            <option value="[DR]">Delivery Receipt</option>
+          </select>
+        </div>
+        <label class="drop-zone" id="dropZone" for="attFileInput">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <div class="drop-zone-txt" id="dropZoneTxt">Drop files or click to upload</div>
+          <div class="drop-zone-sub">PDF, Word, Excel, images — max 20 MB</div>
+          <input type="file" id="attFileInput" multiple style="display:none;">
+        </label>
+        <div id="attProgress" style="display:none;margin-top:10px;padding:10px 12px;border-radius:var(--r-md);background:var(--bg-3);border:1px solid var(--blue-b);">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:6px;">
+            <span id="attProgressLabel">Uploading…</span>
+            <span style="color:var(--t-3);font-family:var(--font-mono);font-size:11px;" id="attProgressCount"></span>
+          </div>
+          <div style="height:3px;border-radius:2px;background:var(--b-1);overflow:hidden;">
+            <div id="attProgressBar" style="height:100%;width:0%;background:var(--blue);transition:width .3s;"></div>
+          </div>
+        </div>
+        <div id="attLoading" class="att-loading" style="display:none;"><span class="spin"></span> Loading files…</div>
+        <div id="attEmpty" class="att-empty" style="display:none;"><i class="fa-solid fa-folder-open"></i>No attachments yet.</div>
+        <div class="att-list" id="attList"></div>
+      </div>
+      <div class="tab-pane" id="vtab-comments">
+        <div id="cmLoading" class="att-loading" style="display:none;"><span class="spin"></span> Loading comments…</div>
+        <div id="cmEmpty" class="cm-empty" style="display:none;"><i class="fa-solid fa-comments" style="display:block;font-size:20px;margin-bottom:6px;opacity:.3;"></i>No comments yet. Be the first to add one.</div>
+        <div class="cm-list" id="cmList"></div>
+        <div class="cm-input">
+          <textarea id="cmInput" placeholder="Add a comment…" maxlength="2000"></textarea>
+          <button class="btn btn-primary btn-sm" id="cmSend" type="button" style="align-self:flex-end;"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+    <div class="md-foot" style="justify-content:space-between;">
+      <button class="btn btn-ghost btn-sm" id="btnEditFromV" type="button"><i class="fa-solid fa-pen"></i> Edit</button>
+      <button class="btn btn-ghost" id="mViewCancel" type="button">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete -->
+<div class="mo" id="mConf" style="display:none;">
+  <div class="md sm">
+    <div class="md-hd">
+      <div><div class="md-title">Delete Request</div><div class="md-sub">This cannot be undone.</div></div>
+      <button class="md-x" id="mConfClose" type="button"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="md-body"><p style="font-size:13px;color:var(--t-2);line-height:1.6;" id="cMsg">Are you sure?</p></div>
+    <div class="md-foot">
+      <button class="btn btn-ghost" id="mConfCancel" type="button">Cancel</button>
+      <button class="btn btn-danger" id="cBtn" type="button"><i class="fa-solid fa-trash"></i> Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- File Preview Modal -->
+<div class="mo" id="mPrev" style="display:none;">
+  <div class="md lg">
+    <div class="md-hd">
+      <div>
+        <div class="md-title" id="prevTitle">Preview</div>
+        <div class="md-sub" id="prevSub"></div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <a class="btn btn-ghost btn-sm" id="prevOpenNew" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open in Drive</a>
+        <button class="md-x" id="mPrevClose" type="button"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div class="md-body" style="padding:0;">
+      <div id="prevLoading" style="text-align:center;padding:60px 20px;color:var(--t-3);font-family:var(--font-mono);font-size:12px;">
+        <span class="spin" style="display:inline-block;margin-right:8px;"></span> Loading preview…
+      </div>
+      <iframe id="prevFrame" style="display:none;width:100%;height:75vh;border:0;background:#fff;border-radius:0 0 16px 16px;"></iframe>
+      <img id="prevImg" style="display:none;width:100%;max-height:75vh;object-fit:contain;background:#000;border-radius:0 0 16px 16px;">
+      <div id="prevFallback" style="display:none;text-align:center;padding:60px 20px;color:var(--t-3);font-family:var(--font-mono);font-size:12px;">
+        <i class="fa-solid fa-file" style="font-size:32px;display:block;margin-bottom:10px;opacity:.4;"></i>
+        Preview not available for this file type.<br>
+        <a id="prevFallbackLink" target="_blank" rel="noopener" style="color:#60a5fa;text-decoration:underline;margin-top:8px;display:inline-block;">Open in Drive →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Analytics Modal -->
+<div class="mo" id="mAn" style="display:none;">
+  <div class="md xl">
+    <div class="md-hd">
+      <div>
+        <div class="md-title">Analytics</div>
+        <div class="md-sub" id="anSub">Procurement overview</div>
+      </div>
+      <button class="md-x" id="mAnClose" type="button"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="md-body">
+      <div id="anLoading" class="att-loading" style="display:none;"><span class="spin"></span> Loading analytics…</div>
+      <div id="anContent" style="display:none;">
+        <div class="an-grid">
+          <div class="an-stat"><div class="an-stat-lbl">Total Spend</div><div class="an-stat-val" id="anTotalSpend">₱0</div><div class="an-stat-sub" id="anTotalCount">0 requests</div></div>
+          <div class="an-stat"><div class="an-stat-lbl">Avg Amount</div><div class="an-stat-val" id="anAvgAmount">₱0</div><div class="an-stat-sub">per request</div></div>
+          <div class="an-stat"><div class="an-stat-lbl">Overdue</div><div class="an-stat-val" id="anOverdue" style="color:#fbbf24;">0</div><div class="an-stat-sub">requests past expected date</div></div>
+          <div class="an-stat"><div class="an-stat-lbl">Top Vendor</div><div class="an-stat-val" id="anTopVendor" style="font-size:14px;">—</div><div class="an-stat-sub" id="anTopVendorSpend">₱0</div></div>
+        </div>
+        <div class="an-charts" id="anChartsWrap">
+          <div class="an-chart wide"><div class="an-chart-title">Monthly Trend (Last 12 Months)</div><canvas id="anTrend"></canvas></div>
+          <div class="an-chart"><div class="an-chart-title">Spend by Status</div><canvas id="anStatus"></canvas></div>
+          <div class="an-chart"><div class="an-chart-title">Spend by Department</div><canvas id="anDept"></canvas></div>
+          <div class="an-chart wide"><div class="an-chart-title">Top 10 Vendors by Spend</div><canvas id="anVendor"></canvas></div>
+        </div>
+      </div>
+      <div id="anEmpty" class="an-empty" style="display:none;"><i class="fa-solid fa-chart-pie" style="display:block;font-size:24px;margin-bottom:8px;opacity:.3;"></i>No data yet. Add some procurement requests first.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Import CSV Modal -->
+<div class="mo" id="mImp" style="display:none;">
+  <div class="md lg">
+    <div class="md-hd">
+      <div><div class="md-title">Import from CSV</div><div class="md-sub">Bulk-create requests by pasting CSV data</div></div>
+      <button class="md-x" id="mImpClose" type="button"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="md-body">
+      <div class="imp-step">
+        <div class="imp-step-title">1 · Format</div>
+        <div style="font-size:11.5px;color:var(--t-2);margin-bottom:6px;">First row = headers. Required: vendor, department, item. Optional: status, priority, qty, amount, requestDate, expectedDate, requestedBy, poNumber, notes.</div>
+        <pre>vendor,department,item,status,priority,qty,amount,expectedDate
+Dell Philippines,IT,5x Laptop,PR Approved,High,5,450000,2026-06-30
+Acme Supplies,Admin,Office chairs,Quotation Requested,Medium,10,80000,</pre>
+      </div>
+      <div class="imp-step">
+        <div class="imp-step-title">2 · Paste CSV</div>
+        <textarea class="imp-csv" id="impCsv" placeholder="Paste CSV content here…"></textarea>
+        <button class="btn btn-ghost btn-sm" id="impParse" type="button" style="margin-top:8px;"><i class="fa-solid fa-magnifying-glass"></i> Parse & Preview</button>
+      </div>
+      <div class="imp-step" id="impPreviewWrap" style="display:none;">
+        <div class="imp-step-title">3 · Preview</div>
+        <div class="imp-preview" id="impPreview"></div>
+        <div class="imp-summary" id="impSummary"></div>
+      </div>
+    </div>
+    <div class="md-foot">
+      <button class="btn btn-ghost" id="mImpCancel" type="button">Cancel</button>
+      <button class="btn btn-primary" id="impGo" type="button" disabled><i class="fa-solid fa-file-import"></i> Import</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Supplier Directory Sidebar -->
+<div id="supOverlay" class="sup-overlay"></div>
+<div id="supSidebar" class="sup-sidebar" role="complementary" aria-label="Supplier directory">
+
+  <div class="sup-hd">
+    <div class="sup-hd-left">
+      <i class="fas fa-building-user" style="font-size:14px;color:var(--blue);"></i>
+      <span class="sup-hd-title">Suppliers</span>
+      <span class="sup-count" id="supCount">0</span>
+    </div>
+    <div style="display:flex;gap:6px;">
+      <button class="btn btn-primary btn-sm" id="btnSupAdd" type="button">
+        <i class="fa-solid fa-plus"></i> Add
+      </button>
+      <button class="ab" id="btnSupClose" type="button" style="width:28px;height:28px;" aria-label="Close suppliers">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="sup-search-wrap">
+    <input type="search" class="sup-search" id="supSearch" placeholder="Search suppliers…">
+  </div>
+
+  <div class="sup-cats" id="supCats">
+    <span class="sup-cat active" data-cat="">All</span>
+  </div>
+
+  <div class="sup-list" id="supList">
+    <div class="sup-empty">
+      <i class="fa-solid fa-building-user"></i>
+      No suppliers yet. Click + Add to get started.
+    </div>
+  </div>
+
+  <div class="sup-footer" id="supFooter"></div>
+</div>
+
+<!-- Add / Edit Supplier Modal -->
+<div class="mo" id="mSupForm" style="display:none;">
+  <div class="md sm" style="max-width:480px;">
+    <div class="md-hd">
+      <div>
+        <div class="md-title" id="supFormTitle">Add Supplier</div>
+        <div class="md-sub">Fill in the supplier details</div>
+      </div>
+      <button class="md-x" id="mSupFormClose" type="button">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="md-body">
+      <input type="hidden" id="supFId">
+      <div class="fg2">
+        <div class="fg">
+          <label class="fl">Name <span class="req">*</span></label>
+          <input class="fc" id="supFName" placeholder="e.g. Dell Philippines">
+        </div>
+        <div class="fg">
+          <label class="fl">Category</label>
+          <input class="fc" id="supFCat" placeholder="e.g. IT Hardware">
+        </div>
+      </div>
+      <div class="fg2">
+        <div class="fg">
+          <label class="fl">Contact Person</label>
+          <input class="fc" id="supFContact" placeholder="Full name">
+        </div>
+        <div class="fg">
+          <label class="fl">Email</label>
+          <input class="fc" id="supFEmail" type="email" placeholder="contact@supplier.com">
+        </div>
+      </div>
+      <div class="fg2">
+        <div class="fg">
+          <label class="fl">Phone</label>
+          <input class="fc" id="supFPhone" placeholder="+63 9XX XXX XXXX">
+        </div>
+        <div class="fg">
+          <label class="fl">Website</label>
+          <input class="fc" id="supFWebsite" placeholder="https://…">
+        </div>
+      </div>
+      <div class="fg2">
+        <div class="fg">
+          <label class="fl">Status</label>
+          <select class="fc" id="supFStatus">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">Payment Terms</label>
+          <input class="fc" id="supFTerms" placeholder="e.g. Net 30">
+        </div>
+      </div>
+      <div class="fg1">
+        <div class="fg">
+          <label class="fl">Notes</label>
+          <textarea class="fc" id="supFNotes" placeholder="Additional info…"></textarea>
+        </div>
+      </div>
+      <div class="ftip" id="supFTip"></div>
+    </div>
+    <div class="md-foot">
+      <button class="btn btn-ghost" id="mSupFormCancel" type="button">Cancel</button>
+      <button class="btn btn-primary" id="supSaveBtn" type="button">
+        <i class="fa-solid fa-check"></i> Save Supplier
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="th"></div>
+
+<script>
+(function(){
+  'use strict';
+  var QUERY = (function() {
+  try {
+    var q = <?= JSON.stringify(QUERY || {}) ?>;
+    if (q && typeof q === 'object' && !Array.isArray(q)) return q;
+    return {};
+  } catch(e) {
+    return {};
+  }
+})();
+
+  // ========================================================================
+  // STATE
+  // ========================================================================
+  var recs = [];
+  var filt = [];
+  var pg = 1;
+  var pendDel = null;
+  var vId = null;
+  var mMode = 'add';
+  var loadAttempts = 0;
+  var MAX_ATTEMPTS = 3;
+  var WATCHDOG_MS = 12000;
+  var watchdogTimer = null;
+  var curView = 'table';          // 'table' | 'pipeline'
+  var openMenuId = null;          // currently-open quick-status menu id
+  var attState = { reqId:null, files:[], uploading:false, total:0, done:0, vTab:'details' };
+  var selected = {};              // { [id]: true } — bulk selection map
+  var commentsState = { reqId:null, items:[], loading:false };
+  var anCharts = {};              // chart.js instances keyed by canvas id
+
+   var ST = [
+    {v:'Quotation Requested',c:'s1-b',d:'#6366f1'},
+    {v:'PR for Approval',c:'s2-b',d:'#f59e0b'},
+    {v:'PR Approved',c:'s3-b',d:'#22c55e'},
+    {v:'PO Requested',c:'s4-b',d:'#3b82f6'},
+    {v:'Payment Received',c:'s5-b',d:'#a855f7'},
+    {v:'Order In Transit',c:'s6-b',d:'#f43f5e'},
+    {v:'Completed',c:'s3-b',d:'#16a34a'}
+  ];
+
+
+  // Tag prefix map
+var ATT_TAGS = [
+  { value: '[PO]', label: 'Purchase Order',               cls: 'po'   },
+  { value: '[SI]', label: 'Sales Invoice',                cls: 'si'   },
+  { value: '[PQ]', label: 'Proposed Quotation',           cls: 'pq'   },
+  { value: '[AQ]', label: 'Approved & Signed Quotation',  cls: 'aq'   },
+  { value: '[DR]', label: 'Delivery Receipt',             cls: 'dr'   },
+];
+
+function _attTagFromName_(name) {
+  for (var i = 0; i < ATT_TAGS.length; i++) {
+    if (String(name || '').indexOf(ATT_TAGS[i].value) === 0) return ATT_TAGS[i];
+  }
+  return null;
+}
+
+function _attDisplayName_(name) {
+  var tag = _attTagFromName_(name);
+  if (!tag) return name;
+  return String(name).slice(tag.value.length + 1); // strip "[XX] " prefix
+}
+
+function _attTagHtml_(name) {
+  var tag = _attTagFromName_(name);
+  if (!tag) return '<span class="att-tag none">Untagged</span>';
+  return '<span class="att-tag ' + tag.cls + '">' + tag.label + '</span>';
+}
+
+  // ========================================================================
+  // HELPERS
+  // ========================================================================
+  function $(id){ return document.getElementById(id); }
+
+  function esc(s){
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function isGas(){
+    try { return !!(window.google && window.google.script && window.google.script.run); }
+    catch(e){ return false; }
+  }
+
+  function fmt(n){
+    return Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:0,maximumFractionDigits:0});
+  }
+
+  function fmtAmt(n){
+    return (!n || n == 0) ? '—' : '₱' + fmt(n);
+  }
+
+  function today(){
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  function sCfg(v){
+    for (var i=0;i<ST.length;i++) if (ST[i].v === v) return ST[i];
+    return ST[0];
+  }
+
+  function isOverdue(r){
+    if (r.status === 'Payment Received' || r.status === 'Order In Transit' || r.status === 'Completed') return false;
+    if (!r.expectedDate) return false;
+    return r.expectedDate < today();
+  }
+
+  function setBanner(type, msg){
+    var b = $('statusBanner');
+    if (!msg) { b.classList.remove('show'); return; }
+    b.className = 'show ' + type;
+    b.innerHTML = msg;
+  }
+
+  function toast(msg, type){
+    var h = $('th');
+    var el = document.createElement('div');
+    el.className = 'ti ' + (type || 'info');
+    var icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-circle-xmark' : 'fa-circle-info';
+    el.innerHTML = '<i class="fa-solid ' + icon + '"></i><span>' + esc(msg) + '</span>';
+    h.appendChild(el);
+    setTimeout(function(){ el.classList.add('on'); }, 10);
+    setTimeout(function(){ el.classList.remove('on'); setTimeout(function(){ el.remove(); }, 200); }, 3000);
+  }
+
+  // ========================================================================
+  // MODAL CONTROL (no document-level listeners — only direct button clicks)
+  // ========================================================================
+  function openModal(id){
+    var el = $(id);
+    if (!el) return;
+    // Move to body to escape any iframe/shell containers
+    if (el.parentNode !== document.body) document.body.appendChild(el);
+    el.classList.add('open');
+    el.style.display = 'flex'; // inline fallback — works even if <style> is stripped
+  }
+
+  function closeModal(id){
+    var el = $(id);
+    if (!el) return;
+    el.classList.remove('open');
+    el.style.display = 'none'; // inline fallback
+  }
+
+  // ========================================================================
+  // GAS DATA LOAD
+  // ========================================================================
+  function loadData(){
+    loadAttempts++;
+    var tb = $('tb');
+    tb.innerHTML = '<tr><td colspan="12" class="ec"><span class="spin" style="vertical-align:middle;margin-right:8px;"></span>Loading' +
+      (loadAttempts > 1 ? ' (attempt ' + loadAttempts + '/' + MAX_ATTEMPTS + ')' : '') + '…</td></tr>';
+
+    if (!isGas()){
+      // Sample data for non-GAS preview
+      recs = [
+        {id:'S-1',requestNo:'PR-2025-001',vendor:'Dell',department:'IT',itemDesc:'Laptops',status:'Order In Transit',priority:'High',amount:450000,qty:5,requestDate:'2025-05-01',expectedDate:'2025-05-30',requestedBy:'Sample User',poNumber:'PO-001',notes:'Sample data — not connected to GAS.'},
+        {id:'S-2',requestNo:'PR-2025-002',vendor:'Printer World',department:'Admin',itemDesc:'Printers',status:'Payment Received',priority:'Medium',amount:62000,qty:2,requestDate:'2025-05-03',expectedDate:'2025-05-20',requestedBy:'Sample User',poNumber:'PO-002',notes:''}
+      ];
+      setBanner('warn', '<i class="fa-solid fa-triangle-exclamation"></i> Running in preview mode (no GAS connection). Showing sample data.');
+      render();
+      return;
+    }
+
+    // Clear any previous watchdog
+    if (watchdogTimer) clearTimeout(watchdogTimer);
+
+    // Watchdog: if no response in WATCHDOG_MS, retry or fail
+    watchdogTimer = setTimeout(function(){
+      if (loadAttempts < MAX_ATTEMPTS){
+        console.warn('[PROCUREMENT] No response after ' + WATCHDOG_MS + 'ms — retrying.');
+        loadData();
+      } else {
+        showLoadError('Server did not respond after ' + MAX_ATTEMPTS + ' attempts. The web app deployment may be stale — redeploy with "New version" and refresh.');
+      }
+    }, WATCHDOG_MS);
+
+    try {
+      google.script.run
+        .withSuccessHandler(onLoadSuccess)
+        .withFailureHandler(onLoadFailure)
+        .procurement_getAll();
+    } catch(err){
+      clearTimeout(watchdogTimer);
+      showLoadError('Could not invoke GAS function: ' + (err.message || err));
+    }
+  }
+
+function onLoadSuccess(r){
+    if (watchdogTimer) clearTimeout(watchdogTimer);
+    loadAttempts = 0;
+
+    if (!r){ showLoadError('Server returned empty response.'); return; }
+    if (!r.ok){ showLoadError('Server error: ' + (r.error || 'unknown')); return; }
+
+    recs = Array.isArray(r.data) ? r.data : [];
+    setBanner('', '');
+    pg = 1;
+    render();
+    refreshDeptFilter();
+
+    // ── Auto-open on exact single match ───────────────────────────
+    var srchVal = ($('srch').value || '').trim().toLowerCase();
+    if (srchVal) {
+      var matches = recs.filter(function(rec) {
+        return String(rec.requestNo || '').toLowerCase() === srchVal;
+      });
+      if (matches.length === 1) {
+        setTimeout(function(){ openView(matches[0].id); }, 150);
+      }
+    }
+    // ──────────────────────────────────────────────────────────────
+  }
+
+  function onLoadFailure(err){
+    if (watchdogTimer) clearTimeout(watchdogTimer);
+    var msg = err && err.message ? err.message : String(err || 'GAS call failed');
+    console.error('[PROCUREMENT] GAS call failed:', err);
+    showLoadError(msg);
+  }
+
+  function showLoadError(msg){
+    recs = [];
+    updateKpis();
+    setBanner('error', '<i class="fa-solid fa-circle-exclamation"></i> ' + esc(msg));
+    $('tb').innerHTML = '<tr><td colspan="12" class="ec err"><i class="fa-solid fa-circle-exclamation" style="display:block;font-size:18px;margin-bottom:6px;"></i>' + esc(msg) + '</td></tr>';
+  }
+
+  // ========================================================================
+  // RENDER
+  // ========================================================================
+  function render(){
+    filt = applyFilters(recs);
+    sortRows();
+    updateKpis();
+    if (curView === 'pipeline') renderPipeline();
+    else renderTable();
+  }
+
+  function applyFilters(src){
+    var q = ($('srch').value || '').trim().toLowerCase();
+    var st = $('sf').value;
+    var pr = $('pf').value;
+    var dp = $('df').value;
+    return src.filter(function(r){
+      if (st && r.status !== st) return false;
+      if (pr && r.priority !== pr) return false;
+      if (dp && r.department !== dp) return false;
+      if (q){
+        var reqNo = String(r.requestNo || '').toLowerCase();
+        // Exact match on requestNo takes priority
+        if (reqNo === q) return true;
+        // Substring match across all searchable fields
+        var h = [r.vendor, r.itemDesc, r.department, r.requestNo,
+                 r.requestedBy, r.poNumber].join(' ').toLowerCase();
+        if (h.indexOf(q) < 0) return false;
+      }
+      return true;
+    });
+  }
+
+  function sortRows(){
+    // Sort by request date desc, fallback to id
+    filt.sort(function(a,b){
+      var av = a.requestDate || '';
+      var bv = b.requestDate || '';
+      if (av < bv) return 1;
+      if (av > bv) return -1;
+      return 0;
+    });
+  }
+
+  function updateKpis(){
+    var totalSpend = 0, overdueCnt = 0;
+    var counts = [0,0,0,0,0,0];
+    filt.forEach(function(r){
+      totalSpend += (Number(r.amount) || 0);
+      if (isOverdue(r)) overdueCnt++;
+      for (var i=0;i<ST.length;i++){
+        if (ST[i].v === r.status){ counts[i]++; break; }
+      }
+    });
+    $('kSpend').textContent = '₱' + fmt(totalSpend);
+    $('kSpendSub').textContent = filt.length + ' request' + (filt.length !== 1 ? 's' : '');
+    $('kOv').textContent = overdueCnt;
+    for (var i=0;i<6;i++) $('k'+i).textContent = counts[i];
+    $('pillTotal').innerHTML = '<i class="fa-solid fa-database"></i> ' + recs.length + ' records';
+    $('pillSpend').innerHTML = '<i class="fa-solid fa-peso-sign"></i> ₱' + fmt(totalSpend) + ' total';
+  }
+
+  function refreshDeptFilter(){
+    var sel = $('df');
+    var cur = sel.value;
+    var depts = {};
+    recs.forEach(function(r){ if (r.department) depts[r.department] = true; });
+    var list = Object.keys(depts).sort();
+    sel.innerHTML = '<option value="">All Departments</option>' +
+      list.map(function(d){ return '<option' + (d === cur ? ' selected' : '') + '>' + esc(d) + '</option>'; }).join('');
+  }
+
+  function renderTable(){
+    var psz = Number($('ps').value) || 50;
+    var tot = filt.length;
+    var pages = Math.max(1, Math.ceil(tot / psz));
+    pg = Math.min(Math.max(1, pg), pages);
+    var st = (pg-1) * psz;
+    var en = Math.min(st + psz, tot);
+    var slice = filt.slice(st, en);
+
+    $('pi').textContent = tot === 0 ? '0 of 0' : 'Page ' + pg + ' / ' + pages + '  •  ' + (st+1) + '–' + en + ' of ' + tot;
+    $('bPrev').disabled = pg <= 1;
+    $('bNext').disabled = pg >= pages;
+
+    var tb = $('tb');
+    if (!slice.length){
+      tb.innerHTML = '<tr><td colspan="12" class="ec"><i class="fa-solid fa-clipboard-list" style="font-size:18px;display:block;margin-bottom:6px;opacity:.3;"></i>' +
+        (recs.length === 0 ? 'No procurement requests yet. Click "New Request" to add one.' : 'No requests match your filters.') + '</td></tr>';
+      $('chkAll').checked = false;
+      return;
+    }
+
+    var selSet = selected; // reference alias for the template
+
+    tb.innerHTML = slice.map(function(r){
+      var sc = sCfg(r.status);
+      var pc = r.priority === 'High' ? 'pph' : r.priority === 'Low' ? 'ppl' : 'ppm';
+      var aStr = fmtAmt(r.amount);
+      var aCls = (!r.amount || r.amount == 0) ? 'amt0' : 'amt';
+      var od = isOverdue(r);
+
+      // Quick-status menu options
+      var menuItems = ST.map(function(s){
+        return '<div class="qs-item" data-qs-pick="' + esc(r.id) + '|' + esc(s.v) + '">' +
+          '<span class="qdot" style="background:' + s.d + ';"></span>' + esc(s.v) + '</div>';
+      }).join('');
+
+      return '<tr' + (od ? ' class="overdue"' : '') + ' data-id="' + esc(r.id) + '">' +
+        '<td class="chkcell"><input type="checkbox" class="rowchk" data-row-id="' + esc(r.id) + '"' + (selSet[r.id] ? ' checked' : '') + '></td>' +
+        '<td class="mono">' + esc(r.requestNo || r.id) + '</td>' +
+        '<td class="fw7">' + esc(r.vendor) + '</td>' +
+        '<td class="muted" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + esc(r.itemDesc) + '">' + esc(r.itemDesc) + '</td>' +
+        '<td class="muted">' + esc(r.department) + '</td>' +
+        '<td><div class="qs-wrap">' +
+          '<span class="sb ' + sc.c + ' qs-btn" data-qs-toggle="' + esc(r.id) + '" title="Click to change status">' +
+            '<span class="dot" style="background:' + sc.d + ';"></span>' + esc(r.status) +
+          '</span>' +
+          '<div class="qs-menu" id="qsm-' + esc(r.id) + '">' + menuItems + '</div>' +
+        '</div></td>' +
+        '<td><span class="pb ' + pc + '">' + esc(r.priority || 'Medium') + '</span></td>' +
+        '<td class="mono muted">' + (r.qty ? r.qty : '—') + '</td>' +
+        '<td class="' + aCls + '">' + aStr + '</td>' +
+        '<td class="muted mono">' + esc(r.requestDate || '—') + '</td>' +
+        '<td class="muted mono">' + esc(r.expectedDate || '—') + '</td>' +
+        '<td><div class="ra">' +
+          '<button class="ab edit" type="button" title="Edit" data-act="edit" data-id="' + esc(r.id) + '"><i class="fa-solid fa-pen"></i></button>' +
+          '<button class="ab" type="button" title="View" data-act="view" data-id="' + esc(r.id) + '"><i class="fa-solid fa-eye"></i></button>' +
+          (r.ticketUrl ? '<a class="ab" href="' + esc(r.ticketUrl) + '" target="_blank" rel="noopener" title="Open ticket"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>' : '') +
+          '<button class="ab del" type="button" title="Delete" data-act="del" data-id="' + esc(r.id) + '"><i class="fa-solid fa-trash"></i></button>' +
+        '</div></td>' +
+      '</tr>';
+    }).join('');
+
+    // Attach handlers DIRECTLY to each action button (no delegation)
+    var buttons = tb.querySelectorAll('button[data-act]');
+    for (var i=0;i<buttons.length;i++){
+      var btn = buttons[i];
+      var act = btn.getAttribute('data-act');
+      var id = btn.getAttribute('data-id');
+      if (act === 'edit') btn.onclick = (function(id){ return function(){ openEdit(id); }; })(id);
+      else if (act === 'view') btn.onclick = (function(id){ return function(){ openView(id); }; })(id);
+      else if (act === 'del') btn.onclick = (function(id){ return function(){ confirmDelete(id); }; })(id);
+    }
+
+    // Wire quick-status badges
+    var qsBtns = tb.querySelectorAll('[data-qs-toggle]');
+    for (var j=0;j<qsBtns.length;j++){
+      var qb = qsBtns[j];
+      var qid = qb.getAttribute('data-qs-toggle');
+      qb.onclick = (function(id){ return function(e){ e.stopPropagation(); toggleQuickStatus(id, e); }; })(qid);
+    }
+    var qsItems = tb.querySelectorAll('[data-qs-pick]');
+    for (var k=0;k<qsItems.length;k++){
+      var qi = qsItems[k];
+      var pick = qi.getAttribute('data-qs-pick').split('|');
+      qi.onclick = (function(id, st){ return function(e){ e.stopPropagation(); applyQuickStatus(id, st); }; })(pick[0], pick[1]);
+    }
+
+    // Wire row checkboxes
+    var chks = tb.querySelectorAll('input.rowchk[data-row-id]');
+    for (var m=0;m<chks.length;m++){
+      var ch = chks[m];
+      var rid = ch.getAttribute('data-row-id');
+      ch.onclick = (function(id, el){
+        return function(e){
+          e.stopPropagation();
+          if (el.checked) selected[id] = true;
+          else delete selected[id];
+          updateBulkBar();
+          // Sync the chkAll header checkbox state
+          var allChecked = slice.every(function(rr){ return !!selected[rr.id]; });
+          $('chkAll').checked = allChecked && slice.length > 0;
+        };
+      })(rid, ch);
+    }
+
+    // Sync chkAll header state with current page
+    $('chkAll').checked = slice.length > 0 && slice.every(function(rr){ return !!selected[rr.id]; });
+  }
+
+  // ========================================================================
+  // PIPELINE VIEW
+  // ========================================================================
+  function renderPipeline(){
+    var board = $('pboard');
+    board.innerHTML = ST.map(function(s, i){
+      var items = filt.filter(function(r){ return r.status === s.v; });
+      var cards = items.map(function(r){
+        var a = fmtAmt(r.amount);
+        var od = isOverdue(r);
+        return '<div class="pk' + (od ? ' overdue-card' : '') + '" data-pk-id="' + esc(r.id) + '">' +
+          '<div class="pk-v">' + esc(r.vendor) + (od ? ' <span style="color:#fbbf24;">⚠</span>' : '') + '</div>' +
+          '<div class="pk-i">' + esc(r.itemDesc) + '</div>' +
+          (a !== '—' ? '<div class="pk-a">' + a + '</div>' : '') +
+          '<div class="pk-m"><span>' + esc(r.department) + '</span><span>' + esc(r.expectedDate || r.requestDate || '') + '</span></div>' +
+        '</div>';
+      }).join('');
+      var hdrBg = s.d.replace('#','rgba(').slice(0,-1); // not used; keep tint per status
+      return '<div class="pc">' +
+        '<div class="pc-hd" style="background:' + s.d + '22;color:' + s.d + ';">' +
+          esc(s.v) + '<span class="pc-cnt">' + items.length + '</span>' +
+        '</div>' +
+        (cards || '<div style="font-size:10px;color:var(--t-3);padding:10px;text-align:center;font-family:var(--font-mono);">Empty</div>') +
+      '</div>';
+    }).join('');
+
+    // Click handlers per card
+    var cards = board.querySelectorAll('[data-pk-id]');
+    for (var i=0;i<cards.length;i++){
+      var card = cards[i];
+      var id = card.getAttribute('data-pk-id');
+      card.onclick = (function(id){ return function(){ openView(id); }; })(id);
+    }
+  }
+
+  function switchView(v){
+    curView = v;
+    $('tvWrap').classList.toggle('hide', v !== 'table');
+    $('pv').classList.toggle('show', v === 'pipeline');
+    $('btnTV').classList.toggle('active', v === 'table');
+    $('btnPV').classList.toggle('active', v === 'pipeline');
+    render();
+  }
+
+  // ========================================================================
+  // QUICK STATUS
+  // ========================================================================
+
+  function toggleQuickStatus(id, e){
+    if (e && e.stopPropagation) e.stopPropagation();
+
+    // Close any other open menu first
+    if (openMenuId && openMenuId !== id) closeAllQuickStatus();
+
+    var menu = $('qsm-' + id);
+    if (!menu) return;
+
+    var willOpen = !menu.classList.contains('open');
+
+    if (willOpen) {
+      // Create backdrop — clicking it closes the menu, no event propagation needed
+      var bd = document.createElement('div');
+      bd.id = 'qsBackdrop';
+      bd.style.cssText = 'position:fixed;inset:0;z-index:2147483646;';
+      bd.onclick = function(){ closeAllQuickStatus(); };
+      document.body.appendChild(bd);
+
+      // Move menu to body so it escapes all overflow:hidden/auto ancestors
+      if (menu.parentNode !== document.body) document.body.appendChild(menu);
+
+      menu.style.position   = 'fixed';
+      menu.style.display    = 'block';
+      menu.style.visibility = 'hidden';
+      menu.style.top  = '0';
+      menu.style.left = '0';
+
+      void menu.offsetHeight; // force reflow before measuring
+
+      var badge = document.querySelector('[data-qs-toggle="' + id + '"]');
+      var pad   = 6;
+      var bRect = badge ? badge.getBoundingClientRect() : {top:0,bottom:0,left:0,right:0};
+      var mH = menu.offsetHeight;
+      var mW = menu.offsetWidth;
+
+      var top  = bRect.bottom + pad;
+      var left = bRect.left;
+      if (top + mH > window.innerHeight - pad) top = bRect.top - mH - pad;
+      if (left + mW > window.innerWidth - pad) left = window.innerWidth - mW - pad;
+      if (left < pad) left = pad;
+      if (top  < pad) top  = pad;
+
+      menu.style.top        = top  + 'px';
+      menu.style.left       = left + 'px';
+      menu.style.visibility = 'visible';
+      menu.classList.add('open');
+      openMenuId = id;
+
+    } else {
+      closeAllQuickStatus();
+    }
+  }
+
+ function closeAllQuickStatus(){
+    var bd = document.getElementById('qsBackdrop');
+    if (bd) bd.remove();
+    if (!openMenuId) return;
+    var m = $('qsm-' + openMenuId);
+    if (m) {
+      m.classList.remove('open');
+      m.style.display = 'none';
+      if (m.parentNode === document.body) document.body.removeChild(m);
+    }
+    openMenuId = null;
+  }
+
+
+  function applyQuickStatus(id, newStatus){
+    closeAllQuickStatus();
+    var r = findRec(id);
+    if (!r || r.status === newStatus) return;
+
+    // Optimistic update — UI flips immediately
+    var oldStatus = r.status;
+    r.status = newStatus;
+    render();
+
+    if (!isGas()){
+      toast('Status updated (preview).', 'success');
+      return;
+    }
+
+    // Save full record so the row stays consistent
+    google.script.run
+      .withSuccessHandler(function(res){
+        if (!res || !res.ok){
+          r.status = oldStatus; // revert
+          render();
+          toast((res && res.error) || 'Status update failed.', 'error');
+        } else {
+          toast('Status updated.', 'success');
+        }
+      })
+      .withFailureHandler(function(err){
+        r.status = oldStatus;
+        render();
+        toast(err && err.message ? err.message : 'Status update failed.', 'error');
+      })
+      .procurement_save(r);
+  }
+
+  // ========================================================================
+  // ADD / EDIT
+  // ========================================================================
+ function openAdd(){
+    mMode = 'add';
+    $('mTitle').textContent = 'New Procurement Request';
+    $('mSub').textContent = 'Fill in the details';
+    $('eId').value = '';
+    $('fV').value = ''; $('fD').value = ''; $('fI').value = '';
+    $('fSt').value = 'Quotation Requested'; $('fPr').value = 'Medium';
+    $('fAm').value = ''; $('fQty').value = ''; $('fRd').value = today(); $('fEd').value = '';
+    $('fRb').value = ''; $('fPo').value = ''; $('fNo').value = ''; $('fTk').value = '';
+    if ($('fLst')) $('fLst').value = '';   // ← ADD THIS LINE
+    $('mTip').textContent = '';
+    $('saveBtn').innerHTML = '<i class="fa-solid fa-check"></i> Save';
+    $('saveBtn').disabled = false;
+    openModal('mAdd');
+  }
+
+  function openEdit(id){
+    var r = findRec(id);
+    if (!r) return;
+    mMode = 'edit';
+    $('mTitle').textContent = 'Edit Request';
+    $('mSub').textContent = r.requestNo || r.id;
+    $('eId').value = r.id;
+    $('fV').value = r.vendor || ''; $('fD').value = r.department || '';
+    $('fI').value = r.itemDesc || ''; $('fSt').value = r.status || 'Quotation Requested';
+    $('fPr').value = r.priority || 'Medium'; $('fAm').value = r.amount || ''; $('fQty').value = r.qty || '';
+    $('fRd').value = r.requestDate || ''; $('fEd').value = r.expectedDate || '';
+    $('fRb').value = r.requestedBy || ''; $('fPo').value = r.poNumber || '';
+    $('fNo').value = r.notes || ''; $('fTk').value = r.ticketUrl || '';
+    $('mTip').textContent = '';
+    $('saveBtn').innerHTML = '<i class="fa-solid fa-check"></i> Update';
+    $('saveBtn').disabled = false;
+    $('fLst').value = r.linkedSerialTag || '';
+    openModal('mAdd');
+  }
+
+  function saveRecord(){
+    var v = $('fV').value.trim();
+    var d = $('fD').value.trim();
+    var i = $('fI').value.trim();
+    if (!v || !d || !i){
+      $('mTip').textContent = '⚠ Vendor, Department, and Item are required.';
+      return;
+    }
+    var existing = mMode === 'edit' ? findRec($('eId').value) : null;
+  var rec = {
+  id: mMode === 'edit' ? $('eId').value : '',
+  requestNo: existing ? existing.requestNo : '',
+  vendor: v, department: d, itemDesc: i,
+  status: $('fSt').value, priority: $('fPr').value,
+  amount: parseFloat($('fAm').value) || 0,
+  qty:    parseFloat($('fQty').value) || 0,
+  requestDate: $('fRd').value, expectedDate: $('fEd').value,
+  requestedBy: $('fRb').value.trim(), poNumber: $('fPo').value.trim(),
+  notes: $('fNo').value.trim(), ticketUrl: $('fTk').value.trim(),
+  linkedSerialTag: $('fLst') ? $('fLst').value.trim() : ''  // ← ADD
+};
+    var btn = $('saveBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span> Saving…';
+
+    if (!isGas()){
+      // Local-only save in preview mode
+      setTimeout(function(){
+        if (mMode === 'add'){
+          rec.id = 'S-' + Date.now();
+          rec.requestNo = 'PR-' + new Date().getFullYear() + '-' + String(recs.length+1).padStart(3,'0');
+          recs.push(rec);
+        } else {
+          var idx = -1;
+          for (var j=0;j<recs.length;j++) if (recs[j].id === rec.id) { idx = j; break; }
+          if (idx >= 0) recs[idx] = rec;
+        }
+        closeModal('mAdd');
+        render();
+        toast('Saved (preview only).', 'success');
+      }, 400);
+      return;
+    }
+
+    var saveTimer = setTimeout(function(){
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> ' + (mMode === 'edit' ? 'Update' : 'Save');
+      $('mTip').textContent = '⚠ Server did not respond. Try again.';
+    }, 15000);
+
+    google.script.run
+      .withSuccessHandler(function(res){
+        clearTimeout(saveTimer);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> ' + (mMode === 'edit' ? 'Update' : 'Save');
+        if (!res || !res.ok){
+          $('mTip').textContent = '⚠ ' + ((res && res.error) || 'Save failed.');
+          return;
+        }
+        closeModal('mAdd');
+        toast(mMode === 'add' ? 'Request added.' : 'Request updated.', 'success');
+        loadData(); // refresh from server
+      })
+      .withFailureHandler(function(err){
+        clearTimeout(saveTimer);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> ' + (mMode === 'edit' ? 'Update' : 'Save');
+        $('mTip').textContent = '⚠ ' + (err && err.message ? err.message : 'Save failed.');
+      })
+      .procurement_save(rec);
+  }
+
+  // ========================================================================
+  // VIEW
+  // ========================================================================
+  function openView(id){
+    var r = findRec(id);
+    if (!r) return;
+    vId = id;
+    $('vTitle').textContent = r.requestNo || r.id;
+    $('vSub').textContent = r.vendor + ' · ' + r.department;
+    var sc = sCfg(r.status);
+    var pc = r.priority === 'High' ? 'pph' : r.priority === 'Low' ? 'ppl' : 'ppm';
+    var html = '<div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;">' +
+      '<span class="sb ' + sc.c + '"><span class="dot" style="background:' + sc.d + ';"></span>' + esc(r.status) + '</span>' +
+      '<span class="pb ' + pc + '">' + esc(r.priority || 'Medium') + '</span>' +
+      '</div>' +
+      kv('Item / Description', r.itemDesc) +
+      kv('Amount', fmtAmt(r.amount)) +
+      kv('Quantity', r.qty ? String(r.qty) : '—') +
+      kv('Request Date', r.requestDate || '—') +
+      kv('Expected Delivery', r.expectedDate || '—') +
+      kv('Requested By', r.requestedBy || '—') +
+      kv('PO Number', r.poNumber || '—') +
+      (r.ticketUrl ? '<div class="kv"><span class="kvl">Ticket</span><span class="kvv"><a href="' + esc(r.ticketUrl) + '" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;font-size:12.5px;font-weight:600;">' + esc(r.ticketUrl.replace(/^https?:\/\//, '')) + ' <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:9px;"></i></a></span></div>' : '') +
+      (r.notes ? '<div style="margin-top:13px;padding-top:13px;border-top:1px solid var(--b-1);"><div class="fl" style="margin-bottom:5px;">Notes</div><div style="font-size:13px;color:var(--t-2);line-height:1.6;">' + esc(r.notes) + '</div></div>' : '');
+    $('vtab-details').innerHTML = html;
+
+    // Reset attachments state and tab
+    attState.reqId = r.id;
+    attState.files = [];
+    attState.uploading = false;
+    attState.total = 0;
+    attState.done = 0;
+    attState.vTab = 'details';
+    setViewTab('details');
+    $('attList').innerHTML = '';
+    $('attEmpty').style.display = 'none';
+    $('attLoading').style.display = 'none';
+    $('attProgress').style.display = 'none';
+    $('attCount').classList.remove('show');
+
+    var tagEl = $('attTag');
+    if (tagEl) tagEl.value = '';
+
+    // Reset comments state
+    commentsState.reqId = r.id;
+    commentsState.items = [];
+    $('cmList').innerHTML = '';
+    $('cmEmpty').style.display = 'none';
+    $('cmLoading').style.display = 'none';
+    $('cmInput').value = '';
+    $('cmCount').classList.remove('show');
+
+    openModal('mView');
+  }
+
+  function setViewTab(tab){
+    attState.vTab = tab;
+    $('vtabDetailsBtn').classList.toggle('active', tab === 'details');
+    $('vtabAttBtn').classList.toggle('active', tab === 'attachments');
+    $('vtabCmBtn').classList.toggle('active', tab === 'comments');
+    $('vtab-details').classList.toggle('active', tab === 'details');
+    $('vtab-attachments').classList.toggle('active', tab === 'attachments');
+    $('vtab-comments').classList.toggle('active', tab === 'comments');
+    if (tab === 'attachments') loadAttachments();
+    if (tab === 'comments') loadComments();
+  }
+
+  function kv(label, val){
+    return '<div class="kv"><span class="kvl">' + esc(label) + '</span><span class="kvv">' + esc(val || '—') + '</span></div>';
+  }
+
+  // ========================================================================
+  // ATTACHMENTS  (clean rewrite — single source of truth = server list)
+  // ========================================================================
+  //
+  // Design:
+  //   - No "queue" UI. Only the live server-side list is shown.
+  //   - Files upload one at a time. Progress bar shows current file + total.
+  //   - After each upload (or after the whole batch), we ALWAYS reload the
+  //     server list. If the file is present, success — regardless of what
+  //     the callback said. This eliminates the false-failure problem caused
+  //     by the shell's broken document click handler closing the message
+  //     channel mid-call.
+  //   - Each file in the list has: Preview, Open in Drive, Delete.
+  //   - Preview opens an inline modal with Google Drive's embedded preview
+  //     (works for PDFs, images, Word, Excel, video, audio, text).
+
+  function setupDropZone(){
+    var zone = $('dropZone');
+    var input = $('attFileInput');
+    if (!zone || !input) return;
+
+    zone.ondragover = function(e){ e.preventDefault(); zone.classList.add('drag'); };
+    zone.ondragleave = function(){ zone.classList.remove('drag'); };
+    zone.ondrop = function(e){
+      e.preventDefault();
+      zone.classList.remove('drag');
+      var files = Array.prototype.slice.call(e.dataTransfer.files);
+      uploadFiles(files);
+    };
+    input.onchange = function(){
+      var files = Array.prototype.slice.call(input.files);
+      input.value = '';
+      uploadFiles(files);
+    };
+  }
+
+  // Entry point — accepts an array of File objects and uploads them sequentially
+  function uploadFiles(files){
+    if (!attState.reqId) { toast('Open a request first.', 'error'); return; }
+    if (!files || !files.length) return;
+    if (attState.uploading) { toast('Wait for current upload to finish.', 'info'); return; }
+
+    // Read selected tag and prepend to filename
+    var tagEl = $('attTag');
+    var tagPrefix = tagEl ? tagEl.value : '';
+
+    // Filter out anything too big
+    var valid = [];
+    files.forEach(function(f){
+      if (f.size > 20 * 1024 * 1024){
+        toast(f.name + ' exceeds 20 MB.', 'error');
+        return;
+      }
+      // Wrap in a plain object so we can override the name
+      valid.push({
+        file: f,
+        name: tagPrefix ? tagPrefix + ' ' + f.name : f.name,
+        size: f.size,
+        type: f.type
+      });
+    });
+    if (!valid.length) return;
+
+    attState.uploading = true;
+    attState.total = valid.length;
+    attState.done = 0;
+    showProgress(valid[0].name, 0, valid.length);
+
+    // Track what we tried so we can verify at the end
+    var attempted = valid.map(function(f){ return f.name; });
+
+    var idx = 0;
+    var next = function(){
+      if (idx >= valid.length){
+        hideProgress();
+        attState.uploading = false;
+        finalizeBatch(attempted);
+        return;
+      }
+      var f = valid[idx++];
+      showProgress(f.name, attState.done, attState.total);
+      uploadOne(f, function(){
+        attState.done++;
+        showProgress(f.name, attState.done, attState.total);
+        // Refresh list after each file so user sees progress
+        loadAttachments();
+        next();
+      });
+    };
+    next();
+  }
+
+  // After a batch finishes, refresh the list once more and check which of the
+  // attempted filenames are present. Show ONE summary toast based on truth.
+  function finalizeBatch(attempted){
+    if (!isGas()){
+      toast(attempted.length === 1 ? 'File uploaded.' : attempted.length + ' files uploaded.', 'success');
+      return;
+    }
+    google.script.run
+      .withSuccessHandler(function(res){
+        if (res && res.ok){
+          attState.files = res.files || [];
+          renderAttList();
+          var serverNames = {};
+          attState.files.forEach(function(f){ serverNames[f.name] = true; });
+          var landed  = attempted.filter(function(n){ return serverNames[n]; });
+          var missing = attempted.filter(function(n){ return !serverNames[n]; });
+          if (landed.length === attempted.length){
+            toast(attempted.length === 1 ? 'File uploaded.' : attempted.length + ' files uploaded.', 'success');
+          } else if (landed.length > 0){
+            toast(landed.length + ' of ' + attempted.length + ' uploaded. ' + missing.length + ' failed.', 'error');
+          } else {
+            toast('Upload failed. Please try again.', 'error');
+          }
+        } else {
+          // Couldn't verify — fall back to optimistic message
+          toast(attempted.length === 1 ? 'File uploaded.' : 'Upload complete.', 'success');
+        }
+      })
+      .withFailureHandler(function(){
+        toast(attempted.length === 1 ? 'File uploaded.' : 'Upload complete.', 'success');
+      })
+      .procurement_listDocs({ reqId: attState.reqId });
+  }
+
+  // Upload one file. Always calls cb() at the end, regardless of outcome.
+  // No toasts here — finalizeBatch() is the single source of truth for
+  // success/failure messaging, based on what's actually in the server list.
+  function uploadOne(fileObj, cb){
+    if (!isGas()){
+      setTimeout(cb, 400);
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var b64 = String(e.target.result).split(',')[1];
+      var done = false;
+      var finish = function(){
+        if (done) return;
+        done = true;
+        cb();
+      };
+
+      // Safety net: if both callbacks somehow never fire, finish after 60s
+      var safetyTimer = setTimeout(finish, 60000);
+
+      google.script.run
+        .withSuccessHandler(function(){
+          clearTimeout(safetyTimer);
+          finish();
+        })
+        .withFailureHandler(function(){
+          clearTimeout(safetyTimer);
+          // Message channel closed — but the server likely finished anyway.
+          // Wait a moment for Drive to index, then let finalizeBatch be the judge.
+          setTimeout(finish, 1500);
+        })
+        .procurement_uploadDoc({
+          reqId:      attState.reqId,
+          fileName:   fileObj.name,           // ← tagged name
+          mimeType:   fileObj.type || 'application/octet-stream',
+          base64Data: b64
+        });
+    };
+      reader.onerror = function(){ cb(); };
+    reader.readAsDataURL(fileObj.file); 
+  }
+
+  function showProgress(name, done, total){
+    $('attProgress').style.display = 'block';
+    $('attProgressLabel').textContent = 'Uploading: ' + name;
+    $('attProgressCount').textContent = done + ' / ' + total;
+    var pct = total ? Math.round((done / total) * 100) : 0;
+    $('attProgressBar').style.width = pct + '%';
+  }
+  function hideProgress(){
+    $('attProgress').style.display = 'none';
+    $('attProgressBar').style.width = '0%';
+  }
+
+  function loadAttachments(){
+    if (!attState.reqId) return;
+    // Only show full loading state if list is empty; otherwise refresh silently
+    var firstLoad = !attState.files.length;
+    if (firstLoad){
+      $('attLoading').style.display = 'block';
+      $('attEmpty').style.display = 'none';
+      $('attList').innerHTML = '';
+    }
+
+    if (!isGas()){
+      $('attLoading').style.display = 'none';
+      $('attEmpty').style.display = 'block';
+      return;
+    }
+
+    google.script.run
+      .withSuccessHandler(function(res){
+        $('attLoading').style.display = 'none';
+        if (!res || !res.ok){
+          if (firstLoad) toast((res && res.error) || 'Could not load attachments.', 'error');
+          return;
+        }
+        attState.files = res.files || [];
+        renderAttList();
+      })
+      .withFailureHandler(function(){
+        $('attLoading').style.display = 'none';
+        // Try once more after a short delay
+        setTimeout(function(){
+          if (!isGas()) return;
+          google.script.run
+            .withSuccessHandler(function(res){
+              if (res && res.ok){
+                attState.files = res.files || [];
+                renderAttList();
+              }
+            })
+            .withFailureHandler(function(){})
+            .procurement_listDocs({ reqId: attState.reqId });
+        }, 1500);
+      })
+      .procurement_listDocs({ reqId: attState.reqId });
+  }
+
+  function renderAttList(){
+    var list = $('attList');
+    var empty = $('attEmpty');
+    var count = $('attCount');
+
+    if (attState.files.length){
+      count.textContent = attState.files.length;
+      count.classList.add('show');
+    } else {
+      count.classList.remove('show');
+    }
+
+    if (!attState.files.length){
+      list.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    list.innerHTML = attState.files.map(function(f, i){
+       var sz = f.size ? fmtSize(f.size) : '';
+      var iconHtml = isImage(f.mimeType)
+        ? '<img src="' + esc(thumbUrl(f.id)) + '" alt="" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'' + fileIcon(f.mimeType).replace(/'/g,"\\'") + '\';">'
+        : fileIcon(f.mimeType);
+      var displayName = _attDisplayName_(f.name);
+      var tagHtml     = _attTagHtml_(f.name);
+      return '<div class="att-file">' +
+        '<div class="att-icon">' + iconHtml + '</div>' +
+        '<div class="att-file-info">' +
+          '<div class="att-file-name" title="' + esc(f.name) + '">' + esc(displayName) + '</div>' +
+          '<div class="att-file-meta" style="display:flex;align-items:center;gap:5px;">' + tagHtml + '<span>' + esc(f.createdDate) + (sz ? ' · ' + sz : '') + '</span></div>' +
+        '</div>' +
+        '<div class="att-actions">' +
+          '<button class="ab ab-prev" type="button" title="Preview" data-att-idx="' + i + '" data-att-action="preview"><i class="fa-solid fa-eye"></i></button>' +
+          '<button class="ab ab-open" type="button" title="Open in Drive" data-att-idx="' + i + '" data-att-action="open"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>' +
+          '<button class="ab ab-del" type="button" title="Delete" data-att-idx="' + i + '" data-att-action="del"><i class="fa-solid fa-trash"></i></button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    // Wire actions
+    var btns = list.querySelectorAll('button[data-att-action]');
+    for (var i=0;i<btns.length;i++){
+      var b = btns[i];
+      var idx = Number(b.getAttribute('data-att-idx'));
+      var act = b.getAttribute('data-att-action');
+      if (act === 'preview') b.onclick = (function(i){ return function(){ openPreview(attState.files[i]); }; })(idx);
+      else if (act === 'open') b.onclick = (function(i){ return function(){ window.open(attState.files[i].url, '_blank', 'noopener'); }; })(idx);
+      else if (act === 'del') b.onclick = (function(i){ return function(){ deleteAttachment(attState.files[i]); }; })(idx);
+    }
+  }
+
+  function deleteAttachment(f){
+    if (!f) return;
+    if (!window.confirm('Delete "' + f.name + '"?')) return;
+    // Optimistic
+    attState.files = attState.files.filter(function(x){ return x.id !== f.id; });
+    renderAttList();
+    if (!isGas()) return;
+    google.script.run
+      .withSuccessHandler(function(res){
+        if (!res || !res.ok){
+          toast((res && res.error) || 'Delete failed.', 'error');
+          loadAttachments();
+          return;
+        }
+        toast('File deleted.', 'success');
+      })
+      .withFailureHandler(function(){
+        // Reload to see truth
+        setTimeout(loadAttachments, 1000);
+      })
+      .procurement_deleteDoc(f.id);
+  }
+
+  // ---- Preview modal ----
+  function openPreview(f){
+    if (!f) return;
+    $('prevTitle').textContent = f.name;
+    $('prevSub').textContent = (f.size ? fmtSize(f.size) + ' · ' : '') + (f.mimeType || '');
+    $('prevOpenNew').href = f.url;
+    $('prevFallbackLink').href = f.url;
+
+    var frame = $('prevFrame');
+    var img = $('prevImg');
+    var loading = $('prevLoading');
+    var fallback = $('prevFallback');
+
+    frame.style.display = 'none';
+    img.style.display = 'none';
+    fallback.style.display = 'none';
+    loading.style.display = 'block';
+    frame.src = 'about:blank';
+    img.src = '';
+
+    var mime = String(f.mimeType || '').toLowerCase();
+
+    if (mime.indexOf('image') >= 0){
+      // Use Drive's direct image view
+      img.onload = function(){ loading.style.display = 'none'; img.style.display = 'block'; };
+      img.onerror = function(){ loading.style.display = 'none'; fallback.style.display = 'block'; };
+      img.src = 'https://drive.google.com/uc?export=view&id=' + encodeURIComponent(f.id);
+    } else if (canPreviewInIframe(mime)){
+      // Drive's preview endpoint handles PDF, Office docs, video, audio, text, etc.
+      frame.onload = function(){ loading.style.display = 'none'; frame.style.display = 'block'; };
+      frame.src = 'https://drive.google.com/file/d/' + encodeURIComponent(f.id) + '/preview';
+      // Failsafe: if iframe takes too long, just show it anyway
+      setTimeout(function(){
+        if (loading.style.display !== 'none'){
+          loading.style.display = 'none';
+          frame.style.display = 'block';
+        }
+      }, 4000);
+    } else {
+      loading.style.display = 'none';
+      fallback.style.display = 'block';
+    }
+
+    openModal('mPrev');
+  }
+
+  function closePreview(){
+    $('prevFrame').src = 'about:blank';
+    $('prevImg').src = '';
+    closeModal('mPrev');
+  }
+
+  function canPreviewInIframe(mime){
+    // Drive's /preview endpoint supports basically everything except some archives
+    if (!mime) return true;
+    if (mime.indexOf('zip') >= 0) return false;
+    if (mime.indexOf('octet-stream') >= 0) return false;
+    return true;
+  }
+
+  function isImage(mime){
+    return String(mime || '').toLowerCase().indexOf('image') >= 0;
+  }
+
+  function thumbUrl(fileId){
+    // Drive thumbnail endpoint — small thumb of any file
+    return 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(fileId) + '&sz=w64';
+  }
+
+  function fileIcon(mime){
+    var m = String(mime || '').toLowerCase();
+    if (m.indexOf('pdf') >= 0) return '<i class="fa-solid fa-file-pdf" style="color:#f87171;"></i>';
+    if (m.indexOf('word') >= 0 || m.indexOf('document') >= 0) return '<i class="fa-solid fa-file-word" style="color:#60a5fa;"></i>';
+    if (m.indexOf('excel') >= 0 || m.indexOf('sheet') >= 0) return '<i class="fa-solid fa-file-excel" style="color:#4ade80;"></i>';
+    if (m.indexOf('powerpoint') >= 0 || m.indexOf('presentation') >= 0) return '<i class="fa-solid fa-file-powerpoint" style="color:#fb923c;"></i>';
+    if (m.indexOf('image') >= 0) return '<i class="fa-solid fa-file-image" style="color:#c084fc;"></i>';
+    if (m.indexOf('video') >= 0) return '<i class="fa-solid fa-file-video" style="color:#f472b6;"></i>';
+    if (m.indexOf('audio') >= 0) return '<i class="fa-solid fa-file-audio" style="color:#fbbf24;"></i>';
+    if (m.indexOf('zip') >= 0) return '<i class="fa-solid fa-file-zipper" style="color:#fb923c;"></i>';
+    if (m.indexOf('text') >= 0) return '<i class="fa-solid fa-file-lines" style="color:#94a3b8;"></i>';
+    return '<i class="fa-solid fa-file" style="opacity:.5;"></i>';
+  }
+
+  function fmtSize(b){
+    if (b < 1024) return b + 'B';
+    if (b < 1024*1024) return Math.round(b/1024) + 'KB';
+    return (b/1024/1024).toFixed(1) + 'MB';
+  }
+
+
+  // ========================================================================
+  // BULK SELECTION
+  // ========================================================================
+  function updateBulkBar(){
+    var ids = Object.keys(selected);
+    var bar = $('bulkbar');
+    if (!ids.length){
+      bar.classList.remove('show');
+      return;
+    }
+    bar.classList.add('show');
+    $('bulkCount').textContent = ids.length + ' selected';
+  }
+
+  function clearSelection(){
+    selected = {};
+    updateBulkBar();
+    var chks = document.querySelectorAll('#tb input.rowchk');
+    for (var i=0;i<chks.length;i++) chks[i].checked = false;
+    $('chkAll').checked = false;
+  }
+
+  function toggleSelectAll(){
+    var psz = Number($('ps').value) || 50;
+    var st = (pg-1) * psz;
+    var en = Math.min(st + psz, filt.length);
+    var slice = filt.slice(st, en);
+    var allSelected = slice.every(function(r){ return !!selected[r.id]; });
+    if (allSelected){
+      slice.forEach(function(r){ delete selected[r.id]; });
+    } else {
+      slice.forEach(function(r){ selected[r.id] = true; });
+    }
+    updateBulkBar();
+    renderTable();
+  }
+
+  function bulkDelete(){
+    var ids = Object.keys(selected);
+    if (!ids.length) return;
+    if (!window.confirm('Delete ' + ids.length + ' selected request' + (ids.length === 1 ? '' : 's') + '? This cannot be undone.')) return;
+    if (!isGas()){
+      recs = recs.filter(function(r){ return !selected[r.id]; });
+      clearSelection();
+      render();
+      toast('Deleted (preview).', 'success');
+      return;
+    }
+    toast('Deleting…', 'info');
+    google.script.run
+      .withSuccessHandler(function(res){
+        if (!res || !res.ok){
+          toast((res && res.error) || 'Bulk delete failed.', 'error');
+          return;
+        }
+        toast('Deleted ' + res.deleted + ' request' + (res.deleted === 1 ? '' : 's') + '.', 'success');
+        clearSelection();
+        loadData();
+      })
+      .withFailureHandler(function(err){ toast(err && err.message ? err.message : 'Bulk delete failed.', 'error'); })
+      .procurement_bulkDelete(ids);
+  }
+
+  function bulkChangeStatus(newStatus){
+    var ids = Object.keys(selected);
+    if (!ids.length || !newStatus) return;
+    if (!isGas()){
+      recs.forEach(function(r){ if (selected[r.id]) r.status = newStatus; });
+      clearSelection();
+      $('bulkStatus').value = '';
+      render();
+      toast('Status updated (preview).', 'success');
+      return;
+    }
+    toast('Updating…', 'info');
+    google.script.run
+      .withSuccessHandler(function(res){
+        if (!res || !res.ok){
+          toast((res && res.error) || 'Bulk update failed.', 'error');
+          return;
+        }
+        toast('Updated ' + res.updated + ' request' + (res.updated === 1 ? '' : 's') + '.', 'success');
+        clearSelection();
+        $('bulkStatus').value = '';
+        loadData();
+      })
+      .withFailureHandler(function(err){ toast(err && err.message ? err.message : 'Bulk update failed.', 'error'); })
+      .procurement_bulkUpdateStatus({ ids: ids, status: newStatus });
+  }
+
+
+  // ========================================================================
+  // ANALYTICS
+  // ========================================================================
+  // Always rebuild the chart container HTML before drawing, so canvases
+  // are guaranteed to exist (the previous render may have been a text fallback
+  // that wiped canvases, or rendered Chart.js instances we need to detach).
+  function resetAnalyticsChartContainer(){
+    var wrap = $('anChartsWrap');
+    if (!wrap) return;
+    // Destroy any existing Chart.js instances first
+    Object.keys(anCharts).forEach(function(k){
+      try { anCharts[k].destroy(); } catch(_){}
+      delete anCharts[k];
+    });
+    wrap.innerHTML =
+      '<div class="an-chart wide"><div class="an-chart-title">Monthly Trend (Last 12 Months)</div><canvas id="anTrend"></canvas></div>' +
+      '<div class="an-chart"><div class="an-chart-title">Spend by Status</div><canvas id="anStatus"></canvas></div>' +
+      '<div class="an-chart"><div class="an-chart-title">Spend by Department</div><canvas id="anDept"></canvas></div>' +
+      '<div class="an-chart wide"><div class="an-chart-title">Top 10 Vendors by Spend</div><canvas id="anVendor"></canvas></div>';
+
+    // Remove any retry/fallback banner from a previous open
+    var stale = document.querySelectorAll('#anContent .an-retry-banner');
+    stale.forEach(function(n){ n.remove(); });
+  }
+
+  function openAnalytics(){
+    openModal('mAn');
+    resetAnalyticsChartContainer();
+    $('anLoading').style.display = 'block';
+    $('anContent').style.display = 'none';
+    $('anEmpty').style.display = 'none';
+
+    if (!isGas()){
+      // Build analytics from local recs
+      var data = buildLocalAnalytics(recs);
+      setTimeout(function(){ renderAnalytics(data); }, 200);
+      return;
+    }
+
+    google.script.run
+      .withSuccessHandler(function(res){
+        $('anLoading').style.display = 'none';
+        if (!res || !res.ok){
+          $('anEmpty').style.display = 'block';
+          $('anEmpty').textContent = (res && res.error) || 'Could not load analytics.';
+          return;
+        }
+        renderAnalytics(res.data);
+      })
+      .withFailureHandler(function(){
+        $('anLoading').style.display = 'none';
+        $('anEmpty').style.display = 'block';
+      })
+      .procurement_getAnalytics();
+  }
+
+  function closeAnalytics(){
+    // Destroy charts to free memory
+    Object.keys(anCharts).forEach(function(k){
+      try { anCharts[k].destroy(); } catch(_){}
+      delete anCharts[k];
+    });
+    closeModal('mAn');
+  }
+
+  function renderAnalytics(data){
+    $('anLoading').style.display = 'none';
+
+    if (!data || !data.totals || !data.totals.totalCount){
+      $('anEmpty').style.display = 'block';
+      return;
+    }
+    $('anContent').style.display = 'block';
+
+    var t = data.totals;
+    $('anTotalSpend').textContent = '₱' + fmt(t.totalSpend);
+    $('anTotalCount').textContent = t.totalCount + ' request' + (t.totalCount === 1 ? '' : 's');
+    $('anAvgAmount').textContent = '₱' + fmt(t.avgAmount);
+    $('anOverdue').textContent = t.overdueCount;
+
+    var topVendor = data.byVendor && data.byVendor[0];
+    $('anTopVendor').textContent = topVendor ? topVendor.label : '—';
+    $('anTopVendorSpend').textContent = topVendor ? '₱' + fmt(topVendor.spend) : '₱0';
+
+    // Chart container is already reset by openAnalytics → resetAnalyticsChartContainer.
+    // Use the global Chart.js loader promise — resolves when ready, rejects if all CDNs fail.
+    if (window.Chart) {
+      drawCharts(data);
+    } else if (window.__chartJsReady) {
+      window.__chartJsReady
+        .then(function(){ drawCharts(data); })
+        .catch(function(){ renderTextFallback(data); });
+    } else {
+      // Loader script didn't run? Fall back immediately.
+      renderTextFallback(data);
+    }
+  }
+
+  // Plain-text fallback when Chart.js can't load (corporate network blocks CDN, etc).
+  // Show the same data as ranked lists so analytics is still useful.
+  function renderTextFallback(data){
+    var fmtRow = function(label, count, spend){
+      return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--b-1);font-size:11.5px;">' +
+        '<span style="color:var(--t-2);">' + esc(label) + '</span>' +
+        '<span style="font-family:var(--font-mono);"><span style="color:var(--t-3);margin-right:8px;">' + count + '×</span><span style="color:var(--t-1);font-weight:700;">₱' + fmt(spend) + '</span></span>' +
+      '</div>';
+    };
+
+    var trendRows = data.trend.filter(function(d){ return d.count > 0; }).map(function(d){ return fmtRow(d.label, d.count, d.spend); }).join('') || '<div style="padding:14px;color:var(--t-3);font-size:11px;text-align:center;">No data in last 12 months.</div>';
+    var statusRows = data.byStatus.map(function(d){ return fmtRow(d.label, d.count, d.spend); }).join('');
+    var deptRows = data.byDepartment.map(function(d){ return fmtRow(d.label, d.count, d.spend); }).join('');
+    var vendorRows = data.byVendor.map(function(d){ return fmtRow(d.label, d.count, d.spend); }).join('');
+
+    // Rebuild the chart wrapper with text-list panels. We replace its
+    // innerHTML wholesale so canvases are cleanly removed for this render.
+    // openAnalytics() will rebuild fresh canvases on the next open.
+    var wrap = $('anChartsWrap');
+    if (wrap){
+      wrap.innerHTML =
+        '<div class="an-chart wide"><div class="an-chart-title">Monthly Trend (Last 12 Months)</div><div style="max-height:200px;overflow-y:auto;">' + trendRows + '</div></div>' +
+        '<div class="an-chart"><div class="an-chart-title">Spend by Status</div><div style="max-height:240px;overflow-y:auto;">' + statusRows + '</div></div>' +
+        '<div class="an-chart"><div class="an-chart-title">Spend by Department</div><div style="max-height:240px;overflow-y:auto;">' + deptRows + '</div></div>' +
+        '<div class="an-chart wide"><div class="an-chart-title">Top 10 Vendors by Spend</div><div style="max-height:200px;overflow-y:auto;">' + vendorRows + '</div></div>';
+    }
+
+    // Hint banner with retry — appended outside the chart wrap so it survives the next reset
+    var existing = $('anContent').querySelector('.an-retry-banner');
+    if (existing) existing.remove();
+    var hint = document.createElement('div');
+    hint.className = 'an-retry-banner';
+    hint.style.cssText = 'margin-top:14px;padding:10px 14px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:var(--r-md);font-size:11.5px;color:#fbbf24;font-family:var(--font-mono);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;';
+    hint.innerHTML =
+      '<span><i class="fa-solid fa-triangle-exclamation"></i> Charts unavailable — showing data as tables.</span>' +
+      '<button class="btn btn-ghost btn-sm" id="anRetryCharts" type="button" style="border-color:rgba(245,158,11,.4);color:#fbbf24;"><i class="fa-solid fa-rotate"></i> Retry charts</button>';
+    $('anContent').appendChild(hint);
+
+    $('anRetryCharts').onclick = function(){
+      hint.innerHTML = '<span><i class="fa-solid fa-circle-notch fa-spin"></i> Retrying Chart.js…</span>';
+
+      // Re-trigger the loader if the previous promise rejected
+      if (!window.Chart) {
+        // Reset the promise and try again from scratch
+        window.__chartJsReady = new Promise(function(resolve, reject){
+          var urls = [
+            'https://cdn.jsdelivr.net/npm/chart.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
+            'https://unpkg.com/chart.js@4.4.1/dist/chart.umd.min.js'
+          ];
+          var i = 0;
+          var tryNext = function(){
+            if (window.Chart) return resolve(window.Chart);
+            if (i >= urls.length) return reject(new Error('all failed'));
+            var url = urls[i++];
+            console.log('[PROCUREMENT] Retry — attempting:', url);
+            var s = document.createElement('script');
+            s.src = url;
+            s.onload  = function(){
+              if (window.Chart) { console.log('[PROCUREMENT] Retry succeeded:', url); resolve(window.Chart); }
+              else tryNext();
+            };
+            s.onerror = function(){ console.warn('[PROCUREMENT] Retry failed:', url); tryNext(); };
+            document.head.appendChild(s);
+          };
+          tryNext();
+        });
+        window.__chartJsReady.catch(function(){});
+      }
+
+      window.__chartJsReady
+        .then(function(){
+          // Re-open analytics to draw real charts
+          closeAnalytics();
+          setTimeout(openAnalytics, 100);
+        })
+        .catch(function(){
+          hint.innerHTML = '<span><i class="fa-solid fa-circle-xmark"></i> Chart.js is blocked by your network. Tables are the only option here. Check console for details.</span>';
+        });
+    };
+  }
+
+  function drawCharts(data){
+    var textColor = 'rgba(255,255,255,.52)';
+    var gridColor = 'rgba(255,255,255,.07)';
+   var STATUS_COLORS = { 'Quotation Requested':'#6366f1','PR for Approval':'#f59e0b','PR Approved':'#22c55e','PO Requested':'#3b82f6','Payment Received':'#a855f7','Order In Transit':'#f43f5e','Completed':'#16a34a' };
+
+    Chart.defaults.color = textColor;
+    Chart.defaults.borderColor = gridColor;
+    Chart.defaults.font.family = "'IBM Plex Mono', monospace";
+    Chart.defaults.font.size = 10;
+
+    // Trend (line)
+    anCharts.trend = new Chart($('anTrend'), {
+      type: 'line',
+      data: {
+        labels: data.trend.map(function(d){ return d.label; }),
+        datasets: [{
+          label: 'Spend (₱)',
+          data: data.trend.map(function(d){ return d.spend; }),
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59,130,246,.12)',
+          tension: .35,
+          fill: true,
+          pointRadius: 3,
+          pointBackgroundColor: '#3b82f6'
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { ticks: { callback: function(v){ return '₱' + (v >= 1000 ? (v/1000)+'k' : v); } }, grid: { color: gridColor } },
+          x: { grid: { color: gridColor } }
+        }
+      }
+    });
+
+    // Status (doughnut)
+    anCharts.status = new Chart($('anStatus'), {
+      type: 'doughnut',
+      data: {
+        labels: data.byStatus.map(function(d){ return d.label; }),
+        datasets: [{
+          data: data.byStatus.map(function(d){ return d.spend; }),
+          backgroundColor: data.byStatus.map(function(d){ return STATUS_COLORS[d.label] || '#64748b'; }),
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, cutout: '60%',
+        plugins: {
+          legend: { position: 'right', labels: { boxWidth: 10, padding: 8, font: { size: 10 } } },
+          tooltip: { callbacks: { label: function(c){ return c.label + ': ₱' + fmt(c.parsed); } } }
+        }
+      }
+    });
+
+    // Department (bar)
+    anCharts.dept = new Chart($('anDept'), {
+      type: 'bar',
+      data: {
+        labels: data.byDepartment.map(function(d){ return d.label; }),
+        datasets: [{
+          label: 'Spend',
+          data: data.byDepartment.map(function(d){ return d.spend; }),
+          backgroundColor: '#a855f7',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: function(c){ return '₱' + fmt(c.parsed.x); } } }
+        },
+        scales: {
+          x: { ticks: { callback: function(v){ return '₱' + (v >= 1000 ? (v/1000)+'k' : v); } }, grid: { color: gridColor } },
+          y: { grid: { display: false } }
+        }
+      }
+    });
+
+    // Vendors (bar)
+    anCharts.vendor = new Chart($('anVendor'), {
+      type: 'bar',
+      data: {
+        labels: data.byVendor.map(function(d){ return d.label; }),
+        datasets: [{
+          label: 'Spend',
+          data: data.byVendor.map(function(d){ return d.spend; }),
+          backgroundColor: '#22c55e',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: function(c){ return '₱' + fmt(c.parsed.y); } } }
+        },
+        scales: {
+          y: { ticks: { callback: function(v){ return '₱' + (v >= 1000 ? (v/1000)+'k' : v); } }, grid: { color: gridColor } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  function buildLocalAnalytics(items){
+    var totals = { totalSpend: 0, totalCount: items.length, avgAmount: 0, overdueCount: 0 };
+    var byStatus = {}, byDept = {}, byVendor = {}, monthly = {};
+    var todayStr = today();
+    items.forEach(function(r){
+      var amt = Number(r.amount) || 0;
+      totals.totalSpend += amt;
+      if (r.expectedDate && r.expectedDate < todayStr && r.status !== 'Payment Received' && r.status !== 'Order In Transit' && r.status !== 'Completed') totals.overdueCount++;
+      var inc = function(obj, key){ if (!obj[key]) obj[key] = { count:0, spend:0 }; obj[key].count++; obj[key].spend += amt; };
+      inc(byStatus, r.status || '—');
+      inc(byDept, r.department || '—');
+      inc(byVendor, r.vendor || '—');
+      if (r.requestDate){
+        var ym = r.requestDate.slice(0,7);
+        if (!monthly[ym]) monthly[ym] = { count:0, spend:0 };
+        monthly[ym].count++; monthly[ym].spend += amt;
+      }
+    });
+    totals.avgAmount = items.length ? Math.round(totals.totalSpend / items.length) : 0;
+    var toArr = function(o){ var a = []; Object.keys(o).forEach(function(k){ a.push({ label:k, count:o[k].count, spend:o[k].spend }); }); a.sort(function(x,y){ return y.spend - x.spend; }); return a; };
+    var trend = [];
+    var now = new Date();
+    for (var m=11;m>=0;m--){
+      var d = new Date(now.getFullYear(), now.getMonth() - m, 1);
+      var key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+      var b = monthly[key] || { count:0, spend:0 };
+      trend.push({ label: d.toLocaleString('en',{month:'short', year:'2-digit'}), count:b.count, spend:b.spend });
+    }
+    return { totals: totals, byStatus: toArr(byStatus), byDepartment: toArr(byDept), byVendor: toArr(byVendor).slice(0,10), trend: trend };
+  }
+
+
+  // ========================================================================
+  // COMMENTS
+  // ========================================================================
+  function loadComments(){
+    if (!commentsState.reqId) return;
+    commentsState.loading = true;
+    $('cmLoading').style.display = 'block';
+    $('cmEmpty').style.display = 'none';
+    $('cmList').innerHTML = '';
+
+    if (!isGas()){
+      $('cmLoading').style.display = 'none';
+      $('cmEmpty').style.display = 'block';
+      return;
+    }
+    google.script.run
+      .withSuccessHandler(function(res){
+        commentsState.loading = false;
+        $('cmLoading').style.display = 'none';
+        if (!res || !res.ok){
+          toast((res && res.error) || 'Could not load comments.', 'error');
+          return;
+        }
+        commentsState.items = res.comments || [];
+        renderComments();
+      })
+      .withFailureHandler(function(){
+        commentsState.loading = false;
+        $('cmLoading').style.display = 'none';
+      })
+      .procurement_listComments(commentsState.reqId);
+  }
+
+  function renderComments(){
+    var list = $('cmList');
+    var empty = $('cmEmpty');
+    var count = $('cmCount');
+
+    if (commentsState.items.length){
+      count.textContent = commentsState.items.length;
+      count.classList.add('show');
+    } else {
+      count.classList.remove('show');
+    }
+
+    if (!commentsState.items.length){
+      list.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    list.innerHTML = commentsState.items.map(function(c, i){
+      return '<div class="cm">' +
+        '<div class="cm-hd">' +
+          '<span class="cm-author">' + esc(c.author) + '</span>' +
+          '<span style="display:flex;align-items:center;gap:6px;">' +
+            '<span class="cm-ts">' + esc(c.ts) + '</span>' +
+            '<button class="cm-del" type="button" data-cm-idx="' + i + '" title="Delete"><i class="fa-solid fa-trash"></i></button>' +
+          '</span>' +
+        '</div>' +
+        '<div class="cm-body">' + esc(c.comment) + '</div>' +
+      '</div>';
+    }).join('');
+
+    var dels = list.querySelectorAll('button.cm-del');
+    for (var i=0;i<dels.length;i++){
+      var b = dels[i];
+      var idx = Number(b.getAttribute('data-cm-idx'));
+      b.onclick = (function(i){ return function(){ deleteComment(commentsState.items[i]); }; })(idx);
+    }
+    // Scroll to bottom (newest)
+    list.scrollTop = list.scrollHeight;
+  }
+
+  function sendComment(){
+    var text = $('cmInput').value.trim();
+    if (!text) return;
+    if (!commentsState.reqId) return;
+    var btn = $('cmSend');
+    btn.disabled = true;
+
+    if (!isGas()){
+      commentsState.items.push({ id:'C-LOCAL'+Date.now(), reqId:commentsState.reqId, author:'You', email:'preview@local', ts:new Date().toLocaleString(), tsRaw:Date.now(), comment:text });
+      $('cmInput').value = '';
+      btn.disabled = false;
+      renderComments();
+      return;
+    }
+    google.script.run
+      .withSuccessHandler(function(res){
+        btn.disabled = false;
+        if (!res || !res.ok){
+          toast((res && res.error) || 'Could not send comment.', 'error');
+          return;
+        }
+        $('cmInput').value = '';
+        commentsState.items.push(res.comment);
+        renderComments();
+      })
+      .withFailureHandler(function(err){
+        btn.disabled = false;
+        toast(err && err.message ? err.message : 'Could not send comment.', 'error');
+      })
+      .procurement_addComment({ reqId: commentsState.reqId, comment: text });
+  }
+
+  function deleteComment(c){
+    if (!c) return;
+    if (!window.confirm('Delete this comment?')) return;
+    // Optimistic
+    commentsState.items = commentsState.items.filter(function(x){ return x.id !== c.id; });
+    renderComments();
+    if (!isGas()) return;
+    google.script.run
+      .withSuccessHandler(function(res){
+        if (!res || !res.ok){
+          toast((res && res.error) || 'Delete failed.', 'error');
+          loadComments();
+        }
+      })
+      .withFailureHandler(function(){ loadComments(); })
+      .procurement_deleteComment(c.id);
+  }
+
+
+  // ========================================================================
+  // CSV IMPORT
+  // ========================================================================
+  var impParsed = null; // { headers, rows, errors }
+
+  function openImport(){
+    $('impCsv').value = '';
+    $('impPreviewWrap').style.display = 'none';
+    $('impPreview').innerHTML = '';
+    $('impSummary').textContent = '';
+    $('impGo').disabled = true;
+    impParsed = null;
+    openModal('mImp');
+  }
+
+  function parseCsv(text){
+    // Minimal CSV parser supporting quoted fields with "" escapes
+    var rows = [];
+    var row = [];
+    var cur = '';
+    var inQ = false;
+    for (var i=0;i<text.length;i++){
+      var ch = text[i];
+      if (inQ){
+        if (ch === '"' && text[i+1] === '"'){ cur += '"'; i++; }
+        else if (ch === '"'){ inQ = false; }
+        else { cur += ch; }
+      } else {
+        if (ch === '"'){ inQ = true; }
+        else if (ch === ','){ row.push(cur); cur = ''; }
+        else if (ch === '\n' || ch === '\r'){
+          if (ch === '\r' && text[i+1] === '\n') i++;
+          row.push(cur); cur = '';
+          if (row.length > 1 || row[0].trim() !== '') rows.push(row);
+          row = [];
+        } else { cur += ch; }
+      }
+    }
+    if (cur !== '' || row.length){ row.push(cur); rows.push(row); }
+    return rows;
+  }
+
+  function impDoParse(){
+    var text = $('impCsv').value.trim();
+    if (!text){ toast('Paste CSV content first.', 'error'); return; }
+    var rows = parseCsv(text);
+    if (rows.length < 2){ toast('Need at least a header row and one data row.', 'error'); return; }
+
+    var headers = rows[0].map(function(h){ return String(h || '').trim().toLowerCase(); });
+    var dataRows = rows.slice(1);
+
+    // Map header aliases to internal keys
+    var aliasMap = {
+      vendor: ['vendor','supplier'],
+      department: ['department','dept'],
+      itemDesc: ['item','itemdesc','description','itemdescription','item description','item / description'],
+      status: ['status'],
+      priority: ['priority'],
+      amount: ['amount','price','cost','total'],
+      qty: ['qty','quantity','count','pieces','pcs'],
+      requestDate: ['requestdate','request date','date'],
+      expectedDate: ['expecteddate','expected delivery','expected','expecteddeliverydate','expected date'],
+      requestedBy: ['requestedby','requested by','requester'],
+      poNumber: ['ponumber','po number','po'],
+      notes: ['notes','remarks','comment']
+    };
+
+    var colMap = {};
+    Object.keys(aliasMap).forEach(function(key){
+      for (var i=0;i<headers.length;i++){
+        if (aliasMap[key].indexOf(headers[i]) >= 0) { colMap[key] = i; break; }
+      }
+    });
+
+    if (colMap.vendor === undefined || colMap.department === undefined || colMap.itemDesc === undefined){
+      toast('Missing required columns: vendor, department, item.', 'error');
+      return;
+    }
+
+    var parsed = [], errors = [];
+    dataRows.forEach(function(r, idx){
+      var rowNum = idx + 2;
+      var rec = {};
+      Object.keys(colMap).forEach(function(k){
+        rec[k] = String(r[colMap[k]] || '').trim();
+      });
+      if (rec.amount) rec.amount = parseFloat(rec.amount.replace(/[,₱$]/g,'')) || 0;
+      if (!rec.vendor || !rec.department || !rec.itemDesc){
+        errors.push({ row: rowNum, msg: 'missing vendor/department/item' });
+      }
+      parsed.push(rec);
+    });
+
+    impParsed = { rows: parsed, errors: errors };
+
+    // Build preview table
+    var validCount = parsed.length - errors.length;
+    var headerHtml = '<tr><th>#</th><th>Vendor</th><th>Department</th><th>Item</th><th>Status</th><th>Priority</th><th>Qty</th><th>Amount</th></tr>';
+    var rowHtml = parsed.map(function(r, i){
+      var bad = errors.some(function(e){ return e.row === i+2; });
+      return '<tr' + (bad ? ' class="bad"' : '') + '>' +
+        '<td>' + (i+2) + '</td>' +
+        '<td>' + esc(r.vendor || '—') + '</td>' +
+        '<td>' + esc(r.department || '—') + '</td>' +
+        '<td>' + esc(r.itemDesc || '—') + '</td>' +
+        '<td>' + esc(r.status || 'Quotation Requested') + '</td>' +
+        '<td>' + esc(r.priority || 'Medium') + '</td>' +
+        '<td>' + (r.qty ? r.qty : '—') + '</td>' +
+        '<td>' + (r.amount ? '₱' + fmt(r.amount) : '—') + '</td>' +
+      '</tr>';
+    }).join('');
+    $('impPreview').innerHTML = '<table>' + headerHtml + rowHtml + '</table>';
+    $('impSummary').innerHTML = validCount + ' ready · ' + errors.length + ' invalid' + (errors.length ? ' (red rows will be skipped)' : '');
+    $('impPreviewWrap').style.display = 'block';
+    $('impGo').disabled = validCount === 0;
+  }
+
+  function impDoImport(){
+    if (!impParsed) return;
+    var good = impParsed.rows.filter(function(r, i){
+      return !impParsed.errors.some(function(e){ return e.row === i+2; });
+    });
+    if (!good.length){ toast('Nothing to import.', 'error'); return; }
+
+    var btn = $('impGo');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span> Importing…';
+
+    if (!isGas()){
+      setTimeout(function(){
+        good.forEach(function(g, i){
+         recs.push({ id:'IMP'+Date.now()+i, requestNo:'PR-LOCAL', vendor:g.vendor, department:g.department, itemDesc:g.itemDesc, status:g.status||'Quotation Requested', priority:g.priority||'Medium', amount:g.amount||0, qty:g.qty||0,requestDate:g.requestDate||'', expectedDate:g.expectedDate||'', requestedBy:g.requestedBy||'', poNumber:g.poNumber||'', notes:g.notes||'' });
+        });
+        closeModal('mImp');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-file-import"></i> Import';
+        render();
+        toast('Imported ' + good.length + ' record(s).', 'success');
+      }, 400);
+      return;
+    }
+
+    google.script.run
+      .withSuccessHandler(function(res){
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-file-import"></i> Import';
+        if (!res || !res.ok){
+          toast((res && res.error) || 'Import failed.', 'error');
+          return;
+        }
+        closeModal('mImp');
+        var msg = 'Imported ' + res.inserted + ' record' + (res.inserted === 1 ? '' : 's');
+        if (res.errors && res.errors.length) msg += ' · ' + res.errors.length + ' skipped';
+        toast(msg, 'success');
+        loadData();
+      })
+      .withFailureHandler(function(err){
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-file-import"></i> Import';
+        toast(err && err.message ? err.message : 'Import failed.', 'error');
+      })
+      .procurement_bulkImport(good);
+  }
+
+
+  // ========================================================================
+  // DELETE
+  // ========================================================================
+  function confirmDelete(id){
+    pendDel = id;
+    var r = findRec(id);
+    $('cMsg').textContent = r ? 'Delete "' + r.itemDesc + '" from ' + r.vendor + '?' : 'Are you sure?';
+    openModal('mConf');
+  }
+
+  function doDelete(){
+    if (!pendDel) return;
+    var id = pendDel;
+    var btn = $('cBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span> Deleting…';
+
+    if (!isGas()){
+      setTimeout(function(){
+        recs = recs.filter(function(r){ return r.id !== id; });
+        closeModal('mConf');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
+        pendDel = null;
+        render();
+        toast('Deleted (preview only).', 'success');
+      }, 300);
+      return;
+    }
+
+    google.script.run
+      .withSuccessHandler(function(res){
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
+        closeModal('mConf');
+        pendDel = null;
+        if (!res || !res.ok){
+          toast((res && res.error) || 'Delete failed.', 'error');
+          return;
+        }
+        toast('Request deleted.', 'success');
+        loadData();
+      })
+      .withFailureHandler(function(err){
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
+        toast(err && err.message ? err.message : 'Delete failed.', 'error');
+      })
+      .procurement_delete(id);
+  }
+
+  // ========================================================================
+  // EXPORT
+  // ========================================================================
+  function doExport(){
+    if (!isGas()){
+      // CSV fallback in preview
+      var h = ['Request No','Vendor','Department','Item','Status','Priority','Qty','Amount','Date','Expected','Requested By','PO Number','Notes'];
+      var rows = recs.map(function(r){
+        return [r.requestNo, r.vendor, r.department, r.itemDesc, r.status, r.priority||'',
+                r.qty||0, r.amount||0, r.requestDate||'', r.expectedDate||'', r.requestedBy||'', r.poNumber||'', r.notes||''
+        ].map(function(v){ return '"' + String(v).replace(/"/g,'""') + '"'; }).join(',');
+      });
+      var csv = [h.join(',')].concat(rows).join('\n');
+      var blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'procurement_' + today() + '.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      toast('Exported as CSV.', 'success');
+      return;
+    }
+    toast('Exporting…', 'info');
+    google.script.run
+      .withSuccessHandler(function(res){
+        if (res && res.ok) toast('Exported to "' + res.sheetName + '"', 'success');
+        else toast((res && res.error) || 'Export failed.', 'error');
+      })
+      .withFailureHandler(function(){ toast('Export failed.', 'error'); })
+      .procurement_exportToSheet();
+  }
+
+  // ========================================================================
+  // HELPERS
+  // ========================================================================
+  function findRec(id){
+    for (var i=0;i<recs.length;i++) if (recs[i].id === id) return recs[i];
+    return null;
+  }
+
+  function clearFilters(){
+    $('srch').value = ''; $('sf').value = ''; $('pf').value = ''; $('df').value = '';
+    render();
+  }
+
+  // ========================================================================
+  // WIRING — direct element handlers only, no document listeners
+  // ========================================================================
+  function wire(){
+    // Toolbar
+    $('btnReload').onclick = function(){ loadAttempts = 0; loadData(); };
+    $('btnAnalytics').onclick = openAnalytics;
+    $('btnImport').onclick = openImport;
+    $('btnExport').onclick = doExport;
+    $('btnNew').onclick = openAdd;
+    $('btnClear').onclick = clearFilters;
+
+    // View toggle
+    $('btnTV').onclick = function(){ switchView('table'); };
+    $('btnPV').onclick = function(){ switchView('pipeline'); };
+
+    // Filters (live)
+    $('srch').oninput = function(){ pg = 1; clearSelection(); render(); };
+    $('sf').onchange = function(){ pg = 1; clearSelection(); render(); };
+    $('pf').onchange = function(){ pg = 1; clearSelection(); render(); };
+    $('df').onchange = function(){ pg = 1; clearSelection(); render(); };
+    $('ps').onchange = function(){ pg = 1; render(); };
+
+    // Pager
+    $('bPrev').onclick = function(){ pg = Math.max(1, pg-1); renderTable(); };
+    $('bNext').onclick = function(){ pg++; renderTable(); };
+
+    // Add/Edit modal
+    $('mAddClose').onclick = function(){ closeModal('mAdd'); };
+    $('mAddCancel').onclick = function(){ closeModal('mAdd'); };
+    $('saveBtn').onclick = saveRecord;
+
+    // View modal
+    $('mViewClose').onclick = function(){ closeModal('mView'); };
+    $('mViewCancel').onclick = function(){ closeModal('mView'); };
+    $('btnEditFromV').onclick = function(){ closeModal('mView'); if (vId) openEdit(vId); };
+    $('vtabDetailsBtn').onclick = function(){ setViewTab('details'); };
+    $('vtabAttBtn').onclick = function(){ setViewTab('attachments'); };
+    $('vtabCmBtn').onclick = function(){ setViewTab('comments'); };
+
+    // Comments input — Enter to send (Shift+Enter for newline)
+    $('cmSend').onclick = sendComment;
+    $('cmInput').onkeydown = function(e){
+      if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendComment(); }
+    };
+
+    // Analytics modal
+    $('mAnClose').onclick = closeAnalytics;
+
+    // Import modal
+    $('mImpClose').onclick = function(){ closeModal('mImp'); };
+    $('mImpCancel').onclick = function(){ closeModal('mImp'); };
+    $('impParse').onclick = impDoParse;
+    $('impGo').onclick = impDoImport;
+
+    // Bulk action bar
+    $('chkAll').onclick = toggleSelectAll;
+    $('bulkClear').onclick = clearSelection;
+    $('bulkDel').onclick = bulkDelete;
+    $('bulkStatus').onchange = function(){
+      var v = $('bulkStatus').value;
+      if (v) bulkChangeStatus(v);
+    };
+
+    // Confirm modal
+    $('mConfClose').onclick = function(){ closeModal('mConf'); pendDel = null; };
+    $('mConfCancel').onclick = function(){ closeModal('mConf'); pendDel = null; };
+    $('cBtn').onclick = doDelete;
+
+    // Preview modal
+    $('mPrevClose').onclick = closePreview;
+
+    // Attachments
+    setupDropZone();
+
+    // Linked serial tags — live badge count
+    var fLstEl = $('fLst');
+    if (fLstEl) {
+      fLstEl.addEventListener('input', function() {
+        var tags = fLstEl.value.split(',').map(function(t){ return t.trim(); }).filter(Boolean);
+        var tip  = fLstEl.parentNode.querySelector('.fLst-count');
+        if (!tip) return;
+        tip.textContent = tags.length > 0
+          ? tags.length + ' asset' + (tags.length > 1 ? 's' : '') + ' linked'
+          : '';
+      });
+    }
+
+    // Close quick-status menus when clicking the body (single bound listener on body, not document)
+    document.body.addEventListener('click', function(e){
+      if (!openMenuId) return;
+      var t = e.target;
+      // If click is inside the open menu or its toggle badge, ignore
+      if (t && t.nodeType === 1){
+        if (t.closest && (t.closest('.qs-menu') || t.closest('[data-qs-toggle]'))) return;
+      }
+      // If the open menu itself is the click target's ancestor (menu moved to body)
+      var m = document.getElementById('qsm-' + openMenuId);
+      if (m && m.contains(t)) return;
+      closeAllQuickStatus();
+    });
+    wireSuppliers(); 
+  }
+
+  // ========================================================================
+  // INIT
+  // ========================================================================
+  function installShellShield(){
+    // The shell injects a document-level click handler that crashes on
+    // `e.target.closest is not a function`. That crash closes the GAS message
+    // channel mid-call, causing uploads to "fail" even when they succeed.
+    //
+    // We intercept every click during the CAPTURE phase (runs before the shell's
+    // bubble-phase handler) and guarantee that e.target supports .closest().
+    // If the original target is missing .closest (e.g. Text node or Document),
+    // we redirect to its parentElement or documentElement.
+
+    var ensureClosest = function(e){
+      try {
+        var t = e.target;
+        if (!t || typeof t.closest !== 'function'){
+          // Build a safe element to use as the target
+          var safe = (t && t.parentElement) ? t.parentElement :
+                     (t && t.parentNode && t.parentNode.nodeType === 1) ? t.parentNode :
+                     document.documentElement;
+          // Override e.target on this event (read-only normally, but we can shadow)
+          try {
+            Object.defineProperty(e, 'target', { value: safe, configurable: true });
+          } catch(_){
+            // If we can't override, do nothing — better than crashing the shell
+          }
+        }
+      } catch(_){}
+    };
+
+    // Capture phase fires before bubble — runs before any shell handler bound with addEventListener(default)
+    ['click','mousedown','mouseup','pointerdown','pointerup','touchstart','touchend'].forEach(function(ev){
+      try { document.addEventListener(ev, ensureClosest, true); } catch(_){}
+    });
+
+    // Also patch Element.prototype.closest defensively — some shells call it on the document or window
+    try {
+      if (!Document.prototype.closest){
+        Document.prototype.closest = function(){ return null; };
+      }
+    } catch(_){}
+  }
+
+  function scrubLeftoverModals(){
+    var ids = ['mAdd','mView','mConf','mPrev','mAn','mImp','mSupForm','supSidebar','supOverlay','th']; // ← add these two
+    ids.forEach(function(id){
+      var nodes = document.querySelectorAll('#' + id);
+      nodes.forEach(function(n){
+        if (n.parentNode === document.body){
+          try { n.remove(); } catch(_){}
+        }
+      });
+    });
+  }
+
+
+  // ========================================================================
+// SUPPLIER DIRECTORY
+// ========================================================================
+var suppliers = [];
+var supFilterCat = '';
+var supSearchQ   = '';
+
+function openSuppliers() {
+  document.getElementById('supSidebar').classList.add('open');
+  document.getElementById('supOverlay').classList.add('open');
+  loadSuppliers();
+}
+
+function closeSuppliers() {
+  document.getElementById('supSidebar').classList.remove('open');
+  document.getElementById('supOverlay').classList.remove('open');
+}
+
+function loadSuppliers() {
+  var list = document.getElementById('supList');
+  list.innerHTML = '<div class="sup-empty"><i class="fa-solid fa-circle-notch fa-spin"></i><br>Loading suppliers…</div>';
+
+  if (!isGas()) {
+    // Sample data for preview
+    suppliers = [
+      { id:'SUP-1', name:'Apple Philippines',  category:'IT Hardware',  contactName:'Juan dela Cruz', email:'juan@apple.ph',    phone:'+63 917 123 4567', website:'https://apple.com/ph', status:'Active',   notes:'Preferred MacBook supplier', paymentTerms:'Net 30' },
+      { id:'SUP-2', name:'Lenovo Philippines', category:'IT Hardware',  contactName:'Maria Santos',   email:'maria@lenovo.ph',  phone:'+63 918 765 4321', website:'https://lenovo.com/ph', status:'Active',  notes:'',                           paymentTerms:'Net 15' },
+      { id:'SUP-3', name:'Acme Supplies',      category:'Office',       contactName:'Pedro Reyes',    email:'pedro@acme.ph',    phone:'+63 920 111 2222', website:'',                      status:'Active',   notes:'Bulk stationery',           paymentTerms:'COD' },
+      { id:'SUP-4', name:'TechWorld PH',       category:'IT Hardware',  contactName:'Ana Lim',        email:'ana@techworld.ph', phone:'+63 919 333 4444', website:'https://techworld.ph',  status:'Inactive', notes:'',                           paymentTerms:'Net 30' },
+    ];
+    renderSuppliers();
+    return;
+  }
+
+  google.script.run
+    .withSuccessHandler(function(res) {
+      if (!res || !res.ok) { toast((res && res.error) || 'Could not load suppliers.', 'error'); return; }
+      suppliers = res.data || [];
+      renderSuppliers();
+    })
+    .withFailureHandler(function(err) {
+      toast(err && err.message ? err.message : 'Could not load suppliers.', 'error');
+    })
+    .suppliers_getAll();
+}
+
+function renderSuppliers() {
+  // Build category filter chips
+  var cats = {};
+  suppliers.forEach(function(s) { if (s.category) cats[s.category] = true; });
+  var catList = Object.keys(cats).sort();
+  var catsEl = document.getElementById('supCats');
+  catsEl.innerHTML = '<span class="sup-cat' + (!supFilterCat ? ' active' : '') + '" data-cat="">All</span>' +
+    catList.map(function(c) {
+      return '<span class="sup-cat' + (supFilterCat === c ? ' active' : '') + '" data-cat="' + esc(c) + '">' + esc(c) + '</span>';
+    }).join('');
+  catsEl.querySelectorAll('.sup-cat').forEach(function(el) {
+    el.onclick = function() { supFilterCat = el.getAttribute('data-cat'); renderSuppliers(); };
+  });
+
+  // Filter
+  var q = supSearchQ.trim().toLowerCase();
+  var filtered = suppliers.filter(function(s) {
+    if (supFilterCat && s.category !== supFilterCat) return false;
+    if (q) {
+      var hay = [s.name, s.category, s.contactName, s.email, s.phone, s.notes].join(' ').toLowerCase();
+      if (hay.indexOf(q) < 0) return false;
+    }
+    return true;
+  });
+
+  // Update count
+  document.getElementById('supCount').textContent = suppliers.length;
+  document.getElementById('supFooter').textContent =
+    filtered.length === suppliers.length
+      ? suppliers.length + ' supplier' + (suppliers.length !== 1 ? 's' : '')
+      : 'Showing ' + filtered.length + ' of ' + suppliers.length;
+
+  var list = document.getElementById('supList');
+  if (!filtered.length) {
+    list.innerHTML = '<div class="sup-empty"><i class="fa-solid fa-building-user"></i>' +
+      (suppliers.length ? 'No suppliers match your search.' : 'No suppliers yet. Click + Add to get started.') + '</div>';
+    return;
+  }
+
+  // Compute per-supplier spend stats from recs
+  var spendMap = {};
+  var countMap = {};
+  recs.forEach(function(r) {
+    var key = (r.vendor || '').trim().toLowerCase();
+    spendMap[key] = (spendMap[key] || 0) + (Number(r.amount) || 0);
+    countMap[key] = (countMap[key] || 0) + 1;
+  });
+
+  list.innerHTML = filtered.map(function(s) {
+    var initials = s.name.split(/\s+/).map(function(w) { return w[0]; }).join('').slice(0, 2).toUpperCase();
+    var sKey = s.name.trim().toLowerCase();
+    var spend = spendMap[sKey] || 0;
+    var cnt   = countMap[sKey] || 0;
+    var statusCls = (s.status || 'Active').toLowerCase() === 'active' ? 'active' : 'inactive';
+
+    return '<div class="sup-card" data-sup-id="' + esc(s.id) + '">' +
+      '<div class="sup-card-top">' +
+        '<div style="display:flex;align-items:flex-start;gap:8px;min-width:0;">' +
+          '<div class="sup-avatar">' + esc(initials) + '</div>' +
+          '<div style="min-width:0;">' +
+            '<div class="sup-name">' + esc(s.name) + '</div>' +
+            '<div class="sup-category">' + esc(s.category || '—') + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<span class="sup-status-pill ' + statusCls + '">' + esc(s.status || 'Active') + '</span>' +
+      '</div>' +
+
+      (s.contactName ? '<div class="sup-contact-row"><i class="fas fa-user"></i>' + esc(s.contactName) + '</div>' : '') +
+      (s.email       ? '<div class="sup-contact-row"><i class="fas fa-envelope"></i><a href="mailto:' + esc(s.email) + '">' + esc(s.email) + '</a></div>' : '') +
+      (s.phone       ? '<div class="sup-contact-row"><i class="fas fa-phone"></i>' + esc(s.phone) + '</div>' : '') +
+      (s.website     ? '<div class="sup-contact-row"><i class="fas fa-globe"></i><a href="' + esc(s.website) + '" target="_blank" rel="noopener">' + esc(s.website.replace(/^https?:\/\//, '')) + '</a></div>' : '') +
+
+      (cnt ? '<div class="sup-stats"><span>' + cnt + ' request' + (cnt !== 1 ? 's' : '') + '</span><span><span class="sup-stat-val">₱' + fmt(spend) + '</span> total spend</span>' + (s.paymentTerms ? '<span>' + esc(s.paymentTerms) + '</span>' : '') + '</div>' : '') +
+
+      '<div class="sup-actions">' +
+        '<button class="sup-btn-use" data-sup-use="' + esc(s.id) + '"><i class="fa-solid fa-file-plus" style="font-size:10px;"></i> New Request</button>' +
+        '<button class="sup-btn-icon edit" data-sup-edit="' + esc(s.id) + '" title="Edit"><i class="fa-solid fa-pen"></i></button>' +
+        '<button class="sup-btn-icon del"  data-sup-del="' + esc(s.id) + '" title="Delete"><i class="fa-solid fa-trash"></i></button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  // Wire buttons
+  list.querySelectorAll('[data-sup-use]').forEach(function(b) {
+    var id = b.getAttribute('data-sup-use');
+    b.onclick = function() { supUseForRequest(id); };
+  });
+  list.querySelectorAll('[data-sup-edit]').forEach(function(b) {
+    var id = b.getAttribute('data-sup-edit');
+    b.onclick = function() { supOpenForm(id); };
+  });
+  list.querySelectorAll('[data-sup-del]').forEach(function(b) {
+    var id = b.getAttribute('data-sup-del');
+    b.onclick = function() { supDelete(id); };
+  });
+}
+
+function supUseForRequest(id) {
+  var s = suppliers.find(function(x) { return x.id === id; });
+  if (!s) return;
+  closeSuppliers();
+  openAdd();
+  // Pre-fill vendor and department
+  var fV = document.getElementById('fV');
+  var fD = document.getElementById('fD');
+  var fRb = document.getElementById('fRb');
+  if (fV) fV.value = s.name;
+  if (fD && s.category) fD.value = s.category;
+  if (fRb && !fRb.value) fRb.value = s.contactName || '';
+}
+
+function supOpenForm(id) {
+  var s = id ? suppliers.find(function(x) { return x.id === id; }) : null;
+  document.getElementById('supFormTitle').textContent = s ? 'Edit Supplier' : 'Add Supplier';
+  document.getElementById('supFId').value       = s ? s.id : '';
+  document.getElementById('supFName').value     = s ? (s.name || '') : '';
+  document.getElementById('supFCat').value      = s ? (s.category || '') : '';
+  document.getElementById('supFContact').value  = s ? (s.contactName || '') : '';
+  document.getElementById('supFEmail').value    = s ? (s.email || '') : '';
+  document.getElementById('supFPhone').value    = s ? (s.phone || '') : '';
+  document.getElementById('supFWebsite').value  = s ? (s.website || '') : '';
+  document.getElementById('supFStatus').value   = s ? (s.status || 'Active') : 'Active';
+  document.getElementById('supFTerms').value    = s ? (s.paymentTerms || '') : '';
+  document.getElementById('supFNotes').value    = s ? (s.notes || '') : '';
+  document.getElementById('supFTip').textContent = '';
+  document.getElementById('supSaveBtn').disabled = false;
+  document.getElementById('supSaveBtn').innerHTML = '<i class="fa-solid fa-check"></i> Save Supplier';
+  openModal('mSupForm');
+}
+
+function supSave() {
+  var name = document.getElementById('supFName').value.trim();
+  if (!name) { document.getElementById('supFTip').textContent = '⚠ Name is required.'; return; }
+
+  var payload = {
+    id:           document.getElementById('supFId').value,
+    name:         name,
+    category:     document.getElementById('supFCat').value.trim(),
+    contactName:  document.getElementById('supFContact').value.trim(),
+    email:        document.getElementById('supFEmail').value.trim(),
+    phone:        document.getElementById('supFPhone').value.trim(),
+    website:      document.getElementById('supFWebsite').value.trim(),
+    status:       document.getElementById('supFStatus').value,
+    paymentTerms: document.getElementById('supFTerms').value.trim(),
+    notes:        document.getElementById('supFNotes').value.trim()
+  };
+
+  var btn = document.getElementById('supSaveBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Saving…';
+
+  if (!isGas()) {
+    setTimeout(function() {
+      if (payload.id) {
+        var idx = suppliers.findIndex(function(x) { return x.id === payload.id; });
+        if (idx >= 0) suppliers[idx] = payload;
+      } else {
+        payload.id = 'SUP-' + Date.now();
+        suppliers.push(payload);
+      }
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Supplier';
+      closeModal('mSupForm');
+      renderSuppliers();
+      toast('Supplier saved (preview).', 'success');
+    }, 350);
+    return;
+  }
+
+  // Optimistic local update helper
+  var applyOptimistic = function(assignedId) {
+    if (payload.id) {
+      var idx = suppliers.findIndex(function(x) { return x.id === payload.id; });
+      if (idx >= 0) suppliers[idx] = payload;
+    } else {
+      payload.id = assignedId || ('SUP-' + Date.now());
+      suppliers.push(payload);
+    }
+    renderSuppliers();
+  };
+
+  // 8s guard — treat as success since data saves even when callback dies
+  var saveGuard = setTimeout(function() {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Supplier';
+    closeModal('mSupForm');
+    applyOptimistic(null);
+    toast('Supplier saved.', 'success');
+    // Deferred background reload — well after the GAS call has fully settled
+    setTimeout(loadSuppliers, 3000);
+  }, 8000);
+
+  google.script.run
+    .withSuccessHandler(function(res) {
+      clearTimeout(saveGuard);
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Supplier';
+      if (!res || !res.ok) {
+        document.getElementById('supFTip').textContent = '⚠ ' + ((res && res.error) || 'Save failed.');
+        return;
+      }
+      closeModal('mSupForm');
+      toast(payload.id ? 'Supplier updated.' : 'Supplier added.', 'success');
+      applyOptimistic(res.id);
+      // Deferred background reload — not immediate, avoids double GAS call on same tick
+      setTimeout(loadSuppliers, 1500);
+    })
+    .withFailureHandler(function(err) {
+      clearTimeout(saveGuard);
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Supplier';
+      document.getElementById('supFTip').textContent = '⚠ ' + (err && err.message ? err.message : 'Save failed.');
+    })
+    .suppliers_save(payload);
+}
+
+
+function supDelete(id) {
+  var s = suppliers.find(function(x) { return x.id === id; });
+  if (!s) return;
+  if (!window.confirm('Delete supplier "' + s.name + '"? This cannot be undone.')) return;
+
+  // Optimistic
+  suppliers = suppliers.filter(function(x) { return x.id !== id; });
+  renderSuppliers();
+  toast('Supplier deleted.', 'success');
+
+  if (!isGas()) return;
+  google.script.run
+    .withSuccessHandler(function(res) {
+      if (!res || !res.ok) { toast((res && res.error) || 'Delete failed.', 'error'); loadSuppliers(); }
+    })
+    .withFailureHandler(function() { loadSuppliers(); })
+    .suppliers_delete(id);
+}
+
+// Wire sidebar controls (call from wire())
+function wireSuppliers() {
+  document.getElementById('btnSuppliers').onclick = openSuppliers;
+  document.getElementById('btnSupClose').onclick  = closeSuppliers;
+  document.getElementById('supOverlay').onclick   = closeSuppliers;
+  document.getElementById('btnSupAdd').onclick    = function() { supOpenForm(null); };
+  document.getElementById('supSearch').oninput    = function() { supSearchQ = this.value; renderSuppliers(); };
+  document.getElementById('mSupFormClose').onclick  = function() { closeModal('mSupForm'); };
+  document.getElementById('mSupFormCancel').onclick = function() { closeModal('mSupForm'); };
+  document.getElementById('supSaveBtn').onclick     = supSave;
+}
+
+
+  function cleanupProcurement(){
+    // Called by the shell when navigating away from vendor.html
+    console.log('[PROCUREMENT] Cleanup invoked');
+
+    // Close any open modals first
+    ['mAdd','mView','mConf','mPrev','mAn','mImp','mSupForm'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) el.classList.remove('open');
+    });
+
+    // Close supplier sidebar
+    var sup = document.getElementById('supSidebar');
+    var ov  = document.getElementById('supOverlay');
+    if (sup) sup.classList.remove('open');
+    if (ov)  ov.classList.remove('open');
+
+    // Destroy any Chart.js instances
+    if (typeof anCharts !== 'undefined'){
+      Object.keys(anCharts).forEach(function(k){
+        try { anCharts[k].destroy(); } catch(_){}
+        delete anCharts[k];
+      });
+    }
+
+    // Remove modals + sidebar from body so the next mount has a clean slate
+    ['mAdd','mView','mConf','mPrev','mAn','mImp','mSupForm','supSidebar','supOverlay','th'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el && el.parentNode === document.body){
+        try { el.remove(); } catch(_){}
+      }
+    });
+
+    // Clear toast queue
+    var th = document.getElementById('th');
+    if (th) th.innerHTML = '';
+
+    // Reset supplier state so next mount starts fresh
+    suppliers     = [];
+    supFilterCat  = '';
+    supSearchQ    = '';
+
+    // Clear cache pill ticker (none in this file, but defensive)
+    window.__PROCUREMENT_CLEANUP__ = null;
+  }
+
+  // Expose to the shell so it can call this on navigation
+  window.__VENDOR_CLEANUP__      = cleanupProcurement;
+  window.__PROCUREMENT_CLEANUP__ = cleanupProcurement;
+
+
+  // Auto-cleanup if the page unloads or becomes hidden (shell SPA route change)
+  window.addEventListener('beforeunload', cleanupProcurement);
+  window.addEventListener('pagehide',     cleanupProcurement);
+
+
+ function init(){
+    scrubLeftoverModals();
+    installShellShield();
+    wire();
+    ['mAdd','mView','mConf','mPrev','mAn','mImp','mSupForm','th'].forEach(function(id){
+      var el = $(id);
+      if (el && el.parentNode !== document.body) document.body.appendChild(el);
+      if (el && id !== 'th'){
+        el.classList.remove('open');
+        el.style.display = 'none';
+      }
+    });
+
+    // ── Apply query params — prefer QUERY, fall back to sessionStorage ──
+    var navSearch = '';
+    if (QUERY && QUERY.search && typeof QUERY.search === 'string') {
+      navSearch = QUERY.search.trim();
+    } else {
+      try {
+        var ss = sessionStorage.getItem('__vendor_nav_search__');
+        if (ss && typeof ss === 'string') navSearch = ss.trim();
+      } catch(_){}
+    }
+
+    // Always clear after reading so it doesn't persist across unrelated visits
+    try { sessionStorage.removeItem('__vendor_nav_search__'); } catch(_){}
+
+    if (navSearch) {
+      var searchEl = $('srch');
+      if (searchEl) {
+        searchEl.value = navSearch;
+        pg = 1;
+      }
+    }
+
+    // ── Apply query params — open view directly if requestId given ─
+    if (QUERY && QUERY.id && typeof QUERY.id === 'string') {
+      setTimeout(function() {
+        var r = findRec(QUERY.id.trim());
+        if (r) openView(r.id);
+      }, 600);
+    }
+    // ──────────────────────────────────────────────────────────────
+
+    setTimeout(loadData, 200);
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1089 @@
+<style>
+  /* ============================================================
+   * FONTS
+   * ============================================================ */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --font-ui:   'Epilogue', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+    /* surfaces — warm paper (light default) */
+    --bg-0: #f5f2ec; --bg-1: #f5f2ec; --bg-2: #ede9e1;
+    --bg-3: #e4ded4; --bg-4: #ddd6ca;
+
+    /* borders */
+    --b-0: rgba(26,24,20,.07); --b-1: rgba(26,24,20,.12); --b-2: rgba(26,24,20,.18);
+
+    /* text */
+    --t-1: rgba(26,24,20,.95); --t-2: rgba(74,71,64,.75); --t-3: rgba(138,134,128,.60);
+
+    /* primary accent — editorial blue (replaces amber) */
+    --am:      #2857a4;
+    --am-d:    rgba(40,87,164,.10);
+    --am-b:    rgba(40,87,164,.30);
+    --am-glow: 0 0 0 1px rgba(40,87,164,.22), 0 3px 12px rgba(40,87,164,.12);
+
+    /* status tokens — light mode muted */
+    --st-pending-bg:  rgba(180,83,9,.09);   --st-pending-c:  #b45309;  --st-pending-b:  rgba(180,83,9,.22);
+    --st-ack-bg:      rgba(40,87,164,.09);  --st-ack-c:      #2857a4;  --st-ack-b:      rgba(40,87,164,.22);
+    --st-approved-bg: rgba(22,163,74,.09);  --st-approved-c: #16a34a;  --st-approved-b: rgba(22,163,74,.22);
+    --st-rejected-bg: rgba(201,64,64,.09);  --st-rejected-c: #c94040;  --st-rejected-b: rgba(201,64,64,.22);
+
+    /* geometry */
+    --r-xl:  14px; --r-lg:  10px; --r-md:  7px; --r-sm:  5px; --r-pill: 999px;
+
+    /* shadows */
+    --sh-1: 0 1px 4px rgba(26,24,20,.08);
+    --sh-2: 0 4px 16px rgba(26,24,20,.10);
+    --sh-3: 0 12px 40px rgba(26,24,20,.14);
+
+    --t-fast: .13s ease;
+
+    /* aliases */
+    --bg-surface:    var(--bg-2);
+    --text-primary:  var(--t-1);
+    --text-secondary:var(--t-2);
+    --border-subtle: var(--b-1);
+    --shadow-soft:   var(--sh-1);
+    --radius-lg:     var(--r-xl);
+    --accent-blue:   #2857a4;
+    --accent-green:  #16a34a;
+    --accent-red:    #c94040;
+  }
+
+  /* ── Dark mode ───────────────────────────── */
+  html[data-theme="dark"] {
+    --bg-0: #161410; --bg-1: #1a1814; --bg-2: #1e1c18; --bg-3: #252220; --bg-4: #2c2a26;
+    --b-0: rgba(240,236,227,.06); --b-1: rgba(240,236,227,.10); --b-2: rgba(240,236,227,.16);
+    --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.75); --t-3: rgba(106,100,92,.60);
+    --am-d:    rgba(40,87,164,.16); --am-b: rgba(40,87,164,.40);
+    --am-glow: 0 0 0 1px rgba(40,87,164,.32), 0 3px 12px rgba(40,87,164,.18);
+    --st-pending-bg:  rgba(245,158,11,.11); --st-pending-c:  #fbbf24; --st-pending-b:  rgba(245,158,11,.26);
+    --st-ack-bg:      rgba(59,130,246,.11); --st-ack-c:      #60a5fa; --st-ack-b:      rgba(59,130,246,.26);
+    --st-approved-bg: rgba(34,197,94,.10);  --st-approved-c: #4ade80; --st-approved-b: rgba(34,197,94,.24);
+    --st-rejected-bg: rgba(239,68,68,.11);  --st-rejected-c: #f87171; --st-rejected-b: rgba(239,68,68,.26);
+    --sh-1: 0 1px 4px rgba(0,0,0,.35); --sh-2: 0 4px 16px rgba(0,0,0,.45); --sh-3: 0 12px 40px rgba(0,0,0,.55);
+    --accent-blue: #5b85c8; --accent-green: #4ade80; --accent-red: #f87171;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-ui); color: var(--t-1); margin: 0;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+    padding-top: 80px; background: var(--bg-0); overflow-x: hidden;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 55% 40% at 10% 0%,  rgba(40,87,164,.04) 0%, transparent 55%),
+      radial-gradient(ellipse 45% 35% at 92% 100%, rgba(40,87,164,.03) 0%, transparent 55%);
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  /* ── Page container ── */
+  .container-main {
+    width: 100%; max-width: 1280px; margin: 0 auto;
+    padding: 24px 22px 56px;
+    animation: fadeUp .36s ease-out both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(9px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 400; letter-spacing: -.02em;
+    color: var(--t-1); margin: 0 0 5px; line-height: 1.08;
+  }
+
+  .sub {
+    font-size: 12.5px; font-family: var(--font-mono);
+    color: var(--t-3); margin-bottom: 18px; line-height: 1.6;
+    letter-spacing: .01em;
+  }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    display: flex; gap: 7px; align-items: center;
+    justify-content: space-between; flex-wrap: wrap; margin-bottom: 13px;
+  }
+
+  .search-wrap {
+    position: relative; flex: 1; min-width: 210px;
+    display: flex; align-items: center;
+  }
+
+  .search-wrap i {
+    position: absolute; left: 10px;
+    color: var(--t-3); font-size: 11px; pointer-events: none;
+  }
+
+  .search-wrap .searchBox { width: 100%; padding-left: 28px; }
+
+  .searchBox {
+    flex: 1; height: 34px; padding: 0 11px 0 30px;
+    background: var(--bg-2); border: 1px solid var(--b-1);
+    border-radius: var(--r-lg); color: var(--t-1);
+    font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+    outline: none;
+    transition: border-color var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+  }
+
+  .searchBox:focus {
+    border-color: var(--am-b); background: var(--bg-1);
+    box-shadow: var(--am-glow);
+  }
+
+  .searchBox::placeholder { color: var(--t-3); }
+
+  .selectBox {
+    height: 34px; padding: 0 10px;
+    background: var(--bg-2); border: 1px solid var(--b-1);
+    border-radius: var(--r-lg); color: var(--t-1);
+    font-family: var(--font-mono); font-size: 11.5px; font-weight: 500;
+    min-width: 160px; outline: none; cursor: pointer;
+    transition: border-color var(--t-fast);
+  }
+
+  .selectBox:focus { border-color: var(--am-b); }
+  .selectBox option { background: var(--bg-2); color: var(--t-1); }
+
+  .btnGhost {
+    height: 34px; padding: 0 12px;
+    background: var(--bg-2); color: var(--t-2);
+    border: 1px solid var(--b-1); border-radius: var(--r-lg);
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    letter-spacing: .04em;
+    cursor: pointer; display: inline-flex; align-items: center;
+    justify-content: center; gap: 6px; white-space: nowrap;
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+  }
+
+  .btnGhost:hover { background: var(--bg-3); border-color: var(--b-2); color: var(--t-1); }
+  .btnGhost:active { transform: scale(.98); }
+  .btnGhost i { font-size: 10.5px; }
+
+  /* ── Table ── */
+  .tableWrap {
+    width: 100%; background: var(--bg-1); border-radius: var(--r-xl);
+    border: 1px solid var(--b-1); box-shadow: var(--sh-1);
+    overflow-x: auto; overflow-y: visible; position: relative;
+  }
+
+  .tableWrap::-webkit-scrollbar { height: 3px; }
+  .tableWrap::-webkit-scrollbar-thumb { background: var(--b-2); border-radius: 4px; }
+
+  .reqTable { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 12.5px; }
+
+  thead {
+    background: var(--bg-0);
+  }
+
+  html[data-theme="dark"] thead { background: rgba(0,0,0,.08); }
+
+  th {
+    text-align: left; padding: 9px 13px; color: var(--t-3);
+    font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .12em;
+    border-bottom: 1px solid var(--b-1); white-space: nowrap;
+  }
+
+  td {
+    padding: 11px 13px; border-bottom: 1px solid var(--b-0);
+    vertical-align: middle; color: var(--t-1);
+    transition: background var(--t-fast); overflow: visible;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr { transition: background var(--t-fast); }
+  tbody tr:hover td { background: rgba(40,87,164,.03); }
+  html[data-theme="dark"] tbody tr:hover td { background: rgba(40,87,164,.06); }
+
+  .mono { font-family: var(--font-mono); font-size: 11.5px; color: var(--t-2); }
+
+  /* paperclip badge */
+  .clip-badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 6px; border-radius: var(--r-pill);
+    background: var(--am-d); border: 1px solid var(--am-b);
+    color: var(--am); font-family: var(--font-mono); font-size: 9px;
+    vertical-align: middle; margin-left: 5px; cursor: pointer;
+    transition: background var(--t-fast), border-color var(--t-fast);
+  }
+
+  .clip-badge:hover { background: rgba(40,87,164,.18); border-color: rgba(40,87,164,.44); }
+  html[data-theme="dark"] .clip-badge { color: #5b85c8; }
+  html[data-theme="dark"] .clip-badge:hover { background: rgba(40,87,164,.22); }
+  .clip-badge i { font-size: 8px; }
+
+  /* ── Status pills ── */
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px;
+    border-radius: var(--r-sm); font-family: var(--font-mono);
+    font-size: 9.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .07em; border: 1px solid; white-space: nowrap;
+  }
+
+  .pill::before {
+    content: ''; width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0;
+  }
+
+  .st-pending  { background: var(--st-pending-bg);  color: var(--st-pending-c);  border-color: var(--st-pending-b); }
+  .st-pending::before  { background: var(--st-pending-c); animation: dotPulse 1.6s infinite; }
+  .st-ack      { background: var(--st-ack-bg);      color: var(--st-ack-c);      border-color: var(--st-ack-b); }
+  .st-ack::before      { background: var(--st-ack-c); }
+  .st-approved { background: var(--st-approved-bg); color: var(--st-approved-c); border-color: var(--st-approved-b); }
+  .st-approved::before { background: var(--st-approved-c); }
+  .st-rejected { background: var(--st-rejected-bg); color: var(--st-rejected-c); border-color: var(--st-rejected-b); }
+  .st-rejected::before { background: var(--st-rejected-c); }
+
+  @keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:.22} }
+
+  /* ── Kebab ── */
+  .actionCell { position: relative; overflow: visible; z-index: 10; text-align: right; }
+
+  .kebabBtn {
+    width: 32px; height: 30px; border-radius: var(--r-md);
+    border: 1px solid var(--b-1); background: var(--bg-2);
+    color: var(--t-3); cursor: pointer;
+    display: grid; place-items: center; font-size: 12px;
+    transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  }
+
+  .kebabBtn:hover { background: var(--bg-3); border-color: var(--b-2); color: var(--t-1); }
+  .kebabBtn:active { transform: scale(.98); }
+
+  .kebabMenu {
+    position: fixed; top: 0; left: 0; min-width: 178px;
+    background: var(--bg-2); border: 1px solid var(--b-2);
+    border-radius: var(--r-lg); padding: 5px;
+    box-shadow: var(--sh-3); display: none; z-index: 2147483647;
+    animation: menuIn .15s ease-out both;
+  }
+
+  @keyframes menuIn {
+    from { opacity: 0; transform: scale(.97) translateY(-3px); }
+    to   { opacity: 1; transform: scale(1)   translateY(0); }
+  }
+
+  html[data-theme="dark"] .kebabMenu { background: var(--bg-3); }
+
+  .kebabItem {
+    width: 100%; display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: var(--r-md); cursor: pointer;
+    font-family: var(--font-mono); font-size: 11.5px; font-weight: 600;
+    letter-spacing: .03em;
+    background: transparent; color: var(--t-1);
+    text-align: left; border: none;
+    transition: background var(--t-fast), color var(--t-fast);
+  }
+
+  .kebabItem i { width: 13px; text-align: center; font-size: 11px; opacity: .65; }
+  .kebabItem:hover { background: var(--b-0); }
+  html[data-theme="dark"] .kebabItem:hover { background: rgba(255,255,255,.06); }
+  .kebabSep { height: 1px; margin: 4px; background: var(--b-1); }
+
+  .kebabItem.ack     { color: var(--st-ack-c); }
+  .kebabItem.approve { color: var(--st-approved-c); }
+  .kebabItem.reject  { color: var(--st-rejected-c); }
+
+  /* ── Modal ── */
+  .modal {
+    position: fixed; inset: 0; display: none;
+    align-items: center; justify-content: center;
+    background: rgba(26,24,20,.44);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    z-index: 9999; padding: 16px;
+  }
+
+  html[data-theme="dark"] .modal { background: rgba(0,0,0,.60); backdrop-filter: blur(10px); }
+
+  .modalContent {
+    width: min(660px, 96vw);
+    background: var(--bg-1); border: 1px solid var(--b-2);
+    border-radius: var(--r-xl); box-shadow: var(--sh-3);
+    color: var(--t-1); display: flex; flex-direction: column;
+    overflow: hidden;
+    animation: modalIn .20s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(.96) translateY(7px); }
+    to   { opacity: 1; transform: scale(1)   translateY(0); }
+  }
+
+  .modalHead {
+    padding: 14px 18px 12px; border-bottom: 1px solid var(--b-0);
+    background: var(--bg-0);
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    flex-shrink: 0; display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 11px;
+  }
+
+  html[data-theme="dark"] .modalHead { background: rgba(0,0,0,.08); }
+
+  .modalHeadLeft { flex: 1; min-width: 0; }
+
+  .modalEyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--t-3);
+    font-family: var(--font-mono); margin-bottom: 3px;
+    display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+  }
+
+  .modalTitle {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 15px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1); line-height: 1.2;
+  }
+
+  .modalMeta {
+    font-size: 10.5px; color: var(--t-3); margin-top: 2px;
+    font-family: var(--font-mono);
+  }
+
+  .modalCloseBtn {
+    width: 26px; height: 26px; border-radius: var(--r-sm);
+    border: 1px solid var(--b-1); background: var(--bg-2);
+    color: var(--t-3); cursor: pointer; font-size: 11px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: background var(--t-fast), color var(--t-fast);
+  }
+
+  .modalCloseBtn:hover { background: var(--bg-3); color: var(--t-1); }
+
+  .modalBody {
+    padding: 14px 18px; flex: 1; overflow-y: auto; min-height: 0;
+  }
+
+  .modalBody::-webkit-scrollbar { width: 3px; }
+  .modalBody::-webkit-scrollbar-thumb { background: var(--b-2); border-radius: 4px; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
+
+  .mfield { display: flex; flex-direction: column; gap: 4px; }
+
+  .mlabel {
+    font-family: var(--font-mono); font-size: 9.5px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--t-3);
+  }
+
+  .mval {
+    padding: 8px 11px; border-radius: var(--r-md);
+    border: 1px solid var(--b-1); background: var(--bg-2);
+    font-size: 12.5px; color: var(--t-1);
+    line-height: 1.58; white-space: pre-wrap; word-break: break-word; min-height: 36px;
+  }
+
+  .mval.mono { font-family: var(--font-mono); font-size: 11.5px; color: var(--t-2); }
+
+  .mval a { color: var(--am); text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+  html[data-theme="dark"] .mval a { color: #5b85c8; }
+  .mval a:hover { text-decoration: underline; }
+
+  .mDivider { height: 1px; background: var(--b-0); margin: 11px 0; }
+
+  .modalFooter {
+    padding: 11px 18px 14px; border-top: 1px solid var(--b-0);
+    display: flex; justify-content: flex-end; gap: 7px; flex-wrap: wrap;
+    flex-shrink: 0; border-radius: 0 0 var(--r-xl) var(--r-xl);
+  }
+
+  .actionBtn {
+    border: 1px solid; border-radius: var(--r-md); padding: 7px 13px;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+    letter-spacing: .04em;
+    cursor: pointer; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: background var(--t-fast);
+  }
+
+  .actionBtn:active { transform: scale(.98); }
+  .actionBtn i { font-size: 10px; }
+  .actionBtn:disabled { opacity: .38; cursor: not-allowed; transform: none !important; }
+
+  .btnAck     { background: var(--st-ack-bg);     color: var(--st-ack-c);     border-color: var(--st-ack-b); }
+  .btnApprove { background: var(--st-approved-bg);color: var(--st-approved-c);border-color: var(--st-approved-b); }
+  .btnReject  { background: var(--st-rejected-bg);color: var(--st-rejected-c);border-color: var(--st-rejected-b); }
+
+  .btnAck:hover    { background: rgba(40,87,164,.16); }
+  html[data-theme="dark"] .btnAck:hover { background: rgba(59,130,246,.18); }
+  .btnApprove:hover { background: rgba(22,163,74,.16); }
+  html[data-theme="dark"] .btnApprove:hover { background: rgba(34,197,94,.17); }
+  .btnReject:hover  { background: rgba(201,64,64,.16); }
+  html[data-theme="dark"] .btnReject:hover  { background: rgba(239,68,68,.18); }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fa-spin { animation: spin .85s linear infinite; }
+</style>
+
+
+<div class="container-main">
+  <div class="page-title">Requests</div>
+  <div class="sub">Review and approve employee requests (VL, SL, WFH, etc.)</div>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <i class="fas fa-magnifying-glass"></i>
+      <input id="q" class="searchBox" placeholder="Search by email, type, status…">
+    </div>
+    <select id="statusFilter" class="selectBox">
+      <option value="">All Status</option>
+      <option value="Pending">Pending</option>
+      <option value="Acknowledged">Acknowledged</option>
+      <option value="Approved">Approved</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+    <button class="btnGhost" type="button" id="refreshBtn">
+      <i class="fas fa-rotate"></i> Refresh
+    </button>
+  </div>
+
+  <div class="tableWrap">
+    <table class="reqTable" aria-live="polite">
+      <colgroup>
+        <col style="width:170px;">
+        <col style="width:240px;">
+        <col style="width:120px;">
+        <col style="width:210px;">
+        <col style="width:120px;">
+        <col style="width:150px;">
+        <col style="width:120px;">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Submitted</th>
+          <th>Employee</th>
+          <th>Type</th>
+          <th>Dates</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th style="text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr>
+          <td colspan="7" style="text-align:center;color:var(--t-3);padding:40px 16px;font-family:var(--font-mono);font-size:12px;">
+            <i class="fas fa-circle-notch fa-spin" style="margin-right:8px;"></i> Loading requests…
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── Request Detail Modal ── -->
+<div id="reqModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="modalContent">
+
+    <div class="modalHead">
+      <div class="modalHeadLeft">
+        <div class="modalEyebrow">
+          <i class="fas fa-file-lines" style="opacity:.5;"></i>
+          <span id="mTypeLabel">Request</span>
+          &nbsp;·&nbsp;
+          <span id="mStatusPill"></span>
+        </div>
+        <div class="modalTitle" id="mTitle">—</div>
+        <div class="modalMeta" id="mSub">—</div>
+      </div>
+      <button class="modalCloseBtn" type="button" id="closeModalBtn" aria-label="Close">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Only this section scrolls -->
+    <div class="modalBody">
+      <div class="grid2">
+        <div class="mfield"><div class="mlabel">Employee</div>          <div class="mval mono" id="mEmail">—</div></div>
+        <div class="mfield"><div class="mlabel">Priority</div>          <div class="mval"      id="mPriority">—</div></div>
+        <div class="mfield"><div class="mlabel">Start Date</div>        <div class="mval mono" id="mStart">—</div></div>
+        <div class="mfield"><div class="mlabel">End Date</div>          <div class="mval mono" id="mEnd">—</div></div>
+        <div class="mfield"><div class="mlabel">Time / Hours</div>      <div class="mval mono" id="mTime">—</div></div>
+        <div class="mfield"><div class="mlabel">Contact While Away</div><div class="mval mono" id="mContact">—</div></div>
+      </div>
+
+      <div class="mDivider"></div>
+
+      <div class="mfield" style="margin-bottom:10px;">
+        <div class="mlabel">Reason / Details</div>
+        <div class="mval" id="mReason" style="min-height:56px;">—</div>
+      </div>
+
+      <div class="mfield" id="mAttachmentRow" style="display:none;margin-bottom:10px;">
+        <div class="mlabel">Attachment</div>
+        <div class="mval" id="mAttachment">—</div>
+      </div>
+
+      <div class="mDivider"></div>
+
+      <div class="grid2">
+        <div class="mfield"><div class="mlabel">Reviewed By</div><div class="mval mono" id="mReviewedBy">—</div></div>
+        <div class="mfield"><div class="mlabel">Reviewed At</div><div class="mval mono" id="mReviewedAt">—</div></div>
+      </div>
+    </div>
+
+    <!-- Footer always pinned at the bottom, never clipped -->
+    <div class="modalFooter">
+      <button class="actionBtn btnAck"     type="button" data-status="Acknowledged"><i class="fas fa-hand"></i>  Acknowledge</button>
+      <button class="actionBtn btnApprove" type="button" data-status="Approved">    <i class="fas fa-check"></i> Approve</button>
+      <button class="actionBtn btnReject"  type="button" data-status="Rejected">    <i class="fas fa-xmark"></i> Reject</button>
+      <button class="btnGhost"             type="button" id="closeModalFooterBtn">Close</button>
+    </div>
+
+  </div>
+</div>
+
+<div id="globalKebabMenu" class="kebabMenu" role="menu" aria-hidden="true"></div>
+
+<script>
+(() => {
+  const CFG = { debounceMs: 180, loadTimeoutMs: 8000 };
+  const PAGE_KEY          = "viewrequest";
+  const REVIEW_ACTION_KEY = "request.review";
+  const MODAL_OPEN_DISPLAY = "flex";
+
+  var allRequests        = [];
+  var selectedId         = null;
+  var isUpdating         = false;
+  var filterTimer        = null;
+  var openKebabRequestId = null;
+  var lastFocus          = null;
+
+  var auth = {
+    email: "", role: "viewer",
+    permissions: { pages: {}, actions: {} },
+    canView: false, canReview: false
+  };
+
+  var reqModal    = document.getElementById("reqModal");
+  var globalKebab = document.getElementById("globalKebabMenu");
+
+  function $(id){ return document.getElementById(id); }
+  function norm(v){ return String(v == null ? "" : v).trim(); }
+  function lower(v){ return norm(v).toLowerCase(); }
+
+  function escapeHtml(s){
+    return String(s || "")
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+
+  function normalizeKey(value){
+    return String(value || "")
+      .replace(/\u00A0/g," ").replace(/[\u200B-\u200D\uFEFF]/g,"")
+      .replace(/\s+/g," ").trim().toLowerCase();
+  }
+
+  function isGasRuntime(){
+    return !!(window.google && google.script && google.script.run);
+  }
+
+  function gasCall(fnName){
+    var extraArgs = [];
+    for (var i = 1; i < arguments.length; i++) extraArgs.push(arguments[i]);
+    return new Promise(function(resolve, reject){
+      if (!isGasRuntime()){ reject(new Error("google.script.run not available")); return; }
+      var runner = google.script.run.withSuccessHandler(resolve).withFailureHandler(reject);
+      runner[fnName].apply(runner, extraArgs);
+    });
+  }
+
+  function getSessionUserEmail(){
+    return (
+      (window.__SHELL_EMAIL__ || "") ||
+      (sessionStorage.getItem("user_email") || "") ||
+      (sessionStorage.getItem("email")      || "") ||
+      (localStorage.getItem("user_email")   || "") ||
+      (localStorage.getItem("email")        || "")
+    ).trim().toLowerCase();
+  }
+
+  function hasPageAccess(k){
+    return !!(auth.permissions && auth.permissions.pages && auth.permissions.pages[normalizeKey(k)]);
+  }
+
+  function hasActionAccess(k){
+    return !!(auth.permissions && auth.permissions.actions && auth.permissions.actions[normalizeKey(k)]);
+  }
+
+  function applyPermissions(perms){
+    auth.permissions = perms || { pages:{}, actions:{} };
+    auth.email    = lower((perms && perms.email) || auth.email || getSessionUserEmail());
+    auth.role     = norm((perms && perms.role) || "viewer");
+    auth.canView   = hasPageAccess(PAGE_KEY);
+    auth.canReview = auth.canView && hasActionAccess(REVIEW_ACTION_KEY);
+  }
+
+  async function loadPermissions(){
+    auth.email = getSessionUserEmail();
+    applyPermissions({ email: auth.email, role:"viewer", pages:{}, actions:{} });
+    if (!isGasRuntime()) return;
+    try { var p = await gasCall("getMyPermissions"); applyPermissions(p); }
+    catch(err){ console.error("RBAC load failed:", err); }
+  }
+
+  function requireViewPermission_(){
+    if (auth.canView) return true;
+    renderAccessDenied(); return false;
+  }
+
+  function requireReviewPermission_(){
+    if (auth.canReview) return true;
+    var tb = $("tbody");
+    if (tb) {
+      var row = tb.querySelector("tr[data-id]");
+      if (row) row.style.opacity = "1";
+    }
+    var msg = "You do not have permission to review requests.";
+    showStatusMessage_(msg, "error");
+    return false;
+  }
+
+  function showStatusMessage_(msg, type) {
+    var existing = document.getElementById("viewreq-toast");
+    if (existing) existing.remove();
+    var el = document.createElement("div");
+    el.id = "viewreq-toast";
+    el.style.cssText = [
+      "position:fixed", "bottom:20px", "left:50%",
+      "transform:translateX(-50%)", "z-index:9999",
+      "padding:10px 16px", "border-radius:8px",
+      "font-family:var(--font-mono)", "font-size:12px", "font-weight:600",
+      "box-shadow:var(--sh-2)", "pointer-events:none",
+      type === "error"
+        ? "background:rgba(201,64,64,.12);border:1px solid rgba(201,64,64,.28);color:var(--accent-red);"
+        : "background:var(--bg-2);border:1px solid var(--b-2);color:var(--t-1);"
+    ].join(";");
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(function() { if (el.parentNode) el.remove(); }, 3500);
+  }
+
+  function renderAccessDenied(){
+    var tb = $("tbody");
+    if (!tb) return;
+    tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--accent-red);padding:40px 16px;">You do not have permission to access View Requests.</td></tr>';
+    closeAllKebabs();
+    closeModalDirect();
+  }
+
+  function isRealAttachUrl(v){
+    var s = String(v == null ? "" : v).trim();
+    if (s.length < 8) return false;
+    if (s.indexOf("http") !== 0) return false;
+    if (s.indexOf("Upload failed") === 0) return false;
+    if (s.indexOf("Cannot") === 0) return false;
+    if (s.indexOf("Error") === 0) return false;
+    return true;
+  }
+
+  function stripDatetime(v){
+    var s = String(v == null ? "" : v).trim();
+    if (!s) return s;
+    var m = s.match(/^(\d{1,2}\/\d{1,2}\/\d{4})/);
+    return m ? m[1] : s;
+  }
+
+  function badgeClass(status){
+    var s = lower(status || "pending");
+    if (s === "approved")     return "st-approved";
+    if (s === "rejected")     return "st-rejected";
+    if (s === "acknowledged") return "st-ack";
+    return "st-pending";
+  }
+
+  function pillHtml(status){
+    var label = norm(status) || "Pending";
+    return '<span class="pill ' + badgeClass(label) + '">' + escapeHtml(label) + '</span>';
+  }
+
+  function parseSortDate_(v) {
+    var s = String(v || "").trim();
+    if (!s) return 0;
+    // Handle "MM/dd/yyyy HH:mm"
+    var m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
+    if (m) return new Date(Number(m[3]), Number(m[1])-1, Number(m[2]), Number(m[4]), Number(m[5])).getTime();
+    return new Date(s).getTime() || 0;
+  }
+
+  function isoSortNewest(a, b){
+    return parseSortDate_((b && b.submittedAt) || "") - parseSortDate_((a && a.submittedAt) || "");
+  }
+
+  function render(rows){
+    var tb = $("tbody");
+    if (!tb) return;
+    if (!requireViewPermission_()) return;
+    var list = Array.isArray(rows) ? rows : [];
+
+    if (!list.length){
+      var isFiltered = (($("q") || {}).value || "").trim() || (($("statusFilter") || {}).value || "").trim();
+      var emptyMsg = isFiltered
+        ? "No requests match your filter."
+        : "No requests found.";
+      tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--t-2);padding:40px 16px;font-family:var(--font-mono);font-size:12px;">' + emptyMsg + '</td></tr>';
+      return;
+    }
+
+    tb.innerHTML = list.map(function(r){
+      var status     = norm(r.status || "Pending");
+      var dates      = escapeHtml(stripDatetime(r.startDate) || "\u2014") + " \u2192 " + escapeHtml(stripDatetime(r.endDate) || "\u2014");
+      var attachName = norm(r.attachmentName || "");
+
+      /* Paperclip — clicks open the Drive file directly, no modal */
+      var clip = "";
+      if (isRealAttachUrl(attachName)) {
+        var safeUrl = attachName.replace(/'/g, "%27");
+        clip = '<span class="clip-badge" title="View attachment" onclick="window.open(\'' + safeUrl + '\',\'_blank\')"><i class="fas fa-paperclip"></i></span>';
+      }
+
+      var actionsHtml = auth.canReview
+        ? '<div style="display:flex;justify-content:flex-end;gap:6px;">' +
+            '<button class="btnGhost btnViewRequest" type="button" data-id="' + escapeHtml(r.id) + '" title="View details" style="height:32px;padding:0 10px;"><i class="fas fa-eye"></i></button>' +
+            '<button class="kebabBtn" type="button" data-id="' + escapeHtml(r.id) + '" aria-label="Open actions" aria-expanded="false"><i class="fas fa-ellipsis-vertical"></i></button>' +
+          '</div>'
+        : '<button class="btnGhost btnViewRequest" type="button" data-id="' + escapeHtml(r.id) + '" style="height:32px;padding:0 10px;"><i class="fas fa-eye"></i> View</button>';
+
+      return '<tr data-id="' + escapeHtml(r.id) + '">' +
+        '<td>' + escapeHtml(stripDatetime(r.submittedAt) || "\u2014") + '</td>' +
+        '<td>' + escapeHtml(r.email    || "\u2014") + '</td>' +
+        '<td>' + escapeHtml(r.type     || "\u2014") + clip + '</td>' +
+        '<td>' + dates + '</td>' +
+        '<td>' + escapeHtml(r.priority || "Normal") + '</td>' +
+        '<td>' + pillHtml(status) + '</td>' +
+        '<td class="actionCell">' + actionsHtml + '</td>' +
+      '</tr>';
+    }).join("");
+  }
+
+  function applyFiltersDebounced(){
+    clearTimeout(filterTimer);
+    filterTimer = setTimeout(applyFilters, CFG.debounceMs);
+  }
+
+  function applyFilters(){
+    if (!requireViewPermission_()) return;
+    var q  = lower(($("q")            || {}).value || "");
+    var st = lower(($("statusFilter") || {}).value || "");
+    var list = allRequests.slice();
+
+    if (st) list = list.filter(function(r){ return lower(r.status || "Pending") === st; });
+
+    if (q) list = list.filter(function(r){
+      var hay = [r.email,r.type,r.priority,r.status,r.startDate,r.endDate,
+                 r.timeOrHours,r.contact,r.reason,r.attachmentName,
+                 r.reviewedBy,r.reviewedAt,r.submittedAt]
+        .map(function(x){ return lower(x); }).join(" ");
+      return hay.indexOf(q) !== -1;
+    });
+
+    render(list);
+  }
+
+  async function reloadRequests(){
+    var tb = $("tbody");
+    if (tb) tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--t-3);padding:40px 16px;font-family:var(--font-mono);font-size:12px;"><i class="fas fa-circle-notch fa-spin" style="margin-right:8px;"></i>Loading requests\u2026</td></tr>';
+
+    if (!isGasRuntime()){
+      if (tb) tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--accent-red);padding:40px 16px;">google.script.run not available.</td></tr>';
+      return;
+    }
+
+    var timeoutId = null;
+    try {
+      var data = await Promise.race([
+        gasCall("getRequestsData", auth.email || getSessionUserEmail()),
+        new Promise(function(_,reject){ timeoutId = setTimeout(function(){ reject(new Error("Timed out.")); }, CFG.loadTimeoutMs); })
+      ]);
+      clearTimeout(timeoutId);
+
+      if (data && data.ok === false){
+        if (tb) tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--accent-red);padding:40px 16px;">' + escapeHtml((data && data.error) || "Access denied.") + '</td></tr>';
+        return;
+      }
+
+      var rows = Array.isArray(data) ? data : (data && Array.isArray(data.rows) ? data.rows : []);
+      allRequests = rows.slice().sort(isoSortNewest);
+      applyFilters();
+
+    } catch(err){
+      clearTimeout(timeoutId);
+      console.error(err);
+      if (tb) tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--accent-red);padding:40px 16px;">Failed to load Requests.<br><small>' + escapeHtml((err && err.message) || String(err)) + '</small></td></tr>';
+    }
+  }
+
+  /* ── Kebab ── */
+  function makeIcon(name){
+    var i = document.createElement("i");
+    i.className = "fas fa-" + name; i.style.marginRight = "8px"; return i;
+  }
+
+  function makeSep(){
+    var d = document.createElement("div"); d.className = "kebabSep"; return d;
+  }
+
+  function buildKebabMenuFor(id){
+    if (!globalKebab) return;
+    globalKebab.innerHTML = "";
+
+    var btnView = document.createElement("button");
+    btnView.className = "kebabItem"; btnView.type = "button"; btnView.textContent = "Review";
+    btnView.prepend(makeIcon("eye"));
+    btnView.addEventListener("click", function(){ openDetails(id); closeAllKebabs(); });
+    globalKebab.appendChild(btnView);
+
+    if (!auth.canReview) return;
+    globalKebab.appendChild(makeSep());
+
+    var actions = [
+      { label:"Acknowledge", cls:"ack",    icon:"hand",  status:"Acknowledged" },
+      { label:"Approve",     cls:"approve",icon:"check", status:"Approved"     },
+      { label:"Reject",      cls:"reject", icon:"xmark", status:"Rejected"     }
+    ];
+
+    actions.forEach(function(a){
+      var btn = document.createElement("button");
+      btn.className = "kebabItem " + a.cls; btn.type = "button"; btn.textContent = a.label;
+      btn.prepend(makeIcon(a.icon));
+      btn.addEventListener("click", function(){
+        if (a.status === "Rejected") {
+          closeAllKebabs();
+          if (!window.confirm("Are you sure you want to reject this request?")) return;
+        }
+        quickAction(id, a.status); closeAllKebabs();
+      });
+      globalKebab.appendChild(btn);
+    });
+  }
+
+  function openKebabForButton(btn, id){
+    if (!globalKebab) return;
+    var sameOpen = globalKebab.style.display === "block" && openKebabRequestId === String(id);
+    closeAllKebabs();
+    if (sameOpen) return;
+
+    buildKebabMenuFor(id);
+    var pad = 10;
+    globalKebab.style.display    = "block";
+    globalKebab.style.visibility = "hidden";
+    globalKebab.style.top = globalKebab.style.left = "0px";
+
+    var btnRect  = btn.getBoundingClientRect();
+    var menuRect = globalKebab.getBoundingClientRect();
+    var top  = btnRect.bottom + 8;
+    var left = btnRect.right - menuRect.width;
+    left = Math.max(pad, Math.min(left, window.innerWidth  - menuRect.width  - pad));
+    if (top + menuRect.height > window.innerHeight - pad) top = btnRect.top - menuRect.height - 8;
+    top = Math.max(pad, Math.min(top, window.innerHeight - menuRect.height - pad));
+
+    globalKebab.style.top = top + "px"; globalKebab.style.left = left + "px";
+    globalKebab.style.visibility = "visible";
+    globalKebab.setAttribute("aria-hidden","false");
+    document.querySelectorAll(".kebabBtn").forEach(function(b){ b.setAttribute("aria-expanded","false"); });
+    btn.setAttribute("aria-expanded","true");
+    openKebabRequestId = String(id);
+    var first = globalKebab.querySelector(".kebabItem");
+    if (first) first.focus();
+  }
+
+  function closeAllKebabs(){
+    if (!globalKebab) return;
+    globalKebab.style.display = "none";
+    globalKebab.setAttribute("aria-hidden","true");
+    document.querySelectorAll(".kebabBtn").forEach(function(b){ b.setAttribute("aria-expanded","false"); });
+    openKebabRequestId = null;
+  }
+
+  /* ── Modal ── */
+  function isModalOpen(){
+    return !!(reqModal && reqModal.style.display === MODAL_OPEN_DISPLAY);
+  }
+
+  function openDetails(id){
+    var r = allRequests.find(function(x){ return String(x.id) === String(id); });
+    if (!r || !reqModal) return;
+    selectedId = id;
+
+    /* Reset body scroll position */
+    var body = reqModal.querySelector(".modalBody");
+    if (body) body.scrollTop = 0;
+
+    var typeLabel  = $("mTypeLabel");
+    var statusPill = $("mStatusPill");
+    if (typeLabel)  typeLabel.textContent = norm(r.type) || "Request";
+    if (statusPill) statusPill.innerHTML  = pillHtml(norm(r.status) || "Pending");
+
+    $("mTitle").textContent = norm(r.email) || "\u2014";
+    $("mSub").textContent   = "Submitted " + (norm(r.submittedAt) || "\u2014");
+
+    function setText(elId, val){
+      var el = $(elId);
+      if (el) el.textContent = norm(val) || "\u2014";
+    }
+    setText("mEmail",      r.email);
+    setText("mPriority",   r.priority);
+    setText("mStart",      stripDatetime(r.startDate));
+    setText("mEnd",        stripDatetime(r.endDate));
+    setText("mTime",       r.timeOrHours);
+    setText("mContact",    r.contact);
+    setText("mReason",     r.reason);
+    setText("mReviewedBy", r.reviewedBy);
+    setText("mReviewedAt", r.reviewedAt);
+
+    /* Attachment */
+    var attachVal = norm(r.attachmentName || "");
+    var attachRow = $("mAttachmentRow");
+    var attachEl  = $("mAttachment");
+
+    if (attachRow && attachEl) {
+      if (isRealAttachUrl(attachVal)) {
+        attachRow.style.display = "";
+        var safeUrl = attachVal.replace(/'/g, "%27");
+        attachEl.innerHTML =
+          '<a href="' + escapeHtml(attachVal) + '" onclick="window.open(\'' + safeUrl + '\',\'_blank\');return false;" style="cursor:pointer;">' +
+          '<i class="fas fa-external-link-alt" style="font-size:10px;"></i> View attachment</a>';
+      } else if (attachVal && attachVal.indexOf("http") !== 0) {
+        attachRow.style.display = "";
+        attachEl.textContent = attachVal;
+      } else {
+        attachRow.style.display = "none";
+        attachEl.textContent = "\u2014";
+      }
+    }
+
+    reqModal.querySelectorAll(".modalFooter button[data-status]").forEach(function(btn){
+      btn.style.display = auth.canReview ? "" : "none";
+      btn.disabled = !auth.canReview;
+    });
+
+        lastFocus = document.activeElement;
+
+    /* Show the overlay first so clientHeight is measurable, then size the box. */
+    reqModal.style.display = MODAL_OPEN_DISPLAY;
+
+    /* reqModal.clientHeight is only valid after display is set.
+       position:fixed inset:0 means it equals the true visible iframe height. */
+    var _ovH = reqModal.clientHeight || 600;
+    var _mc  = reqModal.querySelector(".modalContent");
+    if (_mc) _mc.style.maxHeight = Math.max(300, _ovH - 32) + "px";
+
+    requestAnimationFrame(function(){
+      var focusable = reqModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+      if (focusable.length) focusable[0].focus();
+    });
+  }
+
+  function closeModalDirect(){
+    if (!reqModal) return;
+    reqModal.style.display = "none";
+    selectedId = null;
+    if (lastFocus && typeof lastFocus.focus === "function" && !reqModal.contains(lastFocus)) lastFocus.focus();
+    lastFocus = null;
+  }
+
+  function closeModal(e){ if (e && e.target === reqModal) closeModalDirect(); }
+
+  function setUpdating(v){
+    isUpdating = !!v;
+    document.querySelectorAll(".kebabBtn,.kebabItem,.modalFooter button").forEach(function(b){ if (b) b.disabled = !!v; });
+  }
+
+  async function quickAction(id, status){
+    if (!requireReviewPermission_() || isUpdating) return;
+    setUpdating(true);
+    try { await gasCall("updateRequestStatus", id, status, "", auth.email || getSessionUserEmail()); await reloadRequests(); }
+    catch(err){ console.error(err); showStatusMessage_("Failed to update request: " + ((err && err.message) || String(err)), "error"); }
+    finally { setUpdating(false); }
+  }
+
+  async function modalAction(status){
+    if (!requireReviewPermission_() || !selectedId || isUpdating) return;
+    if (status === "Rejected" && !confirm("Reject this request?")) return;
+    var idToUpdate = selectedId;
+    setUpdating(true);
+    closeModalDirect();
+    try { await gasCall("updateRequestStatus", idToUpdate, status, "", auth.email || getSessionUserEmail()); await reloadRequests(); }
+    catch(err){ console.error(err); showStatusMessage_("Failed to update request: " + ((err && err.message) || String(err)), "error"); }
+    finally { setUpdating(false); }
+  }
+
+  /* ── Global listeners ── */
+  document.addEventListener("click", function(e){
+    if (!globalKebab) return;
+    if (!globalKebab.contains(e.target) && !e.target.closest(".kebabBtn")) closeAllKebabs();
+  });
+  document.addEventListener("scroll", function(){ closeAllKebabs(); }, true);
+  window.addEventListener("resize", function(){ closeAllKebabs(); });
+  document.addEventListener("keydown", function(e){
+    if (e.key !== "Escape") return;
+    closeAllKebabs();
+    if (isModalOpen()) closeModalDirect();
+  });
+
+  /* ── Init ── */
+  var viewRequestsPageBound_ = false;
+
+  async function initViewRequestsPage(){
+    await loadPermissions();
+    if (!auth.canView){ renderAccessDenied(); return; }
+
+    if (!viewRequestsPageBound_){
+      var qEl         = $("q");
+      var stEl        = $("statusFilter");
+      var refreshEl   = $("refreshBtn");
+      var tbodyEl     = $("tbody");
+      var closeBtnEl  = $("closeModalBtn");
+      var closeFootEl = $("closeModalFooterBtn");
+
+      if (qEl)        qEl.addEventListener("input",  applyFiltersDebounced);
+      if (stEl)       stEl.addEventListener("change", applyFilters);
+      if (refreshEl)  refreshEl.addEventListener("click", reloadRequests);
+      if (tbodyEl)    tbodyEl.addEventListener("click", handleViewRequestsTableClick_);
+      if (reqModal)   reqModal.addEventListener("click", closeModal);
+      if (closeBtnEl) closeBtnEl.addEventListener("click", closeModalDirect);
+      if (closeFootEl)closeFootEl.addEventListener("click", closeModalDirect);
+
+      if (reqModal){
+        reqModal.querySelectorAll(".modalFooter button[data-status]").forEach(function(btn){
+          btn.addEventListener("click", function(){ modalAction(btn.getAttribute("data-status")); });
+        });
+      }
+      viewRequestsPageBound_ = true;
+    }
+
+    await reloadRequests();
+  }
+
+  function handleViewRequestsTableClick_(e){
+    var viewBtn = e.target.closest(".btnViewRequest");
+    if (viewBtn){ openDetails(viewBtn.getAttribute("data-id")); return; }
+    var kebabBtn = e.target.closest(".kebabBtn");
+    if (kebabBtn){ openKebabForButton(kebabBtn, kebabBtn.getAttribute("data-id")); }
+  }
+
+  if (document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initViewRequestsPage, { once:true });
+  } else {
+    initViewRequestsPage();
+  }
+
+  window.reloadRequests        = reloadRequests;
+  window.applyFilters          = applyFilters;
+  window.applyFiltersDebounced = applyFiltersDebounced;
+  window.openDetails           = openDetails;
+  window.closeModal            = closeModal;
+  window.closeModalDirect      = closeModalDirect;
+  window.modalAction           = modalAction;
+
+})();
+</script>

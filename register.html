@@ -1,0 +1,1189 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base target="_top" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap');
+
+  /* ============================================================
+   * TOKENS
+   * ============================================================ */
+  :root {
+    --font-ui: 'Sora', system-ui, sans-serif;
+
+    --bg-0: #060608;
+    --bg-1: #0c0c10;
+    --bg-2: #111115;
+    --bg-3: #18181e;
+    --bg-4: #1e1e26;
+
+    --b-0: rgba(255,255,255,.042);
+    --b-1: rgba(255,255,255,.08);
+    --b-2: rgba(255,255,255,.14);
+    --b-3: rgba(255,255,255,.26);
+
+    --t-1: rgba(255,255,255,.93);
+    --t-2: rgba(255,255,255,.50);
+    --t-3: rgba(255,255,255,.26);
+
+    /* indigo accent — matches Login */
+    --ind:    #a5b4fc;
+    --ind-d:  rgba(165,180,252,.10);
+    --ind-b:  rgba(165,180,252,.28);
+    --ind-glow: 0 0 0 1px rgba(99,102,241,.28), 0 4px 16px rgba(99,102,241,.10);
+
+    /* status */
+    --ok-bg:   rgba(34,197,94,.12);
+    --ok-c:    #4ade80;
+    --ok-b:    rgba(34,197,94,.26);
+    --warn-bg: rgba(249,115,22,.12);
+    --warn-c:  #fb923c;
+    --warn-b:  rgba(249,115,22,.26);
+    --err-bg:  rgba(239,68,68,.12);
+    --err-c:   #f87171;
+    --err-b:   rgba(239,68,68,.26);
+
+    --r-xl:  24px;
+    --r-lg:  16px;
+    --r-md:  12px;
+    --r-sm:   8px;
+    --r-pill: 999px;
+
+    --sh-card: 0 32px 80px rgba(0,0,0,.80), 0 0 0 1px rgba(255,255,255,.06);
+    --sh-btn:  0 8px 24px rgba(0,0,0,.55);
+
+    --t-fast:   .14s ease;
+    --t-med:    .24s ease;
+    --t-spring: .32s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    /* legacy compat */
+    --bg-surface:    var(--bg-2);
+    --text-primary:  var(--t-1);
+    --text-secondary: var(--t-2);
+    --border-subtle: var(--b-1);
+    --border-focus:  var(--b-3);
+    --blur-strength: 20px;
+    --shadow-soft:   var(--sh-card);
+    --radius-input:  var(--r-md);
+    --radius-card:   var(--r-xl);
+    --input-bg:      rgba(0,0,0,.32);
+    --color-success-bg:   var(--ok-bg);
+    --color-success-text: var(--ok-c);
+    --color-warn-bg:      var(--warn-bg);
+    --color-warn-text:    var(--warn-c);
+    --color-error-bg:     var(--err-bg);
+    --color-error-text:   var(--err-c);
+  }
+
+  /* ============================================================
+   * BASE
+   * ============================================================ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-ui);
+    background: var(--bg-0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    color: var(--t-1);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%,   rgba(99,102,241,.10) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 50% at 0%   100%, rgba(99,102,241,.06) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 100% 50%,  rgba(59,130,246,.05) 0%, transparent 55%);
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  a {
+    color: var(--t-2);
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color var(--t-fast);
+  }
+
+  a:hover { color: var(--t-1); }
+
+  /* ============================================================
+   * CARD
+   * ============================================================ */
+  .register-box {
+    width: 420px;
+    max-width: min(92vw, 420px);
+    padding: 32px 30px 28px;
+    background: rgba(14,14,18,.82);
+    backdrop-filter: saturate(160%) blur(28px);
+    -webkit-backdrop-filter: saturate(160%) blur(28px);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: var(--r-xl);
+    box-shadow: var(--sh-card);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    transform: translateY(24px) scale(.98);
+    opacity: 0;
+    animation: cardIn .7s cubic-bezier(0.2, 0.8, 0.2, 1) .1s forwards;
+  }
+
+  /* top highlight rim */
+  .register-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+    border-radius: var(--r-pill);
+  }
+
+  @keyframes cardIn {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* ── Title ── */
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -.04em;
+    color: var(--t-1);
+    margin: 0 0 20px;
+  }
+
+  .title i {
+    font-size: 18px;
+    color: var(--ind);
+    opacity: .9;
+  }
+
+  /* ============================================================
+   * STEPPER
+   * ============================================================ */
+  .stepper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 0 0 16px;
+    width: 100%;
+  }
+
+  .step {
+    padding: 9px 12px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--b-1);
+    background: rgba(255,255,255,.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 12px; font-weight: 700;
+    color: var(--t-3);
+    user-select: none;
+    transition: background var(--t-med), border-color var(--t-med), color var(--t-med);
+  }
+
+  .step .dot {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--b-1);
+    display: grid; place-items: center;
+    font-size: 11px; font-weight: 800;
+    flex-shrink: 0;
+    transition: background var(--t-med), border-color var(--t-med);
+  }
+
+  .step.active {
+    color: var(--t-1);
+    border-color: var(--b-2);
+    background: rgba(255,255,255,.06);
+  }
+
+  .step.active .dot {
+    background: var(--ind);
+    border-color: var(--ind);
+    color: #000;
+  }
+
+  .step.done {
+    color: var(--ok-c);
+    border-color: var(--ok-b);
+    background: var(--ok-bg);
+  }
+
+  .step.done .dot {
+    background: var(--ok-c);
+    border-color: var(--ok-b);
+    color: #000;
+  }
+
+  /* ============================================================
+   * PANELS
+   * ============================================================ */
+  .panels {
+    position: relative;
+    width: 100%;
+  }
+
+  .panel {
+    width: 100%;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity .22s ease, transform .22s ease;
+  }
+
+  .panel.hidden {
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+  }
+
+  /* ============================================================
+   * FIELDS
+   * ============================================================ */
+  .field {
+    position: relative;
+    width: 100%;
+    margin-top: 14px;
+  }
+
+  .field input {
+    width: 100%;
+    padding: 15px 18px;
+    background: rgba(0,0,0,.35);
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-lg);
+    color: var(--t-1);
+    font-family: var(--font-ui);
+    font-size: 14.5px;
+    text-align: center;
+    outline: none;
+    caret-color: var(--ind);
+    transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  .field input:focus {
+    border-color: rgba(99,102,241,.55);
+    background: rgba(99,102,241,.05);
+    box-shadow: var(--ind-glow);
+  }
+
+  .field input::placeholder { color: transparent; }
+
+  .field input.valid   { border-color: var(--ok-b)  !important; }
+  .field input.invalid { border-color: var(--err-b) !important; animation: shake .28s ease; }
+
+  /* password eye */
+  .show-btn {
+    position: absolute;
+    right: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--t-3);
+    cursor: pointer;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    user-select: none;
+    transition: color var(--t-fast);
+  }
+
+  .show-btn:hover { color: var(--t-1); }
+
+  .field label {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    color: var(--t-3);
+    font-family: var(--font-ui);
+    font-size: 14px; font-weight: 400;
+    pointer-events: none;
+    transition: var(--t-fast);
+  }
+
+  .field input:focus + label,
+  .field input:not(:placeholder-shown) + label {
+    top: -8px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 9.5px; font-weight: 700;
+    letter-spacing: .10em;
+    text-transform: uppercase;
+    color: var(--ind);
+  }
+
+  /* ── Email hint ── */
+  #emailHint {
+    margin-top: 5px;
+    font-size: 11.5px; font-weight: 600;
+    display: none;
+    font-family: var(--font-ui);
+  }
+
+  #emailHint.ok  { color: var(--ok-c); }
+  #emailHint.err { color: var(--err-c); }
+
+  /* ============================================================
+   * HELPER PILLS
+   * ============================================================ */
+  .helper-row {
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 11.5px; font-weight: 600;
+    color: var(--t-3);
+  }
+
+  .pill {
+    padding: 5px 10px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--b-1);
+    background: rgba(255,255,255,.03);
+    white-space: nowrap;
+    font-family: var(--font-ui);
+    font-size: 11px; font-weight: 700;
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+  }
+
+  .pill.ok   { border-color: var(--ok-b);   color: var(--ok-c);   background: var(--ok-bg); }
+  .pill.warn { border-color: var(--warn-b);  color: var(--warn-c); background: var(--warn-bg); }
+  .pill.err  { border-color: var(--err-b);   color: var(--err-c);  background: var(--err-bg); }
+
+  /* ============================================================
+   * MESSAGES
+   * ============================================================ */
+  #msgBox { width: 100%; }
+
+  .msg {
+    margin-top: 12px;
+    padding: 11px 13px;
+    border-radius: var(--r-md);
+    font-size: 13px; font-weight: 500;
+    text-align: left;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .msg.error   { background: var(--err-bg);  border: 1px solid var(--err-b);  color: var(--err-c); }
+  .msg.success { background: var(--ok-bg);   border: 1px solid var(--ok-b);   color: var(--ok-c); }
+
+  /* ============================================================
+   * BUTTONS
+   * ============================================================ */
+  button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 14px;
+    border: none;
+    border-radius: var(--r-lg);
+    font-family: var(--font-ui);
+    font-size: 14.5px; font-weight: 700;
+    cursor: pointer;
+    background: var(--t-1);
+    color: #000;
+    transition:
+      transform var(--t-spring),
+      box-shadow var(--t-med),
+      background var(--t-fast),
+      opacity var(--t-fast);
+  }
+
+  button:hover  { transform: translateY(-1px) scale(1.005); box-shadow: 0 6px 20px rgba(255,255,255,.12); }
+  button:active { transform: scale(.985); box-shadow: none; }
+
+  button:disabled,
+  button.loading {
+    opacity: .50; pointer-events: none;
+    transform: none !important; box-shadow: none !important;
+  }
+
+  .btn-primary {
+    background: #fff;
+    color: #000;
+    font-weight: 800;
+    letter-spacing: -.01em;
+    box-shadow: var(--sh-btn);
+  }
+
+  .btn-primary:hover { background: #f0f0f0; }
+
+  #resendBtn {
+    background: transparent;
+    color: var(--t-2);
+    border: 1px solid var(--b-1);
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  #resendBtn:hover {
+    border-color: var(--b-2);
+    color: var(--t-1);
+    background: rgba(255,255,255,.05);
+    box-shadow: none;
+    transform: none;
+  }
+
+  /* ============================================================
+   * OTP ROW
+   * ============================================================ */
+  .otp-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .otp-row input {
+    width: 44px; height: 54px;
+    padding: 0;
+    text-align: center;
+    font-family: var(--font-ui);
+    font-size: 22px; font-weight: 800;
+    border-radius: var(--r-md);
+    background: rgba(0,0,0,.38);
+    border: 1px solid var(--b-1);
+    color: var(--t-1);
+    outline: none;
+    caret-color: var(--ind);
+    transition: border-color var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+  }
+
+  .otp-row input:focus {
+    border-color: rgba(99,102,241,.55);
+    background: rgba(99,102,241,.07);
+    box-shadow: var(--ind-glow);
+  }
+
+  .otp-row input:not(:placeholder-shown) {
+    border-color: var(--ind-b);
+    color: var(--ind);
+  }
+
+  .otp-subtext {
+    margin-top: 8px;
+    font-size: 11.5px;
+    color: var(--t-3);
+    font-family: var(--font-ui);
+  }
+
+  .otp-actions {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .back-link {
+    font-size: 12px;
+    color: var(--t-3);
+    user-select: none;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .back-link:hover { color: var(--t-1); }
+
+  /* ============================================================
+   * DIVIDER + FOOTER
+   * ============================================================ */
+  .divider {
+    margin: 18px 0 0;
+    border: none;
+    border-top: 1px solid var(--b-0);
+    width: 100%;
+  }
+
+  /* ============================================================
+   * VALIDATION ANIMATIONS
+   * ============================================================ */
+  @keyframes shake {
+    20% { transform: translateX(-5px); }
+    50% { transform: translateX( 5px); }
+    80% { transform: translateX(-3px); }
+  }
+
+  /* ============================================================
+   * UTILITIES
+   * ============================================================ */
+  :where(input, button, a, .show-btn):focus { outline: none; }
+  :where(input, button, a, .show-btn):focus-visible {
+    box-shadow: 0 0 0 3px rgba(165,180,252,.22), 0 0 0 1px rgba(165,180,252,.45);
+  }
+
+  @media (max-height: 720px) {
+    .register-box { padding: 24px 26px 22px; }
+    .field { margin-top: 10px; }
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fa-spin { animation: spin .85s linear infinite; }
+</style>
+</head>
+
+<body>
+  <div class="register-box">
+
+    <h2 class="title">
+      <i class="fa-solid fa-user-plus"></i>
+      Create Account
+    </h2>
+
+    <!-- Stepper -->
+    <div class="stepper" aria-label="Registration steps">
+      <div id="stepDetails" class="step active">
+        <span class="dot">1</span>
+        <span>Details</span>
+      </div>
+      <div id="stepVerify" class="step">
+        <span class="dot">2</span>
+        <span>Verify</span>
+      </div>
+    </div>
+
+    <div id="msgBox" aria-live="polite"></div>
+
+    <div class="panels">
+
+      <!-- PANEL 1: DETAILS -->
+      <div id="panelDetails" class="panel">
+
+        <div class="field">
+          <input id="reg_email" type="text" placeholder=" " autocomplete="email">
+          <label>Email Address</label>
+        </div>
+        <div id="emailHint"></div>
+
+        <div class="field">
+          <input id="reg_username" placeholder=" " autocomplete="username">
+          <label>Username</label>
+        </div>
+
+        <div class="field">
+          <input id="reg_pass" type="password" placeholder=" " autocomplete="new-password">
+          <label>Password</label>
+          <span class="show-btn" onclick="togglePass('reg_pass', this)">Show</span>
+        </div>
+
+        <div class="helper-row">
+          <span id="pwStrength" class="pill">Strength: —</span>
+          <span id="pwRules"    class="pill">8+ / Aa / 0–9 / #</span>
+        </div>
+
+        <div class="field">
+          <input id="reg_pass_confirm" type="password" placeholder=" " autocomplete="new-password">
+          <label>Confirm Password</label>
+          <span class="show-btn" onclick="togglePass('reg_pass_confirm', this)">Show</span>
+        </div>
+
+        <div class="helper-row">
+          <span id="pwMatch" class="pill">Match: —</span>
+          <span class="pill" style="opacity:.7;">
+            <i class="fa-solid fa-arrow-turn-down"></i> Enter to submit
+          </span>
+        </div>
+
+        <button id="sendBtn" class="btn-primary" onclick="sendCode()" disabled>
+          Send Verification Code
+        </button>
+
+      </div><!-- /panelDetails -->
+
+      <!-- PANEL 2: VERIFY -->
+      <div id="panelVerify" class="panel hidden" aria-hidden="true">
+
+        <div style="margin-top:4px;font-size:12.5px;color:var(--t-2);line-height:1.55;">
+          Enter the 6-digit code we emailed you:
+        </div>
+
+        <div class="otp-row" id="otpRow">
+          <input class="otp" inputmode="numeric" maxlength="1">
+          <input class="otp" inputmode="numeric" maxlength="1">
+          <input class="otp" inputmode="numeric" maxlength="1">
+          <input class="otp" inputmode="numeric" maxlength="1">
+          <input class="otp" inputmode="numeric" maxlength="1">
+          <input class="otp" inputmode="numeric" maxlength="1">
+        </div>
+
+        <div class="otp-subtext">Tip: you can paste the full code.</div>
+
+        <button id="regBtn" class="btn-primary" onclick="verifyThenRegister()" style="margin-top:14px;" disabled>
+          Verify &amp; Register
+        </button>
+
+        <button id="resendBtn" onclick="resendCode()" style="display:none;" disabled>
+          Resend Code <i class="fas fa-rotate"></i>
+        </button>
+
+        <div class="otp-actions">
+          <a class="back-link" onclick="goBackToDetails()">
+            <i class="fa-solid fa-arrow-left"></i> Back to edit details
+          </a>
+        </div>
+
+      </div><!-- /panelVerify -->
+
+    </div><!-- /panels -->
+
+    <hr class="divider">
+
+    <p style="margin-top:14px;font-size:12.5px;color:var(--t-3);">
+      Already have an account? <a onclick="goLogin()">Log in</a>
+    </p>
+
+  </div>
+
+
+  <script>
+    const AUTO_VERIFY_DELAY_MS = 120;   // small delay for UX
+let autoVerifyTimer = null;
+
+function triggerAutoVerifyIfReady() {
+  // Only run on Verify step
+  if (!state.otpStep) return;
+
+  // Only if OTP complete + button enabled
+  if (!isOtpComplete() || ui.regBtn.disabled) return;
+
+  // Prevent multiple timers
+  if (autoVerifyTimer) clearTimeout(autoVerifyTimer);
+
+  autoVerifyTimer = setTimeout(() => {
+    // Double-check again before firing
+    if (!state.isVerifying && isOtpComplete() && !ui.regBtn.disabled) {
+      verifyThenRegister();
+    }
+  }, AUTO_VERIFY_DELAY_MS);
+}
+
+
+    // ===== Helpers =====
+      const $ = (sel) => document.querySelector(sel);
+      const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+      const ui = {
+        msgBox: $("#msgBox"),
+
+        // Steps + panels
+        stepDetails: $("#stepDetails"),
+        stepVerify: $("#stepVerify"),
+        panelDetails: $("#panelDetails"),
+        panelVerify: $("#panelVerify"),
+
+        // Inputs
+        email: $("#reg_email"),
+        username: $("#reg_username"),
+        pass: $("#reg_pass"),
+        pass2: $("#reg_pass_confirm"),
+        hint: $("#emailHint"),
+
+        // Pills
+        pwStrength: $("#pwStrength"),
+        pwRules: $("#pwRules"),
+        pwMatch: $("#pwMatch"),
+
+        // Buttons
+        sendBtn: $("#sendBtn"),
+        regBtn: $("#regBtn"),
+        resendBtn: $("#resendBtn"),
+
+        // OTP
+        otpInputs: $$("#otpRow .otp"),
+      };
+
+      const state = {
+        emailTimer: null,
+        resendTimer: null,
+        counter: 0,
+
+        emailAvailable: false,
+        isSending: false,
+        isVerifying: false,
+        otpStep: false,
+      };
+
+      function msg(text, type) {
+        ui.msgBox.innerHTML = `<div class="msg ${type}">${text}</div>`;
+      }
+
+      function shake(el) {
+        el.classList.add("invalid");
+        setTimeout(() => el.classList.remove("invalid"), 350);
+      }
+
+      function normalizeEmail(s) {
+        return s.trim().toLowerCase();
+      }
+
+      function isValidEmail(s) {
+        return /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/.test(s);
+      }
+
+      function validUsername(u) {
+        return /^[a-zA-Z0-9._-]{3,20}$/.test(u);
+      }
+
+      function validPassword(p) {
+        return (
+          p.length >= 8 &&
+          /[a-z]/.test(p) &&
+          /[A-Z]/.test(p) &&
+          /[0-9]/.test(p) &&
+          /[^A-Za-z0-9]/.test(p)
+        );
+      }
+
+      function setLoading(btn, isLoading, textLoading, textDefault) {
+        btn.classList.toggle("loading", isLoading);
+        btn.textContent = isLoading ? textLoading : textDefault;
+      }
+
+      function setPill(el, text, kind) {
+        el.textContent = text;
+        el.classList.remove("ok", "warn", "err");
+        if (kind) el.classList.add(kind);
+      }
+
+      function computeStrength(p) {
+        if (!p) return { label: "—", kind: null };
+
+        let score = 0;
+        if (p.length >= 8) score++;
+        if (p.length >= 12) score++;
+        if (/[a-z]/.test(p)) score++;
+        if (/[A-Z]/.test(p)) score++;
+        if (/[0-9]/.test(p)) score++;
+        if (/[^A-Za-z0-9]/.test(p)) score++;
+
+        if (score <= 2) return { label: "Weak", kind: "err" };
+        if (score <= 4) return { label: "Okay", kind: "warn" };
+        return { label: "Strong", kind: "ok" };
+      }
+
+      function formValues() {
+        const mail = normalizeEmail(ui.email.value);
+        const user = ui.username.value.trim();
+        const pass = ui.pass.value;
+        const confirm = ui.pass2.value;
+        return { mail, user, pass, confirm };
+      }
+
+      // ===== Stepper / panels =====
+
+      function setStep(step) {
+        if (autoVerifyTimer) {
+  clearTimeout(autoVerifyTimer);
+  autoVerifyTimer = null;
+}
+
+
+        state.otpStep = step === "verify";
+
+        if (state.otpStep) {
+          ui.panelDetails.classList.add("hidden");
+          ui.panelVerify.classList.remove("hidden");
+          ui.panelVerify.setAttribute("aria-hidden", "false");
+          ui.panelDetails.setAttribute("aria-hidden", "true");
+
+          ui.stepDetails.classList.remove("active");
+          ui.stepDetails.classList.add("done");
+
+          ui.stepVerify.classList.add("active");
+        } else {
+          ui.panelVerify.classList.add("hidden");
+          ui.panelDetails.classList.remove("hidden");
+          ui.panelVerify.setAttribute("aria-hidden", "true");
+          ui.panelDetails.setAttribute("aria-hidden", "false");
+
+          ui.stepDetails.classList.add("active");
+          ui.stepDetails.classList.remove("done");
+
+          ui.stepVerify.classList.remove("active");
+        }
+
+        updateButtonStates();
+
+        if (state.otpStep) {
+          ui.otpInputs[0].focus();
+        } else {
+          ui.email.focus();
+        }
+      }
+
+      // ===== Button enabling =====
+      function isFormValidForSend() {
+        const { mail, user, pass, confirm } = formValues();
+        if (!isValidEmail(mail)) return false;
+        if (!validUsername(user)) return false;
+        if (!validPassword(pass)) return false;
+        if (pass !== confirm) return false;
+
+        // Require available once checked (hint visible)
+        if (ui.hint.style.display === "block") return state.emailAvailable === true;
+
+        return true;
+      }
+
+      function isOtpComplete() {
+        return ui.otpInputs.every((i) => i.value.trim().length === 1);
+      }
+
+      function updateButtonStates() {
+        ui.sendBtn.disabled = !isFormValidForSend() || state.isSending;
+        ui.regBtn.disabled = !isOtpComplete() || state.isVerifying;
+
+        // Resend button managed by countdown
+      }
+
+      // ===== Live email availability =====
+      ui.email.addEventListener("input", () => {
+        const email = normalizeEmail(ui.email.value);
+        state.emailAvailable = false;
+
+        if (!email) {
+          ui.email.classList.remove("valid", "invalid");
+          ui.hint.style.display = "none";
+          updateButtonStates();
+          return;
+        }
+
+        if (!isValidEmail(email)) {
+          ui.email.classList.add("invalid");
+          ui.email.classList.remove("valid");
+
+          ui.hint.textContent = "Invalid Email Format";
+          ui.hint.className = "err";
+          ui.hint.style.display = "block";
+
+          updateButtonStates();
+          return;
+        }
+
+        ui.hint.style.display = "block";
+        ui.hint.textContent = "Checking availability...";
+        ui.hint.className = "";
+
+        clearTimeout(state.emailTimer);
+        state.emailTimer = setTimeout(() => {
+          google.script.run
+            .withSuccessHandler((r) => {
+              const setHint = (text, cls, ok) => {
+                ui.hint.textContent = text;
+                ui.hint.className = cls;
+                ui.email.classList.toggle("valid", ok);
+                ui.email.classList.toggle("invalid", !ok);
+                state.emailAvailable = ok;
+              };
+
+              if (r === "exists") return setHint("Email already used", "err", false);
+              if (r === "awaiting") return setHint("Pending admin approval", "err", false);
+              setHint("Available", "ok", true);
+
+              updateButtonStates();
+            })
+            .checkEmailExists(email);
+        }, 400);
+
+        updateButtonStates();
+      });
+
+      ui.username.addEventListener("input", updateButtonStates);
+
+      // ===== Password strength + match =====
+      function updatePasswordUI() {
+        const pass = ui.pass.value;
+        const confirm = ui.pass2.value;
+
+        const s = computeStrength(pass);
+        setPill(ui.pwStrength, `Strength: ${s.label}`, s.kind);
+
+        if (!pass && !confirm) setPill(ui.pwMatch, "Match: —", null);
+        else if (pass && confirm && pass === confirm) setPill(ui.pwMatch, "Match: Yes", "ok");
+        else if (confirm.length > 0) setPill(ui.pwMatch, "Match: No", "err");
+        else setPill(ui.pwMatch, "Match: —", null);
+
+        updateButtonStates();
+      }
+
+      ui.pass.addEventListener("input", updatePasswordUI);
+      ui.pass2.addEventListener("input", updatePasswordUI);
+
+      // ===== Enter-to-submit =====
+      function handleEnterSubmit(e) {
+        if (e.key !== "Enter") return;
+
+        e.preventDefault();
+
+        if (state.otpStep) {
+          if (!ui.regBtn.disabled) verifyThenRegister();
+        } else {
+          if (!ui.sendBtn.disabled) sendCode();
+        }
+      }
+
+      [ui.email, ui.username, ui.pass, ui.pass2].forEach((el) => {
+        el.addEventListener("keydown", handleEnterSubmit);
+      });
+
+// ===== OTP 6-box =====
+function getOtpValue() {
+  return ui.otpInputs.map((i) => i.value).join("");
+}
+
+function setOtpValue(code) {
+  const digits = String(code).replace(/\D/g, "").slice(0, 6).split("");
+  ui.otpInputs.forEach((inp, idx) => (inp.value = digits[idx] || ""));
+  updateButtonStates();
+  triggerAutoVerifyIfReady();
+}
+
+ui.otpInputs.forEach((input, idx) => {
+  input.setAttribute("autocomplete", "one-time-code");
+  input.type = "tel";
+  input.inputMode = "numeric";
+  input.pattern = "\\d*";
+  input.maxLength = 1;
+
+  input.addEventListener("input", () => {
+    input.value = input.value.replace(/\D/g, "").slice(0, 1);
+    if (input.value && idx < ui.otpInputs.length - 1) ui.otpInputs[idx + 1].focus();
+    updateButtonStates();
+    triggerAutoVerifyIfReady();
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Backspace" && !input.value && idx > 0) {
+      ui.otpInputs[idx - 1].focus();
+    }
+    if (e.key === "Enter") handleEnterSubmit(e);
+  });
+
+  input.addEventListener("paste", (e) => {
+    e.preventDefault();
+    const pasted = (e.clipboardData || window.clipboardData).getData("text");
+    setOtpValue(pasted);
+
+    const firstEmpty = ui.otpInputs.findIndex((i) => !i.value);
+    const focusIndex = firstEmpty === -1 ? 5 : Math.max(0, firstEmpty);
+    ui.otpInputs[focusIndex].focus();
+
+    updateButtonStates();
+    triggerAutoVerifyIfReady();
+  });
+});
+
+
+
+      // ===== Actions =====
+      function sendCode() {
+        if (state.isSending) return;
+
+        const { mail, user, pass, confirm } = formValues();
+
+        if (!isValidEmail(mail)) return shake(ui.email), msg("Invalid Email", "error"), updateButtonStates();
+        if (!validUsername(user))
+          return shake(ui.username), msg("Username must be 3–20 characters", "error"), updateButtonStates();
+        if (!validPassword(pass))
+          return shake(ui.pass), msg("Password too weak", "error"), updateButtonStates();
+        if (pass !== confirm)
+          return shake(ui.pass2), msg("Passwords do not match", "error"), updateButtonStates();
+
+        state.isSending = true;
+        updateButtonStates();
+        setLoading(ui.sendBtn, true, "Sending...", "Send Verification Code");
+
+        google.script.run
+          .withSuccessHandler((r) => {
+            state.isSending = false;
+            setLoading(ui.sendBtn, false, "Sending...", "Send Verification Code");
+
+            if (r !== "sent") {
+              msg("Error sending code", "error");
+              updateButtonStates();
+              return;
+            }
+
+            msg("Verification Code Sent", "success");
+
+            // Move to step 2
+            setStep("verify");
+
+            // Show resend (disabled until countdown ends)
+            ui.resendBtn.style.display = "block";
+            startCountdown();
+
+            // Reset OTP
+            setOtpValue("");
+
+            updateButtonStates();
+          })
+          .sendVerificationCode(mail);
+      }
+
+      function startCountdown() {
+        state.counter = 60;
+        ui.resendBtn.disabled = true;
+
+        if (state.resendTimer) clearInterval(state.resendTimer);
+        ui.resendBtn.textContent = `Resend Code in ${state.counter}s`;
+
+        state.resendTimer = setInterval(() => {
+          state.counter -= 1;
+          ui.resendBtn.textContent = `Resend Code in ${state.counter}s`;
+
+          if (state.counter <= 0) {
+            clearInterval(state.resendTimer);
+            state.resendTimer = null;
+            ui.resendBtn.disabled = false;
+            ui.resendBtn.textContent = "Resend Code 🔄";
+          }
+        }, 1000);
+      }
+
+      function resendCode() {
+        const mail = normalizeEmail(ui.email.value);
+
+        google.script.run
+          .withSuccessHandler((r) => {
+            if (r === "sent") {
+              msg("New code sent", "success");
+              startCountdown();
+              setOtpValue("");
+              ui.otpInputs[0].focus();
+            } else {
+              msg("Could not resend", "error");
+            }
+          })
+          .sendVerificationCode(mail);
+      }
+
+function verifyThenRegister() {
+  if (state.isVerifying) return;
+
+  const mail = normalizeEmail(ui.email.value);
+  const user = ui.username.value.trim();
+  const pass = ui.pass.value;
+  const confirm = ui.pass2.value;
+  const code = getOtpValue();
+
+  if (!isValidEmail(mail)) { shake(ui.email); msg("Invalid Email", "error"); return; }
+  if (!validUsername(user)) { shake(ui.username); msg("Invalid Username", "error"); return; }
+  if (!validPassword(pass)) { shake(ui.pass); msg("Weak Password", "error"); return; }
+  if (pass !== confirm) { shake(ui.pass2); msg("Passwords don't match", "error"); return; }
+  if (!code || code.length !== 6) { msg("Enter the 6-digit code", "error"); return; }
+
+  // lock the whole flow until everything is done
+  state.isVerifying = true;
+  updateButtonStates();
+  setLoading(ui.regBtn, true, "Working...", "Verify & Register");
+
+  google.script.run
+    .withSuccessHandler((verifyRes) => {
+      if (verifyRes === "expired") { msg("Code expired — please resend a new one", "error"); return finish(); }
+      if (verifyRes === "waiting_approval") { msg("Awaiting admin approval", "error"); return finish(); }
+      if (verifyRes === "invalid") { msg("Incorrect code", "error"); return finish(); }
+      if (verifyRes !== "verified") { msg("Verification failed", "error"); return finish(); }
+
+      // verified -> register
+      google.script.run
+        .withSuccessHandler((regRes) => {
+          if (!regRes || regRes.ok !== true) {
+            msg("Registration failed: " + (regRes?.error || "unknown"), "error");
+            return finish();
+          }
+
+          // cleanup (don't block redirect if cleanup fails)
+          google.script.run
+            .withSuccessHandler(() => {})
+            .withFailureHandler(() => {})
+            .removePending(mail);
+
+          msg("Account Created! Redirecting...", "success");
+          setTimeout(goLogin, 300);
+
+        })
+        .withFailureHandler((err) => {
+          msg("Registration error: " + (err?.message || err), "error");
+          finish();
+        })
+        .registerUser(mail, user, pass);
+    })
+    .withFailureHandler((err) => {
+      msg("Verification error: " + (err?.message || err), "error");
+      finish();
+    })
+    .verifyCode(mail, code);
+
+  function finish() {
+    state.isVerifying = false;
+    setLoading(ui.regBtn, false, "Working...", "Verify & Register");
+    updateButtonStates();
+  }
+}
+
+
+      function goBackToDetails() {
+        // keep values, just return to step 1
+        setStep("details");
+      }
+
+      // ===== Utils =====
+      function togglePass(id, el) {
+        const input = document.getElementById(id);
+        input.type = input.type === "password" ? "text" : "password";
+        el.textContent = input.type === "password" ? "SHOW" : "HIDE";
+      }
+
+function goLogin() {
+  google.script.run
+    .withSuccessHandler((loginUrl) => {
+      alert("LOGIN URL:\n" + loginUrl);
+
+      // 1) Test in a new tab (if new tab is also blank -> backend doGet issue)
+      window.open(loginUrl, "_blank");
+
+      // 2) Then redirect
+      try {
+        window.top.location.href = loginUrl;   // use href (more reliable than replace)
+      } catch (e) {
+        window.location.href = loginUrl;
+      }
+    })
+    .withFailureHandler((err) => {
+      msg("Redirect failed: " + (err?.message || err), "error");
+    })
+    .getLoginUrl();
+}
+
+
+      // Initial state
+      updatePasswordUI();
+      updateButtonStates();
+      setStep("details");
+  </script>
+
+  <?!= HtmlService.createHtmlOutputFromFile('footer').getContent(); ?>
+
+
+</body>
+
+</html>

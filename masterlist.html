@@ -1,0 +1,4539 @@
+<style>
+  /* ============================================================
+   * FONTS
+   * ============================================================ */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  /* ============================================================
+   * DESIGN TOKENS
+   * ============================================================ */
+  :root {
+    --font-ui:   'Epilogue', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+    /* surfaces — warm paper */
+    --bg-0: #f5f2ec;
+    --bg-1: #f5f2ec;
+    --bg-2: #ede9e1;
+    --bg-3: #e4ded4;
+    --bg-4: #ddd6ca;
+    --bg-5: #d4cbbe;
+
+    /* borders */
+    --b-0: rgba(26,24,20,.08);
+    --b-1: rgba(26,24,20,.12);
+    --b-2: rgba(26,24,20,.18);
+    --b-3: rgba(26,24,20,.28);
+
+    /* text */
+    --t-1: rgba(26,24,20,.95);
+    --t-2: rgba(74,71,64,.80);
+    --t-3: rgba(138,134,128,.70);
+
+    /* primary accent — editorial blue */
+    --indigo:     #2857a4;
+    --indigo-2:   #3a6bc5;
+    --indigo-d:   rgba(40,87,164,.10);
+    --indigo-dd:  rgba(40,87,164,.18);
+    --indigo-b:   rgba(40,87,164,.32);
+    --indigo-glow: 0 0 0 1px rgba(40,87,164,.22), 0 4px 16px rgba(40,87,164,.12);
+
+    /* supporting colour stops */
+    --green:   #16a34a;
+    --green-2: #22c55e;
+    --blue:    #2857a4;
+    --blue-2:  #3a6bc5;
+    --red:     #c94040;
+    --red-2:   #e05252;
+    --yellow:  #b45309;
+    --yellow-2:#d97706;
+    --orange:  #c2410c;
+    --orange-2:#ea580c;
+    --grey-2:  #8a8680;
+
+    /* geometry */
+    --r-xl:  16px;
+    --r-lg:  10px;
+    --r-md:   7px;
+    --r-sm:   5px;
+    --r-pill: 999px;
+
+    /* shadows */
+    --sh-0: 0 1px 3px rgba(26,24,20,.08);
+    --sh-1: 0 4px 16px rgba(26,24,20,.10);
+    --sh-2: 0 8px 32px rgba(26,24,20,.12);
+    --sh-3: 0 16px 48px rgba(26,24,20,.15);
+
+    /* transitions */
+    --t-fast: .14s ease;
+    --t-med:  .22s ease;
+    --t-slow: .36s cubic-bezier(0.2,0.8,0.2,1);
+
+    /* legacy compat aliases */
+    --surface:         var(--bg-2);
+    --surface-raised:  var(--bg-3);
+    --surface-inset:   rgba(26,24,20,.06);
+    --border:          var(--b-1);
+    --border-strong:   var(--b-2);
+    --text-primary:    var(--t-1);
+    --text-secondary:  var(--t-2);
+    --text-tertiary:   var(--t-3);
+    --accent-blue:     var(--indigo);
+    --accent-blue-dim: var(--indigo-d);
+    --accent-blue-glow: rgba(40,87,164,.20);
+    --accent-green:    var(--green);
+    --accent-red:      var(--red);
+    --accent-yellow:   var(--yellow);
+    --accent-orange:   var(--orange);
+    --radius-sm: var(--r-sm);
+    --radius-md: var(--r-md);
+    --radius-lg: var(--r-lg);
+    --radius-xl: var(--r-xl);
+    --shadow-sm: var(--sh-0);
+    --shadow-md: var(--sh-1);
+    --shadow-lg: var(--sh-2);
+  }
+
+  /* ── Dark mode ─────────────────────────────── */
+  html[data-theme="dark"] {
+    --bg-0: #161410; --bg-1: #1a1814; --bg-2: #1e1c18;
+    --bg-3: #252220; --bg-4: #2c2a26; --bg-5: #33302b;
+    --b-0: rgba(240,236,227,.06); --b-1: rgba(240,236,227,.10);
+    --b-2: rgba(240,236,227,.16); --b-3: rgba(240,236,227,.26);
+    --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.80); --t-3: rgba(106,100,92,.70);
+    --surface: var(--bg-2); --surface-raised: var(--bg-3);
+    --surface-inset: rgba(0,0,0,.18);
+    --border: var(--b-1); --border-strong: var(--b-2);
+    --text-primary: var(--t-1); --text-secondary: var(--t-2); --text-tertiary: var(--t-3);
+    --sh-0: 0 1px 3px rgba(0,0,0,.35);
+    --sh-1: 0 4px 16px rgba(0,0,0,.45);
+    --sh-2: 0 8px 32px rgba(0,0,0,.55);
+    --sh-3: 0 16px 48px rgba(0,0,0,.65);
+    --indigo:    #2857a4;
+    --indigo-2:  #5b85c8;
+    --indigo-d:  rgba(40,87,164,.16);
+    --indigo-dd: rgba(40,87,164,.26);
+    --indigo-b:  rgba(40,87,164,.40);
+    --indigo-glow: 0 0 0 1px rgba(40,87,164,.32), 0 4px 16px rgba(40,87,164,.18);
+  }
+
+  /* ============================================================
+   * BASE
+   * ============================================================ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-ui);
+    font-size: 14px;
+    color: var(--t-1);
+    background: var(--bg-0);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 40% at 10% 0%,  rgba(40,87,164,.04) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 35% at 90% 100%, rgba(40,87,164,.03) 0%, transparent 60%);
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  :focus-visible {
+    outline: 2px solid var(--indigo);
+    outline-offset: 2px;
+    border-radius: var(--r-sm);
+  }
+
+  /* ============================================================
+   * PAGE LAYOUT
+   * ============================================================ */
+  .container-main {
+    width: 100%;
+    max-width: 1500px;
+    margin-top: 60px;
+    padding: 44px 28px 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeUp .38s ease-out both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(26px, 3vw, 38px);
+    font-weight: 400;
+    letter-spacing: -.02em;
+    color: var(--t-1);
+    margin: 0 0 6px;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  .page-sub {
+    font-size: 13.5px;
+    font-family: var(--font-mono);
+    color: var(--t-3);
+    margin: 0 0 28px;
+    text-align: center;
+    max-width: 560px;
+    line-height: 1.6;
+    letter-spacing: .01em;
+  }
+
+  /* ============================================================
+   * CARD
+   * ============================================================ */
+  .card-wrap {
+    width: 100%;
+    background: var(--bg-1);
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-xl);
+    box-shadow: var(--sh-1);
+    overflow: visible;
+    isolation: isolate;
+  }
+
+  /* ============================================================
+   * TOOLBAR
+   * ============================================================ */
+  .toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid var(--b-1);
+    background: var(--bg-0);
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+  }
+
+  html[data-theme="dark"] .toolbar {
+    background: rgba(0,0,0,.10);
+  }
+
+  .toolbar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-row--primary { justify-content: space-between; }
+
+  .toolbar-left, .toolbar-right {
+    display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  }
+
+  /* Search */
+  .search-wrap { position: relative; display: flex; align-items: center; }
+
+  .search-icon {
+    position: absolute; left: 10px;
+    color: var(--t-3); font-size: 11px; pointer-events: none;
+    transition: color var(--t-fast);
+  }
+
+  #searchBox {
+    height: 34px;
+    width: 260px;
+    padding: 0 12px 0 30px;
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-lg);
+    background: var(--bg-2);
+    color: var(--t-1);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    outline: none;
+    transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  #searchBox:focus {
+    border-color: var(--indigo-b);
+    background: var(--bg-1);
+    box-shadow: var(--indigo-glow);
+  }
+
+  .search-wrap:focus-within .search-icon { color: var(--indigo-2); }
+  #searchBox::placeholder { color: var(--t-3); }
+
+  /* Segmented filter */
+  .seg-filter {
+    display: flex;
+    height: 34px;
+    padding: 3px;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--b-1);
+    background: var(--bg-2);
+    position: relative;
+  }
+
+  .seg-indicator {
+    position: absolute;
+    top: 3px; bottom: 3px; left: 3px;
+    border-radius: calc(var(--r-lg) - 3px);
+    background: var(--indigo);
+    z-index: 0;
+    transition: transform var(--t-slow), width var(--t-slow), opacity var(--t-med);
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .seg-item {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 12px;
+    font-family: var(--font-mono);
+    font-size: 10.5px; font-weight: 500;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: calc(var(--r-lg) - 3px);
+    color: var(--t-3);
+    white-space: nowrap;
+    transition: color var(--t-fast);
+    user-select: none;
+    background: transparent;
+    border: none;
+    font-family: var(--font-mono);
+  }
+
+  .seg-item:hover { color: var(--t-1); }
+  .seg-item.active { color: #fff; font-weight: 600; }
+
+  /* ── Buttons ─────────────────────────────────── */
+  .btn-ghost {
+    position: relative;
+    height: 34px; padding: 0 12px;
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-lg);
+    background: var(--bg-2);
+    color: var(--t-2);
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: .04em;
+    cursor: pointer; white-space: nowrap;
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+  }
+
+  .btn-ghost:hover {
+    background: var(--bg-3);
+    border-color: var(--b-2);
+    color: var(--t-1);
+  }
+
+  .btn-ghost:active { opacity: .85; }
+  .btn-ghost:disabled { opacity: .40; cursor: not-allowed; }
+  .btn-ghost i { font-size: 11px; }
+
+  .btn-ghost[data-has-filters="true"]::after,
+  .btn-icon[data-has-filters="true"]::after {
+    content: '';
+    position: absolute; top: 6px; right: 6px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--red-2);
+    box-shadow: 0 0 0 2px var(--bg-2);
+  }
+
+  .btn-icon {
+    position: relative;
+    width: 34px; height: 34px; padding: 0;
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-lg);
+    background: var(--bg-2);
+    color: var(--t-2);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 12px;
+    transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  }
+
+  .btn-icon:hover {
+    background: var(--bg-3); color: var(--t-1);
+    border-color: var(--b-2);
+  }
+
+  .btn-primary {
+    height: 34px; padding: 0 14px;
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid var(--indigo-b);
+    border-radius: var(--r-lg);
+    background: var(--indigo-d);
+    color: var(--indigo);
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: .04em;
+    cursor: pointer; white-space: nowrap;
+    transition: background var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  html[data-theme="dark"] .btn-primary { color: var(--indigo-2); }
+
+  .btn-primary:hover {
+    background: var(--indigo-dd);
+    box-shadow: 0 2px 10px rgba(40,87,164,.18);
+  }
+
+  .btn-primary:disabled { opacity: .40; cursor: not-allowed; box-shadow: none; }
+  .btn-primary i { font-size: 11px; }
+
+  .btn-add {
+    height: 34px; padding: 0 16px;
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid var(--indigo-b);
+    border-radius: var(--r-lg);
+    background: var(--indigo);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: .04em;
+    cursor: pointer; white-space: nowrap;
+    transition: filter var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  .btn-add:hover {
+    filter: brightness(1.12);
+    box-shadow: 0 4px 14px rgba(40,87,164,.30);
+  }
+
+  .export-group { display: flex; }
+
+  /* Column selector */
+  .col-selector-wrap { position: relative; }
+
+  #columnSelector {
+    position: absolute;
+    top: calc(100% + 5px); right: 0;
+    width: 210px;
+    background: var(--bg-1);
+    border: 1px solid var(--b-2);
+    border-radius: var(--r-lg);
+    padding: 7px;
+    z-index: 1400;
+    box-shadow: var(--sh-2);
+    display: none;
+  }
+
+  #columnSelector .col-item {
+    display: flex; align-items: center; gap: 9px;
+    padding: 6px 9px;
+    border-radius: var(--r-md);
+    cursor: pointer;
+    font-size: 12px; font-weight: 500;
+    font-family: var(--font-mono);
+    color: var(--t-1);
+    transition: background var(--t-fast);
+  }
+
+  #columnSelector .col-item:hover { background: var(--bg-3); }
+  #columnSelector input { accent-color: var(--indigo); margin: 0; }
+
+  /* ============================================================
+   * TABLE
+   * ============================================================ */
+  .table-scroll { overflow-x: auto; width: 100%; }
+
+  .table-scroll::-webkit-scrollbar { height: 5px; }
+  .table-scroll::-webkit-scrollbar-track { background: transparent; }
+  .table-scroll::-webkit-scrollbar-thumb { background: var(--b-2); border-radius: 4px; }
+  .table-scroll::-webkit-scrollbar-thumb:hover { background: var(--b-3); }
+
+  #masterlistTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+
+  #masterlistTable thead th {
+    padding: 10px 13px;
+    color: var(--t-3);
+    font-size: 9.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .10em;
+    border-bottom: 1px solid var(--b-1);
+    background: var(--bg-0);
+    white-space: nowrap;
+    user-select: none; cursor: pointer;
+    transition: color var(--t-fast);
+    font-family: var(--font-mono);
+  }
+
+  html[data-theme="dark"] #masterlistTable thead th {
+    background: var(--bg-1);
+  }
+
+  #masterlistTable thead th:hover { color: var(--t-1); }
+  #masterlistTable thead th[data-key="actions"] { cursor: default; }
+  #masterlistTable thead th[data-key="actions"]:hover { color: var(--t-3); }
+
+  #masterlistTable tbody td {
+    padding: 11px 13px;
+    border-bottom: 1px solid var(--b-0);
+    color: var(--t-1);
+    vertical-align: middle;
+    white-space: nowrap;
+    transition: background var(--t-fast);
+  }
+
+  #masterlistTable tbody tr:last-child td { border-bottom: none; }
+  #masterlistTable tbody tr { transition: background var(--t-fast); position: relative; }
+
+  #masterlistTable tbody tr:hover td { background: rgba(40,87,164,.05); }
+  #masterlistTable tbody tr:hover td:first-child { box-shadow: inset 3px 0 0 var(--indigo); }
+  #masterlistTable tbody tr:hover td.sticky-col { background: var(--bg-2); }
+
+  html[data-theme="dark"] #masterlistTable tbody tr:hover td { background: rgba(40,87,164,.08); }
+  html[data-theme="dark"] #masterlistTable tbody tr:hover td.sticky-col { background: var(--bg-2); }
+
+  #masterlistTable th[data-key="status"],
+  #masterlistTable td[data-key="status"],
+  #masterlistTable th[data-key="actions"],
+  #masterlistTable td[data-key="actions"] { text-align: center; }
+
+  #masterlistTable th.sticky-col,
+  #masterlistTable td.sticky-col {
+    position: sticky; left: 0; z-index: 5;
+    background: var(--bg-1);
+    border-right: 1px solid var(--b-1);
+  }
+
+  #masterlistTable thead th.sticky-col { z-index: 10; background: var(--bg-0); }
+  html[data-theme="dark"] #masterlistTable thead th.sticky-col { background: var(--bg-1); }
+
+  #masterlistTable th.sticky-col.col-3,
+  #masterlistTable td.sticky-col.col-3 { left: 240px; }
+
+  #masterlistTable th[data-key="model"],
+  #masterlistTable td[data-key="model"] { min-width: 240px; }
+
+  #masterlistTable th[data-key="serialTag"],
+  #masterlistTable td[data-key="serialTag"] { min-width: 160px; }
+
+  .th-sort-icon {
+    opacity: .28; margin-left: 5px; font-size: 9px;
+    font-family: var(--font-mono);
+    transition: opacity var(--t-fast), color var(--t-fast);
+  }
+
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateY(2px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  #masterlistTable tbody tr { animation: rowIn .18s ease-out both; }
+
+  /* ============================================================
+   * STATUS TAGS
+   * ============================================================ */
+  .status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 9px;
+    border-radius: var(--r-pill);
+    font-size: 10px; font-weight: 600;
+    letter-spacing: .07em; text-transform: uppercase;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    border: 1px solid transparent;
+  }
+
+  .status-tag .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%; flex-shrink: 0;
+  }
+
+  .tag-assigned {
+    background: rgba(22,163,74,.10);
+    color: #16a34a;
+    border-color: rgba(22,163,74,.25);
+  }
+  html[data-theme="dark"] .tag-assigned { color: var(--green-2); border-color: rgba(34,197,94,.25); }
+  .tag-assigned .dot { background: #16a34a; }
+  html[data-theme="dark"] .tag-assigned .dot { background: var(--green-2); }
+
+  .tag-available {
+    background: rgba(40,87,164,.10);
+    color: #2857a4;
+    border-color: rgba(40,87,164,.24);
+  }
+  html[data-theme="dark"] .tag-available { color: var(--indigo-2); border-color: rgba(40,87,164,.30); }
+  .tag-available .dot { background: #2857a4; }
+  html[data-theme="dark"] .tag-available .dot { background: var(--indigo-2); }
+
+  .tag-retired {
+    background: rgba(201,64,64,.10);
+    color: #c94040;
+    border-color: rgba(201,64,64,.24);
+  }
+  .tag-retired .dot { background: #c94040; }
+
+  .tag-missing {
+    background: rgba(180,83,9,.10);
+    color: #b45309;
+    border-color: rgba(180,83,9,.24);
+  }
+  html[data-theme="dark"] .tag-missing { color: var(--yellow-2); border-color: rgba(217,119,6,.28); }
+  .tag-missing .dot {
+    background: #b45309;
+    animation: dotPulse 1.6s infinite;
+  }
+  html[data-theme="dark"] .tag-missing .dot { background: var(--yellow-2); }
+
+  .tag-faulty {
+    background: rgba(138,134,128,.10);
+    color: #6b7280;
+    border-color: rgba(138,134,128,.22);
+  }
+  html[data-theme="dark"] .tag-faulty { color: var(--grey-2); }
+  .tag-faulty .dot { background: #6b7280; }
+  html[data-theme="dark"] .tag-faulty .dot { background: var(--grey-2); }
+
+  .tag-return {
+    background: rgba(40,87,164,.10);
+    color: #2857a4;
+    border-color: rgba(40,87,164,.24);
+  }
+  html[data-theme="dark"] .tag-return { color: var(--indigo-2); }
+  .tag-return .dot { background: #2857a4; }
+  html[data-theme="dark"] .tag-return .dot { background: var(--indigo-2); }
+
+  .tag-offboard {
+    background: rgba(194,65,12,.10);
+    color: #c2410c;
+    border-color: rgba(194,65,12,.24);
+  }
+  html[data-theme="dark"] .tag-offboard { color: var(--orange-2); }
+  .tag-offboard .dot { background: #c2410c; }
+  html[data-theme="dark"] .tag-offboard .dot { background: var(--orange-2); }
+
+  @keyframes dotPulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: .25; }
+  }
+
+  /* AF tags */
+  .af-signed,
+  .af-pending {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 9px;
+    border-radius: var(--r-pill);
+    font-size: 10px; font-weight: 600;
+    letter-spacing: .07em; text-transform: uppercase;
+    font-family: var(--font-mono);
+    border: 1px solid transparent;
+  }
+  .af-signed {
+    background: rgba(22,163,74,.10);
+    color: #16a34a;
+    border-color: rgba(22,163,74,.25);
+  }
+  html[data-theme="dark"] .af-signed { color: var(--green-2); }
+  .af-pending {
+    background: rgba(194,65,12,.10);
+    color: #c2410c;
+    border-color: rgba(194,65,12,.24);
+  }
+  html[data-theme="dark"] .af-pending { color: var(--orange-2); }
+  .af-none { color: var(--t-3); font-size: 11px; font-family: var(--font-mono); }
+
+  .mono-cell {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--t-2);
+  }
+
+  /* ============================================================
+   * ACTION BUTTONS (in-row)
+   * ============================================================ */
+  .row-actions {
+    display: flex; align-items: center; justify-content: center; gap: 3px;
+  }
+
+  .action-btn {
+    width: 27px; height: 27px;
+    border-radius: var(--r-md);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--t-3);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 11px;
+    transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  }
+
+  .action-btn:hover { }
+  .action-btn:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+
+  .edit-btn:hover   { background: rgba(40,87,164,.10);  color: var(--indigo);  border-color: rgba(40,87,164,.24); }
+  .delete-btn:hover { background: rgba(201,64,64,.10);  color: var(--red);     border-color: rgba(201,64,64,.24); }
+  .clear-btn:hover  { background: rgba(180,83,9,.10);   color: var(--yellow);  border-color: rgba(180,83,9,.24); }
+
+  html[data-theme="dark"] .edit-btn:hover   { background: rgba(40,87,164,.16); color: var(--indigo-2); }
+  html[data-theme="dark"] .delete-btn:hover { background: rgba(201,64,64,.16); color: var(--red-2); }
+  html[data-theme="dark"] .clear-btn:hover  { background: rgba(180,83,9,.16);  color: var(--yellow-2); }
+
+  .action-btn.is-disabled,
+  .action-btn:disabled {
+    opacity: .28;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .cell-btn {
+    height: 24px; padding: 0 10px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--b-1);
+    background: var(--bg-2);
+    color: var(--t-2);
+    font-family: var(--font-mono);
+    font-size: 10.5px; font-weight: 500;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 5px;
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+    white-space: nowrap;
+  }
+
+  .cell-btn:hover {
+    background: var(--bg-3);
+    border-color: var(--indigo-b);
+    color: var(--indigo);
+  }
+
+  html[data-theme="dark"] .cell-btn:hover { color: var(--indigo-2); }
+
+  /* ============================================================
+   * PAGINATION
+   * ============================================================ */
+  .pagination-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 12px 18px;
+    border-top: 1px solid var(--b-1);
+    flex-wrap: wrap;
+  }
+
+  .pagination-info {
+    font-size: 11px; color: var(--t-3); font-weight: 500;
+    font-family: var(--font-mono);
+  }
+
+  .pagination-controls { display: flex; align-items: center; gap: 6px; }
+
+  /* ============================================================
+   * MODALS
+   * ============================================================ */
+  .modal-content.glass-modal {
+    background: var(--bg-1);
+    border: 1px solid var(--b-2);
+    border-radius: var(--r-xl);
+    color: var(--t-1);
+    box-shadow: var(--sh-3);
+  }
+
+  .modal-header.glass-header,
+  .modal-footer.glass-footer { border-color: var(--b-1); }
+
+  .modal-header.glass-header {
+    padding: 18px 22px 12px;
+    background: var(--bg-0);
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+  }
+
+  html[data-theme="dark"] .modal-header.glass-header {
+    background: rgba(0,0,0,.14);
+  }
+
+  .modal-footer.glass-footer {
+    padding: 12px 22px 18px; gap: 8px;
+  }
+
+  .modal-title.glass-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 17px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1);
+  }
+
+  .glass-modal .form-label {
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: .10em; text-transform: uppercase;
+    color: var(--t-3); margin-bottom: 5px;
+    font-family: var(--font-mono);
+  }
+
+  .glass-modal .form-control,
+  .glass-modal .form-select {
+    background: var(--bg-2);
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-md);
+    color: var(--t-1);
+    padding: 8px 11px;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  .glass-modal .form-control::placeholder { color: var(--t-3); }
+
+  .glass-modal .form-control:focus,
+  .glass-modal .form-select:focus {
+    outline: none;
+    background: var(--bg-1);
+    border-color: var(--indigo-b);
+    box-shadow: var(--indigo-glow);
+    color: var(--t-1);
+  }
+
+  .glass-modal .form-select option { background: var(--bg-2); color: var(--t-1); }
+
+  .glass-modal .form-control.required-field:placeholder-shown {
+    border-left: 3px solid rgba(201,64,64,.45);
+  }
+
+  .glass-modal .form-control.required-field:not(:placeholder-shown) {
+    border-left: 3px solid rgba(22,163,74,.45);
+  }
+
+  .required-marker {
+    color: var(--red);
+    font-weight: 700;
+    margin-left: 3px;
+    font-size: 11px;
+  }
+
+  .modal-section-title {
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: .10em; text-transform: uppercase;
+    color: var(--t-3);
+    padding: 14px 0 7px;
+    border-top: 1px solid var(--b-1);
+    margin-top: 7px;
+    font-family: var(--font-mono);
+  }
+
+  .modal-section-title:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+
+  .modal-btn-cancel {
+    height: 36px; padding: 0 14px;
+    border: 1px solid var(--b-2);
+    border-radius: var(--r-pill);
+    background: var(--bg-2);
+    color: var(--t-2);
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: .04em;
+    cursor: pointer;
+    transition: background var(--t-fast), color var(--t-fast);
+  }
+
+  .modal-btn-cancel:hover { background: var(--bg-3); color: var(--t-1); }
+
+  .modal-btn-save {
+    height: 36px; padding: 0 18px;
+    border: 1px solid var(--indigo-b);
+    border-radius: var(--r-pill);
+    background: var(--indigo);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .04em;
+    cursor: pointer;
+    transition: filter var(--t-fast), box-shadow var(--t-fast);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+
+  .modal-btn-save:hover {
+    filter: brightness(1.10);
+    box-shadow: 0 4px 14px rgba(40,87,164,.28);
+  }
+
+  .modal-btn-save:disabled {
+    opacity: .42; cursor: not-allowed;
+    filter: none !important; box-shadow: none !important;
+  }
+
+  /* Accessories chips */
+  .acc-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+
+  .acc-chip {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--b-1);
+    background: var(--bg-2);
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 500;
+    color: var(--t-2);
+    cursor: pointer;
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+    user-select: none;
+  }
+
+  .acc-chip:hover { background: var(--bg-3); color: var(--t-1); }
+  .acc-chip input { display: none; }
+
+  .acc-chip:has(input:checked) {
+    background: var(--indigo-d);
+    border-color: var(--indigo-b);
+    color: var(--indigo);
+  }
+
+  html[data-theme="dark"] .acc-chip:has(input:checked) { color: var(--indigo-2); }
+
+  /* ============================================================
+   * TOAST
+   * ============================================================ */
+  #appToast.toast {
+    min-width: 270px; max-width: 360px;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--b-2);
+    box-shadow: var(--sh-2);
+    overflow: hidden;
+  }
+
+  #appToast .toast-header {
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--b-1);
+  }
+
+  #appToast .toast-body {
+    background: var(--bg-1);
+    font-family: var(--font-ui);
+    font-weight: 600; font-size: 12.5px;
+    color: var(--t-1);
+  }
+
+  #appToast[data-kind="success"] #toastIcon { color: var(--green); }
+  html[data-theme="dark"] #appToast[data-kind="success"] #toastIcon { color: var(--green-2); }
+  #appToast[data-kind="danger"]  #toastIcon { color: var(--red); }
+  #appToast[data-kind="warning"] #toastIcon { color: var(--orange); }
+  html[data-theme="dark"] #appToast[data-kind="warning"] #toastIcon { color: var(--orange-2); }
+  #appToast[data-kind="info"]    #toastIcon { color: var(--indigo); }
+  html[data-theme="dark"] #appToast[data-kind="info"] #toastIcon { color: var(--indigo-2); }
+
+  /* ============================================================
+   * CONFIRM MODAL KINDS
+   * ============================================================ */
+  #appConfirmModal[data-kind="danger"]  .modal-header.glass-header { background: rgba(201,64,64,.07); }
+  #appConfirmModal[data-kind="warning"] .modal-header.glass-header { background: rgba(194,65,12,.06); }
+  #appConfirmModal[data-kind="success"] .modal-header.glass-header { background: rgba(22,163,74,.07); }
+  #appConfirmModal[data-kind="info"]    .modal-header.glass-header { background: rgba(40,87,164,.07); }
+  #confirmTitle[data-kind="danger"]  { color: var(--red); }
+  #confirmTitle[data-kind="warning"] { color: var(--orange); }
+
+  /* ============================================================
+   * AUDIT TABLE
+   * ============================================================ */
+  .audit-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 900px;
+  }
+
+  .audit-table th {
+    padding: 8px 11px;
+    font-size: 9px; font-weight: 600;
+    letter-spacing: .10em; text-transform: uppercase;
+    color: var(--t-3);
+    border-bottom: 1px solid var(--b-1);
+    background: var(--bg-1);
+    white-space: nowrap;
+    font-family: var(--font-mono);
+  }
+
+  .audit-table td {
+    padding: 9px 11px;
+    border-bottom: 1px solid var(--b-0);
+    color: var(--t-1); vertical-align: middle;
+  }
+
+  .audit-table tbody tr:last-child td { border-bottom: none; }
+  .audit-table tbody tr { transition: background var(--t-fast); }
+  .audit-table tbody tr:hover td { background: rgba(40,87,164,.05); }
+  html[data-theme="dark"] .audit-table tbody tr:hover td { background: rgba(40,87,164,.09); }
+
+  /* ============================================================
+   * EMPTY STATE
+   * ============================================================ */
+  .empty-state {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 48px 20px; color: var(--t-2); gap: 8px;
+  }
+
+  .empty-icon { font-size: 28px; opacity: .35; }
+  .empty-label { font-size: 13.5px; font-weight: 600; color: var(--t-1); }
+  .empty-hint  { font-size: 11.5px; color: var(--t-2); }
+
+  /* ============================================================
+   * GO TO TOP
+   * ============================================================ */
+  #goTopBtn {
+    position: fixed; right: 20px; bottom: 20px;
+    width: 38px; height: 38px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--b-2);
+    background: var(--bg-2);
+    color: var(--t-1);
+    display: grid; place-items: center;
+    box-shadow: var(--sh-1);
+    z-index: 1200;
+    cursor: pointer; font-size: 12px;
+    opacity: 0; transform: translateY(6px) scale(.96);
+    pointer-events: none;
+    transition: opacity .20s, transform .20s, background .14s;
+  }
+
+  #goTopBtn.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+  #goTopBtn:hover { background: var(--bg-3); border-color: var(--indigo-b); }
+
+  /* ============================================================
+   * DROPDOWNS
+   * ============================================================ */
+  .dropdown-menu {
+    background: var(--bg-1) !important;
+    border: 1px solid var(--b-2) !important;
+    border-radius: var(--r-lg) !important;
+    box-shadow: var(--sh-2) !important;
+    padding: 5px !important;
+  }
+
+  .dropdown-item {
+    color: var(--t-1) !important;
+    border-radius: var(--r-md) !important;
+    padding: 7px 11px !important;
+    font-family: var(--font-mono) !important;
+    font-size: 11px !important; font-weight: 500 !important;
+    letter-spacing: .03em !important;
+    transition: background var(--t-fast) !important;
+  }
+
+  .dropdown-item:hover, .dropdown-item:focus {
+    background: rgba(40,87,164,.09) !important;
+    color: var(--indigo) !important;
+  }
+
+  html[data-theme="dark"] .dropdown-item:hover,
+  html[data-theme="dark"] .dropdown-item:focus {
+    color: var(--indigo-2) !important;
+  }
+
+  .dropdown-divider { border-top: 1px solid var(--b-1) !important; margin: 4px !important; }
+
+  /* ============================================================
+   * TOM SELECT
+   * ============================================================ */
+  .ts-control {
+    background: var(--bg-2) !important;
+    border: 1px solid var(--b-1) !important;
+    border-radius: var(--r-md) !important;
+    color: var(--t-1) !important;
+    padding: 5px 9px !important;
+    font-size: 12.5px !important;
+    font-family: var(--font-ui) !important;
+  }
+
+  .ts-control:focus-within {
+    border-color: var(--indigo-b) !important;
+    box-shadow: var(--indigo-glow) !important;
+  }
+
+  .ts-dropdown {
+    background: var(--bg-2) !important;
+    border: 1px solid var(--b-2) !important;
+    border-radius: var(--r-md) !important;
+    z-index: 2000 !important;
+    box-shadow: var(--sh-2) !important;
+  }
+
+  .ts-dropdown .option { color: var(--t-1) !important; font-size: 12.5px !important; }
+  .ts-dropdown .active { background: rgba(40,87,164,.10) !important; }
+
+  /* ============================================================
+   * UTILITIES
+   * ============================================================ */
+  .tip-row {
+    padding: 7px 18px 12px;
+    font-size: 10.5px; color: var(--t-3); font-weight: 500;
+    font-family: var(--font-mono);
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fa-spin { animation: spin .85s linear infinite; }
+
+  /* ============================================================
+   * CLEAR ASSIGNMENT MODAL
+   * ============================================================ */
+  .clear-opt {
+    display: flex; align-items: flex-start; gap: 11px;
+    padding: 12px 14px;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--b-1);
+    background: var(--bg-2);
+    cursor: pointer;
+    transition: border-color var(--t-fast), background var(--t-fast);
+  }
+
+  .clear-opt:hover { border-color: var(--b-2); background: var(--bg-3); }
+
+  .clear-opt:has(input:checked) {
+    border-color: var(--indigo-b);
+    background: var(--indigo-d);
+  }
+
+  .clear-opt input { margin-top: 2px; accent-color: var(--indigo); }
+  .clear-opt-title { font-size: 12.5px; font-weight: 700; color: var(--t-1); }
+  .clear-opt-desc  { font-size: 11.5px; color: var(--t-2); margin-top: 2px; line-height: 1.45; }
+
+  .clear-opt-section-label {
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: .10em; text-transform: uppercase;
+    color: var(--t-3); margin-bottom: 9px;
+    font-family: var(--font-mono);
+  }
+
+  .clear-opt-list { display: flex; flex-direction: column; gap: 7px; }
+
+  .clear-assignment-info {
+    color: var(--t-2); font-size: 13px; line-height: 1.6; margin-bottom: 16px;
+  }
+
+  .clear-assignment-info .hint {
+    font-size: 11.5px; color: var(--t-3); margin-top: 3px; display: block;
+  }
+
+  /* ============================================================
+   * RESPONSIVE
+   * ============================================================ */
+  @media (max-width: 820px) {
+    .container-main { padding: 24px 12px 44px; margin-top: 44px; }
+    #searchBox { width: 180px; }
+    .seg-filter { order: 2; }
+    .toolbar-left, .toolbar-right { width: 100%; }
+    .toolbar-right { justify-content: flex-end; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* ============================================================
+   * HTML CLEANUP SUPPORT
+   * ============================================================ */
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .glass-modal .btn-close,
+  #appToast .btn-close {
+    filter: none;
+    opacity: .55;
+    transition: opacity var(--t-fast);
+  }
+
+  .glass-modal .btn-close:hover,
+  #appToast .btn-close:hover { opacity: 1; }
+
+  html[data-theme="dark"] .glass-modal .btn-close,
+  html[data-theme="dark"] #appToast .btn-close {
+    filter: invert(1) grayscale(1) brightness(2);
+    opacity: .6;
+  }
+
+  /* ============================================================
+   * AUDIT MODAL
+   * ============================================================ */
+  .audit-table-wrap {
+    border-radius: var(--r-md);
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 1px solid var(--b-1);
+  }
+
+  .audit-refresh-btn { height: 36px; border-radius: var(--r-md); }
+
+  .audit-footer {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-top: 11px;
+    gap: 11px; flex-wrap: wrap;
+  }
+
+  .audit-pagination { display: flex; gap: 6px; }
+
+  .audit-details-wrap { margin-top: 12px; }
+
+  .audit-details-summary {
+    font-size: 10.5px;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--t-3);
+    cursor: pointer;
+    padding: 7px 11px;
+    font-family: var(--font-mono);
+    list-style: none;
+    display: inline-flex; gap: 7px; align-items: center;
+    border-radius: var(--r-md);
+    transition: background var(--t-fast), color var(--t-fast);
+    user-select: none;
+  }
+
+  .audit-details-summary::-webkit-details-marker { display: none; }
+  .audit-details-summary:hover { color: var(--t-1); background: var(--bg-3); }
+
+  .audit-details-wrap[open] .audit-details-summary {
+    color: var(--indigo);
+    background: var(--indigo-d);
+    margin-bottom: 7px;
+  }
+
+  html[data-theme="dark"] .audit-details-wrap[open] .audit-details-summary {
+    color: var(--indigo-2);
+  }
+
+  .audit-details-chevron { font-size: 8px; transition: transform var(--t-fast); }
+  .audit-details-wrap[open] .audit-details-chevron { transform: rotate(180deg); }
+
+  .audit-details {
+    background: var(--bg-2);
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-md);
+    padding: 11px;
+    max-height: 190px;
+    overflow: auto;
+    font-size: 11px;
+    color: var(--t-2);
+    font-family: var(--font-mono);
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .confirm-message { color: var(--t-2); font-size: 13px; line-height: 1.6; }
+  .toast-title { color: var(--t-1); font-size: 12.5px; font-family: var(--font-mono); }
+</style>
+
+  <div class="container-main">
+    <h1 class="page-title">Hardware Master List</h1>
+    <p class="page-sub">View and manage all hardware assets with selectable columns.</p>
+
+    <div class="card-wrap">
+
+      <!-- ═══ TOOLBAR ═══ -->
+      <div class="toolbar" role="toolbar" aria-label="Asset list controls">
+        <div class="toolbar-row toolbar-row--primary">
+
+          <div class="toolbar-left" role="search">
+
+            <div class="search-wrap">
+              <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+              <input id="searchBox" type="text" placeholder="Search assets…" aria-label="Search assets">
+            </div>
+
+            <div class="seg-filter" id="segFilter" role="tablist" aria-label="Asset type filter">
+              <div class="seg-indicator" id="segIndicator" aria-hidden="true"></div>
+              <button type="button" class="seg-item active" role="tab"
+                      id="seg-all" data-seg="all"
+                      aria-selected="true" aria-controls="masterlistTable" tabindex="0">All</button>
+              <button type="button" class="seg-item" role="tab"
+                      id="seg-laptop" data-seg="Laptop"
+                      aria-selected="false" aria-controls="masterlistTable" tabindex="-1">Laptop</button>
+              <button type="button" class="seg-item" role="tab"
+                      id="seg-monitor" data-seg="Monitor"
+                      aria-selected="false" aria-controls="masterlistTable" tabindex="-1">Monitor</button>
+            </div>
+
+          </div>
+
+          <div class="toolbar-right" aria-label="Asset actions">
+
+            <button type="button" class="btn-add" id="addAssetBtn" style="display:none;">
+  <i class="fas fa-plus" aria-hidden="true"></i> Add Asset
+</button>
+
+            <div class="export-group dropdown">
+              <button type="button" class="btn-primary dropdown-toggle" id="exportBtn"
+                      data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-file-export" aria-hidden="true"></i> Export
+                <i class="fa-solid fa-chevron-down" style="font-size:9px;margin-left:4px;" aria-hidden="true"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" style="min-width:220px;">
+                <li>
+                  <button class="dropdown-item" id="exportCurrentPageOpt" type="button">
+                    <i class="fa-solid fa-file-lines me-2" aria-hidden="true"></i> Export current page
+                  </button>
+                </li>
+                <li>
+                  <button class="dropdown-item" id="exportAllOpt" type="button">
+                    <i class="fa-solid fa-table me-2" aria-hidden="true"></i> Export all (filtered)
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <button type="button" class="btn-ghost" id="auditBtn">
+              <i class="fas fa-clipboard-list" aria-hidden="true"></i> Audit
+            </button>
+
+            <button type="button" class="btn-icon" id="refreshBtn"
+                    title="Refresh table" aria-label="Refresh table">
+              <i class="fas fa-rotate" aria-hidden="true"></i>
+            </button>
+
+            <button type="button" class="btn-icon" id="clearFiltersBtn"
+                    title="Clear filters" aria-label="Clear all filters">
+              <i class="fas fa-filter-circle-xmark" aria-hidden="true"></i>
+            </button>
+
+            <div class="col-selector-wrap">
+              <button type="button" class="btn-ghost" id="toggleColsBtn"
+                      aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-table-columns" aria-hidden="true"></i> Columns
+              </button>
+              <div id="columnSelector" role="menu" aria-label="Visible columns"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- ═══ BULK ACTION BAR ═══ -->
+      <div id="bulkActionBar" style="display:none;align-items:center;gap:10px;
+           padding:8px 18px;background:var(--indigo-d);border-bottom:1px solid var(--indigo-b);">
+        <span id="bulkSelectionLabel"
+              style="font-size:12px;font-weight:600;color:var(--indigo);font-family:var(--font-mono);">
+        </span>
+        <button type="button" class="btn-primary" id="bulkExportBtn"
+                style="height:28px;font-size:10.5px;">
+          <i class="fas fa-file-export" aria-hidden="true"></i> Export selected
+        </button>
+        <button type="button" class="btn-ghost" id="bulkClearSelectBtn"
+                style="height:28px;font-size:10.5px;">
+          Clear selection
+        </button>
+      </div>
+
+
+      <!-- ═══ TABLE ═══ -->
+      <div class="table-scroll">
+        <table id="masterlistTable">
+          <caption class="visually-hidden">
+            Hardware asset list. Click column headers to sort. Use the toolbar to filter and search.
+          </caption>
+          <thead>
+            <tr id="masterlistHeaderRow"></tr>
+          </thead>
+          <tbody id="masterlistBody">
+            <tr>
+              <td colspan="100">
+                <div class="empty-state">
+                  <div class="empty-icon"><i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i></div>
+                  <div class="empty-label">Loading assets…</div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ═══ PAGINATION ═══ -->
+      <div class="pagination-bar" id="paginationBar" style="display:none;"
+           role="status" aria-live="polite" aria-label="Pagination status">
+        <div class="pagination-info" id="paginationInfo">—</div>
+        <div class="pagination-controls">
+          <button class="btn-ghost" id="btnPrev" type="button" aria-label="Previous page">
+            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i> Prev
+          </button>
+          <button class="btn-ghost" id="btnNext" type="button" aria-label="Next page">
+            Next <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="tip-row">
+        <i class="fa-solid fa-circle-info" aria-hidden="true" style="margin-right:5px;"></i>
+        Click any column header to sort. Use the Columns button to show or hide fields.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GO TO TOP -->
+  <button type="button" id="goTopBtn" aria-label="Back to top">
+    <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
+  </button>
+
+  <!-- ═══ ADD MODAL ═══ -->
+  <div class="modal fade" id="addAssetModal" tabindex="-1"
+       aria-labelledby="addAssetTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header glass-header">
+          <h2 class="modal-title glass-title" id="addAssetTitle">
+            <i class="fa-solid fa-plus" style="color:var(--indigo-2);margin-right:8px;" aria-hidden="true"></i>
+            Add New Asset
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body px-4 pb-2">
+          <form id="addAssetForm" onsubmit="return false;">
+            <div class="row g-3" id="addAssetFields"></div>
+          </form>
+          <div class="tip-row" style="padding:10px 0 0;">
+            <i class="fa-solid fa-circle-info me-1" aria-hidden="true"></i>
+            Serial Tag must be unique.
+          </div>
+        </div>
+        <div class="modal-footer glass-footer">
+          <button type="button" class="modal-btn-cancel" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="modal-btn-save" id="saveAddBtn">
+            <i class="fas fa-floppy-disk" aria-hidden="true"></i> Save Asset
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ EDIT MODAL ═══ -->
+  <div class="modal fade" id="editAssetModal" tabindex="-1"
+       aria-labelledby="editAssetTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header glass-header">
+          <h2 class="modal-title glass-title" id="editAssetTitle">
+            <i class="fa-solid fa-pen" style="color:var(--indigo-2);margin-right:8px;" aria-hidden="true"></i>
+            Edit Asset
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body px-4 pb-2">
+          <form id="editAssetForm" onsubmit="return false;">
+            <input type="hidden" id="edit_originalSerialTag">
+            <div class="row g-3" id="editAssetFields"></div>
+          </form>
+          <div class="tip-row" style="padding:10px 0 0;">
+            <i class="fa-solid fa-circle-info me-1" aria-hidden="true"></i>
+            Changing Serial Tag will be validated for duplicates.
+          </div>
+        </div>
+        <div class="modal-footer glass-footer">
+          <button type="button" class="modal-btn-cancel" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="modal-btn-save" id="saveEditBtn">
+            <i class="fas fa-floppy-disk" aria-hidden="true"></i> Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AUDIT MODAL ═══ -->
+  <div class="modal fade" id="auditLogsModal" tabindex="-1"
+       aria-labelledby="auditLogsTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content glass-modal">
+        <div class="modal-header glass-header">
+          <h2 class="modal-title glass-title" id="auditLogsTitle">
+            <i class="fa-solid fa-clock-rotate-left" style="color:var(--indigo-2);margin-right:8px;" aria-hidden="true"></i>
+            Asset Audit Logs
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body px-4">
+
+          <div class="row g-2 align-items-end mb-3">
+ 
+  <!-- Search -->
+  <div class="col-md-5">
+    <label class="form-label" for="auditQuery">Search</label>
+    <input id="auditQuery" class="form-control"
+           placeholder="Search by user, field, serial tag…"
+           autocomplete="off">
+  </div>
+ 
+  <!-- Action filter (NEW) -->
+  <div class="col-md-2">
+    <label class="form-label" for="auditActionFilter">Action</label>
+    <select id="auditActionFilter" class="form-select">
+      <option value="">All</option>
+      <option value="ADD">ADD</option>
+      <option value="UPDATE">UPDATE</option>
+      <option value="DELETE">DELETE</option>
+      <option value="CLEAR_ASSIGNMENT">CLEAR</option>
+    </select>
+  </div>
+ 
+  <!-- Date from (NEW) -->
+  <div class="col-md-2">
+    <label class="form-label" for="auditDateFrom">From</label>
+    <input type="date" id="auditDateFrom" class="form-control">
+  </div>
+ 
+  <!-- Date to (NEW) -->
+  <div class="col-md-2">
+    <label class="form-label" for="auditDateTo">To</label>
+    <input type="date" id="auditDateTo" class="form-control">
+  </div>
+ 
+  <!-- Page size -->
+  <div class="col-md-1">
+    <label class="form-label" for="auditPageSize">Per page</label>
+    <select id="auditPageSize" class="form-select">
+      <option>25</option>
+      <option selected>50</option>
+      <option>100</option>
+      <option>200</option>
+    </select>
+  </div>
+ 
+</div>
+ 
+<!-- Refresh button row (keep as-is or place here) -->
+<div class="d-flex justify-content-between align-items-center mb-2" style="gap:8px;">
+  <button id="auditClearFilters" class="btn-ghost" type="button" style="height:34px;font-size:12px;">
+    <i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i> Clear filters
+  </button>
+  <button id="auditRefresh" class="btn-primary audit-refresh-btn" type="button" aria-label="Refresh audit logs">
+    <i class="fa-solid fa-rotate me-1" aria-hidden="true"></i> Refresh
+  </button>
+</div>
+ 
+<input type="hidden" id="auditSerial" value="">
+
+          <div class="audit-table-wrap">
+            <table class="audit-table">
+              <caption class="visually-hidden">Audit log entries for asset changes.</caption>
+              <thead>
+  <tr>
+    <th style="width:145px;">Timestamp</th>
+    <th style="width:160px;">Actor</th>
+    <th style="width:105px;">Action</th>
+    <th style="width:115px;">Serial Tag</th>
+    <th style="width:90px;">Entity</th>
+    <th style="width:125px;">Field</th>
+    <th>Old → New</th>
+    <th style="width:140px;">Affected User</th>
+    <th style="width:60px;" aria-label="View details"></th>
+  </tr>
+</thead>
+              <tbody id="auditTbody">
+                <tr>
+                  <td colspan="9">
+                    <div class="empty-state" style="padding:24px;">
+                      <div class="empty-label">No logs loaded.</div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="audit-footer" role="status" aria-live="polite">
+            <div class="pagination-info" id="auditMeta">—</div>
+            <div class="audit-pagination">
+              <button id="auditPrev" class="btn-ghost" type="button" aria-label="Previous audit page">
+                <i class="fa-solid fa-chevron-left" aria-hidden="true"></i> Prev
+              </button>
+              <button id="auditNext" class="btn-ghost" type="button" aria-label="Next audit page">
+                Next <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <details class="audit-details-wrap">
+            <summary class="audit-details-summary">
+              <i class="fa-solid fa-code" aria-hidden="true"></i>
+              <span>Show raw data</span>
+              <i class="fa-solid fa-chevron-down audit-details-chevron" aria-hidden="true"></i>
+            </summary>
+            <pre id="auditDetails" class="audit-details">Select a row to view details…</pre>
+          </details>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CONFIRM MODAL ═══ -->
+  <div class="modal fade" id="appConfirmModal" tabindex="-1"
+       aria-labelledby="confirmTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:480px;">
+      <div class="modal-content glass-modal">
+        <div class="modal-header glass-header">
+          <h2 class="modal-title glass-title" id="confirmTitle">Confirm</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body px-4 py-3">
+          <div id="confirmMessage" class="confirm-message">Are you sure?</div>
+        </div>
+        <div class="modal-footer glass-footer" style="justify-content:flex-end;">
+          <button type="button" class="modal-btn-cancel" id="confirmCancelBtn">Cancel</button>
+          <button type="button" class="modal-btn-save"   id="confirmOkBtn">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CLEAR ASSIGNMENT MODAL ═══ -->
+<div class="modal fade" id="clearAssignmentModal" tabindex="-1"
+     aria-labelledby="clearAssignmentTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:460px;">
+    <div class="modal-content glass-modal">
+      <div class="modal-header glass-header">
+        <h2 class="modal-title glass-title" id="clearAssignmentTitle">
+          <i class="fa-solid fa-eraser" style="color:#fde047;margin-right:8px;" aria-hidden="true"></i>
+          Clear Assignment
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body px-4 py-3">
+        <div id="clearAssignmentInfo" class="clear-assignment-info"></div>
+      </div>
+      <div class="modal-footer glass-footer" style="justify-content:flex-end;">
+        <button type="button" class="modal-btn-cancel" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="modal-btn-save" id="confirmClearBtn">
+          <i class="fas fa-eraser" aria-hidden="true"></i> Clear &amp; Set to In-stock
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- ═══ TOAST ═══ -->
+  <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:20000;">
+    <div id="appToast" class="toast" role="alert" aria-live="polite" aria-atomic="true">
+      <div class="toast-header">
+        <i id="toastIcon" class="fa-solid fa-circle-info me-2" aria-hidden="true"></i>
+        <strong id="toastTitle" class="me-auto toast-title">Notice</strong>
+        <button type="button" class="btn-close ms-2" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div id="toastBody" class="toast-body">…</div>
+    </div>
+  </div>
+
+  <script>
+(() => {
+  'use strict';
+
+  /* ============================================================
+     CONFIG / BOOTSTRAP
+  ============================================================ */
+  const QUERY = <?= JSON.stringify(QUERY || {}) ?>;
+  const $ = (id) => document.getElementById(id);
+
+  const PAGE_SIZE = 25;
+  const REMOVED_COLUMN_KEYS = [''];
+
+  const BASE_COLUMN_MAP = {
+  select: '',
+  type: 'Type',
+  model: 'Model',
+  serialTag: 'Serial Tag',
+  procurementRef: 'Procurement Ref',   // ← moved here
+  serialNumber: 'Serial Number',
+  ram: 'RAM',
+  purchaseDate: 'Purchase Date',
+  endOfWarranty: 'End of Warranty',
+  status: 'Status',
+  assignee: 'Assignee',
+  email: 'Email',
+  department: 'Department',
+  accessories: 'Accessories',
+  notes: 'Notes',
+  accountabilityForm: 'Accountability Form',
+  signedAf: 'Signed AF',
+  afStatus: 'AF Status',
+  afSignedDate: 'AF Signed Date',
+  actions: 'Actions'
+};
+
+  const COLUMN_MAP = Object.fromEntries(
+    Object.entries(BASE_COLUMN_MAP).filter(([key]) => !REMOVED_COLUMN_KEYS.includes(key))
+  );
+
+  const COLUMN_KEYS = Object.keys(COLUMN_MAP);
+  const MODAL_HIDE_KEYS = ['select', 'accountabilityForm', 'signedAf', 'afStatus', 'afSignedDate', 'notes', 'procurementRef'];
+  const MODAL_KEYS = COLUMN_KEYS.filter((key) => key !== 'actions' && !MODAL_HIDE_KEYS.includes(key));
+  const ASSIGNED_ONLY_FIELDS = ['assignee', 'email', 'department', 'accessories'].filter((key) => COLUMN_KEYS.includes(key));
+
+  const DEFAULT_COLUMN_VISIBILITY = {
+    select: true,
+    type: false,
+    model: true,
+    serialTag: true,
+    serialNumber: true,
+    ram: true,
+    purchaseDate: false,
+    endOfWarranty: false,
+    status: true,
+    assignee: true,
+    email: true,
+    department: true,
+    accessories: true,
+    notes: false,
+    accountabilityForm: true,
+    signedAf: true,
+    afStatus: true,
+    afSignedDate: true,
+    procurementRef: false,  
+actions: true
+  };
+
+  const state = {
+    editOriginal: null,
+    activeFilterType: null,
+    activeFilterStatus: null,
+    activeFilterDepartment: null,
+    activeFilterModel: null,
+
+    columnVisibility: {},
+    currentSortColumn: 'serialTag',
+    isAscending: true,
+
+    currentPage: 1,
+    totalRows: 0,
+    lastPageData: [],
+    fetchToken: 0,
+
+    tsAddAssignee: null,
+    tsEditAssignee: null,
+
+    toastInstance: null,
+    confirmModalInstance: null,
+    auditModal: null,
+
+    employees: [],
+    employeeByName: {},
+
+    perms: {
+      canView:   false,
+      canAdd:    false,
+      canEdit:   false,
+      canDelete: false,
+      canExport: false
+    },
+
+    audit: {
+      page:         1,
+      pageSize:     50,
+      query:        '',
+      serialTag:    '',
+      total:        0,
+      loading:      false,
+      actionFilter: '',   // NEW
+      dateFrom:     '',   // NEW
+      dateTo:       ''    // NEW
+    }
+  };
+
+  /* ============================================================
+     UTILITIES
+  ============================================================ */
+  function unwrapResponse_(res) {
+    if (res && typeof res === 'object' && 'ok' in res) return res;
+    return { ok: true, data: res };
+  }
+
+  function escapeAttr(s) {
+    return String(s ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function escapeHtml(s) {
+    return String(s ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function escapeJsString(s) {
+    return String(s ?? '')
+      .replace(/\\/g, '\\\\')
+      .replace(/'/g, "\\'")
+      .replace(/\r/g, '\\r')
+      .replace(/\n/g, '\\n');
+  }
+
+  function debounce(fn, ms = 250) {
+    let timer = null;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn(...args), ms);
+    };
+  }
+
+  function openUrlSafe(url) {
+    const value = String(url || '').trim();
+    if (!value) return;
+    window.open(value, '_blank', 'noopener');
+  }
+
+  function getSessionUserEmail() {
+    return (
+      window.__SHELL_EMAIL__ ||
+      window.__SHELL_BOOTSTRAP__?.email ||
+      sessionStorage.getItem('user_email') ||
+      ''
+    ).trim();
+  }
+
+  function getVisibleColumnCount() {
+    return Math.max(1, COLUMN_KEYS.filter((key) => isColumnVisible(key)).length);
+  }
+
+  function isColumnVisible(key) {
+    return COLUMN_KEYS.includes(key) && state.columnVisibility?.[key] !== false;
+  }
+
+  function setSubText(html) {
+    const el = document.querySelector('.page-sub');
+    if (el) el.innerHTML = html;
+  }
+
+  function getStickyClass(key) {
+    if (key === 'model') return 'sticky-col col-2';
+    if (key === 'serialTag') return 'sticky-col col-3';
+    return '';
+  }
+
+  function hoistModalsToBody() {
+    ['addAssetModal', 'editAssetModal', 'appConfirmModal', 'auditLogsModal',
+     'clearAssignmentModal', 'appToast'].forEach((id) => {
+      const el = $(id);
+      if (el && el.parentElement !== document.body) {
+        document.body.appendChild(el);
+      }
+    });
+  }
+
+  function resetColumnVisibility() {
+    state.columnVisibility = {};
+    COLUMN_KEYS.forEach((key) => {
+      state.columnVisibility[key] = DEFAULT_COLUMN_VISIBILITY[key] !== false;
+    });
+  }
+
+  function updateFilterBadge() {
+    const hasFilters = !!(
+      state.activeFilterType ||
+      state.activeFilterStatus ||
+      state.activeFilterDepartment ||
+      state.activeFilterModel ||
+      ($('searchBox')?.value?.trim())
+    );
+    $('clearFiltersBtn')?.setAttribute('data-has-filters', String(hasFilters));
+  }
+
+  /* ============================================================
+     TOAST / CONFIRM
+  ============================================================ */
+  function showToast(message, kind = 'info', title = null, delay = 4200) {
+    const el = $('appToast');
+    if (!el) {
+      console.log('[toast]', message);
+      return;
+    }
+
+    const icon = $('toastIcon');
+    const tTitle = $('toastTitle');
+    const body = $('toastBody');
+
+    el.setAttribute('data-kind', kind);
+
+    const iconMap = {
+      success: 'fa-circle-check',
+      danger: 'fa-triangle-exclamation',
+      warning: 'fa-triangle-exclamation',
+      info: 'fa-circle-info'
+    };
+
+    if (icon) icon.className = `fa-solid ${iconMap[kind] || iconMap.info} me-2`;
+    if (tTitle) {
+      tTitle.textContent =
+        title ||
+        (kind === 'success'
+          ? 'Success'
+          : kind === 'danger'
+          ? 'Error'
+          : kind === 'warning'
+          ? 'Warning'
+          : 'Notice');
+    }
+    if (body) body.textContent = String(message || '');
+
+    if (!state.toastInstance) {
+      state.toastInstance = bootstrap.Toast.getOrCreateInstance(el);
+    }
+
+    state.toastInstance._config.delay = delay;
+    state.toastInstance.show();
+  }
+
+  function confirmAction({
+    title = 'Confirm',
+    message = 'Are you sure?',
+    kind = 'warning',
+    okText = 'OK',
+    cancelText = 'Cancel'
+  } = {}) {
+    const modalEl = $('appConfirmModal');
+    if (!modalEl) return Promise.resolve(window.confirm(message));
+
+    const titleEl = $('confirmTitle');
+    const msgEl = $('confirmMessage');
+    const okBtn = $('confirmOkBtn');
+    const cancelBtn = $('confirmCancelBtn');
+
+    const icon =
+      kind === 'danger'
+        ? 'fa-circle-xmark'
+        : kind === 'success'
+        ? 'fa-circle-check'
+        : kind === 'info'
+        ? 'fa-circle-info'
+        : 'fa-triangle-exclamation';
+
+    modalEl.setAttribute('data-kind', kind);
+
+    if (titleEl) {
+      titleEl.innerHTML = `<i class="fa-solid ${icon} me-2" aria-hidden="true"></i>`;
+      titleEl.appendChild(document.createTextNode(String(title)));
+    }
+    if (msgEl) msgEl.textContent = String(message || '');
+    if (okBtn) okBtn.textContent = okText;
+    if (cancelBtn) cancelBtn.textContent = cancelText;
+
+    if (!state.confirmModalInstance) {
+      state.confirmModalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+    }
+
+    return new Promise((resolve) => {
+      let resolved = false;
+
+      const cleanup = () => {
+        okBtn?.removeEventListener('click', onOk);
+        cancelBtn?.removeEventListener('click', onCancel);
+        modalEl.removeEventListener('hidden.bs.modal', onHide);
+      };
+
+      const onOk = () => {
+        if (resolved) return;
+        resolved = true;
+        cleanup();
+        state.confirmModalInstance.hide();
+        resolve(true);
+      };
+
+      const onCancel = () => {
+        if (resolved) return;
+        resolved = true;
+        cleanup();
+        state.confirmModalInstance.hide();
+        resolve(false);
+      };
+
+      const onHide = () => {
+        if (resolved) return;
+        resolved = true;
+        cleanup();
+        resolve(false);
+      };
+
+      okBtn?.addEventListener('click', onOk, { once: true });
+      cancelBtn?.addEventListener('click', onCancel, { once: true });
+      modalEl.addEventListener('hidden.bs.modal', onHide, { once: true });
+
+      state.confirmModalInstance.show();
+    });
+  }
+
+  /* ============================================================
+     EMPLOYEES
+  ============================================================ */
+  function loadEmployees(callback) {
+    // ── Try sessionStorage first — employees rarely change ──────
+    try {
+      var cached = sessionStorage.getItem('ml_employees_cache');
+      if (cached) {
+        var parsed = JSON.parse(cached);
+        var age    = Date.now() - (parsed._ts || 0);
+        // Use client cache if less than 10 minutes old
+        if (age < 10 * 60 * 1000 && Array.isArray(parsed.data)) {
+          state.employees    = parsed.data;
+          state.employeeByName = {};
+          state.employees.forEach(function(emp) {
+            var name = String(emp.displayName || '').trim();
+            if (!name) return;
+            state.employeeByName[name] = {
+              email:      String(emp.email      || '').trim(),
+              department: String(emp.department || '').trim()
+            };
+          });
+          if (callback) callback();
+          return; // skip network call entirely
+        }
+      }
+    } catch (_) {}
+ 
+    // ── Network call (server already caches for 10 min too) ─────
+    google.script.run
+      .withFailureHandler((err) => {
+        console.error(err);
+        state.employees      = [];
+        state.employeeByName = {};
+        if (callback) callback();
+      })
+      .withSuccessHandler((res) => {
+        const out = unwrapResponse_(res);
+ 
+        if (!out.ok) {
+          state.employees      = [];
+          state.employeeByName = {};
+          if (callback) callback();
+          return;
+        }
+ 
+        state.employees      = Array.isArray(out.data) ? out.data : [];
+        state.employeeByName = {};
+ 
+        state.employees.forEach((emp) => {
+          const name = String(emp.displayName || '').trim();
+          if (!name) return;
+          state.employeeByName[name] = {
+            email:      String(emp.email      || '').trim(),
+            department: String(emp.department || '').trim()
+          };
+        });
+ 
+        // ── Persist to sessionStorage for next navigation ────────
+        try {
+          sessionStorage.setItem('ml_employees_cache', JSON.stringify({
+            data: state.employees,
+            _ts:  Date.now()
+          }));
+        } catch (_) {}
+ 
+        if (callback) callback();
+      })
+      .employees_dropdown_list();
+  }
+  /* ============================================================
+     TABLE / COLUMNS / SORT
+  ============================================================ */
+  function generateTableHeaders() {
+    const headerRow = $('masterlistHeaderRow');
+    if (!headerRow) return;
+
+    headerRow.innerHTML = '';
+
+    COLUMN_KEYS.forEach((key) => {
+  const th = document.createElement('th');
+  th.className = getStickyClass(key);
+  th.setAttribute('data-key', key);
+  th.style.display = isColumnVisible(key) ? 'table-cell' : 'none';
+
+  // ── Checkbox select-all header ──
+  if (key === 'select') {
+    th.innerHTML = `
+      <input type="checkbox" id="selectAllCb" aria-label="Select all rows"
+             style="accent-color:var(--indigo);cursor:pointer;">
+    `;
+    th.style.width = '36px';
+    th.style.cursor = 'default';
+    headerRow.appendChild(th);
+    return;
+  }
+
+  const label = document.createElement('span');
+  label.className = 'th-label';
+  label.textContent = COLUMN_MAP[key] ?? key;
+  th.appendChild(label);
+
+  if (key !== 'actions') {
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-sort th-sort-icon';
+        icon.setAttribute('aria-hidden', 'true');
+        th.appendChild(icon);
+      }
+
+      headerRow.appendChild(th);
+    });
+
+    updateSortIcons();
+  }
+
+  function generateColumnCheckboxes() {
+    const selector = $('columnSelector');
+    if (!selector) return;
+
+    selector.innerHTML = '';
+
+    COLUMN_KEYS.forEach((key) => {
+      if (key === 'select') return;
+      const item = document.createElement('label');
+      item.className = 'col-item';
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = !!state.columnVisibility[key];
+      cb.dataset.key = key;
+      cb.addEventListener('change', () => updateColumnVisibility(key, cb.checked));
+
+      item.appendChild(cb);
+      item.appendChild(document.createTextNode(` ${COLUMN_MAP[key]}`));
+      selector.appendChild(item);
+    });
+  }
+
+  function toggleColumnSelector() {
+    const el = $('columnSelector');
+    const btn = $('toggleColsBtn');
+    if (!el) return;
+    const isOpen = el.style.display === 'block';
+    el.style.display = isOpen ? 'none' : 'block';
+    if (btn) btn.setAttribute('aria-expanded', String(!isOpen));
+  }
+
+  function updateColumnVisibility(key, visible) {
+    state.columnVisibility[key] = !!visible;
+
+    const th = document.querySelector(`#masterlistHeaderRow th[data-key="${key}"]`);
+    if (th) th.style.display = isColumnVisible(key) ? 'table-cell' : 'none';
+
+    if (state.lastPageData && state.lastPageData.length) {
+    renderMasterlist(state.lastPageData);
+  } else {
+    fetchPage(state.currentPage);
+  }
+  }
+
+  function sortTable(key) {
+    if (state.currentSortColumn === key) {
+      state.isAscending = !state.isAscending;
+    } else {
+      state.currentSortColumn = key;
+      state.isAscending = true;
+    }
+    fetchPage(1);
+  }
+
+  function updateSortIcons() {
+    document.querySelectorAll('#masterlistHeaderRow th').forEach((th) => {
+      const key = th.getAttribute('data-key');
+      const icon = th.querySelector('.th-sort-icon');
+      if (!icon || key === 'actions') return;
+
+      if (key === state.currentSortColumn) {
+        icon.className = `fas ${state.isAscending ? 'fa-sort-up' : 'fa-sort-down'} th-sort-icon`;
+        icon.style.opacity = '1';
+        icon.style.color = 'var(--indigo-2)';
+      } else {
+        icon.className = 'fas fa-sort th-sort-icon';
+        icon.style.opacity = '0.35';
+        icon.style.color = '';
+      }
+    });
+  }
+
+  /* ============================================================
+     FILTERS
+  ============================================================ */
+  function normalizeTypeFilter(v) {
+    const s = String(v || '').trim().toLowerCase();
+    if (!s) return null;
+    if (s === 'laptop') return 'Laptop';
+    if (s === 'monitor') return 'Monitor';
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  function normalizeDepartmentFilter(v) {
+    return String(v || '').trim() || null;
+  }
+
+  function normalizeStatusFilter(v) {
+    const s = String(v || '').trim().toLowerCase();
+    if (!s) return null;
+    if (s === 'in-stock' || s === 'in stock' || s === 'instock') return 'In-stock';
+    if (s === 'assigned') return 'Assigned';
+    if (s === 'retired') return 'Retired';
+    if (s === 'defective') return 'Defective';
+    if (s === 'return') return 'Return';
+    if (s === 'offboard - return' || s === 'offboard-return') return 'Offboard - Return';
+    return v;
+  }
+
+  function normalizeModelFilter(v) {
+    return String(v || '').trim() || null;
+  }
+
+  function applyPresetSortFromQuery() {
+    const sortKey = String(QUERY.sortKey || '').trim();
+    const asc = String(QUERY.asc || '').trim().toLowerCase();
+
+    if (sortKey) state.currentSortColumn = sortKey;
+    if (asc === 'true') state.isAscending = true;
+    if (asc === 'false') state.isAscending = false;
+  }
+
+  function applyPresetFiltersFromQuery() {
+    state.activeFilterType = normalizeTypeFilter(QUERY.type);
+    state.activeFilterStatus = normalizeStatusFilter(QUERY.status);
+    state.activeFilterDepartment = normalizeDepartmentFilter(QUERY.department);
+    state.activeFilterModel = normalizeModelFilter(QUERY.model);
+
+    if (state.activeFilterType === 'Laptop') {
+      quickQuery('Laptop', { skipFetch: true });
+    } else if (state.activeFilterType === 'Monitor') {
+      quickQuery('Monitor', { skipFetch: true });
+    } else {
+      setSegActive('all');
+    }
+
+    updateSubTextForFilters();
+    updateFilterBadge();
+  }
+
+  function updateSubTextForFilters(totalOverride) {
+    const parts = [];
+    if (state.activeFilterType) parts.push(`<b>${escapeHtml(state.activeFilterType)}</b>`);
+    if (state.activeFilterStatus) parts.push(`Status: <b>${escapeHtml(state.activeFilterStatus)}</b>`);
+    if (state.activeFilterDepartment) parts.push(`Dept: <b>${escapeHtml(state.activeFilterDepartment)}</b>`);
+    if (state.activeFilterModel) parts.push(`Model: <b>${escapeHtml(state.activeFilterModel)}</b>`);
+
+    const total = Number(totalOverride ?? state.totalRows ?? 0);
+
+    if (parts.length) {
+      setSubText(`Showing ${parts.join(' • ')} assets • Total <b>${total}</b> assets.`);
+    } else if (total) {
+      setSubText(`Showing page <b>${state.currentPage}</b> • Total <b>${total}</b> assets.`);
+    } else {
+      setSubText('No matching records found.');
+    }
+  }
+
+  function setSegActive(value) {
+    document.querySelectorAll('.seg-item').forEach((item) => {
+      const isActive = item.dataset.seg === value;
+      item.classList.toggle('active', isActive);
+      item.setAttribute('aria-selected', String(isActive));
+      item.setAttribute('tabindex', isActive ? '0' : '-1');
+    });
+
+    const activeItem = document.querySelector(`.seg-item[data-seg="${value}"]`);
+    const indicator = $('segIndicator');
+    const container = $('segFilter');
+
+    if (activeItem && indicator && container) {
+      if (value === 'all') {
+        indicator.style.opacity = '0';
+      } else {
+        indicator.style.opacity = '1';
+        const containerRect = container.getBoundingClientRect();
+        const itemRect = activeItem.getBoundingClientRect();
+        indicator.style.transform = `translateX(${itemRect.left - containerRect.left - 3}px)`;
+        indicator.style.width = `${itemRect.width}px`;
+      }
+    }
+  }
+
+  function clearAllFilters() {
+    if ($('searchBox')) $('searchBox').value = '';
+
+    state.activeFilterType = null;
+    state.activeFilterStatus = null;
+    state.activeFilterDepartment = null;
+    state.activeFilterModel = null;
+
+    setSegActive('all');
+
+    resetColumnVisibility();
+    generateColumnCheckboxes();
+    generateTableHeaders();
+
+    state.currentSortColumn = 'serialTag';
+    state.isAscending = true;
+
+    updateFilterBadge();
+    fetchPage(1);
+  }
+
+  function quickQuery(filterType, options = {}) {
+    const { skipFetch = false } = options;
+
+    state.activeFilterType = filterType;
+    if ($('searchBox')) $('searchBox').value = '';
+
+    let desiredKeys = [];
+
+    if (filterType === 'Laptop') {
+      desiredKeys = [
+        'model', 'serialTag', 'serialNumber', 'ram', 'purchaseDate', 'endOfWarranty',
+        'status', 'assignee', 'email', 'department', 'accessories',
+        'accountabilityForm', 'signedAf', 'afStatus', 'afSignedDate', 'actions'
+      ];
+    } else if (filterType === 'Monitor') {
+      desiredKeys = [
+        'model', 'serialTag', 'serialNumber', 'status', 'assignee', 'email',
+        'department', 'accountabilityForm', 'signedAf', 'afStatus', 'afSignedDate', 'actions'
+      ];
+    } else {
+      clearAllFilters();
+      return;
+    }
+
+    COLUMN_KEYS.forEach((key) => {
+      state.columnVisibility[key] = desiredKeys.includes(key);
+    });
+
+    generateColumnCheckboxes();
+    generateTableHeaders();
+    setSegActive(filterType);
+    updateFilterBadge();
+
+    if (!skipFetch) fetchPage(1);
+  }
+
+  /* ============================================================
+     TABLE RENDER
+  ============================================================ */
+  function getStatusTag(statusText) {
+    if (!statusText) return '';
+    const text = String(statusText).trim().toLowerCase();
+
+    let cls = 'tag-assigned';
+    if (text === 'in-stock' || text === 'in stock' || text === 'instock') {
+      cls = 'tag-available';
+    } else if (text === 'retired') {
+      cls = 'tag-retired';
+    } else if (text === 'defective') {
+      cls = 'tag-faulty';
+    } else if (text === 'return') {
+      cls = 'tag-return';
+    } else if (text === 'offboard - return') {
+      cls = 'tag-offboard';
+    } else if (text === 'assigned') {
+      cls = 'tag-assigned';
+    }
+
+    return `<span class="status-tag ${cls}"><span class="dot"></span>${escapeAttr(statusText)}</span>`;
+  }
+
+  function renderMasterlist(data) {
+    const tbody = $('masterlistBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+const sa = $('selectAllCb');
+if (sa) { sa.checked = false; sa.indeterminate = false; }
+
+    document.querySelectorAll('#masterlistHeaderRow th').forEach((th) => {
+      const key = th.getAttribute('data-key');
+      th.style.display = isColumnVisible(key) ? 'table-cell' : 'none';
+    });
+
+    if (!Array.isArray(data) || !data.length) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="${getVisibleColumnCount()}">
+            <div class="empty-state">
+              <div class="empty-icon"><i class="fa-solid fa-box-open" aria-hidden="true"></i></div>
+              <div class="empty-label">No matching records found.</div>
+              <div class="empty-hint">Try adjusting your search or filters.</div>
+            </div>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = data.map((item) => {
+      const rowId = escapeJsString(item.serialTag ?? '');
+      let rowHtml = '<tr>';
+
+        COLUMN_KEYS.forEach((key) => {
+  const displayStyle = isColumnVisible(key) ? '' : 'display:none;';
+  const cls = getStickyClass(key);
+
+  // ── Per-row checkbox ──
+  if (key === 'select') {
+    rowHtml += `
+      <td data-key="select" style="${displayStyle};width:36px;text-align:center;">
+        <input type="checkbox" class="row-cb"
+               data-serial="${escapeAttr(item.serialTag ?? '')}"
+               aria-label="Select row"
+               style="accent-color:var(--indigo);cursor:pointer;">
+      </td>
+    `;
+    return;
+  }
+
+  if (key === 'department') {
+          const derivedDept = String(state.employeeByName?.[String(item.assignee || '').trim()]?.department || '').trim();
+          const displayDept = String(item.department || '').trim() || derivedDept || '—';
+          rowHtml += `<td data-key="${key}" class="${cls}" style="${displayStyle}">${escapeAttr(displayDept)}</td>`;
+          return;
+        }
+
+        if (key === 'email') {
+          const derivedEmail = String(state.employeeByName?.[String(item.assignee || '').trim()]?.email || '').trim();
+          const displayEmail = String(item.email || '').trim() || derivedEmail || '—';
+          rowHtml += `<td data-key="${key}" class="${cls}" style="${displayStyle}">${escapeAttr(displayEmail)}</td>`;
+          return;
+        }
+
+        if (key === 'accessories') {
+          rowHtml += `<td data-key="${key}" class="${cls}" style="${displayStyle}">${escapeAttr(String(item.accessories || '').trim() || '—')}</td>`;
+          return;
+        }
+
+        if (key === 'status') {
+          rowHtml += `<td data-key="${key}" class="${cls}" style="${displayStyle}">${getStatusTag(item.status)}</td>`;
+          return;
+        }
+
+if (key === 'actions') {
+  const isRetired = String(item.status || '').trim().toLowerCase().includes('retired');
+  const canEdit   = state.perms?.canEdit   !== false;
+  const canDelete = state.perms?.canDelete !== false;
+  const canClear  = state.perms?.canEdit   !== false;
+
+  rowHtml += `
+    <td data-key="${key}" class="${cls}" style="${displayStyle}">
+      <div class="row-actions">
+        ${canEdit ? `
+          <button class="action-btn edit-btn"
+                  data-action="edit"
+                  data-serial="${escapeAttr(item.serialTag ?? '')}"
+                  title="Edit" aria-label="Edit asset">
+            <i class="fas fa-pen" aria-hidden="true"></i>
+          </button>` : ''}
+        ${canDelete ? `
+          <button class="action-btn delete-btn ${isRetired ? '' : 'is-disabled'}"
+                  data-action="delete"
+                  data-serial="${escapeAttr(item.serialTag ?? '')}"
+                  title="${isRetired ? 'Delete' : 'Only retired assets can be deleted'}"
+                  aria-label="${isRetired ? 'Delete asset' : 'Delete disabled'}"
+                  ${isRetired ? '' : 'disabled'}>
+            <i class="fas fa-trash" aria-hidden="true"></i>
+          </button>` : ''}
+        ${canClear ? `
+          <button class="action-btn clear-btn"
+                  data-action="clear"
+                  data-serial="${escapeAttr(item.serialTag ?? '')}"
+                  title="Clear assignment" aria-label="Clear assignment">
+            <i class="fas fa-eraser" aria-hidden="true"></i>
+          </button>` : ''}
+      </div>
+    </td>
+  `;
+  return;
+}
+
+        if (key === 'accountabilityForm') {
+          const link = String(item.accountabilityForm || '').trim();
+          const safeLinkJs = escapeJsString(link);
+          rowHtml += `
+            <td data-key="${key}" class="${cls}" style="${displayStyle}">
+              ${
+                link
+                  ? `<button class="cell-btn" onclick="window.open('${safeLinkJs}','_blank','noopener')"><i class="fas fa-file-signature" aria-hidden="true"></i> View</button>`
+                  : `<button class="cell-btn" onclick="generateAccountabilityForm('${rowId}',this)"><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> Generate</button>`
+              }
+            </td>
+          `;
+          return;
+        }
+
+        if (key === 'signedAf') {
+          const link = String(item.signedAf || '').trim();
+          const safeLinkJs = escapeJsString(link);
+          rowHtml += `
+            <td data-key="${key}" class="${cls}" style="${displayStyle}">
+              ${
+                link
+                  ? `<button class="cell-btn" onclick="window.open('${safeLinkJs}','_blank','noopener')"><i class="fas fa-file-check" aria-hidden="true"></i> View</button>`
+                  : `<span style="color:var(--t-3);">—</span>`
+              }
+            </td>
+          `;
+          return;
+        }
+
+        if (key === 'afStatus') {
+          const value = String(item.afStatus || '').trim();
+          const afCls =
+            value.toLowerCase() === 'signed'
+              ? 'af-signed'
+              : value.toLowerCase() === 'pending'
+              ? 'af-pending'
+              : 'af-none';
+
+          rowHtml += `
+            <td data-key="${key}" class="${cls}" style="${displayStyle}">
+              ${value ? `<span class="${afCls}"><span class="dot"></span>${escapeAttr(value)}</span>` : '—'}
+            </td>
+          `;
+          return;
+        }
+
+        if (key === 'afSignedDate') {
+          rowHtml += `<td data-key="${key}" class="${cls}" style="${displayStyle}">${escapeAttr(item.afSignedDate || '—')}</td>`;
+          return;
+        }
+
+        // ── Procurement Ref ──────────────────────────────────────────
+        // ── Procurement Ref ──────────────────────────────────────────
+if (key === 'procurementRef') {
+  const ref = String(item.procurementRef || '').trim();
+  rowHtml += `
+    <td data-key="${key}" class="${cls}" style="${displayStyle}">
+      ${ref
+        ? `<span
+              data-action="procref"
+              data-ref="${escapeAttr(ref)}"
+              role="button"
+              tabindex="0"
+              title="Open procurement request: ${escapeAttr(ref)}"
+              style="display:inline-flex;align-items:center;gap:5px;
+                     padding:2px 8px;border-radius:var(--r-pill);
+                     background:var(--indigo-d);border:1px solid var(--indigo-b);
+                     font-family:var(--font-mono);font-size:10.5px;font-weight:600;
+                     color:var(--indigo);cursor:pointer;white-space:nowrap;
+                     transition:background .14s,box-shadow .14s;"
+              onmouseover="this.style.background='var(--indigo-dd)';this.style.boxShadow='0 2px 8px rgba(40,87,164,.22)'"
+              onmouseout="this.style.background='var(--indigo-d)';this.style.boxShadow=''">
+              <i class="fas fa-link" style="font-size:9px;" aria-hidden="true"></i>
+              ${escapeAttr(ref)}
+            </span>`
+        : `<span style="color:var(--t-3);">—</span>`
+      }
+    </td>
+  `;
+  return;
+}
+
+        rowHtml += `<td data-key="${key}" class="${cls}" style="${displayStyle}">${escapeAttr(item[key] ?? '')}</td>`;
+      });
+
+      return rowHtml + '</tr>';
+    }).join('');
+
+    updateSortIcons();
+  }
+
+
+
+
+  function getSelectedSerialTags() {
+  return Array.from(document.querySelectorAll('.row-cb:checked'))
+    .map(cb => cb.dataset.serial)
+    .filter(Boolean);
+}
+
+function updateBulkBar() {
+  const count = getSelectedSerialTags().length;
+  const bar   = $('bulkActionBar');
+  const label = $('bulkSelectionLabel');
+  if (!bar) return;
+  bar.style.display = count > 0 ? 'flex' : 'none';
+  if (label) label.textContent = `${count} row${count === 1 ? '' : 's'} selected`;
+}
+
+function exportSelectedRows() {
+  const tags = getSelectedSerialTags();
+  if (!tags.length) { showToast('No rows selected.', 'warning'); return; }
+
+  const tagSet   = new Set(tags);
+  const selected = state.lastPageData.filter(
+    item => tagSet.has(String(item.serialTag ?? '').trim())
+  );
+  if (!selected.length) { showToast('Selected rows not in current page.', 'warning'); return; }
+
+  const { visibleKeys, visibleHeaders } = getVisibleExportConfig();
+  setExportBusy(true, 'Exporting selected...');
+
+  google.script.run
+    .withSuccessHandler((url) => {
+      setExportBusy(false);
+      if (url) openUrlSafe(url);
+    })
+    .withFailureHandler((err) => {
+      setExportBusy(false);
+      showToast(`Export failed: ${err?.message || err}`, 'danger');
+    })
+    .generateMasterlistExport({
+      title:   `Selected Assets (${tags.length})`,
+      headers: visibleHeaders,
+      keys:    visibleKeys,
+      data:    selected
+    });
+}
+
+  /* ============================================================
+     EXPORT / PAGINATION / FETCH
+  ============================================================ */
+  function getVisibleExportConfig() {
+  const visibleKeys = COLUMN_KEYS.filter((key) => isColumnVisible(key) && key !== 'actions' && key !== 'select');
+    return {
+      visibleKeys,
+      visibleHeaders: visibleKeys.map((key) => COLUMN_MAP[key])
+    };
+  }
+
+  function setExportBusy(isBusy, text) {
+    const btn = $('exportBtn');
+    if (!btn) return;
+
+    btn.disabled = !!isBusy;
+    btn.innerHTML = isBusy
+      ? `<i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> ${escapeAttr(text || 'Exporting...')}`
+      : `<i class="fas fa-file-export" aria-hidden="true"></i> Export
+         <i class="fa-solid fa-chevron-down" style="font-size:9px;margin-left:4px;" aria-hidden="true"></i>`;
+  }
+
+  function exportCurrentPage() {
+    if (!Array.isArray(state.lastPageData) || !state.lastPageData.length) {
+      showToast('No data on this page.', 'warning', 'Nothing to Export');
+      return;
+    }
+
+    const { visibleKeys, visibleHeaders } = getVisibleExportConfig();
+
+    setExportBusy(true, 'Exporting page...');
+
+    google.script.run
+      .withSuccessHandler((url) => {
+        setExportBusy(false);
+        if (url) openUrlSafe(url);
+      })
+      .withFailureHandler((err) => {
+        setExportBusy(false);
+        showToast(`Export failed: ${err?.message || err}`, 'danger', 'Export Failed');
+      })
+      .generateMasterlistExport({
+        title: `Hardware Masterlist (Page ${state.currentPage})`,
+        headers: visibleHeaders,
+        keys: visibleKeys,
+        data: state.lastPageData
+      });
+  }
+
+  function exportAllFiltered() {
+    const { visibleKeys, visibleHeaders } = getVisibleExportConfig();
+    const query = $('searchBox')?.value?.toLowerCase().trim() || '';
+
+    const payload = {
+      page: state.currentPage,
+      pageSize: PAGE_SIZE,
+      query,
+      type: state.activeFilterType || '',
+      status: state.activeFilterStatus || '',
+      department: state.activeFilterDepartment || '',
+      model: state.activeFilterModel || '',
+      sortKey: state.currentSortColumn,
+      asc: state.isAscending,
+      title: 'Hardware Masterlist (All Results)',
+      headers: visibleHeaders,
+      keys: visibleKeys
+    };
+
+    setExportBusy(true, 'Exporting all...');
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        setExportBusy(false);
+        const out = unwrapResponse_(res);
+        if (!out.ok) {
+          showToast(`Export failed: ${out.error || 'Unknown error'}`, 'danger', 'Export Failed');
+          return;
+        }
+        if (out.data) openUrlSafe(out.data);
+      })
+      .withFailureHandler((err) => {
+        setExportBusy(false);
+        showToast(`Export failed: ${err?.message || err}`, 'danger', 'Export Failed');
+      })
+      .masterlist_export_all(payload);
+  }
+
+  function getTotalPages() {
+    return Math.max(1, Math.ceil((state.totalRows || 0) / PAGE_SIZE));
+  }
+
+  function renderPaginationBar() {
+    const bar = $('paginationBar');
+    const info = $('paginationInfo');
+    if (!bar) return;
+
+    if ((state.totalRows || 0) <= PAGE_SIZE) {
+      bar.style.display = 'none';
+      return;
+    }
+
+    bar.style.display = 'flex';
+
+    const totalPages = getTotalPages();
+    const start = (state.currentPage - 1) * PAGE_SIZE + 1;
+    const end = Math.min(state.currentPage * PAGE_SIZE, state.totalRows);
+
+    if (info) {
+      info.textContent = `Page ${state.currentPage} / ${totalPages}  •  Showing ${start}–${end} of ${state.totalRows}`;
+    }
+
+    const prev = $('btnPrev');
+    const next = $('btnNext');
+    if (prev) prev.disabled = state.currentPage <= 1;
+    if (next) next.disabled = state.currentPage >= totalPages;
+  }
+
+  function fetchPage(page = 1) {
+    state.currentPage = Math.max(1, page);
+    updateBulkBar();
+    const myToken = ++state.fetchToken;
+
+    const query = $('searchBox')?.value?.toLowerCase().trim() || '';
+    const payload = {
+      page: state.currentPage,
+      pageSize: PAGE_SIZE,
+      query,
+      type: state.activeFilterType || '',
+      status: state.activeFilterStatus || '',
+      department: state.activeFilterDepartment || '',
+      model: state.activeFilterModel || '',
+      sortKey: state.currentSortColumn,
+      asc: state.isAscending
+    };
+
+    const tbody = $('masterlistBody');
+    if (tbody) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="${getVisibleColumnCount()}">
+            <div class="empty-state">
+              <div class="empty-icon"><i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i></div>
+              <div class="empty-label">Loading…</div>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    google.script.run
+      .withFailureHandler((err) => {
+        if (myToken !== state.fetchToken) return;
+        console.error(err);
+
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="${getVisibleColumnCount()}">
+                <div class="empty-state">
+                  <div class="empty-icon" style="color:var(--red-2);">
+                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                  </div>
+                  <div class="empty-label">Unable to load data.</div>
+                  <div class="empty-hint">${escapeHtml(err?.message || String(err))}</div>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+      })
+      .withSuccessHandler((res) => {
+        if (myToken !== state.fetchToken) return;
+
+        const out = unwrapResponse_(res);
+        if (!out.ok) {
+          if (tbody) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="${getVisibleColumnCount()}">
+                  <div class="empty-state">
+                    <div class="empty-icon" style="color:var(--red-2);">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                    </div>
+                    <div class="empty-label">${escapeHtml(out.error || 'Unknown error')}</div>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }
+          return;
+        }
+
+        const pageData = Array.isArray(out.data) ? out.data : [];
+        state.totalRows = Number(out.total || 0) || 0;
+        state.lastPageData = pageData;
+
+        if (state.totalRows) updateSubTextForFilters(state.totalRows);
+        else setSubText('No matching records found.');
+
+        renderMasterlist(pageData);
+        renderPaginationBar();
+        updateFilterBadge();
+      })
+      .masterlist_list_paged(payload);
+  }
+
+  /* ============================================================
+     GO TOP
+  ============================================================ */
+  function setupGoTop(signal) {
+    const btn = $('goTopBtn');
+    if (!btn) return;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let lastY = window.scrollY;
+    let idleTimer = null;
+    const THRESHOLD = 220;
+
+    const show = () => btn.classList.add('show');
+    const hide = () => btn.classList.remove('show');
+
+    const onScroll = () => {
+      const y = window.scrollY;
+      const up = y < lastY;
+
+      if (y <= THRESHOLD) {
+        hide();
+      } else {
+        if (up) {
+          show();
+        } else {
+          hide();
+          clearTimeout(idleTimer);
+          idleTimer = setTimeout(() => {
+            if (window.scrollY > THRESHOLD) show();
+          }, 180);
+        }
+      }
+
+      lastY = y;
+    };
+
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
+    }, { signal });
+
+    window.addEventListener('scroll', onScroll, { passive: true, signal });
+    onScroll();
+  }
+
+  /* ============================================================
+     MODAL HELPERS
+  ============================================================ */
+  function applyStatusSelectColor(selectEl) {
+    if (!selectEl) return;
+
+    const colorMap = {
+      'in-stock':          'rgba(41,151,255,.90)',
+      'assigned':          'rgba(52,199,89,.90)',
+      'return':            'rgba(99,102,241,.90)',
+      'offboard - return': 'rgba(249,115,22,.90)',
+      'retired':           'rgba(255,69,58,.90)',
+      'defective':         'rgba(60,60,67,.85)'
+    };
+
+    const update = () => {
+      const value = selectEl.value.trim().toLowerCase();
+      const bg = colorMap[value] || '';
+      selectEl.style.background  = bg;
+      selectEl.style.color       = bg ? '#fff' : '';
+      selectEl.style.fontWeight  = bg ? '700' : '';
+      selectEl.style.borderColor = bg ? 'transparent' : '';
+    };
+
+    selectEl.removeEventListener('change', selectEl._colorHandler);
+    selectEl._colorHandler = update;
+    selectEl.addEventListener('change', update);
+    update();
+  }
+
+  function isAssignedStatus_(statusVal) {
+  const s = String(statusVal || '').toLowerCase();
+  return s.includes('assigned') || s.includes('in use');
+}
+
+function isReturnStatus_(statusVal) {
+  const s = String(statusVal || '').toLowerCase().trim();
+  return s === 'return' || s === 'offboard - return';
+}
+
+function shouldShowAssignmentFields_(statusVal) {
+  // Show assignment fields for Assigned, In use, Return, and Offboard - Return.
+  // For Return / Offboard - Return we keep the data visible so IT can confirm
+  // what was returned (assignee, accessories, etc.).
+  return isAssignedStatus_(statusVal) || isReturnStatus_(statusVal);
+}
+
+function updateAssignedOnlyFieldsVisibility(prefix) {
+  const statusVal = String($(`${prefix}_status`)?.value || '');
+  const showFields = shouldShowAssignmentFields_(statusVal);
+  const isReturn = isReturnStatus_(statusVal);
+
+  ASSIGNED_ONLY_FIELDS.forEach((key) => {
+    const holder = document.querySelector(`#${prefix}AssetFields [data-key="${key}"]`);
+    if (!holder) return;
+    holder.style.display = showFields ? '' : 'none';
+  });
+
+  const notesWrap = $(`${prefix}_notes_wrap`);
+  if (notesWrap) notesWrap.style.display = showFields ? '' : 'none';
+
+  // Only wipe values when we're hiding the fields entirely.
+  // For Return / Offboard - Return, preserve data so IT can verify what came back.
+  if (!showFields) {
+    const notesEl    = $(`${prefix}_notes`);
+    const notesExtra = $(`${prefix}_notes_extra`);
+    if (notesEl)    notesEl.value    = '';
+    if (notesExtra) notesExtra.value = '';
+
+    const emailEl = $(`${prefix}_email`);
+    const deptEl  = $(`${prefix}_department`);
+    const accEl   = $(`${prefix}_accessories`);
+
+    if (emailEl) emailEl.value = '';
+    if (deptEl)  deptEl.value  = '';
+    if (accEl)   accEl.value   = '';
+
+    document.querySelectorAll(`input[data-acc="${prefix}_accessories"]`).forEach((cb) => {
+      cb.checked = false;
+    });
+  }
+}
+
+  function fillAssigneeOptions(prefix) {
+    const sel = $(`${prefix}_assignee`);
+    if (!sel) return;
+
+    sel.innerHTML =
+      `<option value="">Select employee...</option>` +
+      (state.employees || [])
+        .map((emp) => `<option value="${escapeAttr(emp.displayName)}">${escapeAttr(emp.displayName)}</option>`)
+        .join('');
+  }
+
+  function setupAssigneeAutoFill(prefix) {
+    const assigneeEl = $(`${prefix}_assignee`);
+    const emailEl = $(`${prefix}_email`);
+    const deptEl = $(`${prefix}_department`);
+
+    if (!assigneeEl || assigneeEl.dataset.autofill === '1') return;
+    assigneeEl.dataset.autofill = '1';
+
+    assigneeEl.addEventListener('change', () => {
+      const emp = state.employeeByName?.[String(assigneeEl.value || '').trim()];
+      if (emp) {
+        if (emailEl) emailEl.value = emp.email || '';
+        if (deptEl) deptEl.value = emp.department || '';
+      } else {
+        if (emailEl) emailEl.value = '';
+        if (deptEl) deptEl.value = '';
+      }
+    });
+  }
+
+  function destroyTomSelect(prefix) {
+    if (prefix === 'add' && state.tsAddAssignee) {
+      state.tsAddAssignee.destroy();
+      state.tsAddAssignee = null;
+    }
+    if (prefix === 'edit' && state.tsEditAssignee) {
+      state.tsEditAssignee.destroy();
+      state.tsEditAssignee = null;
+    }
+  }
+
+  function ensureTomSelect(prefix) {
+    const sel = $(`${prefix}_assignee`);
+    if (!sel) return;
+
+    destroyTomSelect(prefix);
+
+    const inst = new TomSelect(sel, {
+      placeholder: 'Search employee...',
+      allowEmptyOption: true,
+      closeAfterSelect: true,
+      maxOptions: 2000
+    });
+
+    if (prefix === 'add') state.tsAddAssignee = inst;
+    if (prefix === 'edit') state.tsEditAssignee = inst;
+
+    inst.on('change', (value) => {
+      const emp = state.employeeByName?.[String(value || '').trim()];
+      const emailEl = $(`${prefix}_email`);
+      const deptEl = $(`${prefix}_department`);
+
+      if (emp) {
+        if (emailEl) emailEl.value = emp.email || '';
+        if (deptEl) deptEl.value = emp.department || '';
+      } else {
+        if (emailEl) emailEl.value = '';
+        if (deptEl) deptEl.value = '';
+      }
+    });
+
+    inst.on('clear', () => {
+      const emailEl = $(`${prefix}_email`);
+      const deptEl = $(`${prefix}_department`);
+      if (emailEl) emailEl.value = '';
+      if (deptEl) deptEl.value = '';
+    });
+  }
+
+  function getModalFieldValue(prefix, key) {
+    if (key === 'accessories') {
+      return Array.from(document.querySelectorAll(`input[data-acc="${prefix}_${key}"]:checked`))
+        .map((cb) => String(cb.value || '').trim())
+        .filter(Boolean)
+        .join(', ');
+    }
+
+    return String($(`${prefix}_${key}`)?.value ?? '').trim();
+  }
+function setModalFieldValue(prefix, key, value, setDefault = false) {
+    const normalized = String(value ?? '');
+
+    if (key === 'accessories') {
+      const selected = normalized.split(',').map((v) => v.trim()).filter(Boolean);
+
+      const hidden = $(`${prefix}_${key}`);
+      if (hidden) {
+        hidden.value = normalized;
+        if (setDefault) hidden.defaultValue = normalized;
+      }
+
+      document.querySelectorAll(`input[data-acc="${prefix}_${key}"]`).forEach((cb) => {
+        cb.checked = selected.includes(String(cb.value || '').trim());
+      });
+
+      return;
+    }
+
+    const el = $(`${prefix}_${key}`);
+    if (!el) return;
+
+    // Normalize dropdown values so dirty sheet data (trailing spaces,
+    // different casing) still matches a dropdown option.
+    // E.g. "16GB"/"16 gb"/"16 GB " → "16 GB", "laptop "/"LAPTOP" → "Laptop"
+    if ((key === 'ram' || key === 'type') && el.tagName === 'SELECT') {
+      const cleaned = normalized.trim();
+      const match = Array.from(el.options).find(
+        (opt) => opt.value.toLowerCase() === cleaned.toLowerCase()
+      );
+      el.value = match ? match.value : '';
+      if (setDefault) el.defaultValue = el.value;
+      return;
+    }
+
+    el.value = normalized;
+    if (setDefault) el.defaultValue = normalized;
+  }
+  
+  function resetModalFields(prefix) {
+    MODAL_KEYS.forEach((key) => {
+      if (key === 'accessories') {
+        const hidden = $(`${prefix}_${key}`);
+        if (hidden) {
+          hidden.value = '';
+          hidden.defaultValue = '';
+        }
+
+        document.querySelectorAll(`input[data-acc="${prefix}_${key}"]`).forEach((cb) => {
+          cb.checked = false;
+        });
+        return;
+      }
+
+      const el = $(`${prefix}_${key}`);
+      if (!el) return;
+      el.value = '';
+      el.defaultValue = '';
+    });
+
+    const originalSerialTag = $(`${prefix}_originalSerialTag`);
+    if (originalSerialTag) originalSerialTag.value = '';
+  }
+
+  function collectModalPayload(prefix, includeOriginalSerialTag = false) {
+    const payload = {};
+
+    if (includeOriginalSerialTag) {
+      payload.originalSerialTag = String($(`${prefix}_originalSerialTag`)?.value || '').trim();
+    }
+
+    MODAL_KEYS.forEach((key) => {
+      payload[key] = getModalFieldValue(prefix, key);
+    });
+
+    const notesCondition = String($(`${prefix}_notes`)?.value || '').trim();
+    const notesExtra     = String($(`${prefix}_notes_extra`)?.value || '').trim();
+    payload.notes = notesCondition && notesExtra
+      ? notesCondition + ' — ' + notesExtra
+      : notesCondition || notesExtra;
+
+    return payload;
+  }
+
+  function bindAccessorySync(prefix) {
+    const hidden = $(`${prefix}_accessories`);
+    const checkboxes = document.querySelectorAll(`input[data-acc="${prefix}_accessories"]`);
+    if (!hidden || !checkboxes.length) return;
+
+    checkboxes.forEach((cb) => {
+      cb.onchange = () => {
+        hidden.value = Array.from(checkboxes)
+          .filter((x) => x.checked)
+          .map((x) => String(x.value || '').trim())
+          .filter(Boolean)
+          .join(', ');
+      };
+    });
+  }
+
+  function setModalBusy(buttonId, busyText, isBusy) {
+    const btn = $(buttonId);
+    if (!btn) return null;
+
+    if (isBusy) {
+      if (!btn.dataset.originalHtml) btn.dataset.originalHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> ${busyText}`;
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = btn.dataset.originalHtml || btn.innerHTML;
+    }
+
+    return btn;
+  }
+
+  function buildModalFields(prefix) {
+    const wrap = $(`${prefix}AssetFields`);
+    if (!wrap) return;
+
+    const REQUIRED_KEYS = ['type', 'model', 'serialTag', 'serialNumber'];
+
+    const RAM_OPTIONS = [
+      '8 GB',
+      '16 GB',
+      '24 GB',
+      '32 GB',
+      '36 GB',
+      '64 GB',
+      'No RAM',
+      'N/A'
+    ];
+
+    wrap.innerHTML = MODAL_KEYS.map((key) => {
+      const label = COLUMN_MAP[key] || key;
+      const id = `${prefix}_${key}`;
+      const isRequired = REQUIRED_KEYS.includes(key);
+      const labelHtml = isRequired
+        ? `${label} <span class="required-marker" aria-hidden="true">*</span>`
+        : label;
+
+
+        if (key === 'type') {
+        return `
+          <div class="col-md-4" data-key="${key}">
+            <label class="form-label" for="${id}">${labelHtml}</label>
+            <select class="form-select ${isRequired ? 'required-field' : ''}" id="${id}" ${isRequired ? 'aria-required="true"' : ''}>
+              <option value="">— Select Type —</option>
+              <option value="Desktop">Desktop</option>
+              <option value="Laptop">Laptop</option>
+              <option value="Monitor">Monitor</option>
+              <option value="Peripheral">Peripheral</option>
+              <option value="Phone">Phone</option>
+              <option value="Tablet">Tablet</option>
+              <option value="Access Point">Access Point</option>
+            </select>
+          </div>
+        `;
+      }
+
+
+      if (key === 'accessories') {
+        return `
+          <div class="col-md-6" data-key="${key}">
+            <label class="form-label">${labelHtml}</label>
+            <input type="hidden" id="${id}" value="">
+            <div class="acc-grid">
+              ${['Box', 'Charger', 'Mouse', 'Bag'].map((item) => `
+                <label class="acc-chip">
+                  <input type="checkbox" value="${item}" data-acc="${prefix}_${key}">
+                  ${item}
+                </label>
+              `).join('')}
+            </div>
+            <div class="tip-row" style="padding:6px 0 0;">Select included accessories.</div>
+          </div>
+        `;
+      }
+
+      if (key === 'assignee') {
+        return `
+          <div class="col-md-4" data-key="${key}">
+            <label class="form-label" for="${id}">${labelHtml}</label>
+            <select class="form-select" id="${id}">
+              <option value="">Select employee...</option>
+            </select>
+          </div>
+        `;
+      }
+
+      if (key === 'status') {
+        return `
+          <div class="col-md-4" data-key="${key}">
+            <label class="form-label" for="${id}">${labelHtml}</label>
+            <select class="form-select" id="${id}">
+              <option value="">—</option>
+              <option value="In-stock">In-stock</option>
+              <option value="Assigned">Assigned</option>
+              <option value="Return">Return</option>
+              <option value="Offboard - Return">Offboard - Return</option>
+              <option value="Retired">Retired</option>
+              <option value="Defective">Defective</option>
+            </select>
+          </div>
+        `;
+      }
+
+      if (key === 'ram') {
+        return `
+          <div class="col-md-4" data-key="${key}">
+            <label class="form-label" for="${id}">${labelHtml}</label>
+            <select class="form-select" id="${id}">
+              <option value="">— Select RAM —</option>
+              ${RAM_OPTIONS.map(opt => `<option value="${escapeAttr(opt)}">${escapeAttr(opt)}</option>`).join('')}
+            </select>
+          </div>
+        `;
+      }
+
+      const placeholder =
+        key === 'purchaseDate' || key === 'endOfWarranty'
+          ? 'MM/DD/YYYY'
+          : ' ';
+
+      const requiredAttrs = isRequired ? 'aria-required="true"' : '';
+
+      return `
+        <div class="col-md-4" data-key="${key}">
+          <label class="form-label" for="${id}">${labelHtml}</label>
+          <input class="form-control ${isRequired ? 'required-field' : ''}"
+                 id="${id}" type="text"
+                 placeholder="${placeholder}"
+                 autocomplete="off"
+                 ${requiredAttrs}>
+        </div>
+      `;
+    }).join('');
+
+    wrap.innerHTML += `
+      <div class="col-12" data-key="notes" id="${prefix}_notes_wrap" style="display:none;">
+        <label class="form-label" for="${prefix}_notes">Notes</label>
+        <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;">
+          <select class="form-select" id="${prefix}_notes" style="max-width:280px;flex-shrink:0;">
+            <option value="">— Select condition —</option>
+            <option value="Used with no issues">Used with no issues</option>
+            <option value="Used with minor issues">Used with minor issues</option>
+            <option value="Brand new">Brand new</option>
+          </select>
+          <textarea class="form-control" id="${prefix}_notes_extra"
+                    placeholder="Add additional notes…"
+                    rows="2"
+                    aria-label="Additional notes"
+                    style="flex:1;min-width:200px;resize:vertical;"></textarea>
+        </div>
+      </div>
+    `;
+
+    updateAssignedOnlyFieldsVisibility(prefix);
+  }
+
+  function prepareModal(prefix) {
+    buildModalFields(prefix);
+    fillAssigneeOptions(prefix);
+    ensureTomSelect(prefix);
+    setupAssigneeAutoFill(prefix);
+    bindAccessorySync(prefix);
+
+    const statusEl = $(`${prefix}_status`);
+    if (statusEl) {
+      statusEl.onchange = () => {
+        updateAssignedOnlyFieldsVisibility(prefix);
+        applyStatusSelectColor(statusEl);
+      };
+    }
+
+    updateAssignedOnlyFieldsVisibility(prefix);
+    applyStatusSelectColor(statusEl);
+  }
+
+  /* ============================================================
+     ADD / EDIT MODALS
+  ============================================================ */
+  function openAddModal() {
+    const modalEl = $('addAssetModal');
+    if (!modalEl) {
+      showToast('Add modal not found.', 'danger', 'UI Error');
+      return;
+    }
+
+    prepareModal('add');
+    resetModalFields('add');
+
+    const statusEl = $('add_status');
+    if (statusEl && !statusEl.value) statusEl.value = 'In-stock';
+
+    updateAssignedOnlyFieldsVisibility('add');
+    applyStatusSelectColor(statusEl);
+
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modal.show();
+
+    setTimeout(() => {
+      $('add_type')?.focus();
+    }, 150);
+  }
+
+  function saveNewAsset() {
+    const payload = collectModalPayload('add');
+
+    const REQUIRED = [
+      { key: 'type',         label: 'Type' },
+      { key: 'model',        label: 'Model' },
+      { key: 'serialTag',    label: 'Serial Tag' },
+      { key: 'serialNumber', label: 'Serial Number' }
+    ];
+
+    for (let fi = 0; fi < REQUIRED.length; fi++) {
+      const field = REQUIRED[fi];
+      if (!String(payload[field.key] || '').trim()) {
+        showToast(field.label + ' is required.', 'danger', 'Validation Error');
+
+        const el = $('add_' + field.key);
+        if (el) {
+          el.style.borderColor = 'rgba(239,68,68,.6)';
+          el.style.boxShadow   = '0 0 0 1px rgba(239,68,68,.28)';
+          el.focus();
+          el.addEventListener('input', function() {
+            this.style.borderColor = '';
+            this.style.boxShadow   = '';
+          }, { once: true });
+        }
+        return;
+      }
+    }
+
+    setModalBusy('saveAddBtn', 'Saving...', true);
+
+    google.script.run
+      .withFailureHandler(function(err) {
+        console.error(err);
+        showToast('Add failed: ' + (err && err.message ? err.message : String(err)), 'danger', 'Add Failed');
+        setModalBusy('saveAddBtn', 'Saving...', false);
+      })
+      .withSuccessHandler(function(res) {
+        const out = unwrapResponse_(res);
+
+        if (!out.ok) {
+          showToast('Add failed: ' + (out.error || 'Unknown error'), 'danger', 'Add Failed');
+          setModalBusy('saveAddBtn', 'Saving...', false);
+          return;
+        }
+
+        const addModalEl = document.getElementById('addAssetModal');
+        if (addModalEl) bootstrap.Modal.getOrCreateInstance(addModalEl).hide();
+
+        setModalBusy('saveAddBtn', 'Saving...', false);
+        showToast('Asset added successfully.', 'success', 'Saved');
+        fetchPage(1);
+      })
+      .masterlist_add(payload);
+  }
+
+  function openEditModal(serialTag) {
+  const tag = String(serialTag || '').trim();
+  if (!tag) {
+    showToast('Missing Serial Tag.', 'warning', 'Invalid Data');
+    return;
+  }
+
+  const modalEl = $('editAssetModal');
+  if (!modalEl) {
+    showToast('Edit modal not found.', 'danger', 'UI Error');
+    return;
+  }
+
+  prepareModal('edit');
+  resetModalFields('edit');
+
+  const originalSerialTagEl = $('edit_originalSerialTag');
+  if (originalSerialTagEl) {
+    originalSerialTagEl.value = tag;
+  }
+
+  setModalBusy('saveEditBtn', 'Loading...', true);
+
+  const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+  modal.show();
+
+  google.script.run
+    .withFailureHandler((err) => {
+      console.error(err);
+      showToast(`Failed to load asset: ${err?.message || err}`, 'danger', 'Load Failed');
+      setModalBusy('saveEditBtn', 'Loading...', false);
+    })
+    .withSuccessHandler((res) => {
+      const out = unwrapResponse_(res);
+
+      if (!out.ok || !out.data) {
+        showToast(out.error || 'Asset not found.', 'warning', 'Not Found');
+        setModalBusy('saveEditBtn', 'Loading...', false);
+        return;
+      }
+
+      const asset = out.data;
+
+      // Snapshot the original asset for later change detection.
+      // This is the source of truth — defaultValue doesn't work reliably
+      // for selects, hidden fields driven by checkboxes, or our compound
+      // notes field. We compare against this snapshot on Save.
+      state.editOriginal = {};
+      MODAL_KEYS.forEach((key) => {
+        state.editOriginal[key] = String(asset[key] ?? '').trim();
+      });
+      state.editOriginal.notes = String(asset.notes ?? '').trim();
+
+      MODAL_KEYS.forEach((key) => {
+        setModalFieldValue('edit', key, asset[key], true);
+      });
+
+      const savedNotes = String(asset.notes || '');
+      const notesParts = savedNotes.split(' — ');
+      const notesEl    = $('edit_notes');
+      const notesExtra = $('edit_notes_extra');
+
+      if (notesEl) notesEl.value = notesParts[0] || '';
+      if (notesExtra) notesExtra.value = notesParts.slice(1).join(' — ') || '';
+
+      updateAssignedOnlyFieldsVisibility('edit');
+      applyStatusSelectColor($('edit_status'));
+      setModalBusy('saveEditBtn', 'Loading...', false);
+
+      setTimeout(() => {
+        $('edit_type')?.focus();
+      }, 100);
+    })
+    .masterlist_get(tag);
+}
+
+  async function saveEditAsset() {
+  const payload = collectModalPayload('edit', true);
+  const originalSerialTag = String(payload.originalSerialTag || '').trim();
+
+  if (!originalSerialTag) {
+    showToast('Missing originalSerialTag.', 'warning', 'Invalid Data');
+    return;
+  }
+
+  const changes = [];
+  const original = state.editOriginal || {};
+
+  // Compare every editable field — including the compound notes field —
+  // against the snapshot we captured when the modal loaded.
+  // We avoid `defaultValue` because it doesn't track reliably for selects,
+  // hidden fields driven by checkboxes, or compound fields (notes).
+  const KEYS_TO_COMPARE = MODAL_KEYS.concat(['notes']);
+
+  KEYS_TO_COMPARE.forEach((key) => {
+    const newVal = String(payload[key] ?? '').trim();
+    const oldVal = String(original[key] ?? '').trim();
+
+    // Normalize accessories order so "Box, Charger" === "Charger, Box".
+    // Different checkbox toggle order shouldn't count as a real change.
+    if (key === 'accessories') {
+      const sortCsv = (s) => s.split(',').map(t => t.trim()).filter(Boolean).sort().join(', ');
+      if (sortCsv(newVal) === sortCsv(oldVal)) return;
+    }
+
+    if (newVal !== oldVal) {
+      changes.push({
+        key,
+        label: COLUMN_MAP[key] || (key === 'notes' ? 'Notes' : key),
+        oldValue: oldVal || '—',
+        newValue: newVal || '—'
+      });
+    }
+  });
+
+  if (!changes.length) {
+    showToast('No changes detected.', 'info', 'Nothing to Save');
+    return;
+  }
+
+  const summaryHtml = changes.map((change) => `
+    <div style="padding:10px 0;border-bottom:1px solid var(--b-1);">
+      <div style="font-size:10px;color:var(--t-2);text-transform:uppercase;letter-spacing:.07em;">
+        ${escapeHtml(change.label)}
+      </div>
+      <div style="font-size:13px;margin-top:4px;">
+        <span style="color:var(--t-2);">${escapeHtml(change.oldValue)}</span>
+        <span style="opacity:.6;padding:0 8px;">→</span>
+        <span style="font-weight:700;">${escapeHtml(change.newValue)}</span>
+      </div>
+    </div>
+  `).join('');
+
+  const msgEl     = $('confirmMessage');
+  const titleEl   = $('confirmTitle');
+  const okBtn     = $('confirmOkBtn');
+  const cancelBtn = $('confirmCancelBtn');
+  const modalEl   = $('appConfirmModal');
+
+  if (!modalEl) {
+    if (!window.confirm(`Save ${changes.length} change(s)?`)) return;
+  } else {
+    modalEl.setAttribute('data-kind', 'info');
+
+    if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-circle-info me-2" aria-hidden="true"></i> Review Changes`;
+
+    if (msgEl) {
+      msgEl.innerHTML = `
+        <div style="margin-bottom:12px;color:var(--t-2);">
+          Save <b>${changes.length}</b> change(s) for
+          <b style="color:var(--t-1)">${escapeHtml(payload.serialTag || originalSerialTag)}</b>?
+        </div>
+        <div style="max-height:240px;overflow:auto;">${summaryHtml}</div>
+      `;
+    }
+
+    if (okBtn)     okBtn.textContent    = 'Save Changes';
+    if (cancelBtn) cancelBtn.textContent = 'Cancel';
+
+    if (!state.confirmModalInstance) {
+      state.confirmModalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+    }
+
+    const confirmed = await new Promise((resolve) => {
+      let done = false;
+
+      const cleanup = () => {
+        okBtn?.removeEventListener('click', onOk);
+        cancelBtn?.removeEventListener('click', onCancel);
+        modalEl.removeEventListener('hidden.bs.modal', onHide);
+      };
+
+      const onOk = () => {
+        if (done) return;
+        done = true;
+        cleanup();
+        state.confirmModalInstance.hide();
+        modalEl.addEventListener('hidden.bs.modal', () => resolve(true), { once: true });
+      };
+
+      const onCancel = () => {
+        if (done) return;
+        done = true;
+        cleanup();
+        state.confirmModalInstance.hide();
+        modalEl.addEventListener('hidden.bs.modal', () => resolve(false), { once: true });
+      };
+
+      const onHide = () => {
+        if (done) return;
+        done = true;
+        cleanup();
+        resolve(false);
+      };
+
+      okBtn?.addEventListener('click', onOk, { once: true });
+      cancelBtn?.addEventListener('click', onCancel, { once: true });
+      modalEl.addEventListener('hidden.bs.modal', onHide, { once: true });
+
+      state.confirmModalInstance.show();
+    });
+
+    if (!confirmed) return;
+  }
+
+  setModalBusy('saveEditBtn', 'Saving...', true);
+
+  google.script.run
+    .withFailureHandler((err) => {
+      console.error(err);
+      showToast(`Save failed: ${err?.message || err}`, 'danger', 'Save Failed');
+      setModalBusy('saveEditBtn', 'Saving...', false);
+    })
+    .withSuccessHandler((res) => {
+      const out = unwrapResponse_(res);
+
+      if (!out.ok) {
+        showToast(`Save failed: ${out.error || 'Unknown error'}`, 'danger', 'Save Failed');
+        setModalBusy('saveEditBtn', 'Saving...', false);
+        return;
+      }
+
+      setModalBusy('saveEditBtn', 'Saving...', false);
+      showToast('Asset updated successfully.', 'success', 'Saved');
+
+      // Clear the snapshot so the next edit starts fresh
+      state.editOriginal = null;
+
+      setTimeout(() => {
+        const editModalEl = document.getElementById('editAssetModal');
+        if (editModalEl) bootstrap.Modal.getOrCreateInstance(editModalEl).hide();
+        fetchPage(state.currentPage);
+      }, 100);
+    })
+    .masterlist_update(payload);
+}
+
+  /* ============================================================
+     ACCOUNTABILITY / DELETE / CLEAR
+  ============================================================ */
+  async function generateAccountabilityForm(serialTag, btn) {
+    const tag = String(serialTag || '').trim();
+    if (!tag) {
+      showToast('Missing Serial Tag.', 'warning', 'Invalid Data');
+      return;
+    }
+
+    const ok = await confirmAction({
+      title: 'Generate Accountability Form',
+      message: `Generate an AF for asset "${tag}"? This will create or update the AF link.`,
+      kind: 'info',
+      okText: 'Generate',
+      cancelText: 'Cancel'
+    });
+
+    if (!ok) return;
+
+    const origHtml = btn?.innerHTML;
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>`;
+    }
+
+    google.script.run
+      .withFailureHandler((err) => {
+        console.error(err);
+        showToast(`Generate failed: ${err?.message || err}`, 'danger', 'AF Failed');
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = origHtml || `<i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> Generate`;
+        }
+      })
+      .withSuccessHandler((res) => {
+        const out = unwrapResponse_(res);
+
+        if (!out.ok) {
+          showToast(`Generate failed: ${out.error || 'Unknown error'}`, 'danger', 'AF Failed');
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = origHtml || `<i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> Generate`;
+          }
+          return;
+        }
+
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = origHtml || `<i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> Generate`;
+        }
+
+        showToast('AF generated.', 'success', 'Generated');
+        if (out.data) openUrlSafe(out.data);
+        fetchPage(state.currentPage);
+      })
+      .masterlist_generateAccountabilityForm(tag);
+  }
+
+  async function deleteAsset(serialTag) {
+    const tag = String(serialTag || '').trim();
+    if (!tag) return;
+
+    const ok = await confirmAction({
+      title: 'Delete Asset',
+      message: `Delete asset "${tag}"? This cannot be undone.`,
+      kind: 'danger',
+      okText: 'Delete',
+      cancelText: 'Cancel'
+    });
+
+    if (!ok) return;
+
+    google.script.run
+      .withFailureHandler((err) => {
+        showToast(`Delete failed: ${err?.message || err}`, 'danger', 'Delete Failed');
+      })
+      .withSuccessHandler((res) => {
+        const out = unwrapResponse_(res);
+        if (!out.ok) {
+          showToast(`Delete failed: ${out.error || 'Unknown error'}`, 'danger', 'Delete Failed');
+          return;
+        }
+        showToast('Asset deleted.', 'success', 'Deleted');
+        fetchPage(state.currentPage);
+      })
+      .masterlist_delete(tag);
+  }
+
+  async function clearAssignment(serialTag) {
+    const tag = String(serialTag || '').trim();
+    if (!tag) return;
+
+    // ── Read from already-loaded page data — zero network call ──────
+    // state.lastPageData always contains full asset objects regardless
+    // of which columns are currently visible in the table.
+    const asset = state.lastPageData.find(
+      item => String(item.serialTag || '').trim() === tag
+    ) || {};
+
+    const accessories = String(asset.accessories || '').trim();
+    const accList = accessories
+      ? accessories.split(',').map(a => a.trim()).filter(Boolean)
+      : [];
+
+    // ── Build modal content ─────────────────────────────────────────
+    const infoEl = $('clearAssignmentInfo');
+    if (infoEl) {
+      const assignee = String(asset.assignee   || '').trim() || '—';
+      const dept     = String(asset.department || '').trim() || '—';
+
+      const accSection = accList.length
+        ? `<div style="margin:14px 0 0;">
+             <div style="font-size:10px;font-weight:700;letter-spacing:.08em;
+                         text-transform:uppercase;color:var(--t-2);
+                         font-family:var(--font-mono);margin-bottom:10px;">
+               Accessories to confirm returned
+             </div>
+             <div id="clearAccList" style="display:flex;flex-direction:column;gap:8px;">
+               ${accList.map((item, idx) => `
+                 <label style="display:flex;align-items:center;gap:12px;
+                               padding:10px 14px;
+                               border-radius:var(--r-md);
+                               border:1px solid var(--b-1);
+                               background:var(--bg-3);
+                               cursor:pointer;
+                               transition:border-color .14s,background .14s;"
+                        onmouseover="this.style.borderColor='var(--b-2)';this.style.background='var(--bg-4)'"
+                        onmouseout="this.style.borderColor='var(--b-1)';this.style.background='var(--bg-3)'">
+                   <input type="checkbox"
+                          id="clearAcc_${idx}"
+                          data-clear-acc="true"
+                          value="${escapeAttr(item)}"
+                          style="width:16px;height:16px;accent-color:var(--indigo);flex-shrink:0;"
+                          onchange="window._updateClearBtn_()">
+                   <span style="font-size:13px;font-weight:600;color:var(--t-1);">
+                     ${escapeHtml(item)}
+                   </span>
+                 </label>
+               `).join('')}
+             </div>
+             <div style="margin-top:10px;font-size:11.5px;color:var(--t-3);
+                         font-family:var(--font-mono);">
+               All accessories must be checked before clearing.
+             </div>
+           </div>`
+        : '';
+
+      infoEl.innerHTML =
+        `<div style="font-size:13.5px;color:var(--t-2);line-height:1.6;">
+           Clear assignment for
+           <b style="color:var(--t-1);">${escapeHtml(tag)}</b>?
+           <span style="display:block;margin-top:4px;font-size:12px;color:var(--t-3);">
+             Assigned to <b style="color:var(--t-2);">${escapeHtml(assignee)}</b>
+             &nbsp;·&nbsp; ${escapeHtml(dept)}
+           </span>
+         </div>
+         ${accSection}
+         <div style="margin-top:14px;padding:10px 14px;
+                     background:rgba(234,179,8,.08);
+                     border:1px solid rgba(234,179,8,.22);
+                     border-radius:var(--r-md);
+                     font-size:12px;color:var(--yellow-2);line-height:1.5;">
+           <i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;"></i>
+           The asset will be set to <b>In-stock</b> and assignment fields will be cleared.
+           Use this only after the device has been physically received and wiped.
+         </div>`;
+    }
+
+    // ── Wire up accessories checkbox → button state ─────────────────
+    const confirmBtn = $('confirmClearBtn');
+
+    window._updateClearBtn_ = () => {
+      if (!accList.length) {
+        if (confirmBtn) {
+          confirmBtn.disabled      = false;
+          confirmBtn.style.opacity = '';
+        }
+        return;
+      }
+      const checkboxes = document.querySelectorAll('[data-clear-acc="true"]');
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      if (confirmBtn) {
+        confirmBtn.disabled      = !allChecked;
+        confirmBtn.style.opacity = allChecked ? '' : '.45';
+      }
+    };
+
+    // Set initial button state — disabled only if there are accessories to confirm
+    if (confirmBtn) {
+      confirmBtn.disabled      = accList.length > 0;
+      confirmBtn.style.opacity = accList.length > 0 ? '.45' : '';
+    }
+
+    // ── Show modal ──────────────────────────────────────────────────
+    const modalEl = $('clearAssignmentModal');
+    if (!modalEl) {
+      const ok = await confirmAction({
+        title:      'Clear Assignment',
+        message:    `Clear assignment for "${tag}" and set to In-stock?`,
+        kind:       'warning',
+        okText:     'Yes, Clear',
+        cancelText: 'Cancel'
+      });
+      if (!ok) return;
+      _executeClearAssignment(tag, 'In-stock');
+      return;
+    }
+
+    const clearModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+    const confirmed = await new Promise((resolve) => {
+      let done = false;
+
+      const cleanup = () => {
+        if (confirmBtn) {
+          confirmBtn.onclick       = null;
+          confirmBtn.disabled      = false;
+          confirmBtn.style.opacity = '';
+        }
+        modalEl.removeEventListener('hidden.bs.modal', onHide);
+        delete window._updateClearBtn_;
+      };
+
+      const onConfirm = () => {
+        if (done) return;
+        done = true;
+        cleanup();
+        modalEl.addEventListener('hidden.bs.modal', () => resolve(true), { once: true });
+        clearModal.hide();
+      };
+
+      const onHide = () => {
+        if (done) return;
+        done = true;
+        cleanup();
+        resolve(false);
+      };
+
+      if (confirmBtn) confirmBtn.onclick = onConfirm;
+      modalEl.addEventListener('hidden.bs.modal', onHide, { once: true });
+
+      clearModal.show();
+    });
+
+    if (!confirmed) return;
+    _executeClearAssignment(tag, 'In-stock');
+  }
+
+
+  function _executeClearAssignment(serialTag, chosenStatus) {
+    const finalStatus = String(chosenStatus || 'In-stock').trim() || 'In-stock';
+
+    const confirmBtn = $('confirmClearBtn');
+    if (confirmBtn) {
+      confirmBtn.disabled = true;
+      confirmBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> Clearing...';
+    }
+
+    google.script.run
+      .withFailureHandler((err) => {
+        if (confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerHTML = '<i class="fas fa-eraser" aria-hidden="true"></i> Clear Assignment';
+        }
+        showToast(`Clear failed: ${err?.message || err}`, 'danger', 'Clear Failed');
+      })
+      .withSuccessHandler((res) => {
+        if (confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerHTML = '<i class="fas fa-eraser" aria-hidden="true"></i> Clear Assignment';
+        }
+        const out = unwrapResponse_(res);
+        if (!out.ok) {
+          showToast(`Clear failed: ${out.error || 'Unknown error'}`, 'danger', 'Clear Failed');
+          return;
+        }
+        showToast('Assignment cleared.', 'success', 'Done');
+        fetchPage(state.currentPage);
+      })
+      .masterlist_clearAssignment(serialTag, getSessionUserEmail(), finalStatus);
+  }
+
+  /* ============================================================
+     AUDIT
+  ============================================================ */
+  function openAuditLogsModal(prefillSerialTag) {
+    if (!state.auditModal) {
+      state.auditModal = new bootstrap.Modal($('auditLogsModal'));
+    }
+
+    if (prefillSerialTag) {
+      $('auditSerial').value = String(prefillSerialTag);
+      state.audit.serialTag = String(prefillSerialTag);
+    }
+
+    state.audit.page = 1;
+    if ($('auditDetails')) $('auditDetails').textContent = 'Select a row to view details…';
+
+    loadAuditLogs();
+    state.auditModal.show();
+  }
+
+  function setAuditLoading(on) {
+    state.audit.loading = !!on;
+
+    if ($('auditRefresh')) $('auditRefresh').disabled = !!on;
+    if ($('auditPrev')) $('auditPrev').disabled = !!on;
+    if ($('auditNext')) $('auditNext').disabled = !!on;
+  }
+
+  function renderAuditLogs(resp) {
+    const tbody   = $('auditTbody');
+    const meta    = $('auditMeta');
+    const details = $('auditDetails');
+ 
+    if (!tbody || !meta || !details) return;
+ 
+    if (!resp || !resp.ok) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="9" style="color:var(--red-2);font-size:12px;padding:12px;">
+            Failed to load: ${escapeHtml(resp?.error || 'Unknown error')}
+          </td>
+        </tr>
+      `;
+      meta.textContent = '—';
+      return;
+    }
+ 
+    state.audit.total = Number(resp.total || 0) || 0;
+    const rows = Array.isArray(resp.data) ? resp.data : [];
+ 
+    if (!rows.length) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="9">
+            <div class="empty-state" style="padding:24px;">
+              <div class="empty-label">No results.</div>
+              <div class="empty-hint">Try adjusting your filters or date range.</div>
+            </div>
+          </td>
+        </tr>
+      `;
+      meta.textContent = `0 / ${state.audit.total} • Page ${state.audit.page}`;
+      return;
+    }
+ 
+    // Action badge styles
+    const ACTION_BADGE = {
+      'ADD':              'tag-assigned',    // green
+      'UPDATE':           'tag-available',   // blue
+      'DELETE':           'tag-retired',     // red
+      'CLEAR_ASSIGNMENT': 'tag-missing',     // yellow
+    };
+ 
+    // Build the diff cell — color-coded per action type
+    function diffCell(row) {
+      const act = String(row.action || '').trim().toUpperCase();
+      const old = escapeHtml(row.oldValue || '—');
+      const nv  = escapeHtml(row.newValue  || '—');
+ 
+      if (act === 'ADD') {
+        // No "before" state — just show what was created
+        return `<span style="color:var(--green-2);font-weight:700;">${nv}</span>`;
+      }
+      if (act === 'DELETE') {
+        // No "after" state — show what was removed in red
+        return `<span style="color:var(--red-2);font-weight:700;text-decoration:line-through;">${old}</span>`;
+      }
+      // UPDATE / CLEAR_ASSIGNMENT — show old → new
+      return `<span style="color:var(--t-3);">${old}</span>
+              <span style="opacity:.45;padding:0 6px;">→</span>
+              <span style="font-weight:700;">${nv}</span>`;
+    }
+ 
+    tbody.innerHTML = rows.map((row, i) => {
+      const badgeCls = ACTION_BADGE[String(row.action || '').trim().toUpperCase()] || 'tag-faulty';
+      return `
+        <tr data-i="${i}">
+          <td style="font-size:11.5px;color:var(--t-2);">${escapeHtml(row.timestamp)}</td>
+          <td style="font-size:12px;">${escapeHtml(row.user)}</td>
+          <td><span class="status-tag ${badgeCls}">${escapeHtml(row.action)}</span></td>
+          <td style="font-family:var(--font-mono);font-size:12px;">${escapeHtml(row.serialTag)}</td>
+          <td style="font-size:12px;color:var(--t-2);">${escapeHtml(row.entity)}</td>
+          <td style="font-family:var(--font-mono);font-size:11.5px;">${escapeHtml(row.field)}</td>
+          <td style="font-size:12.5px;">${diffCell(row)}</td>
+          <td style="font-size:12px;color:var(--t-2);">${escapeHtml(row.affectedUser || '—')}</td>
+          <td>
+            <button class="btn-icon audit-view" type="button"
+                    aria-label="View details"
+                    style="width:26px;height:26px;font-size:11px;">
+              <i class="fa-solid fa-eye" aria-hidden="true"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+ 
+    meta.textContent = `${rows.length} shown • Total ${state.audit.total} • Page ${state.audit.page}`;
+ 
+    // Wire up detail view buttons
+    tbody.querySelectorAll('tr').forEach((tr) => {
+      const i = Number(tr.getAttribute('data-i'));
+tr.querySelector('.audit-view')?.addEventListener('click', () => {
+        const item = rows[i];
+
+        // Highlight selected row
+        tbody.querySelectorAll('tr').forEach(r => r.style.background = '');
+        tr.style.background = 'rgba(99,102,241,.14)';
+
+        // Auto-open the panel
+        const detailsWrap = document.querySelector('.audit-details-wrap');
+        if (detailsWrap) detailsWrap.open = true;
+
+        // Build a focused summary of just this row's change
+        const lines = [];
+
+        lines.push('Action:     ' + (item.action    || '—'));
+        lines.push('Serial Tag: ' + (item.serialTag || '—'));
+        lines.push('Field:      ' + (item.field     || '—'));
+
+        const oldVal = String(item.oldValue || '').trim();
+        const newVal = String(item.newValue || '').trim();
+
+        if (oldVal || newVal) {
+          lines.push('');
+          lines.push('Old value:  ' + (oldVal || '(empty)'));
+          lines.push('New value:  ' + (newVal || '(empty)'));
+        }
+
+        const affectedUser = String(item.affectedUser || '').trim();
+        if (affectedUser) {
+          lines.push('');
+          lines.push('Affected:   ' + affectedUser);
+        }
+
+        lines.push('');
+        lines.push('Actor:      ' + (item.user      || '—'));
+        lines.push('Timestamp:  ' + (item.timestamp || '—'));
+
+        // Append extra details only if there is meaningful data beyond what is already shown
+        const raw = item?.details;
+        if (raw && raw !== '{}' && raw !== '') {
+          try {
+            const parsed = typeof raw === 'object' ? raw : JSON.parse(raw);
+            // Strip fields already surfaced above to avoid repetition
+            const filtered = {};
+            const skip = new Set([
+              'affectedUser', 'originalSerialTag', 'clearedBy',
+              'finalStatus', 'payload'
+            ]);
+            Object.keys(parsed).forEach(k => {
+              if (!skip.has(k) && parsed[k] !== '' && parsed[k] != null) {
+                filtered[k] = parsed[k];
+              }
+            });
+            if (Object.keys(filtered).length) {
+              lines.push('');
+              lines.push('Extra details:');
+              lines.push(JSON.stringify(filtered, null, 2));
+            }
+          } catch (_) {
+            lines.push('');
+            lines.push('Raw: ' + String(raw));
+          }
+        }
+
+        details.textContent = lines.join('\n');
+      });
+    });
+
+    const maxPage = Math.max(1, Math.ceil((state.audit.total || 0) / state.audit.pageSize));
+    if ($('auditPrev')) $('auditPrev').disabled = state.audit.loading || state.audit.page <= 1;
+    if ($('auditNext')) $('auditNext').disabled = state.audit.loading || state.audit.page >= maxPage;
+  }
+
+ function loadAuditLogs() {
+    setAuditLoading(true);
+ 
+    google.script.run
+      .withSuccessHandler((resp) => {
+        setAuditLoading(false);
+        renderAuditLogs(resp);
+      })
+      .withFailureHandler((err) => {
+        setAuditLoading(false);
+        renderAuditLogs({ ok: false, error: err && err.message ? err.message : String(err) });
+      })
+      .asset_log_list({
+        page:         state.audit.page,
+        pageSize:     state.audit.pageSize,
+        query:        state.audit.query,
+        serialTag:    state.audit.serialTag,
+        action:       state.audit.actionFilter || '',   // NEW
+        dateFrom:     state.audit.dateFrom     || '',   // NEW
+        dateTo:       state.audit.dateTo       || ''    // NEW
+      });
+  }
+
+  /* ============================================================
+     INIT
+  ============================================================ */
+function bindGlobalUi() {
+    const ac = new AbortController();
+    const sig = { signal: ac.signal };
+
+    const _existingCleanup = window.__MASTERLIST_CLEANUP__;
+    window.__MASTERLIST_CLEANUP__ = () => {
+      ac.abort();
+      if (typeof _existingCleanup === 'function') _existingCleanup();
+      cleanupMasterlistModals();
+      window.__MASTERLIST_CLEANUP__ = null;
+    };
+
+    setupGoTop(ac.signal);
+
+    // Column selector outside-click
+    document.addEventListener('click', (e) => {
+      const sel = $('columnSelector');
+      const btn = $('toggleColsBtn');
+      if (!sel || !btn) return;
+      if (sel.style.display === 'block' && !sel.contains(e.target) && !btn.contains(e.target)) {
+        sel.style.display = 'none';
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    }, sig);
+
+    // Escape closes the column selector
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const sel = $('columnSelector');
+      const btn = $('toggleColsBtn');
+      if (sel && sel.style.display === 'block') {
+        sel.style.display = 'none';
+        btn?.setAttribute('aria-expanded', 'false');
+        btn?.focus();
+      }
+    }, sig);
+
+    // Seg filter — click + keyboard navigation
+    document.querySelectorAll('.seg-item').forEach((item) => {
+      item.addEventListener('click', () => {
+        const seg = item.dataset.seg;
+        if (seg === 'all') clearAllFilters();
+        else quickQuery(seg);
+      }, sig);
+
+      item.addEventListener('keydown', (e) => {
+        const items = Array.from(document.querySelectorAll('.seg-item'));
+        const i = items.indexOf(e.currentTarget);
+        let next = null;
+
+        if (e.key === 'ArrowRight')     next = items[(i + 1) % items.length];
+        else if (e.key === 'ArrowLeft') next = items[(i - 1 + items.length) % items.length];
+        else if (e.key === 'Home')      next = items[0];
+        else if (e.key === 'End')       next = items[items.length - 1];
+
+        if (next) {
+          e.preventDefault();
+          next.focus();
+          next.click();
+        }
+      }, sig);
+    });
+
+
+    // Delegated row actions
+// Delegated row actions
+// Delegated row actions
+$('masterlistBody')?.addEventListener('click', (e) => {
+  // ── Action buttons (edit / delete / clear) ──
+  const btn = e.target.closest('[data-action="edit"], [data-action="delete"], [data-action="clear"]');
+  if (btn && !btn.disabled) {
+    const action = btn.dataset.action;
+    const serial = btn.dataset.serial;
+    if (!serial) return;
+
+    if (action === 'edit')   openEditModal(serial);
+    if (action === 'delete') deleteAsset(serial);
+    if (action === 'clear')  clearAssignment(serial);
+    return;
+  }
+
+  // ── Procurement ref chip ──
+  const chip = e.target.closest('[data-action="procref"]');
+  if (chip) {
+    const ref = chip.dataset.ref;
+    if (!ref) return;
+
+    if (typeof window.navigateTo === 'function') {
+      try {
+        sessionStorage.setItem('__vendor_nav_search__', ref);
+        window.navigateTo('vendor', { search: ref });
+      } catch (navErr) {
+        showToast(`Navigation failed: ${navErr?.message || navErr}`, 'warning', 'Nav Error');
+      }
+    } else {
+      navigator.clipboard?.writeText(ref).then(() => {
+        showToast(`Ref "${ref}" copied to clipboard — vendor page not available.`, 'info', 'Copied');
+      }).catch(() => {
+        showToast(`Ref: ${ref} — vendor page not available in this context.`, 'info', 'Ref');
+      });
+    }
+    return;
+  }
+}, sig);
+
+// Select-all toggle
+$('masterlistHeaderRow')?.addEventListener('change', (e) => {
+  if (e.target.id !== 'selectAllCb') return;
+  document.querySelectorAll('.row-cb').forEach(cb => {
+    cb.checked = e.target.checked;
+  });
+  updateBulkBar();
+}, sig);
+
+// Per-row checkbox — sync select-all state
+// Per-row checkbox — sync select-all state
+$('masterlistBody')?.addEventListener('change', (e) => {
+  if (!e.target.classList.contains('row-cb')) return;
+  updateBulkBar();
+  const all  = document.querySelectorAll('.row-cb');
+  const done = document.querySelectorAll('.row-cb:checked');
+  const sa   = $('selectAllCb');
+  if (sa) {
+    sa.checked       = done.length === all.length && all.length > 0;
+    sa.indeterminate = done.length > 0 && done.length < all.length;
+  }
+}, sig);
+
+// Bulk action bar buttons
+$('bulkExportBtn')?.addEventListener('click', exportSelectedRows, sig);
+
+$('bulkClearSelectBtn')?.addEventListener('click', () => {
+  document.querySelectorAll('.row-cb').forEach(cb => cb.checked = false);
+  const sa = $('selectAllCb');
+  if (sa) { sa.checked = false; sa.indeterminate = false; }
+  updateBulkBar();
+}, sig);
+
+// Table header sort
+// Table header sort
+$('masterlistHeaderRow')?.addEventListener('click', (e) => {
+  const th = e.target.closest('th');
+  if (!th) return;
+  const key = th.getAttribute('data-key');
+  if (!key || key === 'actions' || key === 'select') return;
+  sortTable(key);
+}, sig);
+
+    // Toolbar buttons
+    $('toggleColsBtn')?.addEventListener('click', toggleColumnSelector, sig);
+    $('refreshBtn')?.addEventListener('click', () => fetchPage(1), sig);
+    $('clearFiltersBtn')?.addEventListener('click', clearAllFilters, sig);
+
+    // Export dropdown items (the Export button itself just opens the menu via Bootstrap)
+    $('exportCurrentPageOpt')?.addEventListener('click', exportCurrentPage, sig);
+    $('exportAllOpt')?.addEventListener('click', exportAllFiltered, sig);
+
+    $('addAssetBtn')?.addEventListener('click', openAddModal, sig);
+    $('auditBtn')?.addEventListener('click', () => openAuditLogsModal(), sig);
+
+    // Modal save buttons
+    $('saveAddBtn')?.addEventListener('click', saveNewAsset, sig);
+    $('saveEditBtn')?.addEventListener('click', saveEditAsset, sig);
+
+    // Clear the Edit modal snapshot when the modal is dismissed (cancel/close/Esc)
+    // so the next edit always starts with a fresh snapshot rather than stale data
+    $('editAssetModal')?.addEventListener('hidden.bs.modal', () => {
+      state.editOriginal = null;
+    }, sig);
+
+    // Pagination
+    $('btnPrev')?.addEventListener('click', () => {
+      if (state.currentPage > 1) {
+        state.currentPage--;
+        fetchPage(state.currentPage);
+      }
+    }, sig);
+
+    $('btnNext')?.addEventListener('click', () => {
+      const totalPages = getTotalPages();
+      if (state.currentPage < totalPages) {
+        state.currentPage++;
+        fetchPage(state.currentPage);
+      }
+    }, sig);
+
+    // Search
+    // Search
+const onSearch = debounce(() => {
+  fetchPage(1);
+  updateFilterBadge();
+}, 400);
+
+$('searchBox')?.addEventListener('input', (e) => {
+  const val = e.target.value;
+  updateFilterBadge();
+
+  // Show a subtle "searching" indicator immediately
+  const tbody = $('masterlistBody');
+  if (tbody && val.trim()) {
+    const existing = tbody.querySelector('.search-pending-row');
+    if (!existing) {
+      const tr = document.createElement('tr');
+      tr.className = 'search-pending-row';
+      tr.innerHTML = `
+        <td colspan="${getVisibleColumnCount()}" style="padding:8px 18px;">
+          <span style="font-size:11px;color:var(--t-3);font-family:var(--font-mono);">
+            <i class="fa-solid fa-magnifying-glass fa-beat-fade"
+               style="margin-right:6px;" aria-hidden="true"></i>
+            Searching…
+          </span>
+        </td>
+      `;
+      tbody.prepend(tr);
+    }
+  }
+
+  onSearch();
+}, sig);
+
+    // Audit filters
+    const onAuditFilter = debounce(() => {
+      state.audit.query        = String($('auditQuery')?.value        || '').trim();
+      state.audit.serialTag    = String($('auditSerial')?.value       || '').trim();
+      state.audit.pageSize     = parseInt($('auditPageSize')?.value, 10) || 50;
+      state.audit.actionFilter = String($('auditActionFilter')?.value || '').trim();
+      state.audit.dateFrom     = String($('auditDateFrom')?.value     || '').trim();
+      state.audit.dateTo       = String($('auditDateTo')?.value       || '').trim();
+      state.audit.page         = 1;
+
+      if ($('auditDetails')) {
+        $('auditDetails').textContent = 'Select a row to view details…';
+      }
+
+      loadAuditLogs();
+    }, 250);
+
+    $('auditQuery')?.addEventListener('input',         onAuditFilter, sig);
+    $('auditPageSize')?.addEventListener('change',     onAuditFilter, sig);
+    $('auditActionFilter')?.addEventListener('change', onAuditFilter, sig);
+    $('auditDateFrom')?.addEventListener('change',     onAuditFilter, sig);
+    $('auditDateTo')?.addEventListener('change',       onAuditFilter, sig);
+    $('auditRefresh')?.addEventListener('click', () => loadAuditLogs(), sig);
+
+    // Clear audit filters button
+    $('auditClearFilters')?.addEventListener('click', () => {
+      if ($('auditQuery'))        $('auditQuery').value        = '';
+      if ($('auditActionFilter')) $('auditActionFilter').value = '';
+      if ($('auditDateFrom'))     $('auditDateFrom').value     = '';
+      if ($('auditDateTo'))       $('auditDateTo').value       = '';
+
+      state.audit.query        = '';
+      state.audit.actionFilter = '';
+      state.audit.dateFrom     = '';
+      state.audit.dateTo       = '';
+      state.audit.page         = 1;
+
+      loadAuditLogs();
+    }, sig);
+
+    $('auditPrev')?.addEventListener('click', () => {
+      if (state.audit.page > 1) {
+        state.audit.page--;
+        loadAuditLogs();
+      }
+    }, sig);
+
+    $('auditNext')?.addEventListener('click', () => {
+      const maxPage = Math.max(1, Math.ceil((state.audit.total || 0) / state.audit.pageSize));
+      if (state.audit.page < maxPage) {
+        state.audit.page++;
+        loadAuditLogs();
+      }
+    }, sig);
+
+  } // ← end of bindGlobalUi()
+
+
+  /* ============================================================
+     GLOBAL ACTION EXPOSURE
+  ============================================================ */
+  function exposeGlobalActions() {
+    window.openEditModal               = openEditModal;
+    window.generateAccountabilityForm  = generateAccountabilityForm;
+    window.deleteAsset                 = deleteAsset;
+    window.clearAssignment             = clearAssignment;
+    window.openAuditLogsModal          = openAuditLogsModal;
+  }
+
+
+  /* ============================================================
+     INIT
+  ============================================================ */
+function initMasterlist() {
+  hoistModalsToBody();
+  exposeGlobalActions();
+  resetColumnVisibility();
+  generateTableHeaders();
+  generateColumnCheckboxes();
+  bindGlobalUi();
+  applyPresetFiltersFromQuery();
+  applyPresetSortFromQuery();
+
+  // Load table immediately — don't wait for permissions
+  // Load table immediately — don't wait for permissions
+loadEmployees(() => fetchPage(1));
+
+// Load warranty KPI and show banner if needed
+google.script.run
+  .withSuccessHandler((res) => {
+    // Guard — only ever show one banner
+    if (document.getElementById('warrantyBanner')) return;
+
+    const out = unwrapResponse_(res);
+    if (!out.ok || !out.data) return;
+    const kpis = out.data.kpis || {};
+    const soon = out.data.soonToExpire || [];
+
+    const critical = soon.filter(a => a.diffDays <= 30).length;
+    const warning  = soon.filter(a => a.diffDays > 30 && a.diffDays <= 90).length;
+
+    if (!critical && !warning && !kpis.warrantyExpired) return;
+
+    const parts = [];
+    if (kpis.warrantyExpired) parts.push(`<b>${kpis.warrantyExpired}</b> expired`);
+    if (critical)             parts.push(`<b>${critical}</b> expiring within 30 days`);
+    if (warning)              parts.push(`<b>${warning}</b> within 90 days`);
+
+    const banner = document.createElement('div');
+    banner.id = 'warrantyBanner';
+    banner.setAttribute('role', 'alert');
+    banner.style.cssText = `
+      width:100%; padding:10px 18px;
+      background:rgba(180,83,9,.10);
+      border-bottom:1px solid rgba(180,83,9,.24);
+      display:flex; align-items:center; gap:10px;
+      font-size:12.5px; font-family:var(--font-mono);
+      color:var(--yellow);
+    `;
+    banner.innerHTML = `
+      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+      <span>Warranty alert: ${parts.join(' • ')}.
+        <button type="button"
+                onclick="document.getElementById('warrantyBanner').remove()"
+                style="margin-left:12px;background:none;border:none;
+                       color:var(--t-3);cursor:pointer;font-size:11px;">
+          Dismiss
+        </button>
+      </span>
+    `;
+
+    const cardWrap = document.querySelector('.card-wrap');
+    if (cardWrap) cardWrap.prepend(banner);
+  })
+  .withFailureHandler(() => {}) // non-blocking
+  .masterlist_report();
+
+  // Load permissions in parallel — reveal Add button only if allowed
+  google.script.run
+    .withSuccessHandler((perms) => {
+  state.perms = perms || {};
+  if (state.perms.canAdd) {
+    const btn = document.getElementById('addAssetBtn');
+    if (btn) btn.style.display = '';
+  }
+  if (state.perms.canExport) {
+    const btn = document.getElementById('exportBtn');
+    if (btn) btn.style.display = '';
+  }
+  // Re-render to apply edit/delete button visibility
+  if (state.lastPageData.length) renderMasterlist(state.lastPageData);
+})
+    .withFailureHandler(() => {
+      // Stays hidden — fail safe
+    })
+    .getAssetReportPermissions();
+}
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMasterlist);
+  } else {
+    initMasterlist();
+  }
+
+
+  /* ============================================================
+     CLEANUP
+  ============================================================ */
+  function cleanupMasterlistModals() {
+    ['addAssetModal', 'editAssetModal', 'appConfirmModal',
+     'auditLogsModal', 'clearAssignmentModal'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        try { bootstrap.Modal.getOrCreateInstance(el).hide(); } catch(_) {}
+        el.remove();
+      }
+    });
+
+    const toast = document.getElementById('appToast');
+    if (toast) {
+      try { bootstrap.Toast.getOrCreateInstance(toast).hide(); } catch(_) {}
+      toast.closest('.toast-container')?.remove() ?? toast.remove();
+    }
+
+    state.confirmModalInstance = null;
+    state.auditModal           = null;
+    state.toastInstance        = null;
+  }
+
+  window.__MASTERLIST_CLEANUP__ = cleanupMasterlistModals;
+
+})();
+
+  </script>

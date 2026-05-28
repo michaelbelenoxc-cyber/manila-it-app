@@ -1,0 +1,1163 @@
+<style>
+  /* ============================================================
+   * FONTS
+   * ============================================================ */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --font-ui:   'Epilogue', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+    /* surfaces — warm paper (light default) */
+    --bg-0: #f5f2ec; --bg-1: #f5f2ec; --bg-2: #ede9e1;
+    --bg-3: #e4ded4; --bg-4: #ddd6ca;
+
+    /* borders */
+    --b-0: rgba(26,24,20,.07); --b-1: rgba(26,24,20,.12);
+    --b-2: rgba(26,24,20,.18);
+
+    /* text */
+    --t-1: rgba(26,24,20,.95); --t-2: rgba(74,71,64,.75); --t-3: rgba(138,134,128,.60);
+
+    /* primary accent — editorial blue */
+    --blue:      #2857a4;
+    --blue-d:    rgba(40,87,164,.10);
+    --blue-b:    rgba(40,87,164,.30);
+    --blue-glow: 0 0 0 1px rgba(40,87,164,.22), 0 3px 12px rgba(40,87,164,.12);
+
+    --green:  #16a34a;
+    --red:    #c94040;
+    --orange: #b45309;
+
+    /* geometry */
+    --r-xl:  14px;
+    --r-lg:  10px;
+    --r-md:   7px;
+    --r-sm:   5px;
+    --r-pill: 999px;
+
+    /* shadows */
+    --sh-1: 0 1px 4px rgba(26,24,20,.08);
+    --sh-2: 0 4px 16px rgba(26,24,20,.10);
+    --sh-3: 0 12px 40px rgba(26,24,20,.14);
+
+    /* motion */
+    --t-fast: .13s ease;
+    --t-med:  .22s ease;
+
+    /* aliases (keep JS-referenced tokens working) */
+    --accent-blue: var(--blue);
+    --accent-green: var(--green);
+    --accent-red: var(--red);
+    --text-primary: var(--t-1);
+    --text-secondary: var(--t-2);
+    --bg-surface: var(--bg-2);
+    --border-subtle: var(--b-1);
+    --radius-lg: var(--r-xl);
+    --radius-md: var(--r-md);
+    --shadow-soft: var(--sh-2);
+    --font-stack: var(--font-ui);
+  }
+
+  /* ── Dark mode ───────────────────────────── */
+  html[data-theme="dark"] {
+    --bg-0: #161410; --bg-1: #1a1814; --bg-2: #1e1c18; --bg-3: #252220; --bg-4: #2c2a26;
+    --b-0: rgba(240,236,227,.06); --b-1: rgba(240,236,227,.10); --b-2: rgba(240,236,227,.16);
+    --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.75); --t-3: rgba(106,100,92,.60);
+    --blue-d:    rgba(40,87,164,.16);
+    --blue-b:    rgba(40,87,164,.40);
+    --blue-glow: 0 0 0 1px rgba(40,87,164,.32), 0 3px 12px rgba(40,87,164,.18);
+    --sh-2: 0 4px 16px rgba(0,0,0,.45);
+    --sh-3: 0 12px 40px rgba(0,0,0,.55);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    font-family: var(--font-ui);
+    color: var(--t-1); background: var(--bg-0);
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 55% 40% at 50% 0%,  rgba(40,87,164,.04) 0%, transparent 55%),
+      radial-gradient(ellipse 45% 35% at 92% 100%, rgba(40,87,164,.03) 0%, transparent 55%);
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  /* ── Page container ── */
+  .container-main {
+    width: 100%; max-width: 820px;
+    margin: 72px auto 0;
+    padding: 36px 20px 68px;
+    display: block;
+    animation: fadeUp .36s ease-out both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(9px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 400; letter-spacing: -.02em;
+    color: var(--t-1); margin-bottom: 5px; line-height: 1.08;
+  }
+
+  .sub {
+    color: var(--t-3); margin-bottom: 20px;
+    line-height: 1.65; font-size: 12.5px;
+    max-width: 560px; font-family: var(--font-mono);
+    letter-spacing: .01em;
+  }
+
+  /* ── Card ── */
+  .cardWrap {
+    background: var(--bg-1); border-radius: var(--r-xl);
+    border: 1px solid var(--b-1); box-shadow: var(--sh-1); overflow: hidden;
+  }
+
+  /* ── Identity strip ── */
+  .topRow {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 11px;
+    padding: 16px 20px 14px;
+    border-bottom: 1px solid var(--b-0);
+    background: var(--bg-0);
+    flex-wrap: wrap;
+  }
+
+  html[data-theme="dark"] .topRow { background: rgba(0,0,0,.08); }
+
+  .who { display: flex; gap: 11px; align-items: center; min-width: 190px; }
+
+  .avatarBig {
+    width: 42px; height: 42px; border-radius: 11px;
+    display: grid; place-items: center;
+    font-family: var(--font-mono); font-weight: 700; font-size: 13px; color: #fff;
+    background: linear-gradient(135deg, var(--blue), #4a74c0);
+    border: 1px solid var(--blue-b);
+    box-shadow: 0 2px 8px rgba(40,87,164,.18);
+    overflow: hidden; flex-shrink: 0;
+  }
+
+  .avatarBig img { width: 100%; height: 100%; object-fit: cover; border-radius: 11px; display: none; }
+
+  .whoText .name { font-size: 14px; font-weight: 700; letter-spacing: -.01em; color: var(--t-1); }
+  .whoText .meta { color: var(--t-3); font-size: 11px; margin-top: 2px; font-family: var(--font-mono); }
+
+  .pillRow { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+  .pill {
+    padding: 5px 10px; border-radius: var(--r-pill);
+    border: 1px solid var(--b-1); background: var(--bg-2);
+    font-size: 11.5px; font-weight: 600;
+    display: inline-flex; gap: 6px; align-items: center; color: var(--t-2);
+    font-family: var(--font-mono); letter-spacing: .03em;
+  }
+
+  .pill i { font-size: 10px; color: var(--blue); }
+  html[data-theme="dark"] .pill i { color: #5b85c8; }
+
+  /* ── Form ── */
+  .form-body { padding: 18px 20px 0; }
+
+  .formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 9.5px; font-weight: 700; color: var(--t-3);
+    text-transform: uppercase; letter-spacing: .12em;
+    font-family: var(--font-mono);
+  }
+
+  input[type="text"], input[type="date"], select, textarea {
+    padding: 9px 11px; border-radius: var(--r-md);
+    border: 1px solid var(--b-1); background: var(--bg-2);
+    color: var(--t-1); font-family: var(--font-ui); font-size: 13px;
+    outline: none; caret-color: var(--blue); width: 100%;
+    transition: border-color var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+  }
+
+  input[type="text"]::placeholder, textarea::placeholder { color: var(--t-3); }
+  select option { background: var(--bg-2); color: var(--t-1); }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--blue-b); background: var(--bg-1);
+    box-shadow: var(--blue-glow); color: var(--t-1);
+  }
+
+  textarea { min-height: 104px; resize: vertical; line-height: 1.58; }
+
+  .helper {
+    color: var(--t-3); font-size: 11px; line-height: 1.5;
+    font-family: var(--font-mono); letter-spacing: .01em;
+  }
+
+  .errorLine {
+    color: var(--red); font-size: 12.5px; font-weight: 600; display: none;
+    padding: 9px 11px; border-radius: var(--r-md);
+    background: rgba(201,64,64,.09); border: 1px solid rgba(201,64,64,.22);
+    font-family: var(--font-mono);
+  }
+
+  html[data-theme="dark"] .errorLine { color: #f87171; }
+
+  /* ── File Upload Zone ── */
+  .upload-zone {
+    border: 1.5px dashed var(--b-2); border-radius: var(--r-md);
+    background: var(--bg-2); padding: 14px 12px; cursor: pointer;
+    transition: border-color var(--t-fast), background var(--t-fast);
+    display: flex; flex-direction: column; align-items: center;
+    gap: 7px; text-align: center; position: relative;
+  }
+
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--blue-b); background: var(--blue-d);
+  }
+
+  .upload-zone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+    width: 100%; height: 100%; padding: 0; border: none; background: transparent;
+  }
+
+  .upload-zone .upload-icon {
+    font-size: 20px; color: var(--t-3); transition: color var(--t-fast);
+  }
+
+  .upload-zone:hover .upload-icon,
+  .upload-zone.drag-over .upload-icon { color: var(--blue); }
+  html[data-theme="dark"] .upload-zone:hover .upload-icon { color: #5b85c8; }
+
+  .upload-zone .upload-label {
+    font-size: 12.5px; font-weight: 600; color: var(--t-2); pointer-events: none;
+  }
+
+  .upload-zone .upload-sub {
+    font-size: 10.5px; color: var(--t-3); pointer-events: none;
+    font-family: var(--font-mono); letter-spacing: .02em;
+  }
+
+  /* ── File Preview ── */
+  .file-preview {
+    display: none; align-items: center; gap: 9px;
+    padding: 9px 11px; border-radius: var(--r-md);
+    border: 1px solid var(--b-1); background: var(--bg-2); margin-top: 5px;
+  }
+
+  .file-preview.visible { display: flex; }
+
+  .file-icon {
+    width: 32px; height: 32px; border-radius: var(--r-sm);
+    background: var(--blue-d); border: 1px solid var(--blue-b);
+    display: grid; place-items: center;
+    color: var(--blue); font-size: 13px; flex-shrink: 0;
+  }
+
+  html[data-theme="dark"] .file-icon { color: #5b85c8; }
+
+  .file-info { flex: 1; min-width: 0; }
+  .file-name { font-size: 12.5px; font-weight: 600; color: var(--t-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .file-size { font-size: 10.5px; color: var(--t-3); margin-top: 2px; font-family: var(--font-mono); }
+
+  .file-remove {
+    width: 26px; height: 26px; border-radius: var(--r-sm);
+    border: 1px solid var(--b-1); background: transparent;
+    color: var(--t-3); display: grid; place-items: center;
+    cursor: pointer; font-size: 10px; flex-shrink: 0;
+    transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  }
+
+  .file-remove:hover {
+    background: rgba(201,64,64,.09); color: var(--red);
+    border-color: rgba(201,64,64,.22);
+  }
+
+  html[data-theme="dark"] .file-remove:hover { color: #f87171; }
+
+  /* ── Upload Progress ── */
+  .upload-progress {
+    display: none; flex-direction: column; gap: 5px;
+    padding: 9px 11px; border-radius: var(--r-md);
+    border: 1px solid var(--b-1); background: var(--bg-2); margin-top: 5px;
+  }
+
+  .upload-progress.visible { display: flex; }
+
+  .progress-label {
+    font-size: 11.5px; color: var(--t-2); font-weight: 600;
+    display: flex; justify-content: space-between;
+    font-family: var(--font-mono);
+  }
+
+  .progress-bar-wrap {
+    height: 3px; border-radius: 2px; background: var(--b-1); overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%; border-radius: 2px; background: var(--blue);
+    width: 0%; transition: width .28s ease;
+  }
+
+  /* ── Actions ── */
+  .actions {
+    display: flex; justify-content: flex-end; gap: 7px;
+    padding: 14px 20px 18px;
+    border-top: 1px solid var(--b-0);
+    margin-top: 16px; flex-wrap: wrap;
+  }
+
+  .btnPrimary {
+    background: var(--blue); color: #fff; border: none;
+    padding: 9px 16px; border-radius: var(--r-md);
+    font-family: var(--font-mono); font-weight: 700;
+    font-size: 12px; letter-spacing: .04em;
+    cursor: pointer; display: inline-flex; gap: 6px; align-items: center;
+    min-width: 120px; box-shadow: 0 2px 10px rgba(40,87,164,.28);
+    transition: filter var(--t-fast), box-shadow var(--t-fast);
+    position: relative;
+  }
+
+  .btnPrimary:hover { filter: brightness(1.10); box-shadow: 0 4px 16px rgba(40,87,164,.38); }
+  .btnPrimary:active { filter: brightness(.97); }
+  .btnPrimary:disabled { opacity: .55; cursor: not-allowed; filter: none !important; box-shadow: none !important; }
+
+  .btnGhost {
+    background: var(--bg-2); color: var(--t-2);
+    border: 1px solid var(--b-1); padding: 9px 13px;
+    border-radius: var(--r-md); font-family: var(--font-mono);
+    font-weight: 600; font-size: 12px; letter-spacing: .04em;
+    cursor: pointer; display: inline-flex; gap: 6px; align-items: center;
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+  }
+
+  .btnGhost:hover { background: var(--bg-3); border-color: var(--b-2); color: var(--t-1); }
+  .btnGhost:active { transform: scale(.98); }
+
+  #submitBtn.is-loading { opacity: .80; pointer-events: none; }
+  #submitBtn .btnSpin { display: none; }
+  #submitBtn.is-loading .btnSpin { display: inline-block; }
+  #submitBtn.is-loading .btnText { visibility: hidden; }
+
+  /* ── Portal ── */
+  .portal-root { position: fixed; inset: 0; pointer-events: none; z-index: 2147483647; }
+
+  .portal-toast-wrap {
+    position: fixed; bottom: 22px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; gap: 7px; pointer-events: none;
+  }
+
+  .portal-toast {
+    background: var(--bg-2); color: var(--t-1);
+    padding: 10px 15px; border-radius: var(--r-lg);
+    box-shadow: var(--sh-2);
+    display: flex; gap: 9px; align-items: center;
+    pointer-events: auto; max-width: min(92vw, 560px);
+    font-size: 12.5px; font-weight: 600;
+    font-family: var(--font-mono); letter-spacing: .02em;
+    animation: toastIn .26s ease; border: 1px solid var(--b-2);
+  }
+
+  @keyframes toastIn {
+    from { transform: translateY(11px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .portal-modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(26,24,20,.42);
+    display: none; align-items: center; justify-content: center;
+    pointer-events: auto;
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  }
+
+  html[data-theme="dark"] .portal-modal-backdrop { background: rgba(0,0,0,.58); backdrop-filter: blur(7px); }
+
+  .portal-modal {
+    background: var(--bg-1); border: 1px solid var(--b-2);
+    box-shadow: var(--sh-3); border-radius: var(--r-xl);
+    width: min(460px, 94vw); padding: 18px; pointer-events: auto;
+    animation: modalIn .20s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(.96) translateY(7px); }
+    to   { opacity: 1; transform: scale(1)   translateY(0); }
+  }
+
+  .portal-modal h3 {
+    margin: 0 0 7px;
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 16px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1);
+  }
+
+  .portal-modal p {
+    margin: 0 0 14px; color: var(--t-2);
+    font-size: 12.5px; line-height: 1.6;
+    font-family: var(--font-mono);
+  }
+
+  .portal-modal-actions { display: flex; justify-content: flex-end; gap: 7px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .formGrid { grid-template-columns: 1fr; }
+    .topRow { align-items: flex-start; }
+    .container-main { padding: 28px 13px 56px; }
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fa-spin { animation: spin .85s linear infinite; }
+</style>
+
+
+<main class="container-main" role="main">
+
+  <div class="page-title">Submit a Request</div>
+  <div class="sub">File VL, SL, WFH, overtime, equipment loans, and schedule changes. Requests are routed to approvers.</div>
+
+  <div class="cardWrap" role="region" aria-label="Request form">
+
+    <!-- Identity strip -->
+    <div class="topRow" role="group" aria-label="Requester info">
+      <div class="who">
+        <div class="avatarBig" id="reqAvatar" aria-hidden="true">
+          <img id="reqAvatarImg" alt="Profile photo">
+          <span id="reqAvatarInitials" aria-hidden="true">—</span>
+        </div>
+        <div class="whoText">
+          <div class="name" id="reqName">—</div>
+          <div class="meta" id="reqEmail">—</div>
+        </div>
+      </div>
+      <div class="pillRow" aria-hidden="true">
+        <div class="pill"><i class="fa-solid fa-user-shield"></i><span id="reqRole">—</span></div>
+        <div class="pill"><i class="fa-solid fa-people-group"></i><span id="reqGroup">—</span></div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form id="requestForm" class="form-body" onsubmit="event.preventDefault(); submitRequest();" novalidate>
+      <div class="formGrid" role="form" aria-label="Request details">
+
+        <div class="field">
+          <label for="reqType">Request Type</label>
+          <select id="reqType" required>
+            <option value="VL">Vacation Leave (VL)</option>
+            <option value="SL">Sick Leave (SL)</option>
+            <option value="WFH">Work From Home (WFH)</option>
+            <option value="OT">Overtime (OT)</option>
+            <option value="Schedule Change">Schedule Change</option>
+            <option value="Borrow Equipment">Borrow Equipment</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="reqPriority">Priority</label>
+          <select id="reqPriority" aria-describedby="priorityHelp">
+            <option value="Normal">Normal</option>
+            <option value="Urgent">Urgent</option>
+          </select>
+          <div id="priorityHelp" class="helper">Urgent requests are routed to on-call approvers.</div>
+        </div>
+
+        <div class="field">
+          <label for="reqStart">Start Date</label>
+          <input id="reqStart" type="date" required aria-required="true">
+        </div>
+
+        <div class="field">
+          <label for="reqEnd">End Date</label>
+          <input id="reqEnd" type="date" required aria-required="true">
+        </div>
+
+        <div class="field">
+          <label for="reqTime">Time / Hours <span style="opacity:.5;font-weight:500;text-transform:none;letter-spacing:0;">(optional)</span></label>
+          <input id="reqTime" type="text" placeholder="e.g. 8:00 AM – 5:00 PM or 4 hours" aria-describedby="timeHelp">
+          <div id="timeHelp" class="helper">Use this for overtime or partial-day requests.</div>
+        </div>
+
+        <div class="field">
+          <label for="reqContact">Contact While Away <span style="opacity:.5;font-weight:500;text-transform:none;letter-spacing:0;">(optional)</span></label>
+          <input id="reqContact" type="text" placeholder="Teams / Phone: 09xx-xxx-xxxx">
+        </div>
+
+        <div class="field full">
+          <label for="reqReason">Reason / Details</label>
+          <textarea id="reqReason" placeholder="Explain the request for the approver…" required aria-required="true" maxlength="1000"></textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
+            <div class="helper">Tip: For VL/SL include coverage arrangements; for equipment include the item name and dates needed.</div>
+            <div class="helper" id="reasonCounter" style="flex-shrink:0;margin-left:8px;">0 / 1000</div>
+          </div>
+        </div>
+
+        <!-- ── Attachment (optional) ── -->
+        <div class="field full">
+          <label>
+            Attachment
+            <span style="opacity:.5;font-weight:500;text-transform:none;letter-spacing:0;">(optional — max 10 MB)</span>
+          </label>
+
+          <div class="upload-zone" id="uploadZone" role="button" tabindex="0"
+               aria-label="Upload attachment — click or drag file here">
+            <input type="file" id="reqAttachment"
+                   accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.webp,.txt,.csv,.zip"
+                   aria-label="Choose file to attach">
+            <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+            <div class="upload-label">Click to browse or drag &amp; drop</div>
+            <div class="upload-sub">PDF, Word, Excel, Images, ZIP — up to 10 MB</div>
+          </div>
+
+          <!-- Selected file preview -->
+          <div class="file-preview" id="filePreview" aria-live="polite">
+            <div class="file-icon"><i class="fa-solid fa-file" id="fileTypeIcon"></i></div>
+            <div class="file-info">
+              <div class="file-name" id="fileName">—</div>
+              <div class="file-size" id="fileSize">—</div>
+            </div>
+            <button type="button" class="file-remove" id="fileRemoveBtn"
+                    aria-label="Remove selected file" title="Remove file">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <!-- Upload progress (shown during submit) -->
+          <div class="upload-progress" id="uploadProgress">
+            <div class="progress-label">
+              <span id="uploadProgressLabel">Uploading…</span>
+              <span id="uploadProgressPct">0%</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" id="uploadProgressBar"></div>
+            </div>
+          </div>
+
+          <div class="helper" style="margin-top:4px;">
+            File is saved to the Manila IT Requests folder in Drive.
+          </div>
+        </div>
+
+        <div id="formError" class="field full errorLine" aria-live="assertive"></div>
+
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btnGhost" onclick="resetRequestForm()" aria-label="Clear form">
+          <i class="fas fa-rotate-left" aria-hidden="true"></i> Clear
+        </button>
+        <button id="submitBtn" class="btnPrimary" type="submit" aria-label="Submit request">
+          <span class="btnText"><i class="fas fa-paper-plane" aria-hidden="true"></i> Submit</span>
+          <span class="btnSpin" aria-hidden="true"><i class="fas fa-circle-notch fa-spin"></i></span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</main>
+
+<script>
+(() => {
+  const PAGE_KEY = "request";
+  const SUBMIT_ACTION_KEY = "request.submit";
+  const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB
+
+  const auth = {
+    email: "", role: "viewer",
+    permissions: { pages: {}, actions: {} },
+    canView: false, canSubmit: false
+  };
+
+  // ── Attachment state ──
+  const attachState = {
+    file: null,       // File object
+    base64: null,     // base64 string (no data-url prefix)
+    mimeType: null,
+    fileName: null
+  };
+
+  function $(id){ return document.getElementById(id); }
+  function norm(v){ return String(v ?? "").trim(); }
+  function lower(v){ return norm(v).toLowerCase(); }
+
+  function escapeHtml(s){
+    return String(s || "")
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#39;");
+  }
+
+  function normalizeKey(v){
+    return String(v || "")
+      .replace(/\u00A0/g," ").replace(/[\u200B-\u200D\uFEFF]/g,"")
+      .replace(/\s+/g," ").trim().toLowerCase();
+  }
+
+  function isGasRuntime(){
+    return !!(window.google && google.script && google.script.run);
+  }
+
+  function gasCall(fnName, ...args){
+    return new Promise((resolve, reject) => {
+      if (!isGasRuntime()) return reject(new Error("google.script.run not available"));
+      google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[fnName](...args);
+    });
+  }
+
+  function hasPageAccess(k){ return !!auth.permissions?.pages?.[normalizeKey(k)]; }
+  function hasActionAccess(k){ return !!auth.permissions?.actions?.[normalizeKey(k)]; }
+
+  function getSessionUserEmail(){
+    return (
+      window.__SHELL_EMAIL__ ||
+      sessionStorage.getItem("user_email") ||
+      sessionStorage.getItem("email") ||
+      localStorage.getItem("user_email") ||
+      localStorage.getItem("email") || ""
+    ).trim().toLowerCase();
+  }
+
+  function applyPermissions(perms){
+    auth.permissions = perms || { pages: {}, actions: {} };
+    auth.email = lower(perms?.email || auth.email || getSessionUserEmail());
+    auth.role = norm(perms?.role || "viewer");
+    auth.canView = hasPageAccess(PAGE_KEY);
+    auth.canSubmit = auth.canView && hasActionAccess(SUBMIT_ACTION_KEY);
+  }
+
+  function requireViewPermission_(){ if (auth.canView) return true; renderAccessDenied(); return false; }
+  function requireSubmitPermission_(){
+    if (auth.canSubmit) return true;
+    showInlineError("You do not have permission to submit requests.");
+    showToast("You do not have permission to submit requests.", "danger", 4500);
+    return false;
+  }
+
+  async function loadPermissions(){
+    auth.email = getSessionUserEmail();
+    applyPermissions({ email: auth.email, role: "viewer", pages: {}, actions: {} });
+    if (!isGasRuntime()) return;
+    try {
+      const perms = await gasCall("getMyPermissions");
+      applyPermissions(perms);
+    } catch(err){
+      console.error("RBAC load failed:", err);
+    }
+  }
+
+  function applyRequestUi_(){
+    const btn = $("submitBtn");
+    if (btn){
+      btn.disabled = !auth.canSubmit;
+      btn.style.opacity = auth.canSubmit ? "" : "0.65";
+      btn.title = auth.canSubmit ? "" : "You do not have permission to submit requests.";
+    }
+  }
+
+  function renderAccessDenied(){
+    const form = $("requestForm");
+    if (form) Array.from(form.querySelectorAll("input, select, textarea, button")).forEach(el => { el.disabled = true; });
+    showInlineError("You do not have permission to access Requests.");
+  }
+
+  /* ── Portal ── */
+  function getPortalDocument_(){
+    try { if (window.top?.document?.body) return window.top.document; } catch(e){}
+    return document;
+  }
+
+  function ensurePortal_(){
+    const doc = getPortalDocument_();
+    let root = doc.getElementById("portalRoot");
+    if (root) return { doc, root };
+
+    root = doc.createElement("div");
+    root.id = "portalRoot"; root.className = "portal-root";
+
+    const toastWrap = doc.createElement("div");
+    toastWrap.id = "portalToastWrap"; toastWrap.className = "portal-toast-wrap";
+
+    const backdrop = doc.createElement("div");
+    backdrop.id = "portalModalBackdrop"; backdrop.className = "portal-modal-backdrop";
+    backdrop.setAttribute("role","dialog"); backdrop.setAttribute("aria-modal","true");
+    backdrop.setAttribute("aria-hidden","true");
+    backdrop.innerHTML = `
+      <div class="portal-modal" role="document" aria-labelledby="portalConfirmTitle">
+        <h3 id="portalConfirmTitle">Confirm request submission</h3>
+        <p id="portalConfirmBody">Submit this request?</p>
+        <div class="portal-modal-actions">
+          <button class="btnGhost" type="button" id="portalConfirmCancel">Cancel</button>
+          <button class="btnPrimary" type="button" id="portalConfirmYes">Yes, submit</button>
+        </div>
+      </div>`;
+
+    root.appendChild(toastWrap);
+    root.appendChild(backdrop);
+    doc.body.appendChild(root);
+    backdrop.addEventListener("click", (e) => { if (e.target === backdrop) closeConfirm(); });
+    return { doc, root };
+  }
+
+  function showToast(message, type = "success", timeout = 3000){
+    const { doc } = ensurePortal_();
+    const wrap = doc.getElementById("portalToastWrap");
+    const el = doc.createElement("div");
+    el.className = "portal-toast";
+    const icon = type === "danger" ? "fa-triangle-exclamation" : (type === "warn" ? "fa-circle-info" : "fa-check-circle");
+    el.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i><div>${escapeHtml(String(message))}</div>`;
+    wrap.appendChild(el);
+    setTimeout(() => {
+      el.style.transition = "opacity .25s ease, transform .25s ease";
+      el.style.opacity = "0"; el.style.transform = "translateY(8px)";
+      setTimeout(() => el.remove(), 260);
+    }, timeout);
+  }
+
+  /* ── Avatar ── */
+  function initialsFromName(n){ n = String(n||"").trim(); if(!n) return "??"; return n.split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase(); }
+
+  function setReqAvatar({ username, email, avatarUrl }){
+    const img = $("reqAvatarImg"); const initials = $("reqAvatarInitials");
+    const txt = initialsFromName(username || email);
+    if (!img || !initials) return;
+    if (avatarUrl && String(avatarUrl).trim()){
+      img.src = String(avatarUrl); img.style.display = "block"; initials.style.display = "none";
+      img.onerror = () => { img.style.display = "none"; initials.style.display = "block"; initials.textContent = txt; };
+    } else {
+      img.style.display = "none"; initials.style.display = "block"; initials.textContent = txt;
+    }
+  }
+
+  async function loadMyRequestHeader(){
+    const email = getSessionUserEmail();
+    if (!email){
+      $("reqName") && ($("reqName").textContent = "Guest");
+      $("reqEmail") && ($("reqEmail").textContent = "—");
+      $("reqRole") && ($("reqRole").textContent = "—");
+      $("reqGroup") && ($("reqGroup").textContent = "—");
+      setReqAvatar({});
+      showToast("Session not found — please sign in.", "warn", 4200);
+      return;
+    }
+    if (!isGasRuntime()){
+      $("reqName") && ($("reqName").textContent = email.split("@")[0]);
+      $("reqEmail") && ($("reqEmail").textContent = email);
+      $("reqRole") && ($("reqRole").textContent = auth.role || "—");
+      $("reqGroup") && ($("reqGroup").textContent = "—");
+      setReqAvatar({ username: email.split("@")[0], email });
+      return;
+    }
+    try {
+      const allUsers = await gasCall("getUsersData");
+      const me = (allUsers||[]).find(u => String(u.email||"").toLowerCase() === email.toLowerCase());
+      if (!me){
+        $("reqName") && ($("reqName").textContent = email.split("@")[0]);
+        $("reqEmail") && ($("reqEmail").textContent = email);
+        $("reqRole") && ($("reqRole").textContent = auth.role || "—");
+        $("reqGroup") && ($("reqGroup").textContent = "—");
+        setReqAvatar({ username: email.split("@")[0], email });
+        return;
+      }
+      $("reqName") && ($("reqName").textContent = me.username || me.email || "—");
+      $("reqEmail") && ($("reqEmail").textContent = me.email || "—");
+      $("reqRole") && ($("reqRole").textContent = me.role || auth.role || "—");
+      $("reqGroup") && ($("reqGroup").textContent = me.group || "—");
+      setReqAvatar({ username: me.username, email: me.email, avatarUrl: me.avatarUrl || me.AvatarUrl || "" });
+    } catch(err){ console.error(err); showToast("Failed to load profile.", "danger"); }
+  }
+
+  /* ── File attachment ── */
+  function getFileIcon(mimeType, fileName){
+    const m = String(mimeType || "").toLowerCase();
+    const n = String(fileName || "").toLowerCase();
+    if (m.includes("pdf") || n.endsWith(".pdf")) return "fa-file-pdf";
+    if (m.includes("word") || n.endsWith(".doc") || n.endsWith(".docx")) return "fa-file-word";
+    if (m.includes("excel") || m.includes("spreadsheet") || n.endsWith(".xls") || n.endsWith(".xlsx") || n.endsWith(".csv")) return "fa-file-excel";
+    if (m.includes("image") || n.match(/\.(png|jpg|jpeg|gif|webp)$/)) return "fa-file-image";
+    if (m.includes("zip") || n.endsWith(".zip")) return "fa-file-zipper";
+    if (m.includes("text") || n.endsWith(".txt")) return "fa-file-lines";
+    return "fa-file";
+  }
+
+  function formatBytes(bytes){
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  }
+
+  function readFileAsBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = String(e.target.result || "");
+      const comma = result.indexOf(",");
+      const b64 = comma >= 0 ? result.slice(comma + 1) : result;
+      resolve(b64);
+    };
+    reader.onerror = () => reject(new Error("FileReader error"));
+    reader.readAsDataURL(file);
+  });
+}
+
+  function applyFileToPreview(file){
+    if (!file) { clearAttachment(); return; }
+
+    if (file.size > MAX_FILE_BYTES){
+      showToast("File exceeds 10 MB limit.", "danger", 4000);
+      clearAttachment();
+      // Reset the input
+      const inp = $("reqAttachment");
+      if (inp) inp.value = "";
+      return;
+    }
+
+    attachState.file = file;
+    attachState.mimeType = file.type || "application/octet-stream";
+    attachState.fileName = file.name;
+
+    // Show preview
+    const icon = $("fileTypeIcon");
+    if (icon) icon.className = `fa-solid ${getFileIcon(file.type, file.name)}`;
+    $("fileName") && ($("fileName").textContent = file.name);
+    $("fileSize") && ($("fileSize").textContent = formatBytes(file.size));
+
+    const prev = $("filePreview");
+    if (prev) prev.classList.add("visible");
+
+    // Read to base64 in the background
+    readFileAsBase64(file)
+      .then(b64 => { attachState.base64 = b64; })
+      .catch(err => {
+        console.error("base64 read failed:", err);
+        showToast("Could not read file. Try again.", "danger", 3500);
+        clearAttachment();
+      });
+  }
+
+  function clearAttachment(){
+    attachState.file = null; attachState.base64 = null;
+    attachState.mimeType = null; attachState.fileName = null;
+    const prev = $("filePreview");
+    if (prev) prev.classList.remove("visible");
+    const prog = $("uploadProgress");
+    if (prog) prog.classList.remove("visible");
+    const inp = $("reqAttachment");
+    if (inp) inp.value = "";
+  }
+
+  function setUploadProgress(pct, label){
+    const prog = $("uploadProgress");
+    if (!prog) return;
+    prog.classList.add("visible");
+    $("uploadProgressBar") && ($("uploadProgressBar").style.width = pct + "%");
+    $("uploadProgressPct") && ($("uploadProgressPct").textContent = pct + "%");
+    $("uploadProgressLabel") && ($("uploadProgressLabel").textContent = label || "Uploading…");
+  }
+
+  function hideUploadProgress(){
+    const prog = $("uploadProgress");
+    if (prog) prog.classList.remove("visible");
+  }
+
+  function bindFileInput(){
+    const inp = $("reqAttachment");
+    const zone = $("uploadZone");
+    const removeBtn = $("fileRemoveBtn");
+
+    if (!inp || !zone) return;
+
+    inp.addEventListener("change", () => {
+      if (inp.files && inp.files[0]) applyFileToPreview(inp.files[0]);
+    });
+
+    // Drag-and-drop
+    zone.addEventListener("dragover", (e) => { e.preventDefault(); zone.classList.add("drag-over"); });
+    zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
+    zone.addEventListener("drop", (e) => {
+      e.preventDefault(); zone.classList.remove("drag-over");
+      const file = e.dataTransfer?.files?.[0];
+      if (file) { applyFileToPreview(file); inp.value = ""; }
+    });
+
+    // Keyboard activate
+    zone.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); inp.click(); }
+    });
+
+    if (removeBtn) removeBtn.addEventListener("click", clearAttachment);
+  }
+
+  /* ── Form defaults / reset ── */
+  function initFormDefaults_(){
+    const today = new Date().toISOString().slice(0,10);
+    const start = $("reqStart"); const end = $("reqEnd");
+    if (start && !start.value) start.value = today;
+    if (start) start.min = today;
+    if (end) end.min = today;
+    if (start && end){
+      start.addEventListener("change", () => {
+        end.min = start.value || today;
+        if (end.value && end.value < end.min) end.value = end.min;
+      });
+      end.addEventListener("change", () => {
+        if (start.value && end.value && end.value < start.value) {
+          end.style.borderColor = "var(--red)";
+          showInlineError("End date cannot be earlier than start date.");
+        } else {
+          end.style.borderColor = "";
+          hideInlineError();
+        }
+      });
+    }
+  }
+
+  function resetRequestForm(){
+    const form = $("requestForm");
+    if (!form) return;
+    form.reset();
+    const today = new Date().toISOString().slice(0,10);
+    $("reqStart") && ($("reqStart").value = today);
+    $("reqEnd") && ($("reqEnd").value = "");
+    clearAttachment();
+    hideInlineError();
+    const counterEl = $("reasonCounter");
+    if (counterEl) { counterEl.textContent = "0 / 1000"; counterEl.style.color = "var(--red)"; }
+    showToast("Form cleared.", "warn", 1400);
+  }
+
+  function showInlineError(msg){ const fe = $("formError"); if (!fe) return; fe.textContent = msg; fe.style.display = "block"; }
+  function hideInlineError(){ const fe = $("formError"); if (!fe) return; fe.textContent = ""; fe.style.display = "none"; }
+
+  function validatePayload(p){
+    if (!p.email) return "No session found. Please sign in again.";
+    if (!p.type) return "Please choose a request type.";
+    if (!p.startDate) return "Start date is required.";
+    if (!p.endDate) return "End date is required.";
+    const _sd = new Date(p.startDate), _ed = new Date(p.endDate);
+  if (!isNaN(_sd) && !isNaN(_ed) && _ed < _sd)
+    return "End date cannot be earlier than start date.";
+   if (!p.reason || p.reason.trim().length < 10) return "Please provide a reason of at least 10 characters for the approver.";
+    return "";
+  }
+
+  /* ── Confirm modal ── */
+  let pendingPayload = null;
+  let isSubmitting = false;
+
+  function openConfirm(text){
+    const { doc } = ensurePortal_();
+    const backdrop = doc.getElementById("portalModalBackdrop");
+    const body = doc.getElementById("portalConfirmBody");
+    const yes = doc.getElementById("portalConfirmYes");
+    const cancel = doc.getElementById("portalConfirmCancel");
+    body.textContent = text || "Submit this request?";
+    backdrop.style.display = "flex";
+    backdrop.setAttribute("aria-hidden","false");
+    cancel.onclick = cancelConfirm;
+    yes.onclick = confirmSubmit;
+    setTimeout(() => yes.focus(), 0);
+  }
+
+  function closeConfirm(){
+    const { doc } = ensurePortal_();
+    const backdrop = doc.getElementById("portalModalBackdrop");
+    backdrop.style.display = "none";
+    backdrop.setAttribute("aria-hidden","true");
+  }
+
+  function cancelConfirm(){ closeConfirm(); pendingPayload = null; }
+
+  function setLoading(on){
+    const btn = $("submitBtn");
+    if (!btn) return;
+    btn.disabled = !!on || !auth.canSubmit;
+    btn.classList.toggle("is-loading", !!on);
+    isSubmitting = !!on;
+  }
+
+  function submitRequest(){
+    if (!requireViewPermission_()) return;
+    if (!requireSubmitPermission_()) return;
+
+    const email = getSessionUserEmail();
+    if (!email){ showInlineError("No session found. Please sign in."); showToast("No session — please sign in.", "danger", 4000); return; }
+
+    const payload = {
+      email,
+      type:        norm($("reqType")?.value),
+      priority:    norm($("reqPriority")?.value),
+      startDate:   toMMDDYYYY($("reqStart")?.value),
+      endDate:     toMMDDYYYY($("reqEnd")?.value),
+      timeOrHours: norm($("reqTime")?.value),
+      contact:     norm($("reqContact")?.value),
+      reason:      norm($("reqReason")?.value),
+      submittedAt: new Date().toISOString(),
+      _actorEmail: auth.email || email,
+      // attachment fields — populated just before actual submission
+      attachmentBase64: null,
+      attachmentMime:   null,
+      attachmentName:   null
+    };
+
+    const err = validatePayload(payload);
+    if (err){ showInlineError(err); showToast(err, "danger"); return; }
+
+    hideInlineError();
+    pendingPayload = payload;
+
+    openConfirm(
+      `Submit request: ${payload.type} — ${payload.startDate}` +
+      `${payload.endDate && payload.endDate !== payload.startDate ? " to " + payload.endDate : ""}` +
+      (attachState.fileName ? ` (+ attachment: ${attachState.fileName})` : "")
+    );
+  }
+
+  async function confirmSubmit(){
+    if (!pendingPayload){ showToast("Missing request payload.", "danger", 3500); return; }
+    if (!requireSubmitPermission_()) return;
+    if (isSubmitting) return;
+    isSubmitting = true; // set BEFORE closeConfirm to prevent re-entry
+
+    closeConfirm();
+    setLoading(true);
+
+    // Attach file data if one is selected
+    if (attachState.file) {
+      // If base64 not yet ready, read it now
+      if (!attachState.base64) {
+        try {
+          setUploadProgress(20, "Reading file…");
+          attachState.base64 = await readFileAsBase64(attachState.file);
+        } catch(e) {
+          setLoading(false); isSubmitting = false; hideUploadProgress();
+          showToast("Could not read the attachment. Please try again.", "danger", 4000);
+          return;
+        }
+      }
+      setUploadProgress(50, "Uploading file…");
+      pendingPayload.attachmentBase64 = attachState.base64;
+      pendingPayload.attachmentMime   = attachState.mimeType;
+      pendingPayload.attachmentName   = attachState.fileName;
+    }
+
+    if (!isGasRuntime()){
+      setTimeout(() => {
+        setLoading(false); isSubmitting = false; hideUploadProgress();
+        showToast("Request (local test) submitted.", "success");
+        resetRequestForm(); pendingPayload = null;
+      }, 700);
+      return;
+    }
+
+    setUploadProgress(75, "Submitting request…");
+
+    google.script.run
+      .withSuccessHandler(function(res){
+        setLoading(false); isSubmitting = false; hideUploadProgress();
+
+        if (String(res || "").toLowerCase() === "ok"){
+          setUploadProgress(100, "Done!");
+          setTimeout(() => hideUploadProgress(), 400);
+          showToast("Request submitted successfully.", "success", 3500);
+          resetRequestForm(); pendingPayload = null;
+        } else {
+          const m = String(res || "Unexpected server response");
+          showToast(m, "danger", 6000);
+          console.warn("Server returned non-ok:", m);
+        }
+      })
+      .withFailureHandler(function(err){
+        setLoading(false); isSubmitting = false; hideUploadProgress();
+        const msg = (err && err.message) ? err.message : String(err || "Unknown error");
+        console.error("submitEmployeeRequest failed:", err);
+        showToast("Request submission failed: " + msg, "danger", 7000);
+      })
+      .submitEmployeeRequest(pendingPayload);
+  }
+
+
+  function toMMDDYYYY(iso){
+  const s = String(iso || "").trim();
+  if (!s) return "";
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return s;
+  return `${m[2]}/${m[3]}/${m[1]}`;
+}
+
+  /* ── Init ── */
+  let requestPageBound_ = false;
+
+  async function initRequestPage(){
+    ensurePortal_();
+    initFormDefaults_();
+    bindFileInput();
+
+    // Bind Escape immediately — don't wait for permissions
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      const { doc } = ensurePortal_();
+      const backdrop = doc.getElementById("portalModalBackdrop");
+      if (backdrop && backdrop.style.display === "flex") closeConfirm();
+    }, { once: false });
+
+    await loadPermissions();
+    applyRequestUi_();
+    await loadMyRequestHeader();
+
+    // Reason character counter
+    const reasonEl = $("reqReason");
+    const counterEl = $("reasonCounter");
+    if (reasonEl && counterEl) {
+      reasonEl.addEventListener("input", () => {
+        const len = reasonEl.value.length;
+        counterEl.textContent = `${len} / 1000`;
+        counterEl.style.color = len < 10 ? "var(--red)" : "var(--t-3)";
+      });
+    }
+
+    if (!auth.canView){ renderAccessDenied(); return; }
+
+    try {
+      if (window.google?.script?.run){
+        google.script.run.logActivity(getSessionUserEmail() || "anonymous", "Page View", "Requests", "Info");
+      }
+    } catch(e){ console.error("logActivity failed:", e); }
+
+    if (!requestPageBound_){
+      const ac = new AbortController();
+      const sig = { signal: ac.signal };
+
+      // Escape listener bound at init — no duplicate needed here
+
+      window.__REQUEST_CLEANUP__ = () => {
+        ac.abort(); closeConfirm();
+        clearAttachment(); hideUploadProgress();
+        window.__REQUEST_CLEANUP__ = null;
+      };
+
+      requestPageBound_ = true;
+    }
+  }
+
+  if (document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initRequestPage, { once: true });
+  } else {
+    initRequestPage();
+  }
+
+
+  window.submitRequest     = submitRequest;
+  window.resetRequestForm  = resetRequestForm;
+
+})();
+
+</script>

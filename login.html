@@ -1,0 +1,1423 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base target="_top" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap');
+
+  /* ============================================================
+   * TOKENS
+   * ============================================================ */
+  :root {
+    --font-ui: 'Sora', system-ui, sans-serif;
+
+    /* surfaces */
+    --bg-0: #060608;
+    --bg-1: #0c0c10;
+    --bg-2: #111115;
+    --bg-3: #18181e;
+    --bg-4: #1e1e26;
+
+    /* borders */
+    --b-0: rgba(255,255,255,.042);
+    --b-1: rgba(255,255,255,.08);
+    --b-2: rgba(255,255,255,.14);
+    --b-3: rgba(255,255,255,.24);
+
+    /* text */
+    --t-1: rgba(255,255,255,.93);
+    --t-2: rgba(255,255,255,.50);
+    --t-3: rgba(255,255,255,.26);
+
+    /* geometry */
+    --r-xl:  24px;
+    --r-lg:  16px;
+    --r-md:  12px;
+    --r-sm:   8px;
+    --r-pill: 999px;
+
+    /* shadows */
+    --sh-card: 0 32px 80px rgba(0,0,0,.80), 0 0 0 1px rgba(255,255,255,.06);
+    --sh-btn:  0 8px 24px rgba(0,0,0,.55);
+
+    /* transitions */
+    --t-fast:   .14s ease;
+    --t-med:    .24s ease;
+    --t-spring: .32s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    /* legacy compat */
+    --bg-surface:     var(--bg-2);
+    --text-primary:   var(--t-1);
+    --text-secondary: var(--t-2);
+    --border-subtle:  var(--b-1);
+    --border-focus:   var(--b-3);
+    --input-bg:       rgba(0,0,0,.32);
+    --danger:         #f87171;
+  }
+
+  /* ============================================================
+   * BASE
+   * ============================================================ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-ui);
+    background: var(--bg-0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    color: var(--t-1);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%,   rgba(99,102,241,.10) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 50% at 0%  100%, rgba(99,102,241,.06) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 100% 50%,  rgba(59,130,246,.05) 0%, transparent 55%);
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  a {
+    color: var(--t-2);
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color var(--t-fast);
+  }
+
+  a:hover { color: var(--t-1); }
+
+  /* ============================================================
+   * CARD
+   * ============================================================ */
+  .login-box {
+    width: 400px;
+    max-width: min(92vw, 400px);
+    padding: 36px 32px 30px;
+    background: rgba(14,14,18,.82);
+    backdrop-filter: saturate(160%) blur(28px);
+    -webkit-backdrop-filter: saturate(160%) blur(28px);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: var(--r-xl);
+    box-shadow: var(--sh-card);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+    transition: opacity .3s ease, transform .3s ease;
+  }
+
+  .login-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.20), transparent);
+    border-radius: var(--r-pill);
+  }
+
+  .login-box {
+    transform: translateY(24px) scale(.98);
+    opacity: 0;
+    animation: cardIn .7s cubic-bezier(0.2, 0.8, 0.2, 1) .1s forwards;
+  }
+
+  @keyframes cardIn {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* ── Brand area ── */
+  .brand-lockup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    width: 100%;
+  }
+
+  .brand-icon {
+    width: 52px; height: 52px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(99,102,241,.30), rgba(59,130,246,.20));
+    border: 1px solid rgba(99,102,241,.28);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: #a5b4fc;
+    box-shadow: 0 4px 20px rgba(99,102,241,.20);
+  }
+
+  .login-box h2 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -.04em;
+    color: var(--t-1);
+    line-height: 1.1;
+  }
+
+  .login-box .brand-sub {
+    font-size: 13px;
+    color: var(--t-3);
+    font-weight: 400;
+    letter-spacing: .01em;
+    margin-top: 2px;
+  }
+
+  /* ============================================================
+   * FIELDS
+   * ============================================================ */
+  .field {
+    width: 100%;
+    margin: 0;
+    position: relative;
+    padding-top: 20px;
+  }
+
+  .field + .field { margin-top: 8px; }
+
+  .field input {
+    width: 100%;
+    min-height: 54px;
+    border-radius: var(--r-lg);
+    background: rgba(0,0,0,.35);
+    border: 1px solid var(--b-1);
+    color: var(--t-1);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    outline: none;
+    text-align: center;
+    padding: 16px 20px;
+    caret-color: #a5b4fc;
+    transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  .field input:focus {
+    border-color: rgba(99,102,241,.55);
+    background: rgba(99,102,241,.05);
+    box-shadow: 0 0 0 1px rgba(99,102,241,.28), 0 4px 16px rgba(99,102,241,.10);
+  }
+
+  .field input::placeholder { color: transparent; }
+
+  #password {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+
+  .field label {
+    position: absolute;
+    left: 50%; top: 8px;
+    transform: translateX(-50%);
+    width: 100%;
+    text-align: center;
+    color: var(--t-3);
+    font-family: var(--font-ui);
+    font-size: 10.5px; font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    pointer-events: none;
+    transition: var(--t-fast);
+  }
+
+  .field input:focus + label,
+  .field input:not(:placeholder-shown) + label {
+    top: 5px;
+    font-size: 9.5px;
+    color: rgba(165,180,252,.80);
+    letter-spacing: .08em;
+  }
+
+  /* ── Password eye toggle ── */
+  .show-btn {
+    position: absolute;
+    right: 16px;
+    top: calc(20px + 27px);
+    transform: translateY(-50%);
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--t-3);
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--b-1);
+    font-size: 12px;
+    transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+  }
+
+  .show-btn:hover {
+    color: var(--t-1);
+    background: rgba(255,255,255,.10);
+    transform: translateY(-50%) scale(1.06);
+  }
+
+  .show-btn:active { transform: translateY(-50%) scale(.94); }
+  .show-btn:focus  { outline: none; }
+
+  /* ── OTP input ── */
+  #authCode {
+    width: 100%;
+    background: rgba(0,0,0,.42);
+    border: 1px solid var(--b-1);
+    padding: 16px;
+    border-radius: var(--r-lg);
+    font-family: var(--font-ui);
+    font-size: 26px; font-weight: 700;
+    letter-spacing: 8px;
+    color: var(--t-1);
+    text-align: center;
+    caret-color: #a5b4fc;
+    outline: none;
+    transition: border-color var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  #authCode:focus {
+    border-color: rgba(99,102,241,.55);
+    box-shadow: 0 0 0 1px rgba(99,102,241,.28);
+  }
+
+  /* ============================================================
+   * REMEMBER ME
+   * ============================================================ */
+  .remember-me-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 14px 0 4px;
+  }
+
+  .remember-me-container label {
+    cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12.5px; color: var(--t-2);
+    transition: color var(--t-fast);
+    user-select: none;
+  }
+
+  .remember-me-container label:hover { color: var(--t-1); }
+
+  .remember-me-container input[type="checkbox"] {
+    appearance: none;
+    width: 15px; height: 15px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid var(--b-1);
+    border-radius: 4px;
+    cursor: pointer; position: relative;
+    transition: background var(--t-fast), border-color var(--t-fast);
+  }
+
+  .remember-me-container input[type="checkbox"]:checked {
+    background: #a5b4fc;
+    border-color: #a5b4fc;
+  }
+
+  .remember-me-container input[type="checkbox"]:checked::after {
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 9px; color: #000;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* ============================================================
+   * BUTTONS
+   * ============================================================ */
+  button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 10px;
+    border: none;
+    border-radius: var(--r-lg);
+    font-family: var(--font-ui);
+    font-size: 14.5px; font-weight: 700;
+    cursor: pointer;
+    background: var(--t-1);
+    color: #000;
+    transition:
+      transform var(--t-spring),
+      box-shadow var(--t-med),
+      background var(--t-fast),
+      opacity var(--t-fast);
+  }
+
+  button:hover  { transform: translateY(-1px) scale(1.005); box-shadow: 0 6px 20px rgba(255,255,255,.12); }
+  button:active { transform: scale(.985); box-shadow: none; }
+
+  button:disabled,
+  button.loading {
+    opacity: .65; pointer-events: none;
+    transform: none !important; box-shadow: none !important;
+  }
+
+  #loginBtn {
+    margin-top: 14px;
+    padding: 16px;
+    border-radius: var(--r-xl);
+    min-height: 56px;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -.01em;
+    position: relative;
+    background: #fff;
+    box-shadow: var(--sh-btn);
+  }
+
+  #loginBtn:hover { box-shadow: 0 12px 32px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.15); }
+  #loginBtn.loading { color: transparent !important; }
+  #loginBtn.loading i {
+    color: #000;
+    position: absolute; inset: 0;
+    display: grid; place-items: center;
+    font-size: 18px;
+  }
+
+  #bioBtn {
+    background: rgba(255,255,255,.07);
+    color: var(--t-1);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--b-1);
+    margin-top: 12px;
+  }
+
+  #bioBtn:hover { background: rgba(255,255,255,.12); }
+
+  .dev-bypass-btn {
+    background: transparent !important;
+    color: var(--t-3) !important;
+    border: 1px dashed var(--b-1) !important;
+    opacity: .55;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: var(--r-lg);
+    font-size: 12px;
+  }
+
+  .dev-bypass-btn:hover {
+    opacity: 1;
+    border-color: var(--b-2) !important;
+    color: var(--t-2) !important;
+    box-shadow: none;
+    transform: none;
+  }
+
+  /* ============================================================
+   * ERROR MESSAGE
+   * ============================================================ */
+  #msg { width: 100%; }
+
+  .error {
+    width: 100%;
+    margin-top: 12px;
+    padding: 11px 13px;
+    background: rgba(239,68,68,.12);
+    border: 1px solid rgba(239,68,68,.28);
+    border-radius: var(--r-md);
+    color: #f87171;
+    font-size: 13px; font-weight: 500;
+    animation: shake .28s ease;
+    text-align: left;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  @keyframes shake {
+    20% { transform: translateX(-5px); }
+    50% { transform: translateX( 5px); }
+    80% { transform: translateX(-3px); }
+  }
+
+  /* ============================================================
+   * CAPS LOCK WARNING
+   * ============================================================ */
+  .caps-warning {
+    display: none;
+    margin-top: 6px;
+    font-size: 11.5px; font-weight: 600;
+    color: #fbbf24;
+    align-items: center; justify-content: center; gap: 5px;
+    user-select: none;
+    opacity: .90;
+  }
+
+  /* ============================================================
+   * VERIFY PILL
+   * ============================================================ */
+  .progress-pill {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 10px;
+    height: 40px; padding: 0 16px;
+    border-radius: var(--r-pill);
+    background: rgba(255,255,255,.08);
+    border: 1px solid var(--b-2);
+    color: var(--t-1);
+    font-family: var(--font-ui);
+    font-weight: 600; font-size: 13.5px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.35);
+  }
+
+  .progress-pill .pill-spinner {
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.28);
+    border-top-color: rgba(255,255,255,.90);
+    animation: pillSpin .8s linear infinite;
+  }
+
+  @keyframes pillSpin { to { transform: rotate(360deg); } }
+
+  #verifyBtn.btn-loading { background: transparent; border: none; box-shadow: none; }
+  #verifyBtn.btn-loading:hover { transform: none; }
+
+  /* ============================================================
+   * FOOTER
+   * ============================================================ */
+  .app-footer {
+    position: fixed; bottom: 20px;
+    color: var(--t-3);
+    font-family: var(--font-ui);
+    font-size: 11.5px; opacity: .7;
+  }
+
+  /* ============================================================
+   * CHANGE PASSWORD MODAL
+   * ============================================================ */
+  .modal {
+    position: fixed; inset: 0;
+    display: none; place-items: center;
+    background: rgba(0,0,0,.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 9999; padding: 18px;
+  }
+
+  .modalContent {
+    width: min(480px, 96vw);
+    background: var(--bg-2);
+    border: 1px solid var(--b-2);
+    border-radius: var(--r-xl);
+    padding: 22px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.75);
+    color: var(--t-1);
+    max-height: calc(100vh - 60px);
+    overflow: auto;
+  }
+
+  .modalHeader {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--b-0);
+    margin-bottom: 18px;
+  }
+
+  .modalHeaderText h3 {
+    margin: 0; font-size: 17px; font-weight: 800;
+    letter-spacing: -.025em; color: var(--t-1);
+  }
+
+  .modalSubtitle { margin: 4px 0 0; font-size: 13px; color: var(--t-2); }
+
+  .modalClose {
+    width: auto; min-width: 30px;
+    height: 30px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--b-1);
+    background: var(--bg-3);
+    color: var(--t-2);
+    cursor: pointer; font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 8px;
+    margin: 0;
+    transition: background var(--t-fast), color var(--t-fast);
+    flex-shrink: 0;
+  }
+
+  .modalClose:hover { background: var(--bg-4); color: var(--t-1); }
+
+  .modalGrid { display: grid; gap: 14px; }
+
+  #pwModal .field { width: 100%; margin: 0; padding-top: 0; }
+
+  #pwModal .field label {
+    display: block; margin: 0 0 7px;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: .10em; text-transform: uppercase;
+    color: var(--t-3); position: static; transform: none;
+    pointer-events: auto;
+  }
+
+  #pwModal .field input {
+    width: 100%; padding: 11px 13px;
+    background: var(--bg-3);
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-md);
+    color: var(--t-1); font-family: var(--font-ui); font-size: 13.5px;
+    outline: none; text-align: left;
+    caret-color: #a5b4fc;
+    transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  #pwModal .field input::placeholder { color: var(--t-3); }
+
+  #pwModal .field input:focus {
+    border-color: rgba(99,102,241,.50);
+    background: rgba(99,102,241,.05);
+    box-shadow: 0 0 0 1px rgba(99,102,241,.24);
+  }
+
+  .modalActions {
+    display: flex; justify-content: flex-end; gap: 8px;
+    padding-top: 14px;
+    border-top: 1px solid var(--b-0);
+    margin-top: 16px;
+  }
+
+  .btnGhost {
+    width: auto;
+    background: var(--bg-3);
+    color: var(--t-2);
+    border: 1px solid var(--b-1);
+    padding: 9px 14px;
+    border-radius: var(--r-md);
+    font-family: var(--font-ui);
+    font-size: 13px; font-weight: 700;
+    margin: 0;
+    transition: background var(--t-fast), color var(--t-fast);
+  }
+
+  .btnGhost:hover { background: var(--bg-4); color: var(--t-1); transform: none; box-shadow: none; }
+
+  .btnPrimary {
+    width: auto;
+    padding: 9px 16px;
+    border-radius: var(--r-md);
+    font-family: var(--font-ui);
+    font-size: 13px; font-weight: 800;
+    margin: 0;
+    background: #a5b4fc;
+    color: #000;
+  }
+
+  .btnPrimary:hover { box-shadow: 0 4px 14px rgba(165,180,252,.30); }
+
+  #pwUpdateBtn {
+    position: relative;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 10px; min-width: 100px;
+  }
+
+  #pwUpdateBtn .btnSpin { display: none; }
+  #pwUpdateBtn.is-loading { opacity: .80; pointer-events: none; }
+  #pwUpdateBtn.is-loading .btnText { opacity: 0; }
+  #pwUpdateBtn.is-loading .btnSpin {
+    display: grid; position: absolute; inset: 0;
+    place-items: center; font-size: 15px;
+  }
+
+  /* ============================================================
+   * UTILITIES
+   * ============================================================ */
+  body.modal-open { overflow: hidden; }
+
+  :where(input, button, a, .show-btn):focus { outline: none; }
+  :where(input, button, a, .show-btn):focus-visible {
+    box-shadow: 0 0 0 3px rgba(165,180,252,.22), 0 0 0 1px rgba(165,180,252,.45);
+  }
+
+  .auth-input-container { width: 100%; display: flex; flex-direction: column; align-items: center; }
+  .auth-input-container .field { margin: 18px 0; }
+
+  @media (max-height: 700px) {
+    .login-box { padding: 26px 28px 22px; }
+    #loginBtn { min-height: 50px; font-size: 15px; }
+    .brand-lockup { margin-bottom: 20px; }
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fa-spin { animation: spin .85s linear infinite; }
+</style>
+</head>
+
+<body>
+  <div class="login-box">
+
+    <!-- Brand -->
+    <div class="brand-lockup">
+      <div class="brand-icon">
+        <i class="fas fa-server"></i>
+      </div>
+      <div>
+        <h2>Manila IT</h2>
+        <div class="brand-sub">Inventory System</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <input id="email" type="email" placeholder=" " required>
+      <label>Email Address</label>
+    </div>
+
+    <div class="field">
+      <input id="password" type="password" placeholder=" " required>
+      <label>Password</label>
+      <span class="show-btn" id="showPwBtn" aria-label="Toggle password visibility">
+        <i class="fas fa-eye"></i>
+      </span>
+      <div id="capsWarning" class="caps-warning">
+        <i class="fas fa-arrow-up"></i> Caps Lock is on
+      </div>
+    </div>
+
+    <div class="remember-me-container">
+      <label>
+        <input type="checkbox" id="rememberMe">
+        Remember Me <span style="font-size:11px;opacity:.55;margin-left:2px;">(Touch ID)</span>
+      </label>
+    </div>
+
+    <div id="msg"></div>
+
+    <button id="loginBtn">Log In</button>
+
+    <button id="bioBtn" style="display:none;">
+      <i class="fas fa-fingerprint"></i> Use Touch ID
+    </button>
+
+    <p style="margin-top:18px;font-size:12.5px;color:var(--t-3);">
+      No account? <a id="registerLink">Create one</a>
+    </p>
+
+    <button id="devBypassBtn" class="dev-bypass-btn">Developer Bypass</button>
+
+  </div>
+
+  <!-- Change Password Modal -->
+  <div id="pwModal" class="modal">
+    <div class="modalContent" id="pwModalContent">
+      <div class="modalHeader">
+        <div class="modalHeaderText">
+          <h3>Change Password</h3>
+          <p class="modalSubtitle">Required before continuing</p>
+        </div>
+        <button class="modalClose" id="pwModalCloseBtn" type="button">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modalGrid" style="grid-template-columns:1fr;">
+        <div class="field">
+          <label>New Password</label>
+          <input id="newPw" type="password" autocomplete="new-password" placeholder="Min 8 characters">
+        </div>
+        <div class="field">
+          <label>Confirm Password</label>
+          <input id="newPw2" type="password" autocomplete="new-password" placeholder="Re-type password">
+        </div>
+      </div>
+      <div class="modalActions">
+        <button class="btnGhost" id="pwCancelBtn" type="button">Cancel</button>
+        <button class="btnPrimary" id="pwUpdateBtn" type="button">
+          <span class="btnText">Update</span>
+          <span class="btnSpin" aria-hidden="true"><i class="fas fa-circle-notch fa-spin"></i></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-footer">FBG Philippines · Manila IT</div>
+
+<script>
+const App = (() => {
+  "use strict";
+
+  /* ----------------------------------------------------------
+   * STATE
+   * ---------------------------------------------------------- */
+  const state = {
+    resendInterval:   null,
+    pendingSessionID: null,
+    isLoginLoading:   false,
+    // Stores the email used at login so OTP steps don't depend on
+    // reading the (potentially hidden or cleared) input field.
+    otpEmail:         "",
+    // Stores the email captured at pw-change so submitNewPassword
+    // doesn't rely on the live input field value either.
+    pwChangeEmail:    "",
+    appUrl:           "",
+  };
+
+  /* ----------------------------------------------------------
+   * DOM HELPERS
+   * ---------------------------------------------------------- */
+  const $  = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  /* ----------------------------------------------------------
+   * HTML ESCAPE — prevents XSS when injecting user-controlled
+   * values (e.g. email address) into innerHTML templates.
+   * ---------------------------------------------------------- */
+  function escapeHtml(str) {
+    return String(str || "")
+      .replace(/&/g,  "&amp;")
+      .replace(/</g,  "&lt;")
+      .replace(/>/g,  "&gt;")
+      .replace(/"/g,  "&quot;")
+      .replace(/'/g,  "&#39;");
+  }
+
+  /* ----------------------------------------------------------
+   * UI CACHE
+   * ---------------------------------------------------------- */
+  const ui = {};
+
+  function cacheUI() {
+    ui.loginBox      = $(".login-box");
+    ui.header        = $(".login-box h2");
+    ui.msg           = $("#msg");
+    ui.email         = $("#email");
+    ui.password      = $("#password");
+    ui.rememberMe    = $("#rememberMe");
+    ui.loginBtn      = $("#loginBtn");
+    ui.bioBtn        = $("#bioBtn");
+    ui.showPwBtn     = $("#showPwBtn");
+    ui.registerLink  = $("#registerLink");
+    ui.devBypassBtn  = $("#devBypassBtn");
+    ui.pwModal       = $("#pwModal");
+    ui.pwModalContent= $("#pwModalContent");
+    ui.pwModalClose  = $("#pwModalCloseBtn");
+    ui.pwCancelBtn   = $("#pwCancelBtn");
+    ui.pwUpdateBtn   = $("#pwUpdateBtn");
+  }
+
+  /* ----------------------------------------------------------
+   * UTILITIES
+   * ---------------------------------------------------------- */
+  function getEmailValue() {
+    return String(ui.email?.value || "").trim().toLowerCase();
+  }
+
+  function getPasswordValue() {
+    return String(ui.password?.value || "");
+  }
+
+  function getStoredSession() {
+    return localStorage.getItem("session") || sessionStorage.getItem("session");
+  }
+
+  function canShowBiometricButton() {
+    return !!window.PublicKeyCredential && !!localStorage.getItem("session");
+  }
+
+  function clearTimers() {
+    if (state.resendInterval) {
+      clearInterval(state.resendInterval);
+      state.resendInterval = null;
+    }
+  }
+
+  function clearSessions() {
+    localStorage.clear();
+    sessionStorage.clear();
+    if (ui.bioBtn) ui.bioBtn.style.display = "none";
+  }
+
+  function logActivitySafe(email, action, resource, status) {
+    try { google.script.run.logActivity(email, action, resource, status); } catch (_) {}
+  }
+
+  function showError(message) {
+    if (!ui.msg) return;
+    ui.msg.innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
+    setTimeout(() => { if (ui.msg) ui.msg.innerHTML = ""; }, 4000);
+  }
+
+function redirectTo(page, sessionID, email) {
+  // Get the app URL synchronously from what we already know
+  // No async call needed — we build the URL client-side
+  const base = window.location.href.split('?')[0];
+  let dest = base + '?page=' + encodeURIComponent(page);
+  if (sessionID) dest += '&sid='  + encodeURIComponent(sessionID);
+  if (email)     dest += '&sue='  + encodeURIComponent(email);
+
+  // This works because it's called directly from verifyOTP's
+  // success handler which runs in the same microtask as the click
+  window.top.location.href = dest;
+}
+
+  /* ----------------------------------------------------------
+   * LOGIN BUTTON STATE
+   * ---------------------------------------------------------- */
+  function setLoginButtonLoading(isLoading) {
+    if (!ui.loginBtn) return;
+    state.isLoginLoading  = !!isLoading;
+    ui.loginBtn.disabled  = !!isLoading;
+    ui.loginBtn.classList.toggle("loading", !!isLoading);
+    ui.loginBtn.innerHTML = isLoading
+      ? '<i class="fas fa-spinner fa-spin"></i>'
+      : "Log In";
+  }
+
+  function setPwUpdateLoading(isLoading) {
+    const btn = ui.pwUpdateBtn;
+    if (!btn) return;
+    btn.disabled = !!isLoading;
+    btn.classList.toggle("is-loading", !!isLoading);
+  }
+
+  function setVerifyButtonLoading(btn, label = "Verifying...") {
+    if (!btn) return;
+    btn.disabled = true;
+    btn.classList.add("btn-loading");
+    btn.innerHTML = `
+      <span class="progress-pill">
+        <span class="pill-spinner" aria-hidden="true"></span>
+        <span>${escapeHtml(label)}</span>
+      </span>`;
+  }
+
+  function setVerifyButtonSuccess(btn) {
+    if (!btn) return;
+    btn.disabled = true;
+    btn.classList.add("btn-loading");
+    btn.innerHTML = `
+      <span class="progress-pill">
+        <span style="font-weight:700;">Verified</span>
+        <span style="opacity:.75;">• Redirecting...</span>
+      </span>`;
+  }
+
+  /* ----------------------------------------------------------
+   * SESSION / BOOT
+   * FIX: if verifySession call itself fails (network/server error),
+   * fall back gracefully to showing the login form rather than
+   * leaving the user stuck on a blank loading state.
+   * ---------------------------------------------------------- */
+ function verifySessionAndRedirect(sessionID) {
+  google.script.run
+    .withSuccessHandler(valid => {
+      if (valid) redirectTo("home");
+      else       clearSessions();
+    })
+    .withFailureHandler(() => { clearSessions(); })
+    .verifySession(sessionID);
+}
+
+function boot() {
+  if (ui.bioBtn) {
+    ui.bioBtn.style.display = canShowBiometricButton() ? "block" : "none";
+  }
+
+  // Pre-fetch app URL so it's ready for redirect without async delay
+  google.script.run
+    .withSuccessHandler(url => { state.appUrl = url; })
+    .withFailureHandler(() => {})
+    .getAppUrl();
+}
+
+  // Disabled — session is now passed via URL params on login redirect.
+  // const sessionID = getStoredSession();
+  // if (sessionID) verifySessionAndRedirect(sessionID);
+
+  /* ----------------------------------------------------------
+   * BIOMETRIC LOGIN
+   * ---------------------------------------------------------- */
+  function biometricLogin() {
+    const sessionID = localStorage.getItem("session");
+    if (!sessionID) { showError("Please log in normally first to enable Touch ID."); return; }
+
+    google.script.run
+      .withSuccessHandler(credentialId => {
+        if (!credentialId) { showError("Touch ID not registered for this account."); return; }
+
+        navigator.credentials.get({
+          publicKey: {
+            challenge: new Uint8Array(32),
+            allowCredentials: [{
+              type: "public-key",
+              id: Uint8Array.from(atob(credentialId), c => c.charCodeAt(0)),
+            }],
+            userVerification: "required",
+          },
+        })
+        .then(() => {
+          logActivitySafe("user", "Login", "Touch ID Verified", "Success");
+          verifySessionAndRedirect(sessionID);
+        })
+        .catch(err => { console.error(err); showError("Touch ID failed or cancelled."); });
+      })
+      .getCredentialBySession(sessionID);
+  }
+
+  /* ----------------------------------------------------------
+   * LOGIN
+   * ---------------------------------------------------------- */
+  function login() {
+    const email    = getEmailValue();
+    const password = getPasswordValue();
+
+    if (!email || !password) { showError("Please enter email and password"); return; }
+
+    logActivitySafe(email, "Login Attempt", "Login Page", "Info");
+    setLoginButtonLoading(true);
+
+    google.script.run
+      .withUserObject({ email })
+      .withFailureHandler((error) => {
+        console.error("checkLogin failed:", error);
+        logActivitySafe(email, "Login Failed", "Server / Network Error", "Error");
+        showError("Connection Error");
+        setLoginButtonLoading(false);
+      })
+      .withSuccessHandler((result, userObject) => {
+        if (typeof result === "string" && result.startsWith("pw_change_required:")) {
+          const sessionID = result.split(":")[1];
+          logActivitySafe(email, "Login Blocked", "Password Change Required", "Warning");
+          setLoginButtonLoading(false);
+          openChangePasswordModal(sessionID, userObject.email);
+          return;
+        }
+
+        const errorMap = {
+          account_locked: ["Login Failed", "Account Locked",      "Security Alert: This account is locked due to multiple failed attempts."],
+          wrong_password: ["Login Failed", "Invalid Credentials", "Incorrect email or password"],
+          no_account:     ["Login Failed", "Invalid Credentials", "Incorrect email or password"],
+          not_active:     ["Login Failed", "Account Not Active",  "Account is not active. Contact Admin."],
+          missing_fields: [null,           null,                  "Please enter email and password"],
+          server_busy:    ["Login Failed", "Server Busy",         "Server busy. Please try again."],
+        };
+
+        const mapped = errorMap[result];
+        if (mapped) {
+          if (mapped[0]) logActivitySafe(email, mapped[0], mapped[1], "Denied");
+          showError(mapped[2]);
+          setLoginButtonLoading(false);
+          return;
+        }
+
+        // Success — result is the sessionID
+        logActivitySafe(email, "Login Success", "2FA Initiated", "Success");
+        requestAuth(userObject.email, result);
+      })
+      .checkLogin(email, password);
+  }
+
+  /* ----------------------------------------------------------
+   * 2FA / OTP
+   * ---------------------------------------------------------- */
+  function requestAuth(email, sessionID) {
+    // Store email in state so OTP verification doesn't depend on
+    // reading the now-hidden input field.
+    state.otpEmail = email;
+
+    google.script.run
+      .withFailureHandler((error) => {
+        console.error("sendAuthCode failed:", error);
+        showError("Failed to send OTP. Please try again.");
+        setLoginButtonLoading(false);
+      })
+      .withSuccessHandler(codeSent => {
+        if (codeSent !== true) {
+          showError("Failed to send OTP.");
+          setLoginButtonLoading(false);
+          return;
+        }
+        renderOTPView(email, sessionID);
+        startResendTimer(email, sessionID);
+      })
+      .sendAuthCode(email, sessionID);
+  }
+
+  function renderOTPView(email, sessionID) {
+    // Snapshot each login element with its correct display value so
+    // resetToLogin can restore exact layout (e.g. flex containers).
+    const loginElements = [
+      { el: $(".field:nth-of-type(1)"),    display: "" },
+      { el: $(".field:nth-of-type(2)"),    display: "" },
+      { el: $(".remember-me-container"),   display: "flex" },
+      { el: ui.loginBtn,                   display: "" },
+      { el: ui.bioBtn,                     display: canShowBiometricButton() ? "block" : "none" },
+      { el: ui.devBypassBtn,               display: "" },
+      { el: $(".login-box > p"),           display: "" },
+    ].filter(item => item.el);
+
+    loginElements.forEach(item => { item.el.style.display = "none"; });
+
+    if (ui.header) ui.header.innerText = "Manila IT";
+
+    if (ui.msg) {
+      // FIX: email is HTML-escaped before injection to prevent XSS.
+      ui.msg.innerHTML = `
+        <div class="auth-input-container">
+          <div style="margin-bottom:15px;color:var(--text-secondary);font-size:14px;">
+            Code sent to <b style="opacity:.8;">${escapeHtml(email)}</b>
+          </div>
+          <div class="field">
+            <input id="authCode" maxlength="6" placeholder="0 0 0 0 0 0"
+                   autocomplete="one-time-code" inputmode="numeric" required />
+          </div>
+          <button id="verifyBtn" type="button">Verify Identity</button>
+          <div id="resendContainer" style="margin-top:20px;font-size:13px;color:var(--text-secondary);">
+            Resend code in <span id="timer">2:00</span>
+          </div>
+          <div style="margin-top:15px;">
+            <a id="backToLoginLink" style="font-size:12px;color:var(--text-secondary);opacity:.6;">
+              <i class="fas fa-arrow-left"></i> Back to Login
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    const authInput = $("#authCode");
+    const verifyBtn = $("#verifyBtn");
+    const backLink  = $("#backToLoginLink");
+
+    if (verifyBtn) verifyBtn.addEventListener("click", () => verifyOTP(sessionID));
+    if (authInput) {
+      authInput.focus();
+      authInput.addEventListener("keydown", e => { if (e.key === "Enter") verifyOTP(sessionID); });
+    }
+
+    // Pass loginElements snapshot so resetToLogin restores correct display values
+    if (backLink) backLink.addEventListener("click", () => resetToLogin(loginElements));
+
+    setLoginButtonLoading(false);
+  }
+
+  function startResendTimer(email, sessionID) {
+    // FIX: always clear any existing timer before starting a new one
+    // to prevent multiple concurrent intervals (e.g. after a resend).
+    clearTimers();
+    let timeLeft = 120;
+
+    state.resendInterval = setInterval(() => {
+      timeLeft -= 1;
+      const timerDisplay    = $("#timer");
+      const resendContainer = $("#resendContainer");
+
+      if (timerDisplay) {
+        timerDisplay.textContent = `${Math.floor(timeLeft / 60)}:${String(timeLeft % 60).padStart(2, "0")}`;
+      }
+
+      if (timeLeft <= 0) {
+        clearTimers();
+        if (resendContainer) {
+          resendContainer.innerHTML = `<a id="resendCodeLink" style="font-size:13px;cursor:pointer;">Resend Code</a>`;
+          const link = $("#resendCodeLink");
+          if (link) link.addEventListener("click", () => resendOTP(email, sessionID));
+        }
+      }
+    }, 1000);
+  }
+
+  // FIX: only calls sendAuthCode once and restarts the timer on
+  // success. The old version called requestAuth() which re-rendered
+  // the OTP view AND sent the code — effectively sending it twice.
+  function resendOTP(email, sessionID) {
+    const resendContainer = $("#resendContainer");
+    if (resendContainer) {
+      resendContainer.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
+          <i class="fas fa-circle-notch fa-spin"></i>
+          <span>Requesting new code...</span>
+        </div>`;
+    }
+
+    google.script.run
+      .withSuccessHandler(codeSent => {
+        if (codeSent === true) {
+          const rc = $("#resendContainer");
+          if (rc) rc.innerHTML = `Resend code in <span id="timer">2:00</span>`;
+          startResendTimer(email, sessionID);
+        } else {
+          showError("Failed to resend code.");
+        }
+      })
+      .withFailureHandler(err => {
+        console.error(err);
+        showError("Failed to resend code.");
+      })
+      .sendAuthCode(email, sessionID);
+  }
+
+function verifyOTP(sessionID) {
+  const btn       = $("#verifyBtn");
+  const codeInput = $("#authCode");
+  const code      = String(codeInput?.value || "").trim();
+  const email     = state.otpEmail;
+
+  if (!sessionID || !code) { showError("Please enter the verification code."); return; }
+  if (!email)               { showError("Session error. Please log in again."); return; }
+  if (btn?.dataset.busy === "1") return;
+
+  if (btn) btn.dataset.busy = "1";
+  const originalHTML = btn ? btn.innerHTML : "Verify Identity";
+  setVerifyButtonLoading(btn);
+
+  const restoreButton = () => {
+    if (!btn) return;
+    btn.disabled = false;
+    btn.classList.remove("btn-loading");
+    btn.innerHTML = originalHTML;
+    btn.dataset.busy = "0";
+  };
+
+  google.script.run
+    .withSuccessHandler(ok => {
+      if (ok) {
+        setVerifyButtonSuccess(btn);
+        const appUrl = 'https://script.google.com/a/macros/betfanatics.com/s/AKfycbwzoyd7lWmwp6o1B7pB84INF733pWLWiV7DsUMkK_HmhCj1Ydx4U2GcsZzmUR28Kgk/exec';
+        let dest = appUrl + '?page=home';
+        dest    += '&sid=' + encodeURIComponent(sessionID);
+        dest    += '&sue=' + encodeURIComponent(email);
+
+        // Use anchor with target="_top" to break out of the GAS iframe
+        const a = document.createElement('a');
+        a.href   = dest;
+        a.target = '_top';
+        a.rel    = 'noopener';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        return;
+      }
+      showError("Invalid or expired code.");
+      restoreButton();
+    })
+    .withFailureHandler(err => {
+      console.error(err);
+      showError("Verification failed. Please try again.");
+      restoreButton();
+    })
+    .verifyAuthCode(sessionID, code, email);
+}
+  /* ----------------------------------------------------------
+   * CHANGE PASSWORD MODAL
+   * FIX: accepts email as a parameter and stores it in state so
+   * submitNewPassword doesn't rely on the live input field value,
+   * which may be empty if the user navigated away.
+   * ---------------------------------------------------------- */
+  function openChangePasswordModal(sessionID, email) {
+    state.pendingSessionID = sessionID;
+    state.pwChangeEmail    = email || getEmailValue();
+
+    const pw1 = $("#newPw");
+    const pw2 = $("#newPw2");
+    if (pw1) pw1.value = "";
+    if (pw2) pw2.value = "";
+    document.body.classList.add("modal-open");
+    if (ui.pwModal) ui.pwModal.style.display = "grid";
+    setPwUpdateLoading(false);
+    setTimeout(() => { if (pw1) pw1.focus(); }, 50);
+  }
+
+  function closePwModal(event) {
+    if (!event || event.target === ui.pwModal) closePwModalDirect();
+  }
+
+  function closePwModalDirect() {
+    if (ui.pwModal) ui.pwModal.style.display = "none";
+    document.body.classList.remove("modal-open");
+    setPwUpdateLoading(false);
+  }
+
+  function submitNewPassword() {
+    const btn = ui.pwUpdateBtn;
+    if (btn?.disabled) return;
+
+    const pw1 = String($("#newPw")?.value  || "");
+    const pw2 = String($("#newPw2")?.value || "");
+
+    // FIX: use stored email from state, not the live input field
+    const email = state.pwChangeEmail;
+
+    if (!pw1 || pw1.length < 8) { showError("Password must be at least 8 characters"); return; }
+    if (pw1 !== pw2)             { showError("Passwords do not match"); return; }
+    if (!state.pendingSessionID) { showError("Missing session"); return; }
+
+    setPwUpdateLoading(true);
+
+    google.script.run
+      .withSuccessHandler(() => {
+        setPwUpdateLoading(false);
+        closePwModalDirect();
+        requestAuth(email, state.pendingSessionID);
+      })
+      .withFailureHandler(err => {
+        console.error(err);
+        setPwUpdateLoading(false);
+        showError(err?.message || "Failed to update password");
+      })
+      .changePassword(state.pendingSessionID, pw1);
+  }
+
+  /* ----------------------------------------------------------
+   * UI ACTIONS
+   * ---------------------------------------------------------- */
+  function togglePasswordVisibility() {
+    if (!ui.password) return;
+    const hidden = ui.password.type === "password";
+    ui.password.type = hidden ? "text" : "password";
+    const icon = ui.showPwBtn?.querySelector("i");
+    if (icon) icon.className = `fas ${hidden ? "fa-eye-slash" : "fa-eye"}`;
+  }
+
+  function goRegister() { redirectTo("register"); }
+
+  // FIX: receives the display-value snapshot from renderOTPView so
+  // every element is restored to its correct original display value
+  // (e.g. "flex" for .remember-me-container, not "block").
+  function resetToLogin(loginElements = []) {
+    clearTimers();
+    state.otpEmail = "";
+
+    if (!ui.loginBox) return;
+
+    ui.loginBox.style.opacity   = "0";
+    ui.loginBox.style.transform = "translateY(10px)";
+
+    setTimeout(() => {
+      if (ui.msg) ui.msg.innerHTML = "";
+
+      loginElements.forEach(item => {
+        item.el.style.display = item.display;
+      });
+
+      if (ui.bioBtn) {
+        ui.bioBtn.style.display = canShowBiometricButton() ? "block" : "none";
+      }
+
+      if (ui.header) ui.header.innerText = "Manila IT";
+      setLoginButtonLoading(false);
+
+      ui.loginBox.style.opacity   = "1";
+      ui.loginBox.style.transform = "translateY(0)";
+    }, 300);
+  }
+
+  // FIX: removed the dead `email` argument — createDevSession on the
+  // server no longer accepts or uses a parameter. Also removed the
+  // hardcoded "DEV_SESSION_123" string; the server now returns a real
+  // cached sessionID via setAuthSession so verifySession won't reject it.
+  function devBypass() {
+    logActivitySafe("developer", "Login (Bypass)", "Developer Override used", "Warning");
+
+    google.script.run
+      .withSuccessHandler(sessionID => {
+        if (!sessionID) { showError("Dev bypass failed — check server logs."); return; }
+        localStorage.setItem("session",    sessionID);
+        localStorage.setItem("user_email", "developer");
+        redirectTo("home");
+      })
+      .withFailureHandler(err => {
+        console.error("devBypass failed:", err);
+        showError("Dev bypass failed: " + (err?.message || err));
+      })
+      .createDevSession();
+  }
+
+  /* ----------------------------------------------------------
+   * CAPS LOCK WARNING
+   * ---------------------------------------------------------- */
+  function initCapsLockWarning() {
+    const passwordInput = ui.password;
+    const warning       = $("#capsWarning");
+    if (!passwordInput || !warning) return;
+
+    let hasTyped = false;
+    const update = e => {
+      const on = e.getModifierState?.("CapsLock");
+      warning.style.display = on && hasTyped ? "flex" : "none";
+    };
+
+    passwordInput.addEventListener("keydown", e => { hasTyped = true; update(e); });
+    passwordInput.addEventListener("keyup",   update);
+    passwordInput.addEventListener("blur",    () => { warning.style.display = "none"; hasTyped = false; });
+  }
+
+  /* ----------------------------------------------------------
+   * EVENTS — all wired via JS, no inline onclick attributes
+   * ---------------------------------------------------------- */
+  function bindEvents() {
+    // Login form — Enter key
+    [ui.email, ui.password].filter(Boolean).forEach(input => {
+      input.addEventListener("keydown", e => { if (e.key === "Enter") login(); });
+    });
+
+    // Login button
+    ui.loginBtn?.addEventListener("click", login);
+
+    // Biometric
+    ui.bioBtn?.addEventListener("click", biometricLogin);
+
+    // Show/hide password
+    ui.showPwBtn?.addEventListener("click", togglePasswordVisibility);
+
+    // Register link
+    ui.registerLink?.addEventListener("click", goRegister);
+
+    // Dev bypass
+    ui.devBypassBtn?.addEventListener("click", devBypass);
+
+    // Password modal — backdrop click
+    ui.pwModal?.addEventListener("click", e => {
+      if (e.target === ui.pwModal) closePwModalDirect();
+    });
+
+    // Password modal — close / cancel buttons
+    ui.pwModalClose?.addEventListener("click",  closePwModalDirect);
+    ui.pwCancelBtn?.addEventListener("click",   closePwModalDirect);
+    ui.pwUpdateBtn?.addEventListener("click",   submitNewPassword);
+
+    // Password modal — keyboard shortcuts
+    document.addEventListener("keydown", e => {
+      const isOpen = ui.pwModal && ui.pwModal.style.display !== "none" && ui.pwModal.style.display !== "";
+      if (!isOpen) return;
+
+      if (e.key === "Escape") { e.preventDefault(); closePwModalDirect(); }
+      if (e.key === "Enter") {
+        const active = document.activeElement;
+        if (active?.id === "newPw" || active?.id === "newPw2") {
+          e.preventDefault();
+          submitNewPassword();
+        }
+      }
+    });
+  }
+
+  /* ----------------------------------------------------------
+   * INIT
+   * ---------------------------------------------------------- */
+  function init() {
+    cacheUI();
+    bindEvents();
+    initCapsLockWarning();
+    boot();
+  }
+
+  /* ----------------------------------------------------------
+   * PUBLIC API
+   * ---------------------------------------------------------- */
+  return { init };
+})();
+
+window.addEventListener("DOMContentLoaded", App.init);
+</script>
+
+</body>
+</html>

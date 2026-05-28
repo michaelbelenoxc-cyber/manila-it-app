@@ -1,0 +1,3003 @@
+<style>
+  /* ============================================================
+   * FONTS
+   * ============================================================ */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  /* ═══════════════════════════════════════════
+     TOKENS
+  ═══════════════════════════════════════════ */
+  :root {
+    --font-ui:   'Epilogue', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+    /* surfaces — warm paper (light default) */
+    --bg-0: #f5f2ec;
+    --bg-1: #f5f2ec;
+    --bg-2: #ede9e1;
+    --bg-3: #e4ded4;
+    --bg-4: #ddd6ca;
+    --bg-5: #d4cbbe;
+
+    /* borders */
+    --b-0: rgba(26,24,20,.07);
+    --b-1: rgba(26,24,20,.12);
+    --b-2: rgba(26,24,20,.18);
+    --b-3: rgba(26,24,20,.28);
+
+    /* text */
+    --t-1: rgba(26,24,20,.95);
+    --t-2: rgba(74,71,64,.75);
+    --t-3: rgba(138,134,128,.60);
+
+    /* primary accent — editorial blue */
+    --blue:     #2857a4;
+    --blue-d:   rgba(40,87,164,.10);
+    --blue-b:   rgba(40,87,164,.30);
+    --blue-glow: 0 0 0 1px rgba(40,87,164,.24), 0 3px 14px rgba(40,87,164,.12);
+
+    /* Status */
+    --green:  #16a34a;
+    --red:    #c94040;
+    --yellow: #b45309;
+    --purple: #6d28d9;
+
+    /* Shift palette — light mode */
+    --rto-bg:  rgba(40,87,164,.10);  --rto-b:  #2857a4; --rto-t:  #2857a4;
+    --wfh-bg:  rgba(22,163,74,.09);  --wfh-b:  #16a34a; --wfh-t:  #16a34a;
+    --fh-bg:   rgba(201,64,64,.09);  --fh-b:   #c94040; --fh-t:   #c94040;
+    --sl-bg:   rgba(14,116,144,.09); --sl-b:   #0e7490; --sl-t:   #0e7490;
+    --vl-bg:   rgba(22,163,74,.08);  --vl-b:   #15803d; --vl-t:   #15803d;
+    --mat-bg:  rgba(190,24,93,.09);  --mat-b:  #be185d; --mat-t:  #be185d;
+    --pat-bg:  rgba(14,116,144,.09); --pat-b:  #0369a1; --pat-t:  #0369a1;
+    --hol-bg:  rgba(109,40,217,.09); --hol-b:  #6d28d9; --hol-t:  #6d28d9;
+    --off-bg:  rgba(107,114,128,.07);--off-b:  #6b7280; --off-t:  #6b7280;
+    --bl-bg:   rgba(107,114,128,.08);--bl-b:   #9ca3af; --bl-t:   #4b5563;
+
+    /* Geometry */
+    --r-sm:   5px;
+    --r-md:   7px;
+    --r-lg:  10px;
+    --r-xl:  16px;
+    --r-pill:999px;
+
+    /* Shadows */
+    --sh-0: 0 1px 4px rgba(26,24,20,.08);
+    --sh-1: 0 4px 16px rgba(26,24,20,.10);
+    --sh-2: 0 8px 32px rgba(26,24,20,.12);
+    --sh-3: 0 16px 48px rgba(26,24,20,.15);
+
+    --t-fast:   .13s ease;
+    --t-med:    .22s ease;
+    --t-spring: .28s cubic-bezier(.2,.8,.2,1);
+
+    --ctrl-h: 34px;
+  }
+
+  /* ── Dark mode ─────────────────────────────── */
+  html[data-theme="dark"] {
+    --bg-0: #161410; --bg-1: #1a1814; --bg-2: #1e1c18;
+    --bg-3: #252220; --bg-4: #2c2a26; --bg-5: #33302b;
+    --b-0: rgba(240,236,227,.06); --b-1: rgba(240,236,227,.10);
+    --b-2: rgba(240,236,227,.16); --b-3: rgba(240,236,227,.26);
+    --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.75); --t-3: rgba(106,100,92,.60);
+    --blue:   #2857a4;
+    --blue-d: rgba(40,87,164,.16);
+    --blue-b: rgba(40,87,164,.40);
+    --blue-glow: 0 0 0 1px rgba(40,87,164,.34), 0 3px 14px rgba(40,87,164,.18);
+    --green:  #16a34a;
+    --red:    #c94040;
+    --yellow: #d97706;
+    --purple: #7c3aed;
+    --rto-bg:  rgba(40,87,164,.14);  --rto-b:  #4f7cc4; --rto-t:  #93c5fd;
+    --wfh-bg:  rgba(22,163,74,.12);  --wfh-b:  #22c55e; --wfh-t:  #86efac;
+    --fh-bg:   rgba(201,64,64,.12);  --fh-b:   #ef4444; --fh-t:   #fca5a5;
+    --sl-bg:   rgba(20,184,166,.11); --sl-b:   #14b8a6; --sl-t:   #5eead4;
+    --vl-bg:   rgba(22,163,74,.10);  --vl-b:   #10b981; --vl-t:   #6ee7b7;
+    --mat-bg:  rgba(244,114,182,.12);--mat-b:  #f472b6; --mat-t:  #f9a8d4;
+    --pat-bg:  rgba(56,189,248,.11); --pat-b:  #38bdf8; --pat-t:  #7dd3fc;
+    --hol-bg:  rgba(167,139,250,.12);--hol-b:  #a78bfa; --hol-t:  #c4b5fd;
+    --off-bg:  rgba(100,116,139,.08);--off-b:  #475569; --off-t:  #94a3b8;
+    --bl-bg:   rgba(148,163,184,.09);--bl-b:   #94a3b8; --bl-t:   #cbd5e1;
+    --sh-0: 0 1px 4px rgba(0,0,0,.35);
+    --sh-1: 0 4px 16px rgba(0,0,0,.45);
+    --sh-2: 0 8px 32px rgba(0,0,0,.55);
+    --sh-3: 0 16px 48px rgba(0,0,0,.65);
+  }
+
+  /* ═══════════════════════════════════════════
+     BASE
+  ═══════════════════════════════════════════ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-ui);
+    font-size: 14px;
+    color: var(--t-1);
+    background: var(--bg-0);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 55% 40% at 15% 0%, rgba(40,87,164,.04) 0%, transparent 55%),
+      radial-gradient(ellipse 45% 35% at 90% 100%, rgba(40,87,164,.03) 0%, transparent 55%);
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  /* ═══════════════════════════════════════════
+     LAYOUT
+  ═══════════════════════════════════════════ */
+  .schedule-page {
+    width: 100%;
+    max-width: 1640px;
+    margin: 76px auto 0;
+    padding: 32px 28px 72px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: pageIn .38s ease-out both;
+  }
+
+  @keyframes pageIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Page header ── */
+  .page-header {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .page-header-left { flex: 1; min-width: 0; }
+
+  .page-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 3px 10px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--blue-b);
+    background: var(--blue-d);
+    color: var(--blue);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+    margin-bottom: 9px;
+  }
+
+  html[data-theme="dark"] .page-eyebrow { color: #5b85c8; }
+
+  .page-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(24px, 3vw, 38px);
+    font-weight: 400;
+    letter-spacing: -.02em;
+    line-height: 1.06;
+    color: var(--t-1);
+    margin-bottom: 5px;
+  }
+
+  .page-sub {
+    font-size: 12.5px;
+    font-family: var(--font-mono);
+    color: var(--t-3);
+    line-height: 1.6;
+    letter-spacing: .01em;
+  }
+
+  /* ═══════════════════════════════════════════
+     TOOLBAR
+  ═══════════════════════════════════════════ */
+  .toolbar {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-bottom: 22px;
+  }
+
+  .toolbar-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-row--main  { justify-content: space-between; }
+  .toolbar-row--admin { justify-content: flex-end; }
+
+  .toolbar-group { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+
+  /* ── Date navigator ── */
+  .date-nav {
+    display: flex;
+    align-items: center;
+    height: var(--ctrl-h);
+    border-radius: var(--r-md);
+    border: 1px solid var(--b-1);
+    background: var(--bg-2);
+    overflow: hidden;
+  }
+
+  .date-nav-btn {
+    width: 32px; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: none;
+    color: var(--t-3); cursor: pointer; font-size: 10px;
+    transition: background var(--t-fast), color var(--t-fast);
+  }
+
+  .date-nav-btn:hover { background: var(--bg-3); color: var(--t-1); }
+
+  .date-nav-divider { width: 1px; height: 16px; background: var(--b-1); }
+
+  #currentWeekDisplay {
+    padding: 0 13px;
+    font-size: 12px;
+    font-weight: 500;
+    min-width: 190px;
+    text-align: center;
+    color: var(--t-1);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    letter-spacing: .02em;
+  }
+
+  /* ── Segmented controls ── */
+  .seg {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: var(--ctrl-h);
+    padding: 3px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--b-1);
+    background: var(--bg-2);
+    user-select: none;
+    overflow: hidden;
+  }
+
+  .seg-pill {
+    position: absolute;
+    top: 3px; bottom: 3px; left: 3px;
+    border-radius: calc(var(--r-md) - 3px);
+    background: var(--blue);
+    pointer-events: none;
+    z-index: 0;
+    transition: transform var(--t-spring), width var(--t-spring);
+  }
+
+  .seg-item {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 14px;
+    height: 100%;
+    font-family: var(--font-mono);
+    font-size: 10.5px; font-weight: 500;
+    letter-spacing: .05em;
+    cursor: pointer; color: var(--t-3);
+    border-radius: calc(var(--r-md) - 3px);
+    white-space: nowrap;
+    transition: color var(--t-fast);
+  }
+
+  .seg-item.active { color: #fff; font-weight: 600; }
+  .seg-item:hover:not(.active) { color: var(--t-1); }
+
+  /* ── Buttons ── */
+  .btn {
+    height: var(--ctrl-h);
+    padding: 0 13px;
+    border-radius: var(--r-md);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .04em;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+    border: 1px solid;
+    transition: background var(--t-fast), border-color var(--t-fast), opacity var(--t-fast);
+  }
+
+  .btn:disabled { opacity: .38; cursor: not-allowed; }
+  .btn i { font-size: 10px; }
+
+  .btn-ghost {
+    background: var(--bg-2); border-color: var(--b-1); color: var(--t-2);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    background: var(--bg-3); border-color: var(--b-2); color: var(--t-1);
+  }
+
+  .btn-primary {
+    background: var(--blue-d); border-color: var(--blue-b); color: var(--blue);
+  }
+  html[data-theme="dark"] .btn-primary { color: #5b85c8; }
+  .btn-primary:hover:not(:disabled) {
+    background: rgba(40,87,164,.16);
+  }
+
+  .btn-danger {
+    background: rgba(201,64,64,.09); border-color: rgba(201,64,64,.22); color: var(--red);
+  }
+  html[data-theme="dark"] .btn-danger { color: #f87171; }
+  .btn-danger:hover:not(:disabled) { background: rgba(201,64,64,.15); }
+
+  .btn-success {
+    background: rgba(22,163,74,.09); border-color: rgba(22,163,74,.22); color: var(--green);
+  }
+  html[data-theme="dark"] .btn-success { color: #4ade80; }
+  .btn-success:hover:not(:disabled) { background: rgba(22,163,74,.15); }
+
+  .btn-sm { height: 28px; padding: 0 9px; font-size: 10px; border-radius: var(--r-sm); }
+
+  .btn-dropdown {
+    background: var(--bg-2); border-color: var(--b-1); color: var(--t-2);
+  }
+  .btn-dropdown:hover { background: var(--bg-3); border-color: var(--b-2); color: var(--t-1); }
+
+  /* ── Dropdown ── */
+  .dropdown-menu {
+    z-index: 9000 !important;
+    border-radius: var(--r-lg) !important;
+    border: 1px solid var(--b-2) !important;
+    background: var(--bg-1) !important;
+    padding: 5px !important;
+    box-shadow: var(--sh-2) !important;
+    min-width: 220px !important;
+  }
+
+  .dropdown-item {
+    border-radius: var(--r-sm) !important;
+    color: var(--t-1) !important;
+    font-size: 11px !important;
+    font-family: var(--font-mono) !important;
+    font-weight: 500 !important;
+    letter-spacing: .03em !important;
+    padding: 7px 11px !important;
+    transition: background var(--t-fast) !important;
+  }
+
+  .dropdown-item:hover, .dropdown-item:focus {
+    background: var(--blue-d) !important;
+    color: var(--blue) !important;
+  }
+
+  html[data-theme="dark"] .dropdown-item:hover,
+  html[data-theme="dark"] .dropdown-item:focus { color: #5b85c8 !important; }
+
+  .dropdown-divider { border-color: var(--b-1) !important; margin: 4px !important; }
+
+  /* ═══════════════════════════════════════════
+     SECTION LABELS
+  ═══════════════════════════════════════════ */
+  .section-label {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 18px 0 7px;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--t-3);
+    font-family: var(--font-mono);
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--b-0);
+  }
+
+  .section-label i { font-size: 9px; }
+
+  /* ═══════════════════════════════════════════
+     GRID CONTAINER
+  ═══════════════════════════════════════════ */
+  .grid-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: var(--r-lg);
+    background: var(--bg-1);
+    border: 1px solid var(--b-1);
+    box-shadow: var(--sh-0);
+    scrollbar-width: none;
+  }
+
+  .grid-container::-webkit-scrollbar { display: none; }
+
+  .grid-container.scrollable {
+    scrollbar-width: thin;
+    scrollbar-color: var(--b-2) transparent;
+  }
+
+  .grid-container.scrollable::-webkit-scrollbar { display: block; height: 4px; }
+  .grid-container.scrollable::-webkit-scrollbar-thumb {
+    background: var(--b-2); border-radius: 99px;
+  }
+
+  .roster-grid { display: grid; min-width: max-content; }
+
+  /* ── Cells ── */
+  .cell {
+    padding: 9px 12px;
+    min-height: 78px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--b-0);
+    border-right: 1px solid var(--b-0);
+    transition: background var(--t-fast);
+  }
+
+  .cell:last-child { border-right: none; }
+
+  .header-cell {
+    position: sticky; top: 0; z-index: 10;
+    min-height: 42px;
+    padding: 9px 12px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--t-3);
+    background: var(--bg-0);
+    border-bottom: 1px solid var(--b-1) !important;
+    font-family: var(--font-mono);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  html[data-theme="dark"] .header-cell { background: var(--bg-1); }
+
+  .header-cell.is-today {
+    color: var(--blue);
+    background: rgba(40,87,164,.04) !important;
+  }
+
+  html[data-theme="dark"] .header-cell.is-today { color: #5b85c8; }
+
+  .header-cell.is-today::after {
+    content: '';
+    position: absolute;
+    bottom: 5px; left: 50%;
+    transform: translateX(-50%);
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--blue);
+  }
+
+  html[data-theme="dark"] .header-cell.is-today::after { background: #5b85c8; }
+
+  .header-cell { position: relative; }
+
+  .day-label  { font-size: 8.5px; opacity: .55; }
+  .day-number { font-size: 14px; font-weight: 600; }
+
+  /* sticky employee col */
+  .sticky-col {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 15 !important;
+    min-width: 210px !important;
+    max-width: 210px !important;
+    background: var(--bg-1) !important;
+    border-right: 1px solid var(--b-1) !important;
+  }
+
+  .sticky-col.header-cell {
+    z-index: 25 !important;
+    background: var(--bg-0) !important;
+  }
+
+  html[data-theme="dark"] .sticky-col.header-cell { background: var(--bg-1) !important; }
+
+  /* states */
+  .cell.is-today   { background: rgba(40,87,164,.06) !important; }
+  .header-cell.is-today { border-top: 2px solid var(--blue) !important; }
+  .cell.is-weekend { background: rgba(26,24,20,.02) !important; }
+  html[data-theme="dark"] .cell.is-weekend { background: rgba(255,255,255,.01) !important; }
+  .cell.is-me-row  { background: rgba(180,83,9,.02); }
+  .employee-cell.has-today-week { border-right: 2px solid rgba(40,87,164,.18) !important; }
+
+  .cell.drag-over {
+    background: rgba(40,87,164,.07) !important;
+    outline: 2px dashed rgba(40,87,164,.35);
+    outline-offset: -2px;
+  }
+
+  /* ── Employee cell ── */
+  .emp-wrap {
+    display: flex; align-items: center; gap: 9px; width: 100%;
+  }
+
+  .emp-checkbox {
+    width: 13px; height: 13px;
+    cursor: pointer; flex-shrink: 0;
+    accent-color: var(--blue);
+  }
+
+  .emp-info {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; gap: 1px;
+    cursor: pointer;
+  }
+
+  .emp-name {
+    font-size: 12px; font-weight: 600;
+    color: var(--t-1); letter-spacing: -.01em;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .emp-role {
+    font-size: 9.5px; color: var(--t-3);
+    font-family: var(--font-mono);
+    letter-spacing: .04em;
+  }
+
+  .emp-actions { margin-top: 4px; }
+
+  .emp-shift-counts {
+    display: flex; flex-wrap: wrap; gap: 3px;
+    margin-top: 3px;
+  }
+
+  .shift-count-pill {
+    font-size: 8.5px; font-weight: 600;
+    font-family: var(--font-mono);
+    letter-spacing: .04em;
+    padding: 1px 5px;
+    border-radius: var(--r-pill);
+    background: var(--bg-3);
+    color: var(--t-3);
+    border: 1px solid var(--b-1);
+    white-space: nowrap;
+  }
+
+  .leave-balance-wrap {
+    margin-top: 5px;
+    width: 100%;
+  }
+
+  .leave-balance-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 100%;
+  }
+
+  .leave-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+  }
+
+  .leave-bar-label {
+    font-size: 8px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: .04em;
+    color: var(--t-3);
+    width: 28px;
+    flex-shrink: 0;
+  }
+
+  .leave-bar-track {
+    flex: 1;
+    height: 3px;
+    background: var(--bg-4);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .leave-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width .3s ease;
+  }
+
+  .leave-bar-count {
+    font-size: 8px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    flex-shrink: 0;
+    min-width: 28px;
+    text-align: right;
+  }
+
+  /* avatar */
+  .schedule-avatar {
+    width: 30px; height: 30px; min-width: 30px;
+    border-radius: var(--r-sm);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--blue-d);
+    border: 1px solid var(--blue-b);
+    color: var(--blue);
+    font-size: 10px; font-weight: 700;
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+  }
+
+  html[data-theme="dark"] .schedule-avatar { color: #5b85c8; }
+
+  .schedule-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .schedule-avatar-fallback { display: grid; place-items: center; width: 100%; height: 100%; }
+
+  /* selection */
+  .employee-cell.row-selected {
+    box-shadow: inset 3px 0 0 var(--blue) !important;
+    background: rgba(40,87,164,.04) !important;
+  }
+
+  .employee-cell.row-selected .emp-name { color: var(--blue) !important; }
+  html[data-theme="dark"] .employee-cell.row-selected .emp-name { color: #5b85c8 !important; }
+
+  /* logged-in user */
+  .employee-cell.is-me {
+    box-shadow: inset 3px 0 0 var(--yellow) !important;
+    background: rgba(180,83,9,.03) !important;
+  }
+
+  .employee-cell.is-me .emp-name { color: var(--yellow) !important; font-weight: 700; }
+
+  html[data-theme="dark"] .employee-cell.is-me .emp-name { color: #fde047 !important; }
+
+  .employee-cell.is-me .schedule-avatar {
+    background: rgba(180,83,9,.10) !important;
+    border-color: rgba(180,83,9,.28) !important;
+    color: var(--yellow) !important;
+  }
+
+  html[data-theme="dark"] .employee-cell.is-me .schedule-avatar { color: #fde047 !important; }
+
+  /* col header pick actions */
+  .pick-actions {
+    display: flex; gap: 8px; margin-left: auto;
+    font-size: 9.5px;
+  }
+
+  .pick-actions a {
+    color: var(--t-3); text-decoration: none;
+    font-family: var(--font-mono);
+    transition: color var(--t-fast); cursor: pointer;
+  }
+
+  .pick-actions a:hover { color: var(--blue); }
+
+  /* ═══════════════════════════════════════════
+     SHIFT BLOCKS
+  ═══════════════════════════════════════════ */
+  .shift-block {
+    width: 100%;
+    padding: 7px 9px;
+    border-radius: var(--r-sm);
+    border-left: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2px;
+    min-height: 50px;
+    cursor: grab;
+    text-align: center;
+    transition: filter var(--t-fast), transform var(--t-fast), opacity var(--t-fast);
+    position: relative;
+  }
+
+  .shift-block:hover,
+  .shift-block:focus-visible { filter: brightness(1.08); transform: translateY(-1px); outline: 2px solid var(--blue); outline-offset: 2px; }
+  .shift-block.dragging { opacity: .35; transform: scale(.93); cursor: grabbing; }
+
+  .shift-block.selected {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(40,87,164,.12);
+    z-index: 20;
+  }
+
+  .shift-tag {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .07em; text-transform: uppercase;
+    line-height: 1; font-family: var(--font-mono);
+  }
+
+  .shift-time {
+    font-size: 10.5px; font-weight: 500;
+    opacity: .75; white-space: nowrap;
+    font-family: var(--font-mono);
+  }
+
+  .shift-notes {
+    font-size: 9px; font-style: italic;
+    opacity: .7; font-family: var(--font-ui);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+
+  /* shift type colors */
+  .type-rto      { background: var(--rto-bg); border-left-color: var(--rto-b); color: var(--rto-t); }
+  .type-wfh      { background: var(--wfh-bg); border-left-color: var(--wfh-b); color: var(--wfh-t); }
+  .type-fhoncall { background: var(--fh-bg);  border-left-color: var(--fh-b);  color: var(--fh-t);  }
+  .type-sl       { background: var(--sl-bg);  border-left-color: var(--sl-b);  color: var(--sl-t);  }
+  .type-vl       { background: var(--vl-bg);  border-left-color: var(--vl-b);  color: var(--vl-t);  }
+  .type-mat      { background: var(--mat-bg); border-left-color: var(--mat-b); color: var(--mat-t); }
+  .type-pat      { background: var(--pat-bg); border-left-color: var(--pat-b); color: var(--pat-t); }
+  .type-hol      { background: var(--hol-bg); border-left-color: var(--hol-b); color: var(--hol-t); }
+  .type-off      { background: var(--off-bg); border-left-color: var(--off-b); color: var(--off-t); }
+  .type-bl       { background: var(--bl-bg);  border-left-color: var(--bl-b);  color: var(--bl-t);  }
+
+  /* empty slot */
+  .empty-slot {
+    width: 100%; height: 100%;
+    min-height: 50px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; opacity: .12; cursor: pointer;
+    border-radius: var(--r-sm);
+    border: 1px dashed transparent;
+    transition: opacity var(--t-fast), color var(--t-fast),
+                background var(--t-fast), border-color var(--t-fast);
+  }
+
+  .empty-slot:hover,
+  .empty-slot:focus-visible {
+    opacity: 1; color: var(--blue);
+    background: rgba(40,87,164,.06);
+    border-color: rgba(40,87,164,.22);
+  }
+
+  html[data-theme="dark"] .empty-slot:hover { color: #5b85c8; }
+
+  /* ═══════════════════════════════════════════
+     SUMMARY ROW
+  ═══════════════════════════════════════════ */
+  .summary-cell { background: rgba(40,87,164,.03) !important; }
+  html[data-theme="dark"] .summary-cell { background: rgba(40,87,164,.05) !important; }
+
+  .summary-card {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+  }
+
+  .count-badge {
+    font-size: 17px; font-weight: 700;
+    color: var(--blue); line-height: 1;
+    font-family: var(--font-mono);
+  }
+
+  html[data-theme="dark"] .count-badge { color: #5b85c8; }
+
+  .breakdown-label {
+    font-size: 9px; font-weight: 600;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--t-3); font-family: var(--font-mono);
+  }
+
+  /* ═══════════════════════════════════════════
+     PERIOD SUMMARY PANEL
+  ═══════════════════════════════════════════ */
+  .summary-panel {
+    width: 100%;
+    background: var(--bg-1);
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-lg);
+    padding: 14px 16px;
+    margin-bottom: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: var(--sh-0);
+  }
+
+  .summary-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .summary-panel-title {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--t-3);
+    font-family: var(--font-mono);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .summary-panel-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* stat cards row */
+  .summary-stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .summary-stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 7px 12px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--b-1);
+    background: var(--bg-2);
+    min-width: 64px;
+    flex: 1;
+  }
+
+  .summary-stat-card.is-zero { opacity: .38; }
+
+  .summary-stat-num {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    line-height: 1;
+    color: var(--t-1);
+  }
+
+  .summary-stat-label {
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+    color: var(--t-3);
+  }
+
+  /* ratio bar */
+  .summary-ratio-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .summary-ratio-label {
+    font-size: 9px;
+    font-family: var(--font-mono);
+    color: var(--t-3);
+    letter-spacing: .06em;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .summary-ratio-track {
+    width: 100%;
+    height: 6px;
+    border-radius: 99px;
+    background: var(--bg-4);
+    overflow: hidden;
+    display: flex;
+  }
+
+  .summary-ratio-rto {
+    height: 100%;
+    background: var(--rto-b);
+    border-radius: 99px 0 0 99px;
+    transition: width .4s ease;
+  }
+
+  .summary-ratio-wfh {
+    height: 100%;
+    background: var(--wfh-b);
+    border-radius: 0 99px 99px 0;
+    transition: width .4s ease;
+  }
+
+  /* unscheduled */
+  .summary-unscheduled {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--t-2);
+    flex-wrap: wrap;
+  }
+
+  .summary-unscheduled-names {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .summary-unscheduled-pill {
+    font-size: 9px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    padding: 2px 7px;
+    border-radius: var(--r-pill);
+    background: rgba(201,64,64,.08);
+    color: var(--red);
+    border: 1px solid rgba(201,64,64,.18);
+  }
+
+  html[data-theme="dark"] .summary-unscheduled-pill { color: #f87171; }
+
+  /* toggle chevron */
+  .summary-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--t-3);
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: var(--r-sm);
+    transition: background var(--t-fast), color var(--t-fast);
+  }
+
+  .summary-toggle-btn:hover { background: var(--bg-3); color: var(--t-1); }
+
+  /* clear btn */
+  .btn-clear-sm {
+    background: rgba(201,64,64,.08);
+    color: var(--red);
+    border: 1px solid rgba(201,64,64,.18);
+    border-radius: var(--r-sm);
+    padding: 2px 7px;
+    font-size: 9px; font-weight: 600;
+    letter-spacing: .06em; text-transform: uppercase;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    transition: background var(--t-fast), color var(--t-fast);
+  }
+
+  .btn-clear-sm:hover { background: var(--red); color: #fff; }
+
+  /* ═══════════════════════════════════════════
+     EXPORT
+  ═══════════════════════════════════════════ */
+  .export-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 28px;
+  }
+
+  #exportBtn {
+    height: 38px;
+    padding: 0 24px;
+    font-size: 11.5px;
+    font-weight: 600;
+    background: var(--blue-d);
+    border-color: var(--blue-b);
+    color: var(--blue);
+    border-radius: var(--r-lg);
+  }
+
+  html[data-theme="dark"] #exportBtn { color: #5b85c8; }
+
+  #exportBtn:hover:not(:disabled) {
+    background: rgba(40,87,164,.16);
+    box-shadow: 0 4px 14px rgba(40,87,164,.18);
+  }
+
+  /* ═══════════════════════════════════════════
+     MODALS
+  ═══════════════════════════════════════════ */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    display: none;
+    align-items: center; justify-content: center;
+    background: rgba(26,24,20,.50);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 4000;
+    padding: 20px;
+  }
+
+  html[data-theme="dark"] .modal-overlay {
+    background: rgba(0,0,0,.62);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .modal-card {
+    background: var(--bg-1);
+    border: 1px solid var(--b-2);
+    border-radius: var(--r-xl);
+    box-shadow: var(--sh-3);
+    padding: 22px;
+    animation: modalIn .22s cubic-bezier(.2,.8,.2,1) both;
+    width: min(440px, 100%);
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(.95) translateY(8px); }
+    to   { opacity: 1; transform: scale(1)   translateY(0); }
+  }
+
+  .modal-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 17px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1);
+    margin-bottom: 18px;
+  }
+
+  /* form fields */
+  .field-label {
+    display: block;
+    font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .12em;
+    color: var(--t-3); font-family: var(--font-mono);
+    margin-bottom: 5px;
+  }
+
+  .form-select, .form-control {
+    width: 100%;
+    height: 36px;
+    padding: 0 10px;
+    background: var(--bg-2) !important;
+    border: 1px solid var(--b-1) !important;
+    border-radius: var(--r-md) !important;
+    color: var(--t-1) !important;
+    font-family: var(--font-ui) !important;
+    font-size: 13px !important;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: border-color var(--t-fast) !important;
+    appearance: auto;
+  }
+
+  .form-select:focus, .form-control:focus {
+    border-color: var(--blue-b) !important;
+    box-shadow: var(--blue-glow) !important;
+    background: var(--bg-1) !important;
+  }
+
+  .form-select option { background: var(--bg-2); color: var(--t-1); }
+
+  .form-field { margin-bottom: 12px; }
+  .form-row   { display: flex; gap: 7px; }
+  .form-row .form-field { flex: 1; }
+
+  .form-check {
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer; font-size: 12.5px; color: var(--t-2);
+    font-family: var(--font-mono);
+  }
+
+  .form-check input {
+    width: 14px; height: 14px;
+    accent-color: var(--blue); cursor: pointer;
+  }
+
+  .modal-actions {
+    display: flex; gap: 7px;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--b-0);
+  }
+
+  .modal-actions .btn { flex: 1; }
+
+  /* confirm modal */
+  .confirm-card {
+    background: var(--bg-1);
+    border: 1px solid var(--b-2);
+    border-radius: var(--r-xl);
+    box-shadow: var(--sh-3);
+    padding: 26px 22px;
+    animation: modalIn .22s cubic-bezier(.2,.8,.2,1) both;
+    width: min(350px, 100%);
+    text-align: center;
+  }
+
+  .confirm-icon { font-size: 28px; margin-bottom: 12px; line-height: 1; }
+
+  .confirm-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 17px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1);
+    margin-bottom: 7px;
+  }
+
+  .confirm-desc {
+    font-size: 12.5px; color: var(--t-2);
+    font-family: var(--font-mono);
+    line-height: 1.55; margin-bottom: 18px;
+    letter-spacing: .01em;
+  }
+
+  .confirm-actions { display: flex; gap: 7px; }
+  .confirm-actions .btn { flex: 1; }
+
+  /* success checkmark */
+  .success-anim {
+    display: none;
+    flex-direction: column; align-items: center; gap: 10px;
+  }
+
+  .checkmark-circle {
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    border: 2px solid var(--green);
+    display: flex; align-items: center; justify-content: center;
+    animation: scaleIn .28s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  html[data-theme="dark"] .checkmark-circle { border-color: #4ade80; }
+
+  .checkmark-circle i {
+    font-size: 22px; color: var(--green);
+    animation: fadeIn .28s .12s both;
+  }
+
+  html[data-theme="dark"] .checkmark-circle i { color: #4ade80; }
+
+  @keyframes scaleIn { from { transform: scale(.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ═══════════════════════════════════════════
+     TOASTS
+  ═══════════════════════════════════════════ */
+  #toastContainer {
+    position: fixed;
+    bottom: 24px; right: 18px;
+    z-index: 5000;
+    display: flex; flex-direction: column;
+    gap: 7px; align-items: flex-end;
+    pointer-events: none;
+  }
+
+  .toast {
+    min-width: 190px; max-width: 280px;
+    padding: 10px 14px;
+    border-radius: var(--r-lg);
+    background: var(--bg-2);
+    border: 1px solid var(--b-2);
+    color: var(--t-1);
+    font-size: 11.5px; font-weight: 500;
+    font-family: var(--font-mono);
+    letter-spacing: .02em;
+    box-shadow: var(--sh-1);
+    opacity: 0; pointer-events: auto;
+    transform: translateY(6px) scale(.97);
+    transition: opacity var(--t-med), transform var(--t-med);
+  }
+
+  html[data-theme="dark"] .toast { background: var(--bg-3); }
+
+  .toast.show { opacity: 1; transform: translateY(0) scale(1); }
+  .toast.error {
+    background: rgba(201,64,64,.12);
+    border-color: rgba(201,64,64,.28);
+    color: var(--red);
+  }
+  html[data-theme="dark"] .toast.error { color: #fca5a5; }
+
+  /* ═══════════════════════════════════════════
+     HIDDEN
+  ═══════════════════════════════════════════ */
+  .hidden { display: none !important; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fa-spin { animation: spin .85s linear infinite; }
+
+  /* ═══════════════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════════════ */
+  @media (max-width: 900px) {
+    .schedule-page { padding: 20px 16px 56px; }
+    .toolbar-row--main { flex-direction: column; align-items: flex-start; }
+    #currentWeekDisplay { min-width: 150px; font-size: 11px; }
+  }
+
+  /* ═══════════════════════════════════════════
+     PRINT
+  ═══════════════════════════════════════════ */
+  @media print {
+    @page { size: A4 landscape; margin: 12mm; }
+
+    body { background: #fff !important; color: #000 !important; font-size: 11px !important; }
+    body::before { display: none !important; }
+
+    .toolbar, .export-wrap, .page-eyebrow,
+    .btn, .dropdown, .modal-overlay,
+    #toastContainer, .emp-actions,
+    .emp-checkbox, .pick-actions,
+    .leave-balance-wrap { display: none !important; }
+
+    .schedule-page { margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
+
+    .page-title { font-size: 16px !important; margin-bottom: 4px !important; }
+    .page-sub   { font-size: 10px !important; margin-bottom: 8px !important; }
+
+    .grid-container {
+      overflow: visible !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+    }
+
+    .sticky-col {
+      position: relative !important;
+      left: auto !important;
+    }
+
+    .cell {
+      border: 1px solid #ddd !important;
+      padding: 4px 6px !important;
+      min-height: auto !important;
+      background: #fff !important;
+    }
+
+    .header-cell {
+      background: #1c1c1e !important;
+      color: #fff !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .shift-block {
+      border: 1px solid currentColor !important;
+      padding: 3px 5px !important;
+      min-height: auto !important;
+      cursor: default !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .shift-tag  { font-size: 9px !important; }
+    .shift-time { font-size: 8px !important; }
+    .shift-notes { font-size: 8px !important; }
+
+    .emp-name { font-size: 10px !important; }
+    .emp-role { font-size: 8px !important; }
+    .emp-shift-counts { display: none !important; }
+
+    .section-label {
+      font-size: 9px !important;
+      margin: 6px 0 3px !important;
+    }
+  }
+</style>
+
+<!-- ═══ PAGE ═══ -->
+<div class="schedule-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-eyebrow">
+        <i class="fas fa-calendar-days"></i> Manila IT
+      </div>
+      <div class="page-title">Team Schedule</div>
+      <div class="page-sub">Coordinate RTO, WFH, leaves and shift assignments across the team</div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+
+    <!-- Row 1: navigation + view -->
+    <div class="toolbar-row toolbar-row--main">
+      <div class="toolbar-group">
+
+        <!-- Date navigator -->
+        <div class="date-nav">
+          <button class="date-nav-btn" onclick="changeDateRange(-1)" title="Previous">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="date-nav-divider"></div>
+          <span id="currentWeekDisplay">Loading…</span>
+          <div class="date-nav-divider"></div>
+          <button class="date-nav-btn" onclick="changeDateRange(1)" title="Next">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <!-- Today -->
+        <button class="btn btn-ghost" onclick="jumpToToday()" title="Jump to today">
+          <i class="fas fa-crosshairs"></i> Today
+        </button>
+
+        <!-- Print -->
+        <button class="btn btn-ghost" onclick="window.print()" title="Print schedule">
+          <i class="fas fa-print"></i> Print
+        </button>
+
+        <!-- Jump to my row -->
+        <button class="btn btn-ghost" id="btnJumpToMe" onclick="jumpToMyRow()" title="Jump to my row">
+          <i class="fas fa-user-check"></i> My Row
+        </button>
+
+        <!-- Shift filter -->
+        <div class="seg" id="shiftFilter" style="width:auto;min-width:220px;">
+          <div class="seg-pill" id="shiftSegIndicator"></div>
+          <div class="seg-item active" data-shift="all"       onclick="setShiftFilter('all')">All</div>
+          <div class="seg-item"        data-shift="morning"   onclick="setShiftFilter('morning')">Morning</div>
+          <div class="seg-item"        data-shift="graveyard" onclick="setShiftFilter('graveyard')">Graveyard</div>
+        </div>
+
+      </div>
+
+      <div class="toolbar-group">
+
+        <!-- Copy dropdown -->
+        <div class="dropdown">
+          <button class="btn btn-dropdown dropdown-toggle" id="copyBtn"
+                  type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-copy"></i> Copy…
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" id="copyDropdownMenu"></ul>
+        </div>
+
+        <!-- Week / Month toggle -->
+        <div class="seg" id="segControl" style="width:auto;min-width:140px;">
+          <div class="seg-pill" id="segIndicator"></div>
+          <div class="seg-item active" id="btnWeek"  onclick="setView('week')">Week</div>
+          <div class="seg-item"        id="btnMonth" onclick="setView('month')">Month</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Row 2: admin actions -->
+    <div class="toolbar-row toolbar-row--admin">
+      <div class="toolbar-group">
+
+        <!-- Weekend controls -->
+        <button id="btnWeekendApply" class="btn btn-success hidden" onclick="handleWeekendAddClick()">
+          <i class="fas fa-calendar-plus"></i> Weekend OFF
+        </button>
+        <button id="btnWeekendClear" class="btn btn-danger hidden" onclick="handleWeekendClearClick()">
+          <i class="fas fa-calendar-xmark"></i> Clear OFF
+        </button>
+
+        <!-- Manage / Clear -->
+        <button class="btn btn-primary hidden" id="btnManageShift" onclick="openModal()">
+          <i class="fas fa-plus"></i> Manage Shift
+        </button>
+        <button class="btn btn-danger hidden" id="btnClearSchedule" onclick="handleClearAllClick()">
+          <i class="fas fa-trash-alt"></i> Clear Schedule
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Period Summary -->
+  <div class="summary-panel" id="periodSummary"></div>
+
+  <!-- Morning shift -->
+  <div class="section-label">
+    <i class="fas fa-sun" style="color:var(--rto-t);"></i>
+    Morning Shift
+  </div>
+  <div class="grid-container">
+    <div class="roster-grid" id="morningGrid"></div>
+  </div>
+
+  <!-- RTO Summary -->
+  <div class="section-label">
+    <i class="fas fa-chart-bar" style="color:var(--blue);"></i>
+    Onsite Occupancy — RTO Total
+  </div>
+  <div class="grid-container scrollable">
+    <div class="roster-grid" id="rtoSummaryGrid"></div>
+  </div>
+
+  <!-- Graveyard shift -->
+  <div class="section-label">
+    <i class="fas fa-moon" style="color:var(--hol-t);"></i>
+    Graveyard Shift
+  </div>
+  <div class="grid-container">
+    <div class="roster-grid" id="graveyardGrid"></div>
+  </div>
+
+  <!-- Export -->
+  <div class="export-wrap">
+    <button class="btn" id="exportBtn" onclick="runExport()">
+      <i class="fas fa-file-export"></i> Export to Spreadsheet
+    </button>
+  </div>
+
+</div><!-- /.schedule-page -->
+
+
+<!-- ══════════ SHIFT MODAL ══════════ -->
+<div class="modal-overlay" id="shiftModal">
+  <div class="modal-card">
+    <div class="modal-title"><i class="fas fa-calendar-pen" style="color:var(--blue);margin-right:8px;font-size:15px;"></i>Assign Shift</div>
+
+    <div class="form-field">
+      <label class="field-label">Employee</label>
+      <select id="mUser" class="form-select"></select>
+    </div>
+
+    <div class="form-field">
+      <label class="field-label">Date</label>
+      <input type="date" id="mDate" class="form-control">
+    </div>
+
+    <div id="timeFieldsWrapper">
+      <div class="form-field">
+        <label class="field-label">Start Time</label>
+        <div class="form-row">
+          <div class="form-field"><select id="mStartHr"   class="form-select"></select></div>
+          <div class="form-field"><select id="mStartMin"  class="form-select"></select></div>
+          <div class="form-field"><select id="mStartAmPm" class="form-select"></select></div>
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="field-label">End Time</label>
+        <div class="form-row">
+          <div class="form-field"><select id="mEndHr"   class="form-select"></select></div>
+          <div class="form-field"><select id="mEndMin"  class="form-select"></select></div>
+          <div class="form-field"><select id="mEndAmPm" class="form-select"></select></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label class="field-label">Mode</label>
+      <select id="mMode" class="form-select" onchange="toggleTimeFields()">
+        <option value="RTO">Office (RTO)</option>
+        <option value="WFH">Remote (WFH)</option>
+        <option value="OFF">Off</option>
+        <option value="VL">VL — Vacation Leave</option>
+        <option value="SL">SL — Sick Leave</option>
+        <option value="MAT">MAT — Maternity</option>
+        <option value="PAT">PAT — Paternity</option>
+        <option value="BL">BL — Bereavement</option>
+        <option value="HOL">HOL — Holiday</option>
+        <option value="FH On-Call">FH On-Call</option>
+      </select>
+    </div>
+
+    <div class="form-field">
+      <label class="field-label">Notes <span style="opacity:.5;">(optional)</span></label>
+      <input type="text" id="mNotes" class="form-control" placeholder="e.g. half day, on standby…" maxlength="80">
+    </div>
+
+    <label class="form-check" style="margin-bottom:16px;">
+      <input type="checkbox" id="mBulk">
+      Apply Mon – Fri (bulk)
+    </label>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="document.getElementById('shiftModal').style.display='none'">
+        Cancel
+      </button>
+      <button class="btn btn-primary" id="saveBtn" onclick="saveShiftEntry()">
+        <i class="fas fa-floppy-disk"></i> Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ DRAG CONFIRM ══════════ -->
+<div class="modal-overlay" id="dragConfirmModal">
+  <div class="confirm-card">
+    <div class="confirm-icon" id="dragIconContainer" style="color:var(--blue);">
+      <i class="fas fa-arrows-up-down-left-right"></i>
+    </div>
+    <div class="confirm-title" id="dragConfirmTitle">Move Shift?</div>
+    <div class="confirm-desc" id="dragConfirmText">Are you sure you want to move this shift?</div>
+    <div class="confirm-actions">
+      <button class="btn btn-ghost" onclick="closeDragModal()">Cancel</button>
+      <button class="btn btn-primary" id="confirmDragBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CUSTOM CONFIRM ══════════ -->
+<div class="modal-overlay" id="customConfirmModal">
+  <div class="confirm-card">
+
+    <!-- Static state -->
+    <div id="confirmStaticState">
+      <div class="confirm-icon" style="color:var(--red);">
+        <i class="fas fa-trash-alt" id="staticIcon"></i>
+      </div>
+      <div class="confirm-title" id="confirmTitle">Clear Schedule?</div>
+      <div class="confirm-desc"  id="confirmDescription"></div>
+      <div class="confirm-actions" id="modalActionButtons">
+        <button class="btn btn-ghost" onclick="closeCustomConfirm()">Cancel</button>
+        <button class="btn btn-danger" id="executeClearBtn">Clear All</button>
+      </div>
+    </div>
+
+    <!-- Success state -->
+    <div class="success-anim" id="successState">
+      <div class="checkmark-circle">
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="confirm-title" style="color:var(--green);">Done!</div>
+      <div class="confirm-desc" id="successMessage"></div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toastContainer"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// Schedule page — rewritten for full shell compatibility
+// ═══════════════════════════════════════════════════════
+(() => {
+  "use strict";
+
+  const GAS = () => !!(window.google && google.script && google.script.run);
+
+  /* ──────────────────────────────────────────
+     STATE
+  ─────────────────────────────────────────── */
+  const state = {
+    currentStart: (() => {
+      const d = new Date();
+      d.setDate(d.getDate() - d.getDay() + (d.getDay() === 0 ? -6 : 1));
+      d.setHours(0,0,0,0);
+      return d;
+    })(),
+    currentView:        "week",
+    currentShiftFilter: "all",
+
+    allEmployees:  [],
+    teamList:      [],
+    teamMorning:   [],
+    teamGraveyard: [],
+
+    shiftMap:    new Map(),
+    rtoCountMap: new Map(),
+
+    selectedShifts: [],
+    dropTargetData: null,
+
+    CAN_MANAGE:  false,
+    CAN_CLEAR:   false,
+    CAN_COPY:    false,
+    CAN_WEEKEND: false,
+
+    LEAVE_LIMITS: { VL: 5, SL: 5, BL: 3, MAT: 60, PAT: 7 },
+
+    CURRENT_USER:    { email: "", role: "", permissions: null },
+    ME:              { email: "", name: "" },
+
+    _delegatesBound: false,
+    lastHighlightedMe: null,
+  };
+
+  /* ──────────────────────────────────────────
+     LEGACY GLOBAL PROXIES
+  ─────────────────────────────────────────── */
+  const proxy_ = (n, g, s) => Object.defineProperty(window, n, { get: g, set: s, configurable: true });
+
+  proxy_("currentStart",   () => state.currentStart,   v => { state.currentStart = v; });
+  proxy_("currentView",    () => state.currentView,    v => { state.currentView  = v; });
+  proxy_("allEmployees",   () => state.allEmployees,   v => { state.allEmployees = Array.isArray(v) ? v : []; rebuildDerived_(); });
+  proxy_("teamList",       () => state.teamList,       v => { state.teamList = Array.isArray(v) ? v : []; rebuildBuckets_(); populateUserOptions_(); });
+  proxy_("CAN_MANAGE",     () => state.CAN_MANAGE,     v => { state.CAN_MANAGE  = !!v; });
+  proxy_("CAN_CLEAR",      () => state.CAN_CLEAR,      v => { state.CAN_CLEAR   = !!v; });
+  proxy_("CAN_COPY",       () => state.CAN_COPY,       v => { state.CAN_COPY    = !!v; });
+  proxy_("CAN_WEEKEND",    () => state.CAN_WEEKEND,    v => { state.CAN_WEEKEND = !!v; });
+  proxy_("CURRENT_USER",   () => state.CURRENT_USER,   v => { state.CURRENT_USER = v || {}; });
+  proxy_("ME",             () => state.ME,             v => { state.ME = v || { email:"", name:"" }; });
+  proxy_("selectedShifts", () => state.selectedShifts, v => { state.selectedShifts = Array.isArray(v) ? v : []; });
+  proxy_("dropTargetData", () => state.dropTargetData, v => { state.dropTargetData = v; });
+
+  /* ──────────────────────────────────────────
+     DOM CACHE
+  ─────────────────────────────────────────── */
+  const dom = {};
+
+  function cacheDom_() {
+    dom.morningGrid    = document.getElementById("morningGrid");
+    dom.graveyardGrid  = document.getElementById("graveyardGrid");
+    dom.summaryGrid    = document.getElementById("rtoSummaryGrid");
+    dom.weekDisplay    = document.getElementById("currentWeekDisplay");
+    dom.shiftFilter    = document.getElementById("shiftFilter");
+    dom.shiftPill      = document.getElementById("shiftSegIndicator");
+    dom.segControl     = document.getElementById("segControl");
+    dom.segPill        = document.getElementById("segIndicator");
+    dom.btnWeek        = document.getElementById("btnWeek");
+    dom.btnMonth       = document.getElementById("btnMonth");
+    dom.shiftModal     = document.getElementById("shiftModal");
+    dom.mUser          = document.getElementById("mUser");
+    dom.mDate          = document.getElementById("mDate");
+    dom.mMode          = document.getElementById("mMode");
+    dom.mBulk          = document.getElementById("mBulk");
+    dom.saveBtn        = document.getElementById("saveBtn");
+    dom.mNotes         = document.getElementById("mNotes");
+    dom.timeWrapper    = document.getElementById("timeFieldsWrapper");
+    dom.toastContainer = document.getElementById("toastContainer");
+
+    dom.morningWrap    = dom.morningGrid?.closest(".grid-container")   || null;
+    dom.graveyardWrap  = dom.graveyardGrid?.closest(".grid-container") || null;
+    dom.summaryWrap    = dom.summaryGrid?.closest(".grid-container")   || null;
+
+    dom.morningSection   = document.querySelector(".section-label .fa-sun")?.closest(".section-label")       || null;
+    dom.graveyardSection = document.querySelector(".section-label .fa-moon")?.closest(".section-label")      || null;
+    dom.summarySection   = document.querySelector(".section-label .fa-chart-bar")?.closest(".section-label") || null;
+  }
+
+  /* ──────────────────────────────────────────
+     SERVER HELPER
+  ─────────────────────────────────────────── */
+  function call_(method, ...args) {
+    return new Promise((resolve, reject) => {
+      if (!GAS() || typeof google.script.run[method] !== "function") {
+        reject(new Error(`Server method not available: ${method}`));
+        return;
+      }
+      google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(reject)[method](...args);
+    });
+  }
+
+  /* ──────────────────────────────────────────
+     UTILITIES
+  ─────────────────────────────────────────── */
+  function toDateKey(d) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  }
+  window.toDateKey = toDateKey;
+
+  function esc_(s) {
+    return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+                        .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+  window.escapeHtml_ = esc_;
+
+  function escJs_(s) {
+    return String(s||"").replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+  }
+
+  function normalizeRole_(r)     { return String(r||"").trim().toLowerCase(); }
+  window.normalizeRole_ = normalizeRole_;
+
+  function normalizeAvatarUrl_(url) {
+    let v = String(url||"").replace(/\r?\n|\r/g,"").trim();
+    if (!v) return "";
+    if (!/^data:/i.test(v) && /^[A-Za-z0-9+/=\s]+$/.test(v) && v.length > 50)
+      v = "data:image/jpeg;base64," + v.replace(/\s+/g,"");
+    return v;
+  }
+  window.normalizeAvatarUrl_ = normalizeAvatarUrl_;
+
+  function getSessionUserEmail() {
+    return (
+      window.__SHELL_EMAIL__ ||
+      window.__SHELL_BOOTSTRAP__?.email ||
+      sessionStorage.getItem("user_email") ||
+      localStorage.getItem("user_email") || ""
+    ).trim();
+  }
+  window.getSessionUserEmail = getSessionUserEmail;
+
+  /* ──────────────────────────────────────────
+     TOAST
+  ─────────────────────────────────────────── */
+  function showToast(message, duration = 3000, type = "") {
+    const c = dom.toastContainer || document.getElementById("toastContainer");
+    if (!c) return;
+    const t = document.createElement("div");
+    t.className = `toast${type ? " " + type : ""}`;
+    t.textContent = message;
+    c.appendChild(t);
+    requestAnimationFrame(() => t.classList.add("show"));
+    setTimeout(() => {
+      t.classList.remove("show");
+      setTimeout(() => t.remove(), 260);
+    }, duration);
+  }
+  window.showToast = showToast;
+
+  /* ──────────────────────────────────────────
+     PERMISSION GUARD
+  ─────────────────────────────────────────── */
+  function can_(actionKey, msg) {
+    const ok = !!(state.CURRENT_USER.permissions?.actions?.[actionKey]);
+    if (!ok) showToast(msg || "Permission denied.", 3000, "error");
+    return ok;
+  }
+  window.requireActionPermission_ = can_;
+
+  /* ──────────────────────────────────────────
+     RBAC UI
+  ─────────────────────────────────────────── */
+  function applySchedulePermissionUI() {
+    document.getElementById("btnManageShift")?.classList.toggle("hidden",  !state.CAN_MANAGE);
+    document.getElementById("btnClearSchedule")?.classList.toggle("hidden", !state.CAN_CLEAR);
+    document.getElementById("copyBtn")?.classList.toggle("hidden",          !state.CAN_COPY);
+    document.getElementById("btnWeekendApply")?.classList.toggle("hidden",  !state.CAN_WEEKEND);
+    document.getElementById("btnWeekendClear")?.classList.toggle("hidden",  !state.CAN_WEEKEND);
+    document.getElementById("btnJumpToMe")?.classList.toggle("hidden",      !state.ME?.name);
+  }
+  window.applySchedulePermissionUI = applySchedulePermissionUI;
+
+  /* ──────────────────────────────────────────
+     DATA
+  ─────────────────────────────────────────── */
+  function rebuildBuckets_() {
+    state.teamMorning   = state.teamList.filter(e => String(e.group||"").trim() === "Morning");
+    state.teamGraveyard = state.teamList.filter(e => String(e.group||"").trim() === "Graveyard");
+  }
+
+  function rebuildDerived_() {
+    const sm = new Map(), rm = new Map();
+    for (const s of state.allEmployees) {
+      const name = String(s?.name||"").trim();
+      const date = String(s?.date||"").trim();
+      if (!name || !date) continue;
+      sm.set(`${name}|${date}`, s);
+      if (String(s.mode||"").trim().toUpperCase() === "RTO") {
+        const p = rm.get(date) || { total:0, morning:0, graveyard:0 };
+        p.total++;
+        if (String(s.group||"").toLowerCase().includes("morning"))   p.morning++;
+        if (String(s.group||"").toLowerCase().includes("graveyard")) p.graveyard++;
+        rm.set(date, p);
+      }
+    }
+    state.shiftMap    = sm;
+    state.rtoCountMap = rm;
+  }
+
+  async function refreshData_() {
+    const shifts = await call_("getEmployeesFromShifts");
+    state.allEmployees = Array.isArray(shifts) ? shifts : [];
+    rebuildDerived_();
+    renderRoster();
+  }
+
+  function refreshData() {
+    if (!GAS()) return;
+    call_("getEmployeesFromShifts")
+      .then(s => { state.allEmployees = Array.isArray(s) ? s : []; rebuildDerived_(); renderRoster(); })
+      .catch(err => console.error("refreshData:", err));
+  }
+  window.refreshData = refreshData;
+
+  /* ──────────────────────────────────────────
+     MODAL HELPERS
+  ─────────────────────────────────────────── */
+  function populateUserOptions_() {
+    if (!dom.mUser) return;
+    dom.mUser.innerHTML = state.teamList.map(u =>
+      `<option value="${esc_(u.name)}">${esc_(u.name)}</option>`
+    ).join("");
+  }
+
+  function populateTimeDropdowns() {
+    const hrs  = ["01","02","03","04","05","06","07","08","09","10","11","12"];
+    const mins = ["00","15","30","45"];
+    const fill = (id, data) => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = data.map(v => `<option value="${v}">${v}</option>`).join("");
+    };
+    fill("mStartHr", hrs);  fill("mEndHr", hrs);
+    fill("mStartMin", mins); fill("mEndMin", mins);
+    fill("mStartAmPm", ["AM","PM"]); fill("mEndAmPm", ["AM","PM"]);
+  }
+  window.populateTimeDropdowns = populateTimeDropdowns;
+
+  function parseTimeStr(str) {
+    const [time, ampm] = String(str||"").split(" ");
+    const [hr, min]   = String(time||"").split(":");
+    return [hr, min, ampm];
+  }
+  window.parseTimeString = parseTimeStr;
+
+  function applyFixedTimes(empData, mode, shift) {
+    let sH,sM,sA,eH,eM,eA;
+    const isGY = String(empData?.group||"").trim() === "Graveyard";
+    const isMo = String(empData?.group||"").trim() === "Morning";
+
+    if (mode === "FH On-Call") {
+      [sH,sM,sA,eH,eM,eA] = isGY ? ["09","00","PM","09","00","AM"] : ["09","00","AM","09","00","PM"];
+    } else if (isMo) {
+      [sH,sM,sA,eH,eM,eA] = ["06","00","AM","02","00","PM"];
+    } else if (isGY) {
+      [sH,sM,sA,eH,eM,eA] = ["09","00","PM","05","00","AM"];
+    }
+
+    if (shift?.start && shift?.end) {
+      [sH,sM,sA] = parseTimeStr(shift.start);
+      [eH,eM,eA] = parseTimeStr(shift.end);
+    }
+
+    const set = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = v; };
+    set("mStartHr",sH); set("mStartMin",sM); set("mStartAmPm",sA);
+    set("mEndHr",eH);   set("mEndMin",eM);   set("mEndAmPm",eA);
+  }
+  window.applyFixedTimes = applyFixedTimes;
+
+  function toggleTimeFields() {
+    const mode = dom.mMode?.value;
+    const needs = ["RTO","WFH","FH On-Call"].includes(mode);
+    if (dom.timeWrapper) dom.timeWrapper.style.display = needs ? "" : "none";
+    if (needs) {
+      const emp = state.teamList.find(e => e.name === dom.mUser?.value);
+      applyFixedTimes(emp, mode, null);
+    }
+  }
+  window.toggleTimeFields = toggleTimeFields;
+
+  function openModal(name = null, date = null) {
+    if (!can_("schedule.manage", "You don't have permission to manage schedule.")) return;
+    if (!dom.mUser) return;
+
+    if (name) dom.mUser.value = name;
+    if (date) dom.mDate.value = date;
+
+    const selName = name || dom.mUser.value;
+    const empData = state.teamList.find(e => e.name === selName);
+    const dateVal = date || dom.mDate?.value || "";
+    const shift   = state.shiftMap.get(`${String(selName||"").trim()}|${String(dateVal).trim()}`);
+    const mode    = shift ? shift.mode : "RTO";
+
+    dom.mMode.value = mode;
+    toggleTimeFields();
+    if (shift) applyFixedTimes(empData, mode, shift);
+    if (dom.mNotes) dom.mNotes.value = shift?.notes || "";
+    dom.shiftModal.style.display = "flex";
+  }
+  window.openModal = openModal;
+
+  function getAvatarHtml_(emp) {
+    const name     = String(emp?.name||"").trim();
+    const initials = name.split(/\s+/).filter(Boolean).map(n=>n[0]).join("").slice(0,2).toUpperCase()||"??";
+    const url      = normalizeAvatarUrl_(emp?.avatarUrl||emp?.avatar||"");
+
+    if (url) {
+      return `<div class="schedule-avatar">
+        <img src="${esc_(url)}" alt="${esc_(name)}"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='grid';">
+        <div class="schedule-avatar-fallback" style="display:none;">${esc_(initials)}</div>
+      </div>`;
+    }
+    return `<div class="schedule-avatar"><div class="schedule-avatar-fallback">${esc_(initials)}</div></div>`;
+  }
+  window.getEmployeeAvatarHtml_ = getAvatarHtml_;
+
+  /* ──────────────────────────────────────────
+     VIEW / NAVIGATION
+  ─────────────────────────────────────────── */
+  function getDateList_() {
+    const count = state.currentView === "week"
+      ? 7
+      : new Date(state.currentStart.getFullYear(), state.currentStart.getMonth()+1, 0).getDate();
+    return Array.from({length: count}, (_,i) => new Date(
+      state.currentStart.getFullYear(),
+      state.currentStart.getMonth(),
+      state.currentStart.getDate() + i
+    ));
+  }
+
+  function applyShiftVisibility_() {
+  const showM = state.currentShiftFilter !== "graveyard";
+  const showG = state.currentShiftFilter !== "morning";
+
+  [dom.morningSection,  dom.morningWrap].forEach(el  => el && (el.style.display = showM ? "" : "none"));
+  [dom.graveyardSection,dom.graveyardWrap].forEach(el => el && (el.style.display = showG ? "" : "none"));
+
+  // Summary row always visible — remove the showS condition entirely
+  [dom.summarySection, dom.summaryWrap].forEach(el => el && (el.style.display = ""));
+}
+  window.applyShiftVisibility_ = applyShiftVisibility_;
+
+ function updateShiftPill_(filter) {
+  const container = document.getElementById("shiftFilter");
+  const items     = document.querySelectorAll("#shiftFilter .seg-item");
+  if (!dom.shiftPill || !items.length || !container) return;
+
+  const idx = filter === "all" ? 0 : filter === "morning" ? 1 : 2;
+  const activeItem    = items[idx];
+  const containerRect = container.getBoundingClientRect();
+  const itemRect      = activeItem.getBoundingClientRect();
+
+  dom.shiftPill.style.width     = `${itemRect.width}px`;
+  dom.shiftPill.style.transform = `translateX(${itemRect.left - containerRect.left - 3}px)`;
+}
+
+ function setShiftFilter(filter) {
+  state.currentShiftFilter = filter;
+  document.querySelectorAll("#shiftFilter .seg-item").forEach(i =>
+    i.classList.toggle("active", i.dataset.shift === filter)
+  );
+  requestAnimationFrame(() => updateShiftPill_(filter));  // ← wrap in rAF
+  applyShiftVisibility_();
+  renderRoster();
+}
+  window.setShiftFilter = setShiftFilter;
+
+ function updateSegPill_(view) {
+  const container = document.getElementById("segControl");
+  const items     = document.querySelectorAll("#segControl .seg-item");
+  if (!dom.segPill || !items.length || !container) return;
+
+  const idx           = view === "month" ? 1 : 0;
+  const activeItem    = items[idx];
+  const containerRect = container.getBoundingClientRect();
+  const itemRect      = activeItem.getBoundingClientRect();
+
+  dom.segPill.style.width     = `${itemRect.width}px`;
+  dom.segPill.style.transform = `translateX(${itemRect.left - containerRect.left - 3}px)`;
+}
+  window.updateSegmentIndicator = updateSegPill_;
+
+  function setView(view) {
+    state.currentView = view;
+    dom.btnWeek?.classList.toggle("active",  view === "week");
+    dom.btnMonth?.classList.toggle("active", view === "month");
+    updateSegPill_(view);
+
+    const today = new Date(); today.setHours(0,0,0,0);
+    if (view === "month") {
+      state.currentStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    } else {
+      const diff = today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1);
+      state.currentStart = new Date(today); state.currentStart.setDate(diff);
+    }
+    state.currentStart.setHours(0,0,0,0);
+    renderRoster();
+  }
+  window.setView = setView;
+
+  function changeDateRange(dir) {
+    if (state.currentView === "week") {
+      state.currentStart.setDate(state.currentStart.getDate() + dir*7);
+    } else {
+      state.currentStart.setMonth(state.currentStart.getMonth() + dir);
+      state.currentStart.setDate(1);
+    }
+    renderRoster();
+  }
+  window.changeDateRange = changeDateRange;
+
+  function jumpToToday() {
+    const t = new Date(); t.setHours(0,0,0,0);
+    if (state.currentView === "week") {
+      state.currentStart = new Date(t);
+      state.currentStart.setDate(t.getDate() - t.getDay() + (t.getDay() === 0 ? -6 : 1));
+    } else {
+      state.currentStart = new Date(t.getFullYear(), t.getMonth(), 1);
+    }
+    renderRoster();
+  }
+  window.jumpToToday = jumpToToday;
+
+  function updateCopyMenu() {
+    const menu = document.getElementById("copyDropdownMenu");
+    if (!menu) return;
+    if (state.currentView === "week") {
+      menu.innerHTML = `
+        <li><a class="dropdown-item" href="javascript:void(0)" onclick="runCopy('week')">
+          <i class="fas fa-arrow-left me-2"></i>Copy Previous Week
+        </a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="javascript:void(0)" onclick="runCopyRemainingWeeksOfMonth()">
+          <i class="fas fa-copy me-2"></i>Copy week → remaining weeks of month
+        </a></li>`;
+    } else {
+      menu.innerHTML = `
+        <li><a class="dropdown-item" href="javascript:void(0)" onclick="runCopy('month')">
+          <i class="fas fa-arrow-left me-2"></i>Copy Previous Month
+        </a></li>`;
+    }
+  }
+  window.updateCopyMenu = updateCopyMenu;
+
+
+
+  function jumpToMyRow() {
+    const name = String(state.ME?.name || "").trim();
+    if (!name) { showToast("Your identity isn't set.", 2000, "error"); return; }
+
+    const id = name.replaceAll(" ", "_");
+    const el = document.getElementById(`empCell_${id}`);
+    if (!el) { showToast("Your row isn't visible in this view.", 2500, "error"); return; }
+
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    // Brief pulse highlight
+    el.style.transition = "box-shadow .2s ease";
+    el.style.boxShadow  = "inset 3px 0 0 var(--blue), 0 0 0 2px rgba(40,87,164,.25)";
+    setTimeout(() => {
+      el.style.boxShadow = "";
+    }, 1800);
+  }
+  window.jumpToMyRow = jumpToMyRow;
+
+
+  async function copyEmployeeWeekForward_(name) {
+    if (!can_("schedule.copy", "No permission.")) return;
+    const confirmed = confirm(`Copy ${name}'s current week shifts to next week?`);
+    if (!confirmed) return;
+
+    const grids = document.querySelectorAll(".grid-container");
+    grids.forEach(g => g.style.opacity = ".35");
+
+    try {
+      const result = await call_("copyEmployeeWeekForward", {
+        name,
+        sourceWeekStart: toDateKey(state.currentStart)
+      });
+      showToast(`Copied ${result.shiftsCopied} shift(s) for ${name} to next week.`);
+      await refreshData_();
+    } catch(err) {
+      showToast("Error: " + (err?.message||err), 3500, "error");
+    } finally {
+      grids.forEach(g => g.style.opacity = "1");
+    }
+  }
+  window.copyEmployeeWeekForward_ = copyEmployeeWeekForward_;
+
+
+
+  function buildPeriodSummary_(dates) {
+    const panel = document.getElementById("periodSummary");
+    if (!panel) return;
+
+    // Scope to visible dates only
+    const visibleKeys = new Set(dates.map(d => toDateKey(d)));
+
+    // Count modes
+    const modeCounts = {};
+    const scheduledNames = new Set();
+
+    for (const s of state.allEmployees) {
+      if (!visibleKeys.has(String(s.date||"").trim())) continue;
+      const m = String(s.mode||"").toUpperCase();
+      if (!m) continue;
+      modeCounts[m] = (modeCounts[m] || 0) + 1;
+      scheduledNames.add(String(s.name||"").trim());
+    }
+
+    // Unscheduled employees
+    const allNames  = state.teamList.map(e => String(e.name||"").trim());
+    const unscheduled = allNames.filter(n => n && !scheduledNames.has(n));
+
+    // RTO vs WFH ratio
+    const rto = modeCounts["RTO"] || 0;
+    const wfh = modeCounts["WFH"] || 0;
+    const total = rto + wfh;
+    const rtoPct = total ? Math.round((rto / total) * 100) : 0;
+    const wfhPct = total ? 100 - rtoPct : 0;
+
+    // Stat cards — ordered by relevance
+    const STAT_ORDER = ["RTO","WFH","SL","VL","HOL","MAT","PAT","BL","OFF","FH ON-CALL"];
+    const statCards = STAT_ORDER
+      .filter(m => modeCounts[m] !== undefined || ["RTO","WFH"].includes(m))
+      .map(m => {
+        const count = modeCounts[m] || 0;
+        return `<div class="summary-stat-card ${count === 0 ? "is-zero" : ""}">
+          <span class="summary-stat-num">${count}</span>
+          <span class="summary-stat-label">${m}</span>
+        </div>`;
+      }).join("");
+
+    // Unscheduled pills
+    const unscheduledHtml = unscheduled.length
+      ? `<div class="summary-unscheduled">
+          <span style="color:var(--red);font-weight:600;">${unscheduled.length} unscheduled:</span>
+          <div class="summary-unscheduled-names">
+            ${unscheduled.map(n => `<span class="summary-unscheduled-pill">${esc_(n)}</span>`).join("")}
+          </div>
+        </div>`
+      : `<div style="font-size:11px;font-family:var(--font-mono);color:var(--green);">
+          <i class="fas fa-circle-check"></i> All ${allNames.length} employees scheduled
+        </div>`;
+
+    // Ratio bar
+    const ratioHtml = total > 0 ? `
+      <div class="summary-ratio-wrap">
+        <div class="summary-ratio-label">
+          <span style="color:var(--rto-t);">RTO ${rtoPct}%</span>
+          <span style="color:var(--t-3);">Onsite vs Remote</span>
+          <span style="color:var(--wfh-t);">WFH ${wfhPct}%</span>
+        </div>
+        <div class="summary-ratio-track">
+          <div class="summary-ratio-rto"  style="width:${rtoPct}%;"></div>
+          <div class="summary-ratio-wfh"  style="width:${wfhPct}%;"></div>
+        </div>
+      </div>` : "";
+
+    // Check if currently collapsed
+    const isCollapsed = panel.dataset.collapsed === "true";
+
+    panel.innerHTML = `
+      <div class="summary-panel-header">
+        <div class="summary-panel-title">
+          <i class="fas fa-chart-simple"></i>
+          Period Summary
+          <span style="opacity:.5;font-weight:400;">— ${dates.length} day${dates.length !== 1 ? "s" : ""}</span>
+        </div>
+        <button class="summary-toggle-btn" onclick="toggleSummaryPanel_()" title="${isCollapsed ? "Expand" : "Collapse"}">
+          <i class="fas fa-chevron-${isCollapsed ? "down" : "up"}"></i>
+        </button>
+      </div>
+      ${isCollapsed ? "" : `
+      <div class="summary-panel-body">
+        <div class="summary-stat-row">${statCards}</div>
+        ${ratioHtml}
+        ${unscheduledHtml}
+      </div>`}
+    `;
+  }
+  window.buildPeriodSummary_ = buildPeriodSummary_;
+
+  function toggleSummaryPanel_() {
+    const panel = document.getElementById("periodSummary");
+    if (!panel) return;
+    panel.dataset.collapsed = panel.dataset.collapsed === "true" ? "false" : "true";
+    // Re-render with current dates
+    const dates = getDateList_();
+    buildPeriodSummary_(dates);
+  }
+  window.toggleSummaryPanel_ = toggleSummaryPanel_;
+
+
+
+  /* ──────────────────────────────────────────
+     RENDER
+  ─────────────────────────────────────────── */
+  function renderRoster() {
+    state.selectedShifts = [];
+    const dates    = getDateList_();
+    const todayStr = toDateKey(new Date());
+
+    if (dom.weekDisplay) {
+      dom.weekDisplay.textContent = state.currentView === "week"
+        ? `${state.currentStart.toLocaleDateString("en-US",{month:"short",day:"numeric"})} – ` +
+          `${dates[dates.length-1].toLocaleDateString("en-US",{month:"short",day:"numeric"})}, ${state.currentStart.getFullYear()}`
+        : state.currentStart.toLocaleDateString("en-US",{month:"long",year:"numeric"});
+    }
+
+    updateCopyMenu();
+
+    const morning   = state.currentShiftFilter === "graveyard" ? [] : state.teamMorning;
+    const graveyard = state.currentShiftFilter === "morning"   ? [] : state.teamGraveyard;
+
+    buildGrid_("morningGrid",   morning,   dates, todayStr);
+    buildGrid_("graveyardGrid", graveyard, dates, todayStr);
+    buildSummaryRow_(dates, todayStr);
+    buildPeriodSummary_(dates);
+    applyShiftVisibility_();
+    highlightMe_();
+  }
+  window.renderRoster = renderRoster;
+
+  function buildShiftCounts_(name, dates) {
+    const counts = {};
+    dates.forEach(d => {
+      const shift = state.shiftMap.get(`${name}|${toDateKey(d)}`);
+      if (!shift || !shift.mode) return;
+      const m = String(shift.mode).toUpperCase();
+      counts[m] = (counts[m] || 0) + 1;
+    });
+    const order = ["RTO","WFH","SL","VL","MAT","PAT","BL","HOL","OFF","FH ON-CALL"];
+    const parts = order.filter(m => counts[m]).map(m => `${counts[m]} ${m}`);
+    if (!parts.length) return `<span style="opacity:.35;font-size:9px;font-family:var(--font-mono);">no shifts</span>`;
+    return parts.map(p => `<span class="shift-count-pill">${p}</span>`).join("");
+  }
+
+
+  function buildLeaveTooltip_(name, dates) {
+    const limits  = state.LEAVE_LIMITS;
+    const used    = {};
+
+    // Build a Set of date keys visible in the current view
+    const visibleKeys = new Set(dates.map(d => toDateKey(d)));
+
+    // Only count shifts that fall within the visible date range
+    for (const s of state.allEmployees) {
+      if (String(s.name||"").trim() !== name) continue;
+      if (!visibleKeys.has(String(s.date||"").trim())) continue;
+      const m = String(s.mode||"").toUpperCase();
+      if (m in limits) used[m] = (used[m] || 0) + 1;
+    }
+
+    const lines = Object.keys(limits).map(m => {
+      const u = used[m] || 0;
+      const l = limits[m];
+      const pct = Math.min(100, Math.round((u / l) * 100));
+      const color = pct >= 100 ? "var(--red)" : pct >= 80 ? "var(--yellow)" : "var(--green)";
+      return `<div class="leave-bar-row">
+        <span class="leave-bar-label">${m}</span>
+        <div class="leave-bar-track">
+          <div class="leave-bar-fill" style="width:${pct}%;background:${color};"></div>
+        </div>
+        <span class="leave-bar-count" style="color:${color};">${u}/${l}</span>
+      </div>`;
+    }).join("");
+
+    return `<div class="leave-balance-panel">${lines}</div>`;
+  }
+
+
+  function buildGrid_(gridId, employees, dates, todayStr) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+
+    const dayMin = state.currentView === "month" ? 220 : 164;
+    grid.style.gridTemplateColumns = `210px repeat(${dates.length}, minmax(${dayMin}px, 1fr))`;
+
+    const p = [];
+    const myName   = String(state.ME?.name||"").trim().toLowerCase();
+    const hasToday = dates.some(d => toDateKey(d) === todayStr);
+
+    // ── Header row ──
+    p.push(`<div class="cell header-cell sticky-col">
+      <div class="emp-wrap">
+        <span style="font-size:9.5px;letter-spacing:.10em;color:var(--t-3);">EMPLOYEE</span>
+        ${state.CAN_MANAGE ? `<span class="pick-actions">
+          <a onclick="selectAll_(true)">All</a>
+          <a onclick="selectAll_(false)">Clear</a>
+        </span>` : ""}
+      </div>
+    </div>`);
+
+    for (const d of dates) {
+      const ds      = toDateKey(d);
+      const weekend = d.getDay() === 0 || d.getDay() === 6;
+      const today   = ds === todayStr;
+      p.push(`<div class="cell header-cell ${weekend?"is-weekend":""} ${today?"is-today":""}">
+        <span class="day-label">${d.toLocaleDateString("en-US",{weekday:"short"})}</span>
+        <span class="day-number">${d.getDate()}</span>
+      </div>`);
+    }
+
+    // ── Employee rows ──
+    for (const emp of employees) {
+      const name   = String(emp?.name||"");
+      const trim   = name.trim();
+      const isMe   = !!myName && trim.toLowerCase() === myName;
+      const id     = trim.replaceAll(" ","_");
+      const sName  = esc_(name);
+      const jsName = escJs_(name);
+
+      p.push(`<div class="cell employee-cell sticky-col ${isMe?"is-me":""} ${hasToday?"has-today-week":""}" id="empCell_${id}">
+        <div class="emp-wrap">
+          ${state.CAN_MANAGE ? `<input type="checkbox" class="emp-checkbox employee-select" id="pick_${id}"
+            value="${sName}" title="Select ${sName}"
+            onclick="event.stopPropagation();this.closest('.employee-cell')?.classList.toggle('row-selected',this.checked);">` : ""}
+          <div style="cursor:pointer;display:flex;align-items:center;gap:10px;flex:1;"
+               onclick="${state.CAN_MANAGE ? `togglePick_(document.getElementById('pick_${id}'))` : ""}">
+            ${getAvatarHtml_(emp)}
+            <div class="emp-info">
+              <span class="emp-name">${sName}</span>
+              <span class="emp-role">${esc_(emp.role||"Staff")}</span>
+              <span class="emp-shift-counts">${buildShiftCounts_(trim, dates)}</span>
+              <div class="leave-balance-wrap">${buildLeaveTooltip_(trim, dates)}</div>
+              ${state.CAN_MANAGE ? `<div class="emp-actions">
+                <button class="btn-clear-sm" onclick="event.stopPropagation();handleClearImmediate('${jsName}')">
+                  <i class="fas fa-trash-alt"></i> Clear
+                </button>
+                ${state.currentView === "week" && state.CAN_COPY ? `<button class="btn-clear-sm" style="background:rgba(40,87,164,.08);color:var(--blue);border-color:rgba(40,87,164,.18);"
+                  onclick="event.stopPropagation();copyEmployeeWeekForward_('${jsName}')">
+                  <i class="fas fa-forward"></i> Copy →
+                </button>` : ""}
+              </div>` : ""}
+            </div>
+          </div>
+        </div>
+      </div>`);
+
+      for (const d of dates) {
+        const ds      = toDateKey(d);
+        const weekend = d.getDay() === 0 || d.getDay() === 6;
+        const today   = ds === todayStr;
+        const shift   = state.shiftMap.get(`${trim}|${ds}`);
+
+        p.push(`<div class="cell ${isMe?"is-me-row":""} ${weekend?"is-weekend":""} ${today?"is-today":""}"
+          data-cell="1" data-name="${sName}" data-date="${ds}">`);
+
+        if (shift && String(shift.mode||"").trim()) {
+          const mode    = String(shift.mode).toUpperCase();
+          const css     = mode.toLowerCase().replace(/[\s-]/g,"");
+          const showTime = shift.start && shift.end && ["RTO","WFH","FH ON-CALL"].includes(mode)
+            ? `${shift.start}–${shift.end}` : "";
+          const notesTxt = String(shift.notes || "").trim();
+          p.push(`<div class="shift-block type-${css}" draggable="true"
+            tabindex="0" role="button" aria-label="${esc_(mode)} shift for ${esc_(name)} on ${ds}"
+            data-action="shift" data-name="${sName}" data-date="${ds}"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openModal('${escJs_(name)}','${ds}');}">
+            <span class="shift-tag" style="pointer-events:none;">${esc_(mode)}</span>
+            <span class="shift-time" style="pointer-events:none;">${esc_(showTime)}</span>
+            ${notesTxt ? `<span class="shift-notes" style="pointer-events:none;">${esc_(notesTxt)}</span>` : ""}
+          </div>`);
+        } else {
+          p.push(state.CAN_MANAGE
+            ? `<div class="empty-slot" data-action="open" data-name="${sName}" data-date="${ds}"
+                tabindex="0" role="button" aria-label="Add shift for ${esc_(name)} on ${ds}"
+                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openModal('${escJs_(name)}','${ds}');}">
+                <i class="fas fa-plus"></i>
+               </div>`
+            : `<div class="empty-slot" style="cursor:default;pointer-events:none;"></div>`
+          );
+        }
+
+        p.push("</div>");
+      }
+    }
+
+    grid.innerHTML = p.join("");
+    syncPickHighlights_();
+  }
+  window.updateGrid = buildGrid_;
+
+  function buildSummaryRow_(dates, todayStr) {
+    const grid = dom.summaryGrid;
+    if (!grid) return;
+
+    const dayMin = state.currentView === "month" ? 220 : 164;
+    grid.style.gridTemplateColumns = `210px repeat(${dates.length}, minmax(${dayMin}px, 1fr))`;
+
+    const p = [];
+
+    p.push(`<div class="cell sticky-col summary-cell" style="min-height:60px;">
+      <div class="emp-wrap">
+        <div class="schedule-avatar" style="background:rgba(79,142,247,.14);color:#93c5fd;border-color:rgba(79,142,247,.22);">
+          <div class="schedule-avatar-fallback"><i class="fas fa-building" style="font-size:10px;"></i></div>
+        </div>
+        <div class="emp-info">
+          <span class="emp-name" style="color:#93c5fd;">Onsite Total</span>
+          <span class="emp-role">DAILY CAPACITY</span>
+        </div>
+      </div>
+    </div>`);
+
+    for (const d of dates) {
+      const ds      = toDateKey(d);
+      const weekend = d.getDay() === 0 || d.getDay() === 6;
+      const today   = ds === todayStr;
+      const counts  = state.rtoCountMap.get(ds) || {total:0,morning:0,graveyard:0};
+
+      p.push(`<div class="cell summary-cell ${weekend?"is-weekend":""} ${today?"is-today":""}" style="min-height:60px;">
+        <div class="summary-card" style="width:100%;">
+          <div class="count-badge">${counts.total || "–"}</div>
+          <div class="breakdown-label">${counts.total ? `M:${counts.morning} • G:${counts.graveyard}` : "–"}</div>
+        </div>
+      </div>`);
+    }
+
+    grid.innerHTML = p.join("");
+  }
+  window.updateRTOCounters = buildSummaryRow_;
+
+  /* ──────────────────────────────────────────
+     GRID SCROLL SYNC
+  ─────────────────────────────────────────── */
+  function syncGridScroll() {
+    if (state._scrollSynced) return;
+    state._scrollSynced = true;
+    const containers = [dom.morningWrap, dom.summaryWrap, dom.graveyardWrap].filter(Boolean);
+    let syncing = false;
+    containers.forEach(c => {
+      c.addEventListener("scroll", function() {
+        if (syncing) return; syncing = true;
+        const sl = this.scrollLeft;
+        containers.forEach(t => { if (t !== this) t.scrollLeft = sl; });
+        syncing = false;
+      }, { passive: true });
+    });
+  }
+  window.syncGridScroll = syncGridScroll;
+
+  /* ──────────────────────────────────────────
+     EMPLOYEE SELECTION
+  ─────────────────────────────────────────── */
+  function getSelectedNames_() {
+    return Array.from(document.querySelectorAll(".employee-select:checked"))
+      .map(el => String(el.value||"").trim()).filter(Boolean);
+  }
+  window.getSelectedEmployeeNames_ = getSelectedNames_;
+
+  function selectAll_(checked) {
+    document.querySelectorAll(".employee-select").forEach(cb => {
+      cb.checked = !!checked;
+      cb.closest(".employee-cell")?.classList.toggle("row-selected", cb.checked);
+    });
+    showToast(checked ? "Selected all employees" : "Cleared selection", 1500);
+  }
+  window.selectAllEmployees_ = selectAll_;
+
+  function togglePick_(cb) {
+    if (!cb) return;
+    cb.checked = !cb.checked;
+    cb.closest(".employee-cell")?.classList.toggle("row-selected", cb.checked);
+  }
+  window.toggleEmployeePick_ = togglePick_;
+
+  function syncPickHighlights_() {
+    document.querySelectorAll(".employee-select").forEach(cb => {
+      cb.closest(".employee-cell")?.classList.toggle("row-selected", cb.checked);
+    });
+  }
+  window.syncEmployeePickHighlights_ = syncPickHighlights_;
+
+  function highlightMe_() {
+    const name = String(state.ME?.name||"").trim();
+    if (!name) return;
+    const id = name.replaceAll(" ","_");
+    const el = document.getElementById(`empCell_${id}`);
+    if (!el) return;
+    if (state.lastHighlightedMe && state.lastHighlightedMe !== el)
+      state.lastHighlightedMe.classList.remove("is-me");
+    el.classList.add("is-me");
+    state.lastHighlightedMe = el;
+  }
+  window.highlightLoggedInUser_ = highlightMe_;
+
+  /* ──────────────────────────────────────────
+     SAVE SHIFT
+  ─────────────────────────────────────────── */
+  async function saveShiftEntry() {
+    if (!can_("schedule.manage", "You don't have permission to manage schedule.")) return;
+
+    const btn  = dom.saveBtn;
+    const name = dom.mUser.value;
+    const date = dom.mDate.value;
+    const bulk = dom.mBulk.checked;
+    const emp  = state.teamList.find(e => e.name === name);
+
+    const startT = `${document.getElementById("mStartHr").value}:${document.getElementById("mStartMin").value} ${document.getElementById("mStartAmPm").value}`;
+    const endT   = `${document.getElementById("mEndHr").value}:${document.getElementById("mEndMin").value} ${document.getElementById("mEndAmPm").value}`;
+
+    // Conflict detection
+    const conflictDates = [];
+    if (bulk) {
+      const [y,m,d] = date.split("-").map(Number);
+      const base = new Date(y,m-1,d);
+      const mon  = base.getDay() === 0 ? -6 : 1 - base.getDay();
+      for (let i = 0; i < 5; i++) {
+        const dd  = new Date(y,m-1,d+mon+i);
+        const key = toDateKey(dd);
+        const existing = state.shiftMap.get(`${String(name).trim()}|${key}`);
+        if (existing?.mode) conflictDates.push({ date: key, mode: existing.mode });
+      }
+    } else {
+      const existing = state.shiftMap.get(`${String(name).trim()}|${date}`);
+      if (existing?.mode) conflictDates.push({ date, mode: existing.mode });
+    }
+
+    if (conflictDates.length) {
+      const lines = conflictDates.map(c => `• ${c.date} — ${c.mode}`).join("\n");
+      const confirmed = confirm(
+        `${name} already has ${conflictDates.length > 1 ? "shifts" : "a shift"} on:\n\n${lines}\n\nReplace ${conflictDates.length > 1 ? "them" : "it"}?`
+      );
+      if (!confirmed) return;
+    }
+
+    btn.disabled = true; btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Saving…`;
+
+    let dates = [];
+    if (bulk) {
+      const [y,m,d] = date.split("-").map(Number);
+      const base    = new Date(y,m-1,d);
+      const mon     = base.getDay() === 0 ? -6 : 1 - base.getDay();
+      for (let i = 0; i < 5; i++) {
+        const dd = new Date(y,m-1,d+mon+i);
+        dates.push(toDateKey(dd));
+      }
+    } else {
+      dates = [date];
+    }
+
+    try {
+      await call_("saveBulkShiftsToSheet", {
+        role:  emp?.role  || "Staff",
+        name,
+        mode:  dom.mMode.value,
+        group: emp?.group || "Morning",
+        dates, start: startT, end: endT,
+        notes: dom.mNotes?.value || ""
+      });
+      dom.mBulk.checked = false;
+      if (dom.mNotes) dom.mNotes.value = "";
+      dom.shiftModal.style.display = "none";
+      showToast("Shift saved!");
+      await refreshData_();
+    } catch(err) {
+      showToast("Error: " + (err?.message||err), 3500, "error");
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fas fa-floppy-disk"></i> Save`;
+    }
+  }
+  window.saveShiftEntry = saveShiftEntry;
+
+  /* ──────────────────────────────────────────
+     CONFIRM MODAL
+  ─────────────────────────────────────────── */
+  function closeCustomConfirm() {
+    const m = document.getElementById("customConfirmModal");
+    if (m) m.style.display = "none";
+    // Reset to static state
+    const ss = document.getElementById("confirmStaticState");
+    const su = document.getElementById("successState");
+    if (ss) ss.style.display = "";
+    if (su) su.style.display = "none";
+  }
+  window.closeCustomConfirm = closeCustomConfirm;
+
+  function showSuccessAnimation(message) {
+    const m  = document.getElementById("customConfirmModal");
+    const ss = document.getElementById("confirmStaticState");
+    const su = document.getElementById("successState");
+    const sm = document.getElementById("successMessage");
+
+    if (ss) ss.style.display = "none";
+    if (su) { su.style.display = "flex"; }
+    if (sm) sm.textContent = message;
+
+    setTimeout(() => {
+      closeCustomConfirm();
+    }, 2200);
+  }
+  window.showSuccessAnimation = showSuccessAnimation;
+
+  function openConfirm_({ icon, iconColor, title, desc, btnLabel, btnClass, onConfirm }) {
+    const m = document.getElementById("customConfirmModal");
+    if (!m) return;
+
+    document.getElementById("staticIcon").className   = icon || "fas fa-trash-alt";
+    document.getElementById("staticIcon").style.color  = iconColor || "var(--red)";
+    document.getElementById("confirmTitle").textContent = title || "Confirm?";
+    document.getElementById("confirmDescription").innerHTML = desc || "";
+    const execBtn = document.getElementById("executeClearBtn");
+    execBtn.textContent = btnLabel || "Confirm";
+    execBtn.className   = `btn ${btnClass || "btn-danger"}`;
+    execBtn.onclick = () => { closeCustomConfirm(); onConfirm(); };
+
+    document.getElementById("confirmStaticState").style.display = "";
+    document.getElementById("successState").style.display = "none";
+    m.style.display = "flex";
+  }
+
+  function handleClearImmediate(name) {
+    if (!can_("schedule.clear", "You don't have permission to clear schedule.")) return;
+    openConfirm_({
+      icon: "fas fa-user-minus",
+      title: "Clear Schedule?",
+      desc: `Remove <b>${esc_(name)}</b>'s shifts for this ${state.currentView}?`,
+      btnLabel: "Clear",
+      onConfirm: () => executeClearEmployee_(name)
+    });
+  }
+  window.handleClearImmediate = handleClearImmediate;
+
+  async function executeClearEmployee_(name) {
+    const id  = name.replaceAll(" ","_");
+    const btn = document.getElementById(`clearBtn_${id}`);
+    if (btn) { btn.disabled = true; btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`; }
+    document.querySelectorAll(".grid-container").forEach(g => g.style.opacity = ".35");
+    try {
+      await call_("clearScheduleForEmployee", { name, startDate: toDateKey(state.currentStart), view: state.currentView });
+      showSuccessAnimation(`Schedule cleared for ${name}`);
+      await refreshData_();
+    } catch(err) {
+      showToast("Error: " + (err?.message||err), 3500, "error");
+      if (btn) { btn.disabled = false; btn.innerHTML = `<i class="fas fa-trash-alt"></i> Clear`; }
+    } finally {
+      document.querySelectorAll(".grid-container").forEach(g => g.style.opacity = "1");
+    }
+  }
+  window.executeClearProcess = executeClearEmployee_;
+
+  function handleClearAllClick() {
+    if (!can_("schedule.clear", "You don't have permission to clear schedule.")) return;
+    openConfirm_({
+      title:    "Clear Full Roster?",
+      desc:     `Remove <b>everyone's</b> shifts for the current ${state.currentView}? This cannot be undone.`,
+      btnLabel: "Clear All",
+      onConfirm: executeBulkClear_
+    });
+  }
+  window.handleClearAllClick = handleClearAllClick;
+
+  async function executeBulkClear_() {
+    if (!can_("schedule.clear")) return;
+    document.querySelectorAll(".grid-container").forEach(g => g.style.opacity = ".35");
+    try {
+      await call_("clearScheduleForRange", { startDate: toDateKey(state.currentStart), view: state.currentView });
+      showSuccessAnimation("Roster cleared successfully!");
+      await refreshData_();
+    } catch(err) {
+      showToast("Error: " + (err?.message||err), 3500, "error");
+    } finally {
+      document.querySelectorAll(".grid-container").forEach(g => g.style.opacity = "1");
+    }
+  }
+  window.executeBulkClear = executeBulkClear_;
+
+  /* ──────────────────────────────────────────
+     DRAG & DROP
+  ─────────────────────────────────────────── */
+  function toggleSelection(el, name, date) {
+    const idx = state.selectedShifts.findIndex(s => s.name===name && s.date===date);
+    if (idx > -1) { state.selectedShifts.splice(idx,1); el.classList.remove("selected"); }
+    else          { state.selectedShifts.push({name,date}); el.classList.add("selected"); }
+  }
+  window.toggleSelection = toggleSelection;
+
+  function handleDragStart(e, name, date) {
+    if (!can_("schedule.manage", "No permission.")) { e.preventDefault(); return; }
+    const isSel = state.selectedShifts.some(s => s.name===name && s.date===date);
+    if (!isSel) {
+      document.querySelectorAll(".shift-block.selected").forEach(el => el.classList.remove("selected"));
+      state.selectedShifts = [{name,date}];
+      e.target.classList.add("selected");
+    }
+    e.target.classList.add("dragging");
+    e.dataTransfer.effectAllowed = "copyMove";
+  }
+  window.handleDragStart = handleDragStart;
+
+  function handleDragOver(e)  { e.preventDefault(); e.dataTransfer.dropEffect = e.altKey?"copy":"move"; e.currentTarget?.classList.add("drag-over"); }
+  function handleDragLeave(e) { e.currentTarget?.classList.remove("drag-over"); }
+  function handleDragEnd(e)   { e.target.classList.remove("dragging"); }
+  window.handleDragOver  = handleDragOver;
+  window.handleDragLeave = handleDragLeave;
+  window.handleDragEnd   = handleDragEnd;
+
+  function handleDrop(e, targetName, targetDate) {
+    if (!can_("schedule.manage")) { e.preventDefault(); return; }
+    e.preventDefault();
+    e.currentTarget?.classList.remove("drag-over");
+    if (!state.selectedShifts.length) return;
+
+    state.dropTargetData = { targetName, targetDate, isCopy: e.altKey };
+    document.getElementById("dragConfirmTitle").textContent = e.altKey ? "Copy Shifts?" : "Move Shifts?";
+    document.getElementById("dragIconContainer").style.color = e.altKey ? "var(--purple)" : "var(--blue)";
+    document.getElementById("dragConfirmModal").style.display = "flex";
+    document.getElementById("confirmDragBtn").onclick = execDrag_;
+  }
+  window.handleDrop = handleDrop;
+
+  async function execDrag_() {
+    const { targetName, targetDate, isCopy } = state.dropTargetData;
+    closeDragModal();
+    const action  = isCopy ? "copyShiftsBulk" : "moveShiftsBulk";
+    const shifts  = [...state.selectedShifts];
+    document.querySelectorAll(".grid-container").forEach(g => g.style.opacity = ".35");
+    try {
+      await call_(action, { sourceShifts: shifts, targetName, targetDate });
+      state.selectedShifts = [];
+      await refreshData_();
+      showToast(isCopy ? "Shifts copied!" : "Shifts moved!");
+    } catch(err) {
+      showToast("Error: " + (err?.message||err), 3500, "error");
+    } finally {
+      document.querySelectorAll(".grid-container").forEach(g => g.style.opacity = "1");
+    }
+  }
+  window.executeMultiDragAction = execDrag_;
+
+  function closeDragModal() { document.getElementById("dragConfirmModal").style.display = "none"; }
+  window.closeDragModal = closeDragModal;
+
+  /* ──────────────────────────────────────────
+     GRID DELEGATION (bound once)
+  ─────────────────────────────────────────── */
+  function bindDelegates_() {
+    if (state._delegatesBound) return;
+    state._delegatesBound = true;
+
+    [dom.morningGrid, dom.graveyardGrid].forEach(grid => {
+      if (!grid) return;
+
+      grid.addEventListener("click", e => {
+        const slot = e.target.closest('[data-action="open"]');
+        if (slot) { openModal(slot.dataset.name||"", slot.dataset.date||""); return; }
+        const block = e.target.closest('[data-action="shift"]');
+        if (block) {
+          e.shiftKey
+            ? toggleSelection(block, block.dataset.name||"", block.dataset.date||"")
+            : openModal(block.dataset.name||"", block.dataset.date||"");
+        }
+      });
+
+      grid.addEventListener("dragstart", e => {
+        const b = e.target.closest('[data-action="shift"]');
+        if (b) handleDragStart(e, b.dataset.name||"", b.dataset.date||"");
+      });
+
+      grid.addEventListener("dragend", e => {
+        const b = e.target.closest('[data-action="shift"]');
+        if (b) handleDragEnd(e);
+      });
+
+      grid.addEventListener("dragover", e => {
+        const c = e.target.closest("[data-cell='1']");
+        if (c) handleDragOver({ ...e, currentTarget: c, preventDefault: ()=>e.preventDefault() });
+      });
+
+      grid.addEventListener("dragleave", e => {
+        const c = e.target.closest("[data-cell='1']");
+        if (c) handleDragLeave({ ...e, currentTarget: c });
+      });
+
+      grid.addEventListener("drop", e => {
+        const c = e.target.closest("[data-cell='1']");
+        if (!c) return;
+        handleDrop(
+          { ...e, currentTarget: c, preventDefault: ()=>e.preventDefault() },
+          c.dataset.name||"", c.dataset.date||""
+        );
+      });
+    });
+  }
+
+  /* ──────────────────────────────────────────
+     COPY / EXPORT
+  ─────────────────────────────────────────── */
+  async function runCopy(period) {
+    if (!can_("schedule.copy", "No permission.")) return;
+    const btn = document.getElementById("copyBtn");
+    try { bootstrap.Dropdown.getInstance(btn)?.hide(); } catch(_) {}
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Copying…`;
+    try {
+      const count = await call_("copyPreviousSchedule", {
+        targetStart: state.currentStart.toISOString(), period,
+      });
+      showToast(`Copied ${count} shifts.`);
+      await refreshData_();
+    } catch(err) {
+      showToast("Error: " + (err?.message||err), 3500, "error");
+    } finally {
+      btn.disabled = false; btn.innerHTML = orig;
+    }
+  }
+  window.runCopy = runCopy;
+
+  async function runCopyRemainingWeeksOfMonth() {
+    if (!can_("schedule.copy", "No permission.")) return;
+    const btn = document.getElementById("copyBtn");
+    try { bootstrap.Dropdown.getInstance(btn)?.hide(); } catch(_) {}
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Copying…`;
+    try {
+      const r = await call_("copyWeekToRemainingWeeksOfMonth", {
+        sourceWeekStart: toDateKey(state.currentStart), overwrite: true,
+      });
+      showToast(`Copied ${r.shiftsCopied} shifts across ${r.weeksCopied} week(s).`);
+      await refreshData_();
+    } catch(err) {
+      showToast("Error: " + (err?.message||err), 3500, "error");
+    } finally {
+      btn.disabled = false; btn.innerHTML = orig;
+    }
+  }
+  window.runCopyRemainingWeeksOfMonth = runCopyRemainingWeeksOfMonth;
+
+  async function runExport() {
+    const btn = document.getElementById("exportBtn");
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Exporting…`;
+    try {
+      const url = await call_("generateRosterExport", {
+        startDate: state.currentStart.toISOString(),
+        view:      state.currentView,
+        title:     dom.weekDisplay?.textContent || "",
+        shiftData: state.allEmployees,
+      });
+      window.open(url, "_blank");
+    } catch(err) {
+      showToast("Export failed: " + (err?.message||err), 3500, "error");
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fas fa-file-export"></i> Export to Spreadsheet`;
+    }
+  }
+  window.runExport = runExport;
+
+  /* ──────────────────────────────────────────
+     WEEKEND OFF
+  ─────────────────────────────────────────── */
+  function setBusy_(busy) {
+    ["btnWeekendApply","btnWeekendClear"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.disabled = busy;
+    });
+    document.querySelectorAll(".grid-container").forEach(g => {
+      g.style.opacity = busy ? ".35" : "1";
+      g.style.pointerEvents = busy ? "none" : "auto";
+    });
+  }
+  window.setWeekendButtonsBusy_ = setBusy_;
+
+  async function handleWeekendAddClick() {
+    if (!can_("schedule.weekend", "No permission.")) return;
+    const names = getSelectedNames_();
+    setBusy_(true);
+    try {
+      await call_("applyFixedWeekendOff", {
+        startDate: toDateKey(state.currentStart),
+        view: state.currentView,
+        removeMode: false,
+        employeeNames: names.length ? names : null,
+      });
+      await refreshData_();
+      showToast(names.length ? `Weekend OFF added for ${names.length} employee(s).` : "Weekend OFF added for all!");
+    } catch(err) {
+      showToast("Error: " + (err?.message||err), 3500, "error");
+    } finally {
+      setBusy_(false);
+    }
+  }
+  window.handleWeekendAddClick = handleWeekendAddClick;
+
+  async function handleWeekendClearClick() {
+    if (!can_("schedule.weekend", "No permission.")) return;
+    const names   = getSelectedNames_();
+    const clearAll = !names.length;
+
+    openConfirm_({
+      icon:     "fas fa-calendar-xmark",
+      iconColor:"var(--yellow)",
+      title:    "Clear Weekend OFF?",
+      desc:     clearAll
+        ? "Remove all <b>OFF</b> entries from weekends for <b>all employees</b> in this view."
+        : `Remove weekend <b>OFF</b> entries for <b>${names.length} selected employee(s)</b>.`,
+      btnLabel: "Clear Weekend OFF",
+      btnClass: "btn btn-danger",
+      onConfirm: async () => {
+        setBusy_(true);
+        try {
+          await call_("applyFixedWeekendOff", {
+            startDate: toDateKey(state.currentStart),
+            view: state.currentView,
+            removeMode: true,
+            employeeNames: clearAll ? null : names,
+          });
+          await refreshData_();
+          showToast(clearAll ? "Weekend OFF cleared for all!" : `Weekend OFF cleared for ${names.length} employee(s).`);
+        } catch(err) {
+          showToast("Error: " + (err?.message||err), 3500, "error");
+        } finally {
+          setBusy_(false);
+        }
+      }
+    });
+  }
+  window.handleWeekendClearClick = handleWeekendClearClick;
+
+  /* ──────────────────────────────────────────
+     INIT
+  ─────────────────────────────────────────── */
+  async function init() {
+    cacheDom_();
+    populateTimeDropdowns();
+    bindDelegates_();
+
+    // Escape key closes any open modal
+    document.addEventListener("keydown", e => {
+      if (e.key !== "Escape") return;
+      if (dom.shiftModal?.style.display === "flex") {
+        dom.shiftModal.style.display = "none"; return;
+      }
+      const drag = document.getElementById("dragConfirmModal");
+      if (drag?.style.display === "flex") { closeDragModal(); return; }
+      closeCustomConfirm();
+    }, { passive: true });
+
+    // Shell cleanup registration
+    window.__SCHEDULE_CLEANUP__ = () => {
+      ["shiftModal","dragConfirmModal","customConfirmModal"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = "none";
+      });
+      window.__SCHEDULE_CLEANUP__ = null;
+    };
+
+    if (!GAS()) { renderRoster(); syncGridScroll(); return; }
+
+    try {
+      const boot  = await call_("getScheduleBootstrap");
+      const perms = boot?.perms || {};
+
+      state.CURRENT_USER = { email: perms?.email||"", role: perms?.role||"", permissions: perms||null };
+      state.CAN_MANAGE  = !!perms?.actions?.["schedule.manage"];
+      state.CAN_CLEAR   = !!perms?.actions?.["schedule.clear"];
+      state.CAN_COPY    = !!perms?.actions?.["schedule.copy"];
+      state.CAN_WEEKEND = !!perms?.actions?.["schedule.weekend"];
+      applySchedulePermissionUI();
+
+      state.ME = boot?.me || { email:"", name:"", group:"" };
+      state.teamList = Array.isArray(boot?.users) ? boot.users : [];
+      rebuildBuckets_();
+      populateUserOptions_();
+
+      state.allEmployees = Array.isArray(boot?.shifts) ? boot.shifts : [];
+      rebuildDerived_();
+
+    } catch(err) {
+      console.warn("Bootstrap failed, falling back:", err);
+      try {
+        const perms = await call_("getMyPermissions").catch(() => ({}));
+        state.CURRENT_USER = { email: perms?.email||"", role: perms?.role||"", permissions: perms||null };
+        state.CAN_MANAGE  = !!perms?.actions?.["schedule.manage"];
+        state.CAN_CLEAR   = !!perms?.actions?.["schedule.clear"];
+        state.CAN_COPY    = !!perms?.actions?.["schedule.copy"];
+        state.CAN_WEEKEND = !!perms?.actions?.["schedule.weekend"];
+        applySchedulePermissionUI();
+
+        const [me, users, shifts] = await Promise.all([
+          call_("getMyScheduleIdentity").catch(() => ({email:"",name:""})),
+          call_("getTeamList").catch(() => []),
+          call_("getEmployeesFromShifts").catch(() => []),
+        ]);
+
+        state.ME = me || {email:"",name:"",group:""};
+        state.teamList = Array.isArray(users) ? users : [];
+        rebuildBuckets_();
+        populateUserOptions_();
+        state.allEmployees = Array.isArray(shifts) ? shifts : [];
+        rebuildDerived_();
+      } catch(e2) {
+        console.error("Fallback also failed:", e2);
+      }
+    }
+
+// Auto-filter to the current user's shift group
+    const meGroup = String(state.ME?.group || "").trim().toLowerCase();
+    if (meGroup === "morning" || meGroup === "graveyard") {
+      state.currentShiftFilter = meGroup;
+      document.querySelectorAll("#shiftFilter .seg-item").forEach(i =>
+        i.classList.toggle("active", i.dataset.shift === meGroup)
+      );
+    }
+
+    renderRoster();
+    syncGridScroll();
+    applyShiftVisibility_();
+
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+      updateSegPill_(state.currentView);
+      updateShiftPill_(state.currentShiftFilter);
+    });
+  }
+
+  window.init = init;
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
+
+})();
+</script>

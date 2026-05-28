@@ -1,0 +1,1026 @@
+ <style>
+  /* ============================================================
+   * FONTS
+   * ============================================================ */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  /* ═══════════════════════════════════════════
+     TOKENS
+  ═══════════════════════════════════════════ */
+  :root {
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-body:    'Epilogue', system-ui, sans-serif;
+    --font-mono:    'IBM Plex Mono', 'Courier New', monospace;
+
+    /* surfaces — warm paper (light default) */
+    --bg-0: #f5f2ec;
+    --bg-1: #f5f2ec;
+    --bg-2: #ede9e1;
+    --bg-3: #e4ded4;
+    --bg-4: #ddd6ca;
+    --bg-5: #d4cbbe;
+
+    /* borders */
+    --b-0: rgba(26,24,20,.07);
+    --b-1: rgba(26,24,20,.12);
+    --b-2: rgba(26,24,20,.18);
+    --b-3: rgba(26,24,20,.28);
+
+    /* text */
+    --t-1: rgba(26,24,20,.95);
+    --t-2: rgba(74,71,64,.75);
+    --t-3: rgba(138,134,128,.60);
+
+    /* primary accent — editorial blue (replaces crimson rose) */
+    --rose:    #2857a4;
+    --rose-d:  rgba(40,87,164,.10);
+    --rose-b:  rgba(40,87,164,.30);
+    --rose-glow: 0 0 0 1px rgba(40,87,164,.22), 0 6px 20px rgba(40,87,164,.12);
+
+    /* card accent colours — muted light-mode palette */
+    --c-blue:     #2857a4;
+    --c-blue-d:   rgba(40,87,164,.09);
+    --c-blue-b:   rgba(40,87,164,.22);
+
+    --c-orange:   #b45309;
+    --c-orange-d: rgba(180,83,9,.09);
+    --c-orange-b: rgba(180,83,9,.22);
+
+    --c-violet:   #6d28d9;
+    --c-violet-d: rgba(109,40,217,.09);
+    --c-violet-b: rgba(109,40,217,.22);
+
+    --c-green:    #16a34a;
+    --c-green-d:  rgba(22,163,74,.09);
+    --c-green-b:  rgba(22,163,74,.22);
+
+    /* amber card */
+    --amber:    #b45309;
+    --amber-d:  rgba(180,83,9,.09);
+    --amber-b:  rgba(180,83,9,.22);
+
+    /* status */
+    --s-success: #16a34a;
+    --s-warn:    #b45309;
+    --s-error:   #c94040;
+    --s-denied:  #c2520a;
+    --s-info:    #2857a4;
+
+    /* geometry */
+    --r-xl:  14px;
+    --r-lg:  10px;
+    --r-md:   7px;
+    --r-sm:   5px;
+    --r-pill: 999px;
+
+    /* shadows */
+    --sh-1: 0 1px 4px rgba(26,24,20,.08);
+    --sh-2: 0 4px 16px rgba(26,24,20,.10);
+    --sh-3: 0 12px 40px rgba(26,24,20,.14);
+  }
+
+  /* ── Dark mode ───────────────────────────── */
+  html[data-theme="dark"] {
+    --bg-0: #161410; --bg-1: #1a1814; --bg-2: #1e1c18;
+    --bg-3: #252220; --bg-4: #2c2a26; --bg-5: #33302b;
+    --b-0: rgba(240,236,227,.06); --b-1: rgba(240,236,227,.10);
+    --b-2: rgba(240,236,227,.16); --b-3: rgba(240,236,227,.26);
+    --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.75); --t-3: rgba(106,100,92,.60);
+    --rose:   #2857a4; --rose-d: rgba(40,87,164,.16); --rose-b: rgba(40,87,164,.40);
+    --rose-glow: 0 0 0 1px rgba(40,87,164,.32), 0 6px 20px rgba(40,87,164,.18);
+    --c-blue:     #5b85c8; --c-blue-d:   rgba(40,87,164,.14);  --c-blue-b:   rgba(40,87,164,.30);
+    --c-orange:   #fbbf24; --c-orange-d: rgba(245,158,11,.12); --c-orange-b: rgba(245,158,11,.28);
+    --c-violet:   #a78bfa; --c-violet-d: rgba(167,139,250,.12);--c-violet-b: rgba(167,139,250,.28);
+    --c-green:    #4ade80; --c-green-d:  rgba(74,222,128,.11); --c-green-b:  rgba(74,222,128,.24);
+    --amber:      #fbbf24; --amber-d:    rgba(245,158,11,.12); --amber-b:    rgba(245,158,11,.28);
+    --s-success:  #4ade80; --s-warn: #fbbf24; --s-error: #f87171; --s-denied: #fb923c; --s-info: #5b85c8;
+    --sh-1: 0 1px 4px rgba(0,0,0,.35); --sh-2: 0 4px 16px rgba(0,0,0,.45); --sh-3: 0 12px 40px rgba(0,0,0,.55);
+  }
+
+  /* ═══════════════════════════════════════════
+     BASE
+  ═══════════════════════════════════════════ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    min-height: 100vh; padding-top: 80px;
+    overflow-x: hidden;
+    font-family: var(--font-body); font-size: 14px;
+    color: var(--t-1); background: var(--bg-0);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 45% at 50% -8%,  rgba(40,87,164,.04) 0%, transparent 58%),
+      radial-gradient(ellipse 50% 40% at 92% 108%, rgba(40,87,164,.03) 0%, transparent 55%);
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  /* ═══════════════════════════════════════════
+     PAGE WRAP
+  ═══════════════════════════════════════════ */
+  .page {
+    width: min(100%, 1260px); margin: 0 auto;
+    padding: 40px 28px 76px;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    margin-bottom: 38px;
+    animation: fadeUp .38s ease-out both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 3px 11px; border-radius: var(--r-pill);
+    border: 1px solid var(--rose-b); background: var(--rose-d);
+    color: var(--rose); font-size: 10px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    font-family: var(--font-mono); margin-bottom: 13px;
+  }
+
+  html[data-theme="dark"] .hero-eyebrow { color: #5b85c8; }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 4.5vw, 52px);
+    font-weight: 400;
+    letter-spacing: -.02em; line-height: 1.04;
+    color: var(--t-1); margin-bottom: 10px;
+  }
+
+  .hero-sub {
+    font-size: 13px; font-family: var(--font-mono);
+    color: var(--t-3); line-height: 1.65;
+    max-width: 500px; letter-spacing: .01em;
+  }
+
+  .hero-meta {
+    display: flex; align-items: center;
+    gap: 13px; margin-top: 16px; flex-wrap: wrap;
+  }
+
+  .alert-badge {
+    display: none; align-items: center; gap: 6px;
+    padding: 5px 11px; border-radius: var(--r-pill);
+    border: 1px solid var(--rose-b); background: var(--rose-d);
+    color: var(--rose); font-size: 11.5px; font-weight: 700;
+    font-family: var(--font-mono);
+  }
+  html[data-theme="dark"] .alert-badge { color: #5b85c8; }
+  .alert-badge.visible { display: inline-flex; animation: alertPulse 2.2s ease-in-out infinite; }
+
+  @keyframes alertPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(40,87,164,.22); }
+    50%      { box-shadow: 0 0 0 5px rgba(40,87,164,0); }
+  }
+
+  .audit-timestamp {
+    font-size: 11px; color: var(--t-3); font-family: var(--font-mono);
+    letter-spacing: .03em;
+  }
+
+  /* ═══════════════════════════════════════════
+     MODULE GRID
+  ═══════════════════════════════════════════ */
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+    gap: 12px;
+    animation: fadeUp .38s .09s ease-out both;
+  }
+
+  /* ── Module card ── */
+  .mod-card {
+    position: relative;
+    padding: 20px 22px;
+    border-radius: var(--r-xl);
+    background: var(--bg-2);
+    border: 1px solid var(--b-1);
+    box-shadow: var(--sh-1);
+    overflow: hidden; cursor: pointer;
+    transition: border-color .18s, box-shadow .18s, transform .18s;
+    display: flex; flex-direction: column; gap: 0;
+  }
+
+  .mod-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: var(--card-stripe);
+    opacity: 0; transition: opacity .18s;
+  }
+
+  .mod-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--b-2); box-shadow: var(--sh-2);
+  }
+
+  .mod-card:hover::before { opacity: 1; }
+
+  /* colour variants */
+  .mod-card.c-blue   { --card-stripe: var(--c-blue);   --card-icon-bg: var(--c-blue-d);   --card-icon-c: var(--c-blue);   --card-icon-b: var(--c-blue-b);   }
+  .mod-card.c-orange { --card-stripe: var(--c-orange); --card-icon-bg: var(--c-orange-d); --card-icon-c: var(--c-orange); --card-icon-b: var(--c-orange-b); }
+  .mod-card.c-violet { --card-stripe: var(--c-violet); --card-icon-bg: var(--c-violet-d); --card-icon-c: var(--c-violet); --card-icon-b: var(--c-violet-b); }
+  .mod-card.c-green  { --card-stripe: var(--c-green);  --card-icon-bg: var(--c-green-d);  --card-icon-c: var(--c-green);  --card-icon-b: var(--c-green-b);  }
+  .mod-card.c-rose   { --card-stripe: var(--rose);     --card-icon-bg: var(--rose-d);     --card-icon-c: var(--rose);     --card-icon-b: var(--rose-b);     }
+  .mod-card.c-amber  { --card-stripe: var(--amber);    --card-icon-bg: var(--amber-d);    --card-icon-c: var(--amber);    --card-icon-b: var(--amber-b);    }
+
+  html[data-theme="dark"] .mod-card.c-rose  { --card-icon-c: #5b85c8; }
+  html[data-theme="dark"] .mod-card.c-amber { --card-icon-c: #fbbf24; }
+
+  .card-icon-wrap {
+    width: 40px; height: 40px; border-radius: var(--r-md);
+    display: flex; align-items: center; justify-content: center;
+    background: var(--card-icon-bg); border: 1px solid var(--card-icon-b);
+    color: var(--card-icon-c); font-size: 16px;
+    margin-bottom: 16px;
+    transition: transform .18s;
+  }
+
+  .mod-card:hover .card-icon-wrap { transform: scale(1.05); }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 16px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1); margin-bottom: 6px;
+  }
+
+  .card-desc {
+    font-size: 12px; font-family: var(--font-mono);
+    color: var(--t-3); line-height: 1.58;
+    margin-bottom: 18px; flex: 1;
+    letter-spacing: .01em;
+  }
+
+  .card-btn {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px; border-radius: var(--r-md);
+    background: var(--card-icon-bg); border: 1px solid var(--card-icon-b);
+    color: var(--card-icon-c);
+    font-family: var(--font-mono); font-size: 11.5px; font-weight: 600;
+    letter-spacing: .04em;
+    cursor: pointer; text-align: left; width: 100%;
+    transition: background .13s, border-color .13s;
+  }
+
+  .card-btn:hover { background: color-mix(in srgb, var(--card-icon-bg) 65%, rgba(26,24,20,.08)); }
+
+  .card-btn i.arrow { font-size: 10.5px; opacity: .6; }
+
+  /* corner blob */
+  .mod-card::after {
+    content: ''; position: absolute;
+    bottom: -16px; right: -16px;
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--card-icon-bg); opacity: .35;
+    pointer-events: none;
+  }
+
+  /* ═══════════════════════════════════════════
+     LOG SECTION
+  ═══════════════════════════════════════════ */
+  #logSection {
+    display: none; opacity: 0; transform: translateY(16px);
+    transition: opacity .32s ease, transform .32s ease;
+  }
+
+  .log-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 14px; flex-wrap: wrap; margin-bottom: 20px;
+  }
+
+  .log-title {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 3.8vw, 40px);
+    font-weight: 400; letter-spacing: -.02em;
+    line-height: 1.04; color: var(--t-1); margin-bottom: 5px;
+  }
+
+  .log-sub { font-size: 12px; font-family: var(--font-mono); color: var(--t-3); }
+
+  .btn-back {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: none; border: none;
+    color: var(--rose); font-family: var(--font-mono);
+    font-size: 12px; font-weight: 600; letter-spacing: .04em;
+    cursor: pointer; padding: 0; margin-bottom: 20px;
+    transition: opacity .13s;
+  }
+
+  html[data-theme="dark"] .btn-back { color: #5b85c8; }
+  .btn-back:hover { opacity: .70; }
+
+  /* ── Log card ── */
+  .log-card {
+    background: var(--bg-1); border: 1px solid var(--b-1);
+    border-radius: var(--r-xl); box-shadow: var(--sh-1); overflow: hidden;
+  }
+
+  .log-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 11px; flex-wrap: wrap; padding: 12px 18px;
+    border-bottom: 1px solid var(--b-0);
+    background: var(--bg-0);
+  }
+
+  html[data-theme="dark"] .log-toolbar { background: rgba(0,0,0,.08); }
+
+  .log-meta {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 11px; font-family: var(--font-mono); color: var(--t-3);
+  }
+
+  .log-meta i { color: var(--rose); }
+  html[data-theme="dark"] .log-meta i { color: #5b85c8; }
+
+  .log-count-pill {
+    padding: 3px 9px; border-radius: var(--r-pill);
+    border: 1px solid var(--b-0); background: var(--bg-3);
+    font-size: 10.5px; font-family: var(--font-mono);
+  }
+
+  /* ── Table ── */
+  .table-scroll { width: 100%; overflow-x: auto; }
+  .table-scroll::-webkit-scrollbar { height: 3px; }
+  .table-scroll::-webkit-scrollbar-thumb { background: var(--b-2); border-radius: 4px; }
+
+  #logTable {
+    width: 100%; border-collapse: collapse;
+    font-size: 12.5px; min-width: 820px;
+  }
+
+  #logTable thead th {
+    padding: 9px 16px; text-align: left; white-space: nowrap;
+    font-size: 9px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--t-3);
+    border-bottom: 1px solid var(--b-1);
+    background: var(--bg-0);
+    font-family: var(--font-mono);
+  }
+
+  html[data-theme="dark"] #logTable thead th { background: rgba(0,0,0,.08); }
+
+  #logTable tbody td {
+    padding: 11px 16px; border-bottom: 1px solid var(--b-0);
+    vertical-align: middle; transition: background .11s;
+  }
+
+  #logTable tbody tr:last-child td { border-bottom: none; }
+  #logTable tbody tr:hover td { background: rgba(40,87,164,.03); }
+  html[data-theme="dark"] #logTable tbody tr:hover td { background: rgba(40,87,164,.06); }
+
+  #logTable tbody tr:nth-child(even) td { background: rgba(26,24,20,.025); }
+  html[data-theme="dark"] #logTable tbody tr:nth-child(even) td { background: rgba(255,255,255,.018); }
+  #logTable tbody tr:nth-child(even):hover td { background: rgba(40,87,164,.04); }
+
+  .ts-cell {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--t-3); white-space: nowrap;
+  }
+
+  .user-cell-log { font-weight: 700; color: var(--t-1); font-size: 12.5px; }
+  .action-cell   { font-size: 12px; color: var(--t-2); }
+
+  .resource-cell {
+    font-family: var(--font-mono); font-size: 11.5px; color: var(--t-3);
+    max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  /* ── Status badges ── */
+  .s-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px; border-radius: var(--r-pill);
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .06em;
+    white-space: nowrap; font-family: var(--font-mono);
+  }
+
+  .s-badge::before {
+    content: ''; width: 4px; height: 4px;
+    border-radius: 50%; flex-shrink: 0;
+  }
+
+  .sb-success { background: rgba(22,163,74,.09);  border: 1px solid rgba(22,163,74,.22);  color: var(--s-success); }
+  .sb-success::before { background: var(--s-success); }
+  html[data-theme="dark"] .sb-success { background: rgba(74,222,128,.10); border-color: rgba(74,222,128,.22); color: #4ade80; }
+
+  .sb-warning { background: rgba(180,83,9,.09);   border: 1px solid rgba(180,83,9,.22);   color: var(--s-warn); }
+  .sb-warning::before { background: var(--s-warn); }
+  html[data-theme="dark"] .sb-warning { background: rgba(250,204,21,.10); border-color: rgba(250,204,21,.22); color: #fbbf24; }
+
+  .sb-error   { background: rgba(201,64,64,.09);  border: 1px solid rgba(201,64,64,.22);  color: var(--s-error); }
+  .sb-error::before { background: var(--s-error); animation: statusPulse 1.6s infinite; }
+  html[data-theme="dark"] .sb-error { background: rgba(248,113,113,.10); border-color: rgba(248,113,113,.22); color: #f87171; }
+
+  .sb-denied  { background: rgba(194,82,10,.09);  border: 1px solid rgba(194,82,10,.22);  color: var(--s-denied); }
+  .sb-denied::before { background: var(--s-denied); animation: statusPulse 1.6s infinite; }
+  html[data-theme="dark"] .sb-denied { background: rgba(251,146,60,.10); border-color: rgba(251,146,60,.22); color: #fb923c; }
+
+  .sb-info    { background: rgba(40,87,164,.09);  border: 1px solid rgba(40,87,164,.22);  color: var(--s-info); }
+  .sb-info::before { background: var(--s-info); }
+  html[data-theme="dark"] .sb-info { background: rgba(96,165,250,.10); border-color: rgba(96,165,250,.22); color: #5b85c8; }
+
+  @keyframes statusPulse { 0%,100%{opacity:1} 50%{opacity:.22} }
+
+  /* ── Log empty/loading ── */
+  .log-empty {
+    padding: 52px 20px; text-align: center;
+    color: var(--t-3); font-size: 12.5px; font-family: var(--font-mono);
+  }
+
+  .log-empty i { font-size: 18px; display: block; margin-bottom: 8px; opacity: .4; }
+
+  /* ═══════════════════════════════════════════
+     BUTTONS
+  ═══════════════════════════════════════════ */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 33px; padding: 0 13px;
+    border-radius: var(--r-md);
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    letter-spacing: .04em; cursor: pointer; border: none; white-space: nowrap;
+    transition: background .13s, border-color .13s, opacity .13s;
+  }
+
+  .btn:disabled { opacity: .40; cursor: not-allowed; }
+  .btn i { font-size: 10px; }
+
+  .btn-ghost {
+    background: var(--bg-2); border: 1px solid var(--b-1); color: var(--t-2);
+  }
+  .btn-ghost:hover:not(:disabled) { background: var(--bg-3); border-color: var(--b-2); color: var(--t-1); }
+
+  .btn-danger {
+    background: rgba(201,64,64,.09); border: 1px solid rgba(201,64,64,.24); color: var(--s-error);
+  }
+  html[data-theme="dark"] .btn-danger { color: #f87171; }
+  .btn-danger:hover:not(:disabled) { background: rgba(201,64,64,.16); }
+
+  /* ═══════════════════════════════════════════
+     DELETE CONFIRM MODAL
+  ═══════════════════════════════════════════ */
+  .confirm-modal {
+    position: fixed; inset: 0; display: none;
+    align-items: center; justify-content: center; padding: 20px;
+    background: rgba(26,24,20,.45);
+    backdrop-filter: blur(5px);
+    z-index: 3000;
+  }
+
+  html[data-theme="dark"] .confirm-modal { background: rgba(0,0,0,.62); backdrop-filter: blur(9px); }
+
+  .confirm-card {
+    width: min(480px, 96vw);
+    background: var(--bg-1); border: 1px solid var(--b-2);
+    border-radius: var(--r-xl); box-shadow: var(--sh-3); overflow: hidden;
+  }
+
+  .confirm-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 11px; padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--b-0);
+    background: var(--bg-0);
+  }
+
+  html[data-theme="dark"] .confirm-head { background: rgba(0,0,0,.08); }
+
+  .confirm-icon {
+    width: 36px; height: 36px; border-radius: var(--r-md);
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(201,64,64,.09); border: 1px solid rgba(201,64,64,.22);
+    color: var(--s-error); font-size: 14px; flex-shrink: 0;
+  }
+
+  html[data-theme="dark"] .confirm-icon { color: #f87171; }
+
+  .confirm-title {
+    font-family: var(--font-display);
+    font-size: 15px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1);
+  }
+
+  .confirm-sub {
+    font-size: 11.5px; font-family: var(--font-mono);
+    color: var(--t-3); margin-top: 4px; line-height: 1.55;
+  }
+
+  .confirm-close {
+    width: 28px; height: 28px; border-radius: var(--r-sm);
+    border: 1px solid var(--b-1); background: var(--bg-2);
+    color: var(--t-3); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 12px;
+    transition: background .13s, color .13s; flex-shrink: 0;
+  }
+
+  .confirm-close:hover { background: var(--bg-3); color: var(--t-1); }
+
+  .confirm-body { padding: 16px 20px; }
+
+  .confirm-label {
+    display: block; font-size: 9.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .12em;
+    color: var(--t-3); font-family: var(--font-mono); margin-bottom: 7px;
+  }
+
+  .confirm-input {
+    width: 100%; height: 36px; padding: 0 10px;
+    border-radius: var(--r-md); border: 1px solid var(--b-1);
+    background: var(--bg-2); color: var(--t-1);
+    font-family: var(--font-mono); font-size: 13px; outline: none;
+    transition: border-color .13s, box-shadow .13s;
+  }
+
+  .confirm-input:focus {
+    border-color: rgba(201,64,64,.35);
+    box-shadow: 0 0 0 3px rgba(201,64,64,.10);
+  }
+
+  html[data-theme="dark"] .confirm-input:focus {
+    border-color: rgba(248,113,113,.38);
+    box-shadow: 0 0 0 3px rgba(248,113,113,.12);
+  }
+
+  .confirm-input::placeholder { color: var(--t-3); }
+
+  .confirm-footer {
+    display: flex; justify-content: flex-end; gap: 7px;
+    padding: 12px 20px 16px;
+    border-top: 1px solid var(--b-0);
+  }
+
+  /* ═══════════════════════════════════════════
+     TOASTS
+  ═══════════════════════════════════════════ */
+  #toastContainer {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000; display: flex; flex-direction: column;
+    gap: 7px; pointer-events: none;
+  }
+
+  .custom-toast {
+    display: flex; align-items: center; gap: 9px;
+    padding: 10px 16px; border-radius: var(--r-pill);
+    background: var(--bg-2); border: 1px solid var(--b-2);
+    color: var(--t-1); font-size: 12px; font-weight: 600;
+    font-family: var(--font-mono); letter-spacing: .03em;
+    box-shadow: var(--sh-2); pointer-events: auto; white-space: nowrap;
+    animation: toastUp .26s cubic-bezier(0.175,0.885,0.32,1.275) forwards;
+  }
+
+  html[data-theme="dark"] .custom-toast { background: var(--bg-3); }
+
+  @keyframes toastUp   { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes toastDown { from{opacity:1;transform:translateY(0)}     to{opacity:0;transform:translateY(16px)} }
+
+  /* ═══════════════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════════════ */
+  @media (max-width: 900px)  { .page { padding: 28px 18px 56px; } }
+  @media (max-width: 600px)  { .page { padding: 22px 13px 48px; } .module-grid { grid-template-columns: 1fr; } }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fa-spin { animation: spin .85s linear infinite; }
+</style>
+
+
+  <!-- ══════════════════════════════════════════
+       DASHBOARD
+  ══════════════════════════════════════════ -->
+ <div class="page" id="mainDashboard">
+
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <i class="fas fa-terminal"></i> System Console
+    </div>
+    <h1 class="hero-title">Admin Console</h1>
+    <p class="hero-sub">System-wide configurations, access governance, and security oversight in one place.</p>
+
+    <div class="hero-meta">
+      <div class="alert-badge" id="securityAlert">
+        <i class="fas fa-triangle-exclamation"></i>
+        <span id="alertCount">0</span> critical alerts
+      </div>
+      <div class="audit-timestamp">Last security audit: Today</div>
+    </div>
+  </div>
+
+ <div class="module-grid">
+
+  <div class="mod-card c-blue" data-page="users" role="button" tabindex="0">
+    <div class="card-icon-wrap"><i class="fas fa-user-shield"></i></div>
+    <div class="card-title">Access Control</div>
+    <div class="card-desc">Review user permissions, manage accounts, and control access levels across the system.</div>
+    <button class="card-btn" type="button">
+      <span>Manage Users</span>
+      <i class="fas fa-arrow-right arrow"></i>
+    </button>
+  </div>
+
+  <div class="mod-card c-orange" onclick="showLogs()">
+    <div class="card-icon-wrap"><i class="fas fa-scroll"></i></div>
+    <div class="card-title">Audit Trail</div>
+    <div class="card-desc">Detailed logs of all database writes, login events, and sensitive system actions.</div>
+    <button class="card-btn" type="button">
+      <span>View Logs</span>
+      <i class="fas fa-arrow-right arrow"></i>
+    </button>
+  </div>
+
+  <div class="mod-card c-green" data-page="viewrequest" role="button" tabindex="0">
+    <div class="card-icon-wrap"><i class="fas fa-clipboard-check"></i></div>
+    <div class="card-title">Requests</div>
+    <div class="card-desc">Review and approve pending employee requests from the request queue.</div>
+    <button class="card-btn" type="button">
+      <span>View Requests</span>
+      <i class="fas fa-arrow-right arrow"></i>
+    </button>
+  </div>
+
+  <div class="mod-card c-violet" data-page="rbac" role="button" tabindex="0">
+    <div class="card-icon-wrap"><i class="fas fa-sitemap"></i></div>
+    <div class="card-title">RBAC</div>
+    <div class="card-desc">Manage role-based access rules, page visibility, and action-level permissions by role.</div>
+    <button class="card-btn" type="button">
+      <span>Manage Roles</span>
+      <i class="fas fa-arrow-right arrow"></i>
+    </button>
+  </div>
+
+  <div class="mod-card c-rose" data-page="publish" role="button" tabindex="0">
+    <div class="card-icon-wrap"><i class="fas fa-pen-to-square"></i></div>
+    <div class="card-title">Publish Center</div>
+    <div class="card-desc">Create and manage announcements, achievements, IT news, and tips shown on the Home feed.</div>
+    <button class="card-btn" type="button">
+      <span>Manage Posts</span>
+      <i class="fas fa-arrow-right arrow"></i>
+    </button>
+  </div>
+
+  <div class="mod-card c-blue" data-page="warrantyconfig" role="button" tabindex="0">
+    <div class="card-icon-wrap"><i class="fas fa-envelope-circle-check"></i></div>
+    <div class="card-title">Warranty Email</div>
+    <div class="card-desc">Configure who receives the monthly warranty expiry reminder and how far ahead it looks.</div>
+    <button class="card-btn" type="button">
+      <span>Manage Config</span>
+      <i class="fas fa-arrow-right arrow"></i>
+    </button>
+  </div>
+
+  <div class="mod-card c-amber" data-page="maintenance" role="button" tabindex="0">
+    <div class="card-icon-wrap"><i class="fas fa-screwdriver-wrench"></i></div>
+    <div class="card-title">Maintenance</div>
+    <div class="card-desc">Run health checks, clear caches, scan data integrity issues, and manage scheduled automation triggers.</div>
+    <button class="card-btn" type="button">
+      <span>Open Panel</span>
+      <i class="fas fa-arrow-right arrow"></i>
+    </button>
+  </div>
+
+</div>
+
+
+  </div>
+</div>
+
+  <!-- ══════════════════════════════════════════
+       LOG SECTION
+  ══════════════════════════════════════════ -->
+  <div class="page" id="logSection">
+
+    <button class="btn-back" type="button" onclick="hideLogs()">
+      <i class="fas fa-arrow-left"></i> Back to Console
+    </button>
+
+    <div class="log-head">
+      <div>
+        <div class="log-title">Audit Logs</div>
+        <div class="log-sub">Comprehensive history of system transactions and access events.</div>
+      </div>
+    </div>
+
+    <div class="log-card">
+      <div class="log-toolbar">
+        <div class="log-meta">
+          <i class="fas fa-database" style="color:var(--rose);"></i>
+          <span>Activity Log</span>
+          <span class="log-count-pill" id="logCountPill">— entries</span>
+        </div>
+        <button class="btn btn-danger" id="btnClearLogs" type="button" onclick="openDeleteModal()">
+          <i class="fas fa-trash-can"></i> Delete Logs
+        </button>
+      </div>
+
+      <div class="table-scroll">
+        <table id="logTable">
+        <thead>
+  <tr>
+    <th>Timestamp</th>
+    <th>User</th>
+    <th>Action</th>
+    <th>Entity</th>
+    <th>Field</th>
+    <th>Old Value</th>
+    <th>New Value</th>
+    <th>Serial Tag</th>
+    <th>Details</th>
+  </tr>
+</thead>
+          <tbody id="logBody">
+            <tr>
+              <td colspan="9" class="log-empty">
+                <i class="fas fa-circle-notch fa-spin"></i>
+                Syncing audit logs…
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       DELETE MODAL
+  ══════════════════════════════════════════ -->
+  <div id="deleteConfirmModal" class="confirm-modal" role="dialog" aria-modal="true"
+       onclick="closeDeleteModal(event)">
+    <div class="confirm-card" onclick="event.stopPropagation()">
+
+      <div class="confirm-head">
+        <div style="display:flex;align-items:flex-start;gap:13px;">
+          <div class="confirm-icon"><i class="fas fa-trash-can"></i></div>
+          <div>
+            <div class="confirm-title">Delete Audit Logs</div>
+            <div class="confirm-sub">This will permanently erase <strong>all</strong> audit logs. This action cannot be undone.</div>
+          </div>
+        </div>
+        <button class="confirm-close" type="button" aria-label="Close" onclick="closeDeleteModalDirect()">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="confirm-body">
+        <label class="confirm-label" for="deleteConfirmInput">Type DELETE to confirm</label>
+        <input id="deleteConfirmInput" class="confirm-input" placeholder="DELETE" autocomplete="off">
+      </div>
+
+      <div class="confirm-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeDeleteModalDirect()">Cancel</button>
+        <button type="button" class="btn btn-danger" id="deleteConfirmBtn" onclick="confirmClearLogs()">
+          <span id="deleteConfirmBtnText"><i class="fas fa-trash-can"></i> Delete All Logs</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="toastContainer"></div>
+
+ <script>
+  /* ── Navigation ────────────────────────── */
+window.openModule = function(page, query = {}) {
+  const targetPage = String(page || "").trim().toLowerCase();
+  if (!targetPage) return false;
+
+  let targetQuery = {};
+
+  if (typeof query === "string") {
+    const params = new URLSearchParams(query.trim());
+    params.forEach((v, k) => targetQuery[k] = v);
+  } else if (query && typeof query === "object") {
+    targetQuery = { ...query };
+  }
+
+ 
+  if (typeof window.navigateTo === "function") {
+    window.navigateTo(targetPage, targetQuery, true);
+    return false;
+  }
+
+  // fallback
+  const search = new URLSearchParams();
+  search.set("page", targetPage);
+
+  Object.entries(targetQuery).forEach(([k, v]) => {
+    if (v) search.set(k, v);
+  });
+
+  window.location.href = `?${search.toString()}`;
+  return false;
+};
+
+  /* ── Show / hide logs ──────────────────── */
+function showLogs() {
+  const dash = document.getElementById("mainDashboard");
+  const logs = document.getElementById("logSection");
+
+  dash.style.transition = "opacity .28s ease, transform .28s ease";
+  dash.style.opacity = "0";
+  dash.style.transform = "translateY(-14px)";
+
+  setTimeout(() => {
+    dash.style.display = "none";
+    logs.style.display = "block";
+
+    requestAnimationFrame(() => {
+      logs.style.opacity = "1";
+      logs.style.transform = "translateY(0)";
+    });
+
+    loadAuditLogs_();
+  }, 300);
+}
+
+function loadAuditLogs_() {
+  if (!window.google?.script?.run) return;
+
+  document.getElementById("logBody").innerHTML =
+    `<tr><td colspan="9" class="log-empty"><i class="fas fa-circle-notch fa-spin"></i> Syncing audit logs…</td></tr>`;
+
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res?.ok) {
+        renderLogs(res.data || []);
+      } else {
+        document.getElementById("logBody").innerHTML =
+          `<tr><td colspan="9" class="log-empty"><i class="fas fa-triangle-exclamation"></i> ${res?.error || "Failed to load logs."}</td></tr>`;
+      }
+    })
+    .withFailureHandler(err => {
+      document.getElementById("logBody").innerHTML =
+        `<tr><td colspan="9" class="log-empty"><i class="fas fa-triangle-exclamation"></i> Error loading logs.</td></tr>`;
+      showToast(err?.message || "Error loading logs.", "danger");
+    })
+    .audit_list({ page: 1, pageSize: 200 });
+}
+
+  function hideLogs() {
+    const dash = document.getElementById("mainDashboard");
+    const logs = document.getElementById("logSection");
+
+    logs.style.opacity = "0";
+    logs.style.transform = "translateY(14px)";
+
+    setTimeout(() => {
+      logs.style.display = "none";
+      dash.style.display = "block";
+
+      requestAnimationFrame(() => {
+        dash.style.opacity = "1";
+        dash.style.transform = "translateY(0)";
+      });
+    }, 300);
+  }
+
+  /* ── Render status badge ───────────────── */
+  function renderStatusBadge(status) {
+    const s = String(status || "").toLowerCase();
+    let cls = "sb-info";
+    if      (s === "success") cls = "sb-success";
+    else if (s === "warning") cls = "sb-warning";
+    else if (s === "error")   cls = "sb-error";
+    else if (s === "denied")  cls = "sb-denied";
+    return `<span class="s-badge ${cls}">${status || "Info"}</span>`;
+  }
+
+  /* ── Render logs ───────────────────────── */
+  function renderLogs(data) {
+  const body    = document.getElementById("logBody");
+  const pill    = document.getElementById("logCountPill");
+  const alertEl = document.getElementById("securityAlert");
+  const alertN  = document.getElementById("alertCount");
+
+  if (!body) return;
+
+  if (pill) pill.textContent = `${data.length} entr${data.length !== 1 ? "ies" : "y"}`;
+
+  if (!data.length) {
+    body.innerHTML = `<tr><td colspan="9" class="log-empty"><i class="fas fa-circle-check"></i> No logs found.</td></tr>`;
+    if (alertEl) alertEl.classList.remove("visible");
+    return;
+  }
+
+  const eh = v => String(v || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+  body.innerHTML = data.map((log, i) => {
+    const delay = Math.min(i * 14, 300);
+    return `
+      <tr style="animation: fadeUp .22s ${delay}ms ease-out both;">
+        <td class="ts-cell">${eh(log.timestamp) || "—"}</td>
+        <td class="user-cell-log">${eh(log.user) || "—"}</td>
+        <td class="action-cell">${eh(log.action) || "—"}</td>
+        <td class="resource-cell">${eh(log.entity) || "—"}</td>
+        <td class="resource-cell">${eh(log.field) || "—"}</td>
+        <td class="resource-cell">${eh(log.oldValue) || "—"}</td>
+        <td class="resource-cell">${eh(log.newValue) || "—"}</td>
+        <td class="resource-cell">${eh(log.serialTag) || "—"}</td>
+        <td class="resource-cell" title="${eh(log.details)}">${eh(log.details) || "—"}</td>
+      </tr>`;
+  }).join("");
+
+  if (alertEl) alertEl.classList.remove("visible");
+}
+
+  /* ── Delete modal ──────────────────────── */
+  function openDeleteModal() {
+    const modal = document.getElementById("deleteConfirmModal");
+    const input = document.getElementById("deleteConfirmInput");
+    if (!modal) return;
+    modal.style.display = "flex";
+    setTimeout(() => { if (input) input.focus(); }, 50);
+  }
+
+  function closeDeleteModal(e) {
+    if (e && e.target && e.target.id === "deleteConfirmModal") closeDeleteModalDirect();
+  }
+
+  function closeDeleteModalDirect() {
+    const modal = document.getElementById("deleteConfirmModal");
+    const input = document.getElementById("deleteConfirmInput");
+    if (modal) modal.style.display = "none";
+    if (input) input.value = "";
+  }
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeDeleteModalDirect();
+  });
+
+  /* ── Confirm delete ────────────────────── */
+  function confirmClearLogs() {
+    const input   = document.getElementById("deleteConfirmInput");
+    const btn     = document.getElementById("deleteConfirmBtn");
+    const btnText = document.getElementById("deleteConfirmBtnText");
+    const body    = document.getElementById("logBody");
+
+    if (String(input?.value || "").trim() !== "DELETE") {
+      showToast("Type DELETE to confirm.", "info");
+      return;
+    }
+
+    if (btn) btn.disabled = true;
+    if (btnText) btnText.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Deleting…`;
+
+    if (!window.google?.script?.run) {
+      showToast("Server connection not available.", "danger");
+      if (btn) btn.disabled = false;
+      if (btnText) btnText.innerHTML = `<i class="fas fa-trash-can"></i> Delete All Logs`;
+      return;
+    }
+
+    if (body) body.innerHTML = `<tr><td colspan="9" class="log-empty"><i class="fas fa-circle-notch fa-spin"></i>Deleting logs…</td></tr>`;
+
+   google.script.run
+  .withSuccessHandler(res => {
+    if (!res?.ok) {
+      showToast(res?.error || "Failed to delete logs.", "danger");
+      if (btn) btn.disabled = false;
+      if (btnText) btnText.innerHTML = `<i class="fas fa-trash-can"></i> Delete All Logs`;
+      return;
+    }
+    showToast(`${res.deletedRows} log(s) deleted.`, "success");
+    const alertEl = document.getElementById("securityAlert");
+    if (alertEl) alertEl.classList.remove("visible");
+    closeDeleteModalDirect();
+    loadAuditLogs_();
+    if (btn) btn.disabled = false;
+    if (btnText) btnText.innerHTML = `<i class="fas fa-trash-can"></i> Delete All Logs`;
+  })
+  .withFailureHandler(err => {
+    showToast(err?.message || "Failed to delete logs.", "danger");
+    if (btn) btn.disabled = false;
+    if (btnText) btnText.innerHTML = `<i class="fas fa-trash-can"></i> Delete All Logs`;
+  })
+  .audit_clear(); 
+  }
+
+  /* ── Toast ─────────────────────────────── */
+  function showToast(message, type = "success") {
+    const c = document.getElementById("toastContainer");
+    if (!c) return;
+
+    const t = document.createElement("div");
+    t.className = "custom-toast";
+
+    const icon  = type === "danger" ? "fa-triangle-exclamation" : type === "info" ? "fa-circle-info" : "fa-circle-check";
+    const color = type === "danger" ? "#f87171" : type === "info" ? "#60a5fa" : "#4ade80";
+
+    t.innerHTML = `<i class="fas ${icon}" style="color:${color};font-size:13px;"></i><span>${message}</span>`;
+    c.appendChild(t);
+
+    setTimeout(() => {
+      t.style.animation = "toastDown .28s forwards";
+      setTimeout(() => t.remove(), 300);
+    }, 2800);
+  }
+</script>

@@ -1,0 +1,465 @@
+<style>
+  /* ============================================================
+   * FONTS
+   * ============================================================ */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  /* ============================================================
+   * TOKENS
+   * ============================================================ */
+  :root {
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-body:    'Epilogue', system-ui, sans-serif;
+    --font-mono:    'IBM Plex Mono', 'Courier New', monospace;
+
+    /* surfaces — warm paper (light default) */
+    --bg-0: #f5f2ec;
+    --bg-1: #f5f2ec;
+    --bg-2: #ede9e1;
+    --bg-3: #e4ded4;
+    --bg-4: #ddd6ca;
+
+    /* borders */
+    --b-0: rgba(26,24,20,.07);
+    --b-1: rgba(26,24,20,.12);
+    --b-2: rgba(26,24,20,.20);
+
+    /* text */
+    --t-1: rgba(26,24,20,.95);
+    --t-2: rgba(74,71,64,.75);
+    --t-3: rgba(138,134,128,.65);
+
+    /* card accents */
+    --c-blue:   #2857a4;
+    --c-amber:  #b45309;
+    --c-green:  #16a34a;
+    --c-teal:   #0e7490;
+    --c-violet: #6d28d9;
+    --c-rose:   #be185d;
+
+    /* geometry */
+    --r-xl:  16px;
+    --r-lg:  10px;
+    --r-md:   7px;
+    --r-pill: 999px;
+
+    /* shadows */
+    --sh-1: 0 2px 12px rgba(26,24,20,.08);
+    --sh-2: 0 8px 28px rgba(26,24,20,.12);
+
+    /* transitions */
+    --t-fast: .14s ease;
+    --t-med:  .22s ease;
+    --t-slow: .36s cubic-bezier(0.2,0.8,0.2,1);
+  }
+
+  /* ── Dark mode ─────────────────────────────── */
+  html[data-theme="dark"] {
+    --bg-0: #161410; --bg-1: #1a1814; --bg-2: #1e1c18;
+    --bg-3: #252220; --bg-4: #2c2a26;
+    --b-0: rgba(240,236,227,.06); --b-1: rgba(240,236,227,.10); --b-2: rgba(240,236,227,.18);
+    --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.75); --t-3: rgba(106,100,92,.65);
+    --c-blue:   #2857a4;
+    --c-amber:  #d97706;
+    --c-green:  #16a34a;
+    --c-teal:   #0e7490;
+    --c-violet: #7c3aed;
+    --c-rose:   #be185d;
+    --sh-1: 0 2px 12px rgba(0,0,0,.35);
+    --sh-2: 0 8px 28px rgba(0,0,0,.50);
+  }
+
+  /* ── Dark mode card accent overrides ── */
+  html[data-theme="dark"] .card-blue   { --card-icon-c: #5b85c8; --card-accent: #2857a4; --card-accent-b: rgba(40,87,164,.32); --card-icon-bg: rgba(40,87,164,.14); }
+  html[data-theme="dark"] .card-amber  { --card-icon-c: #fbbf24; --card-accent: #d97706; --card-accent-b: rgba(217,119,6,.30);  --card-icon-bg: rgba(217,119,6,.13); }
+  html[data-theme="dark"] .card-green  { --card-icon-c: #4ade80; --card-accent: #16a34a; --card-accent-b: rgba(74,222,128,.26); --card-icon-bg: rgba(74,222,128,.11); }
+  html[data-theme="dark"] .card-teal   { --card-icon-c: #2dd4bf; --card-accent: #0e7490; --card-accent-b: rgba(45,212,191,.26); --card-icon-bg: rgba(45,212,191,.11); }
+  html[data-theme="dark"] .card-violet { --card-icon-c: #a78bfa; --card-accent: #7c3aed; --card-accent-b: rgba(167,139,250,.28);--card-icon-bg: rgba(167,139,250,.11);}
+  html[data-theme="dark"] .card-rose   { --card-icon-c: #fb7185; --card-accent: #be185d; --card-accent-b: rgba(251,113,133,.28);--card-icon-bg: rgba(251,113,133,.11);}
+
+  /* ============================================================
+   * BASE
+   * ============================================================ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--t-1);
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    padding-top: 80px;
+    background: var(--bg-0);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 40% at 15% 0%,  rgba(40,87,164,.04) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 35% at 85% 100%, rgba(40,87,164,.03) 0%, transparent 55%);
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  /* ============================================================
+   * PAGE LAYOUT
+   * ============================================================ */
+  .reports-container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 52px 28px 80px;
+  }
+
+  /* ── Header ── */
+  .header-area { margin-bottom: 40px; }
+
+  .header-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--c-blue);
+    margin-bottom: 10px;
+    opacity: .85;
+  }
+
+  html[data-theme="dark"] .header-eyebrow { color: #5b85c8; }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: clamp(34px, 5vw, 56px);
+    font-weight: 400;
+    letter-spacing: -.02em;
+    color: var(--t-1);
+    line-height: 1.06;
+    margin-bottom: 10px;
+  }
+
+  .page-sub {
+    font-size: 14px;
+    font-family: var(--font-mono);
+    color: var(--t-3);
+    line-height: 1.65;
+    max-width: 460px;
+    letter-spacing: .01em;
+  }
+
+  /* ============================================================
+   * REPORTS GRID
+   * ============================================================ */
+  .reports-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  @media (max-width: 960px)  { .reports-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px)  { .reports-grid { grid-template-columns: 1fr; } }
+
+  /* ── Card ── */
+  .report-card {
+    position: relative;
+    background: var(--bg-1);
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-xl);
+    padding: 22px 20px 18px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform var(--t-med), border-color var(--t-med), box-shadow var(--t-med);
+    box-shadow: var(--sh-1);
+    display: flex;
+    flex-direction: column;
+
+    opacity: 0;
+    animation: cardIn .44s ease-out forwards;
+  }
+
+  .report-card:nth-child(1) { animation-delay: .04s; }
+  .report-card:nth-child(2) { animation-delay: .09s; }
+  .report-card:nth-child(3) { animation-delay: .14s; }
+  .report-card:nth-child(4) { animation-delay: .19s; }
+  .report-card:nth-child(5) { animation-delay: .24s; }
+  .report-card:nth-child(6) { animation-delay: .29s; }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .report-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--card-accent-b);
+    box-shadow: var(--sh-2), 0 0 0 1px var(--card-accent-b);
+  }
+
+  /* top hairline rule */
+  .report-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--card-accent);
+    opacity: 0;
+    transition: opacity var(--t-med);
+  }
+
+  .report-card:hover::before { opacity: .7; }
+
+  /* corner ambient */
+  .report-card::after {
+    content: '';
+    position: absolute;
+    bottom: -24px; right: -24px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--card-accent);
+    opacity: .05;
+    filter: blur(22px);
+    pointer-events: none;
+    transition: opacity var(--t-med);
+  }
+
+  .report-card:hover::after { opacity: .10; }
+
+  /* ── Per-card accent colours — light mode ── */
+  .card-blue   {
+    --card-accent:   var(--c-blue);
+    --card-accent-b: rgba(40,87,164,.22);
+    --card-icon-bg:  rgba(40,87,164,.09);
+    --card-icon-c:   #2857a4;
+  }
+  .card-amber  {
+    --card-accent:   var(--c-amber);
+    --card-accent-b: rgba(180,83,9,.22);
+    --card-icon-bg:  rgba(180,83,9,.09);
+    --card-icon-c:   #b45309;
+  }
+  .card-green  {
+    --card-accent:   var(--c-green);
+    --card-accent-b: rgba(22,163,74,.22);
+    --card-icon-bg:  rgba(22,163,74,.09);
+    --card-icon-c:   #16a34a;
+  }
+  .card-teal   {
+    --card-accent:   var(--c-teal);
+    --card-accent-b: rgba(14,116,144,.22);
+    --card-icon-bg:  rgba(14,116,144,.09);
+    --card-icon-c:   #0e7490;
+  }
+  .card-violet {
+    --card-accent:   var(--c-violet);
+    --card-accent-b: rgba(109,40,217,.22);
+    --card-icon-bg:  rgba(109,40,217,.09);
+    --card-icon-c:   #6d28d9;
+  }
+  .card-rose   {
+    --card-accent:   var(--c-rose);
+    --card-accent-b: rgba(190,24,93,.22);
+    --card-icon-bg:  rgba(190,24,93,.09);
+    --card-icon-c:   #be185d;
+  }
+
+  /* ── Icon ── */
+  .card-icon {
+    width: 42px; height: 42px;
+    border-radius: var(--r-lg);
+    display: flex; align-items: center; justify-content: center;
+    background: var(--card-icon-bg);
+    border: 1px solid var(--card-accent-b);
+    color: var(--card-icon-c);
+    font-size: 18px;
+    margin-bottom: 18px;
+    flex-shrink: 0;
+    transition: transform var(--t-med);
+  }
+
+  .report-card:hover .card-icon { transform: scale(1.05); }
+
+  /* ── Card content ── */
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: -.01em;
+    color: var(--t-1);
+    margin-bottom: 7px;
+    line-height: 1.2;
+  }
+
+  .card-desc {
+    font-size: 12.5px;
+    font-family: var(--font-mono);
+    color: var(--t-3);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex: 1;
+    letter-spacing: .01em;
+  }
+
+  /* ── Card button ── */
+  .report-btn {
+    width: 100%;
+    padding: 9px 13px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--card-accent-b);
+    background: var(--card-icon-bg);
+    color: var(--card-icon-c);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    transition: background var(--t-fast), border-color var(--t-fast);
+  }
+
+  .report-btn:hover {
+    background: color-mix(in srgb, var(--card-icon-bg) 65%, rgba(26,24,20,.06));
+  }
+
+  html[data-theme="dark"] .report-btn:hover {
+    background: color-mix(in srgb, var(--card-icon-bg) 65%, rgba(240,236,227,.06));
+  }
+
+  .report-btn .btn-arrow {
+    font-size: 10px;
+    opacity: .55;
+    transition: transform var(--t-fast);
+  }
+
+  .report-card:hover .report-btn .btn-arrow { transform: translateX(3px); }
+
+  /* ── Light mode card surface ── */
+  .report-card {
+    background: var(--bg-2);
+  }
+
+  html[data-theme="dark"] .report-card {
+    background: var(--bg-1);
+    box-shadow: var(--sh-1);
+  }
+
+  html[data-theme="dark"] .report-card:hover {
+    box-shadow: var(--sh-2), 0 0 0 1px var(--card-accent-b);
+  }
+
+  @media (max-width: 480px) {
+    .reports-container { padding: 36px 16px 60px; }
+    .page-title { font-size: 34px; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+
+  <div class="reports-container">
+
+    <div class="header-area">
+      <div class="header-eyebrow">
+        <i class="fas fa-chart-line"></i> Analytics & Exports
+      </div>
+      <h1 class="page-title">Reports</h1>
+      <p class="page-sub">Export your data into professional documents and explore insights across the system.</p>
+    </div>
+
+    <div class="reports-grid">
+
+      <!-- Asset Summary -->
+      <div class="report-card card-blue" onclick="openModule('assetreport')">
+        <div class="card-icon"><i class="fas fa-file-pdf"></i></div>
+        <div class="card-title">Asset Summary</div>
+        <div class="card-desc">Full breakdown of current stock, assigned items, and depreciated hardware assets.</div>
+        <button class="report-btn" type="button">
+          Open Report <i class="fas fa-arrow-right btn-arrow"></i>
+        </button>
+      </div>
+
+
+      <!-- Tasks -->
+      <div class="report-card card-green" onclick="openModule('tasks')">
+        <div class="card-icon"><i class="fas fa-list-check"></i></div>
+        <div class="card-title">Tasks</div>
+        <div class="card-desc">Track, assign, and monitor employee tasks. Stay on top of deadlines, progress, and submissions.</div>
+        <button class="report-btn" type="button">
+          Open Report <i class="fas fa-arrow-right btn-arrow"></i>
+        </button>
+      </div>
+
+      <!-- Signed Accountability -->
+      <div class="report-card card-teal" onclick="openModule('signedaf')">
+        <div class="card-icon"><i class="fas fa-file-signature"></i></div>
+        <div class="card-title">Signed Accountability</div>
+        <div class="card-desc">Browse and track all signed accountability forms across employees and departments.</div>
+        <button class="report-btn" type="button">
+          Open Report <i class="fas fa-arrow-right btn-arrow"></i>
+        </button>
+      </div>
+
+      <!-- Vendors -->
+      <div class="report-card card-violet" onclick="openModule('vendor')">
+        <div class="card-icon"><i class="fas fa-handshake"></i></div>
+        <div class="card-title">Vendors</div>
+        <div class="card-desc">Browse and manage approved vendor listings, contacts, and procurement partners.</div>
+        <button class="report-btn" type="button">
+          Open Report <i class="fas fa-arrow-right btn-arrow"></i>
+        </button>
+      </div>
+
+
+    </div>
+  </div>
+
+  <script>
+  function openModule(m) {
+  if (typeof window.navigateTo === "function") {
+    window.navigateTo(m);
+    return;
+  }
+  // fallback for non-shell context
+  if (window.google && google.script) {
+    google.script.run
+      .withSuccessHandler(url => window.top.location = url + `?page=${m}`)
+      .getAppUrl();
+  } else {
+    window.location.href = m + ".html";
+  }
+}
+ function generatePDF(type, event) {
+  const btn = event.target;
+  const originalHtml = btn.innerHTML;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+  btn.disabled = true;
+
+  google.script.run
+    .withSuccessHandler(url => {
+      btn.innerHTML = originalHtml;
+      btn.disabled = false;
+      window.open(url, '_blank');
+    })
+    .withFailureHandler(err => {
+      btn.innerHTML = originalHtml;
+      btn.disabled = false;
+      const msg = (err && err.message) ? err.message : String(err || "Unknown error");
+      if (typeof showToast === "function") {
+        showToast("PDF generation failed: " + msg, "danger");
+      } else {
+        console.error("PDF generation failed:", msg);
+      }
+    })
+    .createReportPDF(type);
+}
+
+  </script>

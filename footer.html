@@ -1,0 +1,93 @@
+<!-- footer.html -->
+<footer class="app-footer" aria-label="App footer">
+  <span class="app-footer__text">
+    Manila IT Inventory System &bull; <span id="footerYear"></span>
+  </span>
+</footer>
+
+<script>
+  (function () {
+    var y = document.getElementById("footerYear");
+    if (y) y.textContent = new Date().getFullYear();
+  })();
+</script>
+
+<style>
+  /* Reserve space so footer never covers content */
+  body{
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .app-footer{
+    position: fixed !important;
+    left: 0;
+    right: 0;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 9999;
+    pointer-events: none;
+
+    /* reduce iOS “float”/jitter */
+    transform: translate3d(0,0,0);
+    -webkit-transform: translate3d(0,0,0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    contain: paint;
+  }
+
+  .app-footer__text{
+    pointer-events: auto;
+    font-size: 12px;
+    color: var(--text-secondary);
+    opacity: 0.65;
+    letter-spacing: 0.02em;
+
+    padding: 8px 16px;
+    border-radius: 999px;
+
+    /* default (non-iOS): glass pill */
+    background: rgba(28,28,30,0.35);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  }
+
+  html[data-theme="light"] .app-footer__text{
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+  }
+
+  /*  iOS Safari: blur on fixed elements causes “moving” during scroll.
+     Disable blur ONLY on iOS for rock-solid lock. */
+  @supports (-webkit-touch-callout: none) {
+    .app-footer__text{
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+
+      /* keep the same look without blur */
+      background: rgba(28,28,30,0.70);
+    }
+    html[data-theme="light"] .app-footer__text{
+      background: rgba(255,255,255,0.85);
+    }
+  }
+
+  @media (max-height: 720px){
+    body{
+      padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    }
+    .app-footer{
+      bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    }
+    .app-footer__text{
+      font-size: 11px;
+      padding: 7px 14px;
+    }
+  }
+</style>

@@ -1,0 +1,1338 @@
+<!-- ============================================================
+     home.html — editorial bento-grid redesign
+     Drop-in replacement. All GAS hooks preserved.
+     No <html>, <head>, or <body> tags.
+     ============================================================ -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Epilogue:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ── TOKENS ─────────────────────────────────────────────────── */
+.hp {
+  --serif:  'DM Serif Display', Georgia, serif;
+  --sans:   'Epilogue', system-ui, sans-serif;
+  --mono:   'IBM Plex Mono', 'Courier New', monospace;
+
+  --ink:    #1a1814;
+  --ink2:   #4a4740;
+  --ink3:   #8a8680;
+  --paper:  #f5f2ec;
+  --paper2: #ede9e1;
+  --paper3: #e4ded4;
+  --rule:   rgba(26,24,20,.12);
+  --rule2:  rgba(26,24,20,.22);
+
+  --red:    #c94040;
+  --amber:  #c47b1a;
+  --green:  #2a7a52;
+  --blue:   #2857a4;
+  --teal:   #1d7a79;
+
+  --red-bg:   #fdf0f0;
+  --amber-bg: #fdf6e8;
+  --green-bg: #edf6f1;
+  --blue-bg:  #edf2fb;
+  --teal-bg:  #edf5f5;
+
+  --ease:   cubic-bezier(.22,.68,0,1.2);
+}
+
+html[data-theme="dark"] .hp {
+  --ink:    #f0ece3;
+  --ink2:   #b0a99e;
+  --ink3:   #6a645c;
+  --paper:  #161410;
+  --paper2: #1e1c18;
+  --paper3: #252220;
+  --rule:   rgba(240,236,227,.10);
+  --rule2:  rgba(240,236,227,.18);
+  --red-bg:   rgba(201,64,64,.12);
+  --amber-bg: rgba(196,123,26,.12);
+  --green-bg: rgba(42,122,82,.12);
+  --blue-bg:  rgba(40,87,164,.12);
+  --teal-bg:  rgba(29,122,121,.12);
+}
+
+/* ── RESET ──────────────────────────────────────────────────── */
+.hp *, .hp *::before, .hp *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+}
+
+.hp {
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--paper);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── LAYOUT ─────────────────────────────────────────────────── */
+.hp-wrap {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 64px 32px 80px;
+}
+
+/* ── MASTHEAD ───────────────────────────────────────────────── */
+.hp-masthead {
+  border-bottom: 2px solid var(--rule2);
+  padding-bottom: 20px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  animation: hp-in .5s var(--ease) both;
+}
+
+@keyframes hp-in {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.hp-masthead-left { flex: 1; min-width: 220px; }
+
+.hp-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hp-eyebrow-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+.hp-title {
+  font-family: var(--serif);
+  font-size: clamp(34px, 5vw, 58px);
+  font-weight: 400;
+  letter-spacing: -.02em;
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+.hp-title em {
+  font-style: italic;
+  color: var(--blue);
+}
+
+.hp-masthead-right {
+  text-align: right;
+}
+
+.hp-datestamp {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink3);
+  line-height: 1.6;
+}
+
+.hp-edition {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--ink3);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* ── NOTICE ─────────────────────────────────────────────────── */
+#hp-notice {
+  display: none;
+  padding: 10px 14px;
+  border-left: 3px solid var(--amber);
+  background: var(--amber-bg);
+  color: var(--ink2);
+  font-size: 12.5px;
+  margin-bottom: 24px;
+  border-radius: 0 4px 4px 0;
+}
+
+/* ── TICKER ─────────────────────────────────────────────────── */
+.hp-ticker {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #1a1814;
+  color: #f0ece3;
+  border-radius: 6px;
+  padding: 0;
+  margin-bottom: 28px;
+  overflow: hidden;
+  animation: hp-in .5s .06s var(--ease) both;
+}
+
+html[data-theme="dark"] .hp-ticker {
+  background: #0d0c0a;
+  border: 1px solid rgba(240,236,227,.10);
+}
+
+.hp-ticker-label {
+  flex-shrink: 0;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 9px 14px;
+  white-space: nowrap;
+}
+
+.hp-ticker-stats {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+  padding: 0 6px;
+  flex-wrap: nowrap;
+  scrollbar-width: none;
+}
+
+.hp-ticker-stats::-webkit-scrollbar { display: none; }
+
+.hp-ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-right: 1px solid rgba(255,255,255,.08);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.hp-ticker-item:last-child { border-right: none; }
+
+.hp-ticker-val {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: -.02em;
+  line-height: 1;
+}
+
+.hp-ticker-lbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.65);
+}
+
+.hp-ticker-pill {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+.hp-ticker-pill--warn  { background: rgba(196,123,26,.25); color: #fbbf24; }
+.hp-ticker-pill--ok    { background: rgba(42,122,82,.25);  color: #6ee7b7; }
+
+/* ── PINNED ──────────────────────────────────────────────────── */
+.hp-pinned-wrap {
+  margin-bottom: 28px;
+  animation: hp-in .5s .09s var(--ease) both;
+}
+
+.hp-pinned {
+  border: 1.5px solid var(--blue);
+  border-radius: 8px;
+  background: var(--blue-bg);
+  padding: 18px 22px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 16px;
+}
+
+.hp-pinned-flag {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--blue);
+  background: rgba(40,87,164,.12);
+  border: 1px solid rgba(40,87,164,.22);
+  border-radius: 3px;
+  padding: 3px 8px;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.hp-pinned-title {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 4px;
+  line-height: 1.25;
+}
+
+.hp-pinned-body {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.65;
+}
+
+.hp-pinned-date {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--ink3);
+  white-space: nowrap;
+  margin-top: 3px;
+}
+
+/* ── SECTION RULE ───────────────────────────────────────────── */
+.hp-rule {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.hp-rule-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.hp-rule-line {
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+/* ── BENTO GRID ─────────────────────────────────────────────── */
+.hp-bento {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 14px;
+  align-items: start;
+  animation: hp-in .5s .12s var(--ease) both;
+}
+
+@media (max-width: 780px) {
+  .hp-bento { grid-template-columns: 1fr; }
+}
+
+/* ── BENTO CELL (base) ──────────────────────────────────────── */
+.hp-cell {
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color .18s ease, transform .18s var(--ease);
+}
+
+.hp-cell:hover { border-color: var(--rule2); }
+
+.hp-cell-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.hp-cell-title {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink3);
+}
+
+.hp-cell-tag {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: .06em;
+  color: var(--ink3);
+  background: var(--paper3);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 2px 7px;
+}
+
+/* ── KPI CELLS ──────────────────────────────────────────────── */
+.hp-kpi-cell {
+  padding: 20px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hp-kpi-cell::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.hp-kpi-cell--blue::after   { background: var(--blue); }
+.hp-kpi-cell--green::after  { background: var(--green); }
+.hp-kpi-cell--amber::after  { background: var(--amber); }
+.hp-kpi-cell--red::after    { background: var(--red); }
+
+.hp-kpi-num {
+  font-family: var(--mono);
+  font-size: 38px;
+  font-weight: 500;
+  letter-spacing: -.04em;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.hp-kpi-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink3);
+}
+
+.hp-kpi-sub {
+  font-size: 11px;
+  color: var(--ink3);
+  margin-top: 4px;
+}
+
+/* ── FEED ───────────────────────────────────────────────────── */
+.hp-bento-feed {
+  align-self: start;
+}
+
+.hp-feed-inner { padding: 4px 0; }
+
+/* ── FILTER BAR ─────────────────────────────────────────────── */
+.hp-filter-bar {
+  display: flex;
+  gap: 4px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--rule);
+  flex-wrap: wrap;
+}
+
+.hp-fb {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 3px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink3);
+  cursor: pointer;
+  transition: all .13s ease;
+}
+
+.hp-fb:hover { border-color: var(--rule2); color: var(--ink2); }
+
+.hp-fb.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+/* ── POST ───────────────────────────────────────────────────── */
+.hp-post {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--rule);
+  transition: background .13s ease;
+  cursor: default;
+}
+
+.hp-post:last-child { border-bottom: none; }
+.hp-post:hover { background: var(--paper3); }
+
+.hp-post-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.hp-post-badge {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 2px;
+  border: 1px solid;
+}
+
+.hp-badge--announcement { color: var(--blue);  background: var(--blue-bg);  border-color: rgba(40,87,164,.25); }
+.hp-badge--achievement  { color: var(--amber); background: var(--amber-bg); border-color: rgba(196,123,26,.25); }
+.hp-badge--news         { color: var(--teal);  background: var(--teal-bg);  border-color: rgba(29,122,121,.25); }
+.hp-badge--tip          { color: var(--green); background: var(--green-bg); border-color: rgba(42,122,82,.25); }
+
+.hp-post-author {
+  font-size: 11.5px;
+  color: var(--ink2);
+  font-weight: 500;
+}
+
+.hp-post-time {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--ink3);
+  margin-left: auto;
+}
+
+.hp-post-title {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 8px;
+  line-height: 1.3;
+  letter-spacing: -.01em;
+}
+
+.hp-post-body {
+  font-size: 12.5px;
+  color: var(--ink2);
+  line-height: 1.68;
+}
+
+.hp-post-footer {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.hp-post-like {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink3);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all .13s ease;
+  user-select: none;
+}
+
+.hp-post-like:hover { background: var(--paper3); color: var(--ink2); }
+.hp-post-like.active { color: var(--blue); }
+
+/* ── EMPTY STATE ────────────────────────────────────────────── */
+.hp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  color: var(--ink3);
+  font-family: var(--mono);
+  font-size: 11px;
+  text-align: center;
+  gap: 6px;
+}
+
+/* ── SIDEBAR ────────────────────────────────────────────────── */
+.hp-bento-sidebar {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-self: start;
+}
+
+@media (max-width: 780px)  { .hp-bento-sidebar { grid-column: 1; } }
+
+/* ── ACHIEVERS ──────────────────────────────────────────────── */
+.hp-achiev-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--rule);
+  transition: background .13s ease;
+}
+
+.hp-achiev-item:last-child { border-bottom: none; }
+.hp-achiev-item:hover { background: var(--paper3); }
+
+.hp-achiev-rank {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.hp-achiev-rank.gold   { color: var(--amber); }
+.hp-achiev-rank.silver { color: var(--ink3); }
+.hp-achiev-rank.bronze { color: #a0734a; }
+
+.hp-achiev-av {
+  width: 32px; height: 32px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600;
+  flex-shrink: 0;
+  border: 1px solid var(--rule);
+}
+
+.hp-achiev-info { flex: 1; min-width: 0; }
+
+.hp-achiev-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hp-achiev-role {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--ink3);
+}
+
+/* ── ACTIVITY ───────────────────────────────────────────────── */
+.hp-act-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--rule);
+  transition: background .13s ease;
+}
+
+.hp-act-item:last-child { border-bottom: none; }
+.hp-act-item:hover { background: var(--paper3); }
+
+.hp-act-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.hp-act-text {
+  font-size: 12px;
+  color: var(--ink2);
+  line-height: 1.55;
+}
+
+.hp-act-time {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--ink3);
+  margin-top: 2px;
+}
+
+/* ── TIPS ───────────────────────────────────────────────────── */
+.hp-tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--rule);
+  transition: background .13s ease;
+}
+
+.hp-tip-item:last-child { border-bottom: none; }
+.hp-tip-item:hover { background: var(--paper3); }
+
+.hp-tip-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.hp-tip-text {
+  font-size: 12px;
+  color: var(--ink2);
+  line-height: 1.6;
+}
+
+/* ── WARRANTY PROGRESS ──────────────────────────────────────── */
+.hp-war-wrap { padding: 16px; }
+
+.hp-war-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.hp-war-row:last-child { margin-bottom: 0; }
+
+.hp-war-label {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .05em;
+  color: var(--ink2);
+  width: 92px;
+  flex-shrink: 0;
+}
+
+.hp-war-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--paper3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.hp-war-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .6s var(--ease);
+}
+
+.hp-war-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink3);
+  width: 22px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── UPDATED FOOTER ─────────────────────────────────────────── */
+.hp-updated-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  gap: 8px;
+  animation: hp-in .5s .04s var(--ease) both;
+}
+
+.hp-updated-txt {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--ink3);
+}
+</style>
+
+<div class="hp">
+  <div class="hp-wrap">
+
+    <!-- ── MASTHEAD ────────────────────────────────────────── -->
+    <div class="hp-masthead">
+      <div class="hp-masthead-left">
+        <div class="hp-eyebrow">
+          <span class="hp-eyebrow-dot"></span>
+          Manila IT · Systems Online
+        </div>
+        <h1 class="hp-title" id="hp-welcome">
+          Good morning, <em>Team.</em>
+        </h1>
+      </div>
+      <div class="hp-masthead-right">
+        <div class="hp-datestamp" id="hp-datestamp">—</div>
+        <div class="hp-edition">IT Inventory Dashboard</div>
+      </div>
+    </div>
+
+    <div id="hp-notice"></div>
+
+    <!-- ── TICKER ────────────────────────────────────────────── -->
+    <div class="hp-ticker">
+      <div class="hp-ticker-label">Live Stats</div>
+      <div class="hp-ticker-stats">
+        <div class="hp-ticker-item">
+          <span class="hp-ticker-val" id="tk-total">—</span>
+          <span class="hp-ticker-lbl">Total Assets</span>
+        </div>
+        <div class="hp-ticker-item">
+          <span class="hp-ticker-val" id="tk-assigned">—</span>
+          <span class="hp-ticker-lbl">Assigned</span>
+        </div>
+        <div class="hp-ticker-item">
+          <span class="hp-ticker-val" id="tk-instock">—</span>
+          <span class="hp-ticker-lbl">In Stock</span>
+        </div>
+        <div class="hp-ticker-item">
+          <span class="hp-ticker-val" id="tk-expiring">—</span>
+          <span class="hp-ticker-lbl">Expiring 30d</span>
+          <span class="hp-ticker-pill hp-ticker-pill--warn" id="tk-exp-pill" style="display:none;">!</span>
+        </div>
+        <div class="hp-ticker-item">
+          <span id="hp-updated" class="hp-ticker-lbl">Updated: —</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PINNED ─────────────────────────────────────────────── -->
+    <div id="hp-pinned-wrap" style="display:none;" class="hp-pinned-wrap">
+      <div class="hp-pinned">
+        <div class="hp-pinned-flag">Pinned</div>
+        <div>
+          <div class="hp-pinned-title" id="pinned-title">—</div>
+          <div class="hp-pinned-body" id="pinned-text">—</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="hp-pinned-date" id="pinned-date">—</div>
+        <button onclick="document.getElementById('hp-pinned-wrap').style.display='none'"
+          style="background:none;border:none;cursor:pointer;font-size:11px;color:var(--ink3);font-family:var(--mono);padding:2px 4px;border-radius:3px;transition:color .13s ease;"
+          onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--ink3)'">
+          ✕ dismiss
+        </button>
+      </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION RULE ──────────────────────────────────────── -->
+    <div class="hp-rule" style="animation: hp-in .5s .11s var(--ease) both;">
+      <span class="hp-rule-label">Updates &amp; Reports</span>
+      <div class="hp-rule-line"></div>
+    </div>
+
+    <!-- ── BENTO GRID ─────────────────────────────────────────── -->
+    <div class="hp-bento">
+
+      <!-- FEED (spans rows 1-3, cols 1-3) -->
+      <div class="hp-cell hp-bento-feed">
+        <div class="hp-cell-head">
+          <span class="hp-cell-title">Latest Updates</span>
+          <span class="hp-cell-tag" id="feed-count">—</span>
+        </div>
+
+        <div class="hp-filter-bar" id="hp-filters">
+          <button class="hp-fb active" data-filter="all">All</button>
+          <button class="hp-fb" data-filter="announcement">Announcements</button>
+          <button class="hp-fb" data-filter="achievement">Achievements</button>
+          <button class="hp-fb" data-filter="news">IT News</button>
+          <button class="hp-fb" data-filter="tip">Tips</button>
+        </div>
+
+        <div id="hp-feed" class="hp-feed-inner">
+          <div class="hp-empty">Loading feed…</div>
+        </div>
+      </div>
+
+      <!-- SIDEBAR (col 4, rows 1-3) -->
+      <div class="hp-bento-sidebar">
+
+       <!-- Warranty Buckets -->
+        <div class="hp-cell">
+          <div class="hp-cell-head">
+            <span class="hp-cell-title">Warranty Status</span>
+            <span class="hp-cell-tag">Assets</span>
+          </div>
+          <div id="hp-warranty">
+            <div class="hp-empty" style="padding:16px;">Loading…</div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="hp-cell">
+          <div class="hp-cell-head">
+            <span class="hp-cell-title">Recent Activity</span>
+            <span class="hp-cell-tag">Audit</span>
+          </div>
+          <div id="hp-activity">
+            <div class="hp-empty" style="padding:20px;">Loading…</div>
+          </div>
+        </div>
+
+        <!-- IT Tips -->
+        <div class="hp-cell">
+          <div class="hp-cell-head">
+            <span class="hp-cell-title">IT Tips</span>
+            <span class="hp-cell-tag">Reminders</span>
+          </div>
+          <div id="hp-tips"></div>
+        </div>
+
+      </div><!-- /.hp-bento-sidebar -->
+
+    </div><!-- /.hp-bento -->
+
+  </div><!-- /.hp-wrap -->
+</div><!-- /.hp -->
+
+<script>
+(() => {
+  'use strict';
+
+  const PAGE_KEY = 'home';
+
+  /* ── STATE ───────────────────────────────────────────────── */
+  const state = {
+    mounted: false,
+    activeFilter: 'all',
+    likes: {},
+  };
+
+  const EL = {};
+
+  let FEED_DATA = [];
+  let ACHIEVERS = [];
+
+  const TIPS = [
+    { icon: '🔒', text: 'Use a strong, unique password for each work account and enable MFA where possible.' },
+    { icon: '💾', text: 'Save files to OneDrive — not just your local desktop.' },
+    { icon: '🔄', text: 'Restart your computer weekly to keep it running smoothly.' },
+    { icon: '📋', text: 'Submit IT tickets through the portal for faster resolution.' },
+  ];
+
+  const SAMPLE_ACTIVITY = [
+    { color: '#2857a4', text: 'Asset IT-0312 assigned to Maria Santos', time: '2h ago'    },
+    { color: '#2a7a52', text: 'Warranty updated for Dell Latitude 7420',  time: '5h ago'    },
+    { color: '#c47b1a', text: 'IT-0289 status changed to Defective',      time: 'Yesterday' },
+    { color: '#1d7a79', text: 'Accountability form signed — IT-0301',     time: 'Yesterday' },
+  ];
+
+  /* ── DOM CACHE ───────────────────────────────────────────── */
+  function cacheDom() {
+    EL.notice    = document.getElementById('hp-notice');
+    EL.updated   = document.getElementById('hp-updated');
+    EL.welcome   = document.getElementById('hp-welcome');
+    EL.datestamp = document.getElementById('hp-datestamp');
+    EL.feed      = document.getElementById('hp-feed');
+    EL.feedCount = document.getElementById('feed-count');
+    EL.filters   = document.getElementById('hp-filters');
+    EL.achievers = document.getElementById('hp-achievers');
+    EL.warranty  = document.getElementById('hp-warranty');
+    EL.tips      = document.getElementById('hp-tips');
+    EL.activity  = document.getElementById('hp-activity');
+    EL.tkTotal   = document.getElementById('tk-total');
+    EL.tkAssign  = document.getElementById('tk-assigned');
+    EL.tkInstock = document.getElementById('tk-instock');
+    EL.tkExpire  = document.getElementById('tk-expiring');
+    EL.tkExpPill = document.getElementById('tk-exp-pill');
+  }
+
+  /* ── HELPERS ─────────────────────────────────────────────── */
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function fmt(n) {
+    return n != null ? Number(n).toLocaleString() : '—';
+  }
+
+  function fmtDate(raw) {
+    if (!raw) return '';
+    const s = String(raw);
+    const d = new Date(s);
+    if (isNaN(d.getTime())) return s.replace(/ GMT.*$/, '').trim();
+    return d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function showNotice(msg) {
+    if (!EL.notice) return;
+    EL.notice.textContent = msg || '';
+    EL.notice.style.display = msg ? 'block' : 'none';
+  }
+
+  function setTimestamp() {
+    const now = new Date();
+    if (EL.datestamp) {
+      EL.datestamp.textContent = now.toLocaleDateString('en-PH', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    }
+    refreshUpdatedLabel_();
+  }
+
+  function refreshUpdatedLabel_() {
+    if (EL.updated) {
+      EL.updated.textContent = 'Updated: ' + new Date().toLocaleTimeString('en-PH', { hour:'2-digit', minute:'2-digit' });
+    }
+  }
+
+  function hasGas() {
+    return !!(window.google && google.script && google.script.run);
+  }
+
+  function badgeCls(type) {
+    const map = { announcement:'announcement', achievement:'achievement', news:'news', tip:'tip' };
+    return map[type] || 'news';
+  }
+
+  function badgeLabel(type) {
+    const map = { announcement:'Announcement', achievement:'Achievement', news:'IT News', tip:'IT Tip' };
+    return map[type] || 'IT News';
+  }
+
+  /* ── RENDER FEED ─────────────────────────────────────────── */
+  function renderFeed(filter) {
+    if (!EL.feed) return;
+    const items = filter === 'all' ? FEED_DATA : FEED_DATA.filter(p => p.type === filter);
+
+    if (EL.feedCount) EL.feedCount.textContent = items.length + ' post' + (items.length !== 1 ? 's' : '');
+
+    if (!items.length) {
+      const icons = { all:'📭', announcement:'📢', achievement:'🏆', news:'📰', tip:'💡' };
+      const icon  = icons[filter] || '📭';
+      EL.feed.innerHTML = `<div class="hp-empty">
+        <span style="font-size:28px;">${icon}</span>
+        <span>No ${esc(filter === 'all' ? '' : filter + ' ')}posts yet.</span>
+      </div>`;
+      return;
+    }
+
+    EL.feed.innerHTML = items.map(post => {
+      const likes = state.likes[post.id] ?? post.likes;
+      const liked = state.likes['l_' + post.id] || false;
+      const cls   = badgeCls(post.type);
+      return `
+        <div class="hp-post" data-id="${post.id}" data-type="${esc(post.type)}">
+          <div class="hp-post-meta">
+            <span class="hp-post-badge hp-badge--${cls}">${badgeLabel(post.type)}</span>
+            <span class="hp-post-author">${esc(post.author)}</span>
+            <span class="hp-post-time">${esc(fmtDate(post.time))}</span>
+          </div>
+          <div class="hp-post-title">${esc(post.title)}</div>
+          <div class="hp-post-body">${esc(post.body)}</div>
+          <div class="hp-post-footer">
+            <span class="hp-post-like ${liked ? 'active' : ''}" data-action="like" data-id="${post.id}">
+              ♥ ${likes}
+            </span>
+          </div>
+        </div>`;
+    }).join('');
+
+    EL.feed.querySelectorAll('[data-action="like"]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const id  = Number(btn.dataset.id);
+        const was = state.likes['l_' + id] || false;
+        const post = FEED_DATA.find(p => p.id === id);
+        if (!post) return;
+        state.likes['l_' + id] = !was;
+        state.likes[id] = (state.likes[id] ?? post.likes) + (was ? -1 : 1);
+        renderFeed(state.activeFilter);
+      });
+    });
+  }
+
+  /* ── RENDER ACHIEVERS ────────────────────────────────────── */
+  const ACHIEV_COLORS = [
+    { bg:'#edf2fb', color:'#2857a4' },
+    { bg:'#edf6f1', color:'#2a7a52' },
+    { bg:'#fdf0f0', color:'#c94040' },
+    { bg:'#fdf6e8', color:'#c47b1a' },
+    { bg:'#edf5f5', color:'#1d7a79' },
+  ];
+
+  function renderAchievers() {
+    if (!EL.achievers) return;
+    if (!ACHIEVERS.length) {
+      EL.achievers.innerHTML = `<div class="hp-empty" style="padding:20px;">No performers yet.</div>`;
+      return;
+    }
+    const rankCls = ['gold','silver','bronze'];
+    EL.achievers.innerHTML = ACHIEVERS.map((a, i) => {
+      const col = ACHIEV_COLORS[i % ACHIEV_COLORS.length];
+      const bg  = a.avatarBg    || col.bg;
+      const fg  = a.avatarColor || col.color;
+      return `
+        <div class="hp-achiev-item">
+          <div class="hp-achiev-rank ${rankCls[i] || ''}">${i + 1}</div>
+          <div class="hp-achiev-av" style="background:${esc(bg)};color:${esc(fg)};">
+            ${esc(a.initials || '?')}
+          </div>
+          <div class="hp-achiev-info">
+            <div class="hp-achiev-name">${esc(a.name)}</div>
+            <div class="hp-achiev-role">${esc(a.role || '')}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ── RENDER WARRANTY BARS ────────────────────────────────── */
+  function renderWarranty(buckets) {
+    if (!EL.warranty) return;
+    if (!buckets) {
+      EL.warranty.innerHTML = `<div class="hp-empty" style="padding:16px;">No data.</div>`;
+      return;
+    }
+    const rows = [
+      { label: 'Expired',     key: 'Expired',     color: '#c94040' },
+      { label: '0–30 days',   key: '0–30 days',   color: '#c47b1a' },
+      { label: '31–90 days',  key: '31–90 days',  color: '#c47b1a' },
+      { label: '91–180 days', key: '91–180 days', color: '#2857a4' },
+      { label: '180+ days',   key: '180+ days',   color: '#2a7a52' },
+    ];
+    const total = rows.reduce((s, r) => s + (buckets[r.key] || 0), 0) || 1;
+    EL.warranty.innerHTML = `<div class="hp-war-wrap">${
+      rows.map(r => {
+        const n = buckets[r.key] || 0;
+        const pct = Math.round((n / total) * 100);
+        return `<div class="hp-war-row">
+          <span class="hp-war-label">${r.label}</span>
+          <div class="hp-war-bar-wrap">
+            <div class="hp-war-bar" style="width:${pct}%;background:${r.color};"></div>
+          </div>
+          <span class="hp-war-count">${n}</span>
+        </div>`;
+      }).join('')
+    }</div>`;
+  }
+
+  /* ── RENDER TIPS ─────────────────────────────────────────── */
+  function renderTips() {
+    if (!EL.tips) return;
+    EL.tips.innerHTML = TIPS.map(t => `
+      <div class="hp-tip-item">
+        <span class="hp-tip-icon">${t.icon}</span>
+        <span class="hp-tip-text">${esc(t.text)}</span>
+      </div>`).join('');
+  }
+
+
+  function activityColor_(text) {
+    const t = String(text || '').toLowerCase();
+    if (t.includes('assign'))   return '#2857a4';
+    if (t.includes('warranty')) return '#2a7a52';
+    if (t.includes('defect') || t.includes('fault')) return '#c94040';
+    if (t.includes('signed') || t.includes('form'))  return '#1d7a79';
+    if (t.includes('retire') || t.includes('dispos')) return '#c47b1a';
+    return '#8a8680';
+  }
+
+
+  /* ── RENDER ACTIVITY ─────────────────────────────────────── */
+  function renderActivity(items) {
+    if (!EL.activity) return;
+    const rows = (items && items.length) ? items : SAMPLE_ACTIVITY;
+    EL.activity.innerHTML = rows.map(a => `
+      <div class="hp-act-item">
+        <div class="hp-act-dot" style="background:${esc(a.color || activityColor_(a.text))};"></div>
+        <div>
+          <div class="hp-act-text">${esc(a.text)}</div>
+          <div class="hp-act-time">${esc(a.time)}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ── BIND FILTERS ────────────────────────────────────────── */
+  function bindFilters() {
+    if (!EL.filters) return;
+    EL.filters.querySelectorAll('.hp-fb').forEach(btn => {
+      btn.addEventListener('click', () => {
+        EL.filters.querySelectorAll('.hp-fb').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.activeFilter = btn.dataset.filter;
+        renderFeed(state.activeFilter);
+      });
+    });
+  }
+
+  /* ── STATS ───────────────────────────────────────────────── */
+  function applyStats(stats) {
+    const d = stats || {};
+    if (EL.tkTotal)   EL.tkTotal.textContent   = fmt(d.totalAssets);
+    if (EL.tkAssign)  EL.tkAssign.textContent  = fmt(d.assignedLaptopCount ?? d.assigned);
+    if (EL.tkInstock) EL.tkInstock.textContent = fmt(d.inStockLaptopCount  ?? d.inStock);
+    if (EL.tkExpire)  EL.tkExpire.textContent  = fmt(d.warrantyExpiringSoon);
+    if (EL.tkExpPill) {
+      const n = Number(d.warrantyExpiringSoon || 0);
+      EL.tkExpPill.style.display = n > 0 ? 'inline' : 'none';
+    }
+  }
+
+  function loadStats() {
+    if (!hasGas()) { applyStats(null); return; }
+    google.script.run
+      .withSuccessHandler(s => { if (state.mounted) { applyStats(s); refreshUpdatedLabel_(); } })
+      .withFailureHandler(() => applyStats(null))
+      .getDashboardStats();
+  }
+
+  /* ── LOAD POSTS ──────────────────────────────────────────── */
+  function loadPosts() {
+    if (!hasGas()) { renderFeed('all'); return; }
+
+    if (EL.feed) EL.feed.innerHTML = `<div class="hp-empty">Loading feed…</div>`;
+
+    google.script.run
+      .withSuccessHandler(res => {
+        if (!state.mounted) return;
+        if (!res || !res.ok) { showNotice(res?.error || 'Could not load posts.'); return; }
+
+        const pinned = res.data?.pinned;
+        const wrap   = document.getElementById('hp-pinned-wrap');
+        if (pinned) {
+          const tEl = document.getElementById('pinned-title');
+          const bEl = document.getElementById('pinned-text');
+          const dEl = document.getElementById('pinned-date');
+          if (tEl) tEl.textContent = pinned.title;
+          if (bEl) bEl.textContent = pinned.body;
+          if (dEl) dEl.textContent = pinned.date;
+          if (wrap) wrap.style.display = 'block';
+        } else {
+          if (wrap) wrap.style.display = 'none';
+        }
+
+        const BADGE_CFG = {
+          announcement: { color: '#2857a4', bg: 'rgba(40,87,164,.10)'   },
+          achievement:  { color: '#c47b1a', bg: 'rgba(196,123,26,.10)'  },
+          news:         { color: '#1d7a79', bg: 'rgba(29,122,121,.10)'  },
+          tip:          { color: '#2a7a52', bg: 'rgba(42,122,82,.10)'   },
+        };
+
+        FEED_DATA = (res.data?.feed || []).map(p => {
+          const cfg      = BADGE_CFG[p.type] || BADGE_CFG['news'];
+          const initials = String(p.author || 'IT').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+          return {
+            id: p.id, type: p.type, author: p.author, initials,
+            avatarColor: cfg.color, avatarBg: cfg.bg,
+            time: p.date, title: p.title, body: p.body, likes: 0,
+          };
+        });
+
+        renderFeed(state.activeFilter);
+      })
+      .withFailureHandler(err => {
+        if (!state.mounted) return;
+        showNotice('Could not load posts.');
+        console.error('getHomePosts failed:', err);
+      })
+      .getHomePosts();
+  }
+
+  /* ── LOAD MASTERLIST REPORT (warranty) ───────────────────── */
+  function loadWarranty() {
+    if (!hasGas()) { renderWarranty(null); return; }
+    google.script.run
+      .withSuccessHandler(res => {
+        if (!state.mounted) return;
+        console.log('[warranty]', JSON.stringify(res));
+        renderWarranty(res && res.ok ? res.data?.warrantyBuckets : null);
+      })
+    .withFailureHandler((err) => {
+        console.error('[warranty] failed:', err);
+        if (state.mounted) renderWarranty(null);
+      })
+      .masterlist_report();
+  }
+
+  /* ── LOAD ACTIVITY ───────────────────────────────────────── */
+  function loadActivity() {
+    if (!hasGas()) { renderActivity(null); return; }
+    google.script.run
+      .withSuccessHandler(res => {
+        if (!state.mounted) return;
+        renderActivity(res && res.ok ? res.data : null);
+      })
+      .withFailureHandler(() => { if (state.mounted) renderActivity(null); })
+      .getRecentActivity(6);
+  }
+
+  /* ── LOAD TOP PERFORMERS ─────────────────────────────────── */
+  function loadTopPerformers() {
+    if (!hasGas()) { renderAchievers(); return; }
+    google.script.run
+      .withSuccessHandler(res => {
+        if (!state.mounted) return;
+        if (res && res.ok && res.data && res.data.length) ACHIEVERS = res.data;
+        renderAchievers();
+      })
+      .withFailureHandler(() => { if (state.mounted) renderAchievers(); })
+      .getTopPerformers();
+  }
+
+  /* ── WELCOME GREETING ────────────────────────────────────── */
+  function getGreeting() {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 18) return 'Good afternoon';
+    return 'Good evening';
+  }
+
+  function beautify(v) {
+    return String(v || '').replace(/[._]/g,' ').replace(/\s+/g,' ').trim()
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function applyWelcome(raw) {
+    if (!EL.welcome) return;
+    const name = beautify(raw);
+    const g    = getGreeting();
+    EL.welcome.innerHTML = name
+      ? `${g}, <em>${esc(name)}.</em>`
+      : `${g}, <em>Team.</em>`;
+  }
+
+  function setWelcome() {
+    const boot = window.__SHELL_BOOTSTRAP__ || {};
+    if (boot.username) applyWelcome(boot.username);
+    else if (boot.email) applyWelcome(String(boot.email).split('@')[0]);
+    if (!hasGas()) return;
+    google.script.run
+      .withSuccessHandler(u => { if (state.mounted && (u?.username || u?.name)) applyWelcome(u.username || u.name); })
+      .withFailureHandler(() => {})
+      .getCurrentUser();
+  }
+
+  /* ── LIFECYCLE ───────────────────────────────────────────── */
+  function mount() {
+    if (state.mounted) return;
+    state.mounted = true;
+    cacheDom();
+    setWelcome();
+    setTimestamp();
+    loadPosts();
+    loadTopPerformers();
+    loadActivity();
+    loadWarranty();
+    renderTips();
+    bindFilters();
+    loadStats();
+  }
+
+  function unmount() { state.mounted = false; }
+
+  function refresh() {
+    if (!state.mounted) return;
+    loadStats();
+    loadPosts();
+    loadTopPerformers();
+    loadActivity();
+    loadWarranty();
+    setTimestamp();
+    setWelcome();
+  }
+
+  /* ── REGISTER ────────────────────────────────────────────── */
+  window.HomePage = { mount, unmount, refresh };
+  if (typeof window.registerPageModule === 'function') {
+    window.registerPageModule(PAGE_KEY, { mount, unmount, refresh });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mount, { once: true });
+  } else {
+    mount();
+  }
+})();
+</script>

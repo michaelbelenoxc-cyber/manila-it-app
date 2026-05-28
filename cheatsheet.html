@@ -1,0 +1,1053 @@
+<style>
+  /* ============================================================
+   * FONTS
+   * ============================================================ */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --font-ui:   'Epilogue', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+    /* surfaces — warm paper (light default) */
+    --bg-root:  #f5f2ec;
+    --bg-card:  #f5f2ec;
+    --bg-inset: #ede9e1;
+    --bg-raise: #e4ded4;
+    --bg-hover: #ddd6ca;
+
+    /* borders */
+    --br-0: rgba(26,24,20,.07);
+    --br-1: rgba(26,24,20,.12);
+    --br-2: rgba(26,24,20,.18);
+    --br-3: rgba(26,24,20,.28);
+
+    /* text */
+    --tx-1: rgba(26,24,20,.95);
+    --tx-2: rgba(74,71,64,.75);
+    --tx-3: rgba(138,134,128,.60);
+
+    /* accent — editorial blue */
+    --ac:      #2857a4;
+    --ac-d:    rgba(40,87,164,.10);
+    --ac-b:    rgba(40,87,164,.30);
+    --ac-glow: 0 0 0 1px rgba(40,87,164,.22), 0 3px 14px rgba(40,87,164,.12);
+
+    /* semantic */
+    --green:  #16a34a;
+    --blue:   #2857a4;
+    --red:    #c94040;
+    --amber:  #b45309;
+    --teal:   #0e7490;
+
+    /* geometry */
+    --r-2xl:  16px;
+    --r-xl:   12px;
+    --r-lg:   9px;
+    --r-md:   6px;
+    --r-sm:   4px;
+    --r-pill: 999px;
+
+    /* shadows */
+    --sh-1: 0 1px 4px rgba(26,24,20,.08);
+    --sh-2: 0 4px 16px rgba(26,24,20,.10);
+    --sh-3: 0 12px 40px rgba(26,24,20,.13);
+
+    /* motion */
+    --ease:   cubic-bezier(.22,.68,0,1.2);
+    --t-fast: .13s ease;
+    --t-med:  .22s ease;
+  }
+
+  /* ── Dark mode ─────────────────────────────── */
+  html[data-theme="dark"] {
+    --bg-root:  #161410;
+    --bg-card:  #1a1814;
+    --bg-inset: #1e1c18;
+    --bg-raise: #252220;
+    --bg-hover: #2c2a26;
+    --br-0: rgba(240,236,227,.06);
+    --br-1: rgba(240,236,227,.10);
+    --br-2: rgba(240,236,227,.16);
+    --br-3: rgba(240,236,227,.26);
+    --tx-1: rgba(240,236,227,.95);
+    --tx-2: rgba(176,169,158,.75);
+    --tx-3: rgba(106,100,92,.60);
+    --ac-d: rgba(40,87,164,.16);
+    --ac-b: rgba(40,87,164,.40);
+    --ac-glow: 0 0 0 1px rgba(40,87,164,.32), 0 3px 14px rgba(40,87,164,.18);
+    --sh-1: 0 1px 4px rgba(0,0,0,.35);
+    --sh-2: 0 4px 16px rgba(0,0,0,.45);
+    --sh-3: 0 12px 40px rgba(0,0,0,.55);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-ui);
+    font-size: 14px;
+    color: var(--tx-1);
+    background: var(--bg-root);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 55% 40% at 12% 0%, rgba(40,87,164,.04) 0%, transparent 55%),
+      radial-gradient(ellipse 45% 35% at 88% 100%, rgba(40,87,164,.03) 0%, transparent 55%);
+  }
+
+  /* ── Page wrapper ── */
+  .cs-page {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 1140px;
+    margin: 0 auto;
+    padding: 72px 24px 80px;
+    animation: pageIn .40s var(--ease) both;
+  }
+
+  @keyframes pageIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Hero ── */
+  .cs-hero { text-align: center; margin-bottom: 36px; }
+
+  .cs-eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 11px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--br-1); background: var(--bg-inset);
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    color: var(--ac); letter-spacing: .12em; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  html[data-theme="dark"] .cs-eyebrow { color: #5b85c8; }
+
+  .cs-eyebrow-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--ac);
+    animation: blink 2.4s ease-in-out infinite;
+  }
+
+  html[data-theme="dark"] .cs-eyebrow-dot { background: #5b85c8; }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.28} }
+
+  .cs-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(26px, 3.5vw, 40px);
+    font-weight: 400;
+    letter-spacing: -.02em;
+    line-height: 1.08;
+    color: var(--tx-1);
+    margin-bottom: 9px;
+  }
+
+  .cs-sub {
+    font-size: 13px; font-family: var(--font-mono);
+    color: var(--tx-3); line-height: 1.65;
+    max-width: 420px; margin: 0 auto;
+    letter-spacing: .01em;
+  }
+
+  /* ── Shell ── */
+  .cs-shell {
+    background: var(--bg-card);
+    border: 1px solid var(--br-1);
+    border-radius: var(--r-2xl);
+    box-shadow: var(--sh-1);
+    overflow: hidden;
+  }
+
+  /* ── Toolbar ── */
+  .cs-toolbar {
+    padding: 12px 16px 10px;
+    border-bottom: 1px solid var(--br-0);
+    background: var(--bg-root);
+    display: flex; align-items: center;
+    gap: 9px; flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  html[data-theme="dark"] .cs-toolbar { background: rgba(0,0,0,.10); }
+
+  .tb-left, .tb-right { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+  /* Search */
+  .search-wrap { position: relative; display: flex; align-items: center; }
+
+  .search-ico {
+    position: absolute; left: 10px;
+    color: var(--tx-3); font-size: 11px; pointer-events: none;
+  }
+
+  #searchBox {
+    height: 34px; width: 250px;
+    padding: 0 11px 0 30px;
+    border: 1px solid var(--br-1); border-radius: var(--r-lg);
+    background: var(--bg-inset); color: var(--tx-1);
+    font-family: var(--font-mono); font-size: 11.5px; outline: none;
+    transition: width .18s ease, border-color .13s, box-shadow .13s, background .13s;
+  }
+
+  #searchBox:focus {
+    width: 310px; border-color: var(--ac-b);
+    background: var(--bg-card); box-shadow: var(--ac-glow);
+  }
+
+  #searchBox::placeholder { color: var(--tx-3); }
+
+  /* Filter chips */
+  .chips { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+
+  .chip {
+    height: 26px; padding: 0 10px;
+    display: inline-flex; align-items: center;
+    border: 1px solid var(--br-1); border-radius: var(--r-pill);
+    background: var(--bg-inset); color: var(--tx-3);
+    font-family: var(--font-mono); font-size: 10.5px; font-weight: 500;
+    letter-spacing: .04em;
+    cursor: pointer; white-space: nowrap;
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+    user-select: none;
+  }
+
+  .chip:hover { background: var(--bg-raise); color: var(--tx-1); border-color: var(--br-2); }
+
+  .chip.active {
+    background: var(--ac-d); border-color: var(--ac-b); color: var(--ac);
+  }
+
+  html[data-theme="dark"] .chip.active { color: #5b85c8; }
+
+  /* Buttons */
+  .btn-primary {
+    height: 34px; padding: 0 14px;
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid var(--ac-b); border-radius: var(--r-lg);
+    background: var(--ac-d); color: var(--ac);
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    letter-spacing: .04em;
+    cursor: pointer; white-space: nowrap;
+    transition: background var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  html[data-theme="dark"] .btn-primary { color: #5b85c8; }
+  .btn-primary:hover { background: rgba(40,87,164,.16); box-shadow: 0 2px 10px rgba(40,87,164,.18); }
+  .btn-primary i { font-size: 10px; }
+
+  .btn-icon {
+    width: 34px; height: 34px; padding: 0;
+    border: 1px solid var(--br-1); border-radius: var(--r-lg);
+    background: var(--bg-inset); color: var(--tx-3);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 12px;
+    transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  }
+
+  .btn-icon:hover { background: var(--bg-raise); color: var(--tx-1); border-color: var(--br-2); }
+
+  /* ── Stats bar ── */
+  .cs-stats {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 18px 7px;
+    border-bottom: 1px solid var(--br-0);
+    font-family: var(--font-mono); font-size: 10.5px;
+    color: var(--tx-3); gap: 7px; flex-wrap: wrap;
+  }
+
+  /* ── Cards grid ── */
+  .cs-body { padding: 16px 18px; }
+
+  .cs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 10px;
+  }
+
+  /* ── Entry card ── */
+  .e-card {
+    background: var(--bg-inset);
+    border: 1px solid var(--br-1);
+    border-radius: var(--r-xl);
+    padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 9px;
+    transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+    animation: cardIn .20s var(--ease) both;
+    position: relative; overflow: hidden;
+  }
+
+  .e-card::before {
+    content: '';
+    position: absolute; left: 0; top: 14px; bottom: 14px;
+    width: 2px; border-radius: 0 2px 2px 0;
+    opacity: 0; transition: opacity .18s ease;
+  }
+
+  .e-card:hover { border-color: var(--br-2); background: var(--bg-raise); box-shadow: var(--sh-1); }
+  .e-card:hover::before { opacity: 1; }
+
+  .e-card[data-cat="access"]::before   { background: var(--blue); }
+  .e-card[data-cat="hardware"]::before { background: var(--amber); }
+  .e-card[data-cat="software"]::before { background: var(--green); }
+  .e-card[data-cat="network"]::before  { background: var(--red); }
+  .e-card[data-cat="other"]::before    { background: var(--ac); }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(5px) scale(.99); }
+    to   { opacity: 1; transform: translateY(0)   scale(1); }
+  }
+
+  .e-head {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 9px;
+  }
+
+  .e-issue {
+    font-size: 13px; font-weight: 700;
+    color: var(--tx-1); line-height: 1.4; flex: 1;
+    word-break: break-word;
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px;
+    border-radius: var(--r-pill);
+    font-family: var(--font-mono); font-size: 9.5px; font-weight: 600;
+    letter-spacing: .06em; text-transform: uppercase;
+    white-space: nowrap; flex-shrink: 0;
+  }
+
+  .badge-dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Light mode — muted ink-friendly */
+  .badge-access   { background: rgba(40,87,164,.09);  color: #2857a4; border: 1px solid rgba(40,87,164,.20); }
+  .badge-access .badge-dot   { background: #2857a4; }
+  .badge-hardware { background: rgba(180,83,9,.09);   color: #b45309; border: 1px solid rgba(180,83,9,.20); }
+  .badge-hardware .badge-dot { background: #b45309; }
+  .badge-software { background: rgba(22,163,74,.09);  color: #16a34a; border: 1px solid rgba(22,163,74,.20); }
+  .badge-software .badge-dot { background: #16a34a; animation: glow 2s ease-in-out infinite; }
+  .badge-network  { background: rgba(201,64,64,.09);  color: #c94040; border: 1px solid rgba(201,64,64,.20); }
+  .badge-network .badge-dot  { background: #c94040; }
+  .badge-other    { background: rgba(40,87,164,.09);  color: #2857a4; border: 1px solid rgba(40,87,164,.20); }
+  .badge-other .badge-dot    { background: var(--ac); }
+
+  @keyframes glow { 0%,100%{box-shadow:0 0 0 transparent} 50%{box-shadow:0 0 5px #16a34a} }
+
+  /* Dark mode — vivid */
+  html[data-theme="dark"] .badge-access   { background: rgba(40,87,164,.14);  color: #5b85c8; border-color: rgba(40,87,164,.28); }
+  html[data-theme="dark"] .badge-hardware { background: rgba(245,158,11,.12); color: #fbbf24; border-color: rgba(245,158,11,.26); }
+  html[data-theme="dark"] .badge-software { background: rgba(74,222,128,.11); color: #4ade80; border-color: rgba(74,222,128,.24); }
+  html[data-theme="dark"] .badge-network  { background: rgba(248,113,113,.12);color: #f87171; border-color: rgba(248,113,113,.26); }
+  html[data-theme="dark"] .badge-other    { background: rgba(40,87,164,.14);  color: #5b85c8; border-color: rgba(40,87,164,.28); }
+
+  /* Divider */
+  .e-divider { height: 1px; background: var(--br-0); border: none; margin: 0; }
+
+  /* Action text */
+  .e-action {
+    font-size: 12.5px; color: var(--tx-2); line-height: 1.6;
+    word-break: break-word; overflow-wrap: break-word;
+  }
+
+  /* Meta row */
+  .e-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; }
+
+  .meta-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    height: 22px; padding: 0 9px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--ac-b); background: var(--ac-d);
+    color: var(--ac); font-size: 10.5px; font-weight: 600;
+    text-decoration: none; font-family: var(--font-mono);
+    transition: background var(--t-fast), border-color var(--t-fast);
+  }
+
+  html[data-theme="dark"] .meta-link { color: #5b85c8; }
+  .meta-link:hover { background: rgba(40,87,164,.16); border-color: rgba(40,87,164,.45); }
+
+  .meta-channel {
+    display: inline-flex; align-items: center; gap: 4px;
+    height: 22px; padding: 0 8px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--br-1); background: var(--bg-raise);
+    color: var(--tx-3); font-size: 10px; font-family: var(--font-mono);
+  }
+
+  .meta-contact {
+    font-size: 11px; color: var(--tx-3);
+    font-style: italic; padding: 0 2px;
+  }
+
+  /* Card action buttons */
+  .e-actions {
+    display: flex; justify-content: flex-end; gap: 3px; margin-top: 1px;
+  }
+
+  .e-btn {
+    width: 26px; height: 26px;
+    border-radius: var(--r-md); border: 1px solid transparent;
+    background: transparent; color: var(--tx-3);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 10px;
+    transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  }
+
+  .e-btn.edit:hover  { background: var(--ac-d); color: var(--ac); border-color: var(--ac-b); }
+  .e-btn.del:hover   { background: rgba(201,64,64,.09); color: var(--red); border-color: rgba(201,64,64,.22); }
+  html[data-theme="dark"] .e-btn.edit:hover { color: #5b85c8; }
+  html[data-theme="dark"] .e-btn.del:hover  { color: #f87171; }
+
+  /* ── Empty state ── */
+  .cs-empty {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 56px 20px; gap: 9px;
+    grid-column: 1 / -1; color: var(--tx-2);
+  }
+
+  .cs-empty-ico { font-size: 24px; opacity: .25; margin-bottom: 3px; }
+  .cs-empty-lbl  { font-size: 13.5px; font-weight: 600; }
+  .cs-empty-hint { font-size: 11.5px; color: var(--tx-3); font-family: var(--font-mono); }
+
+  /* ── Footer tip ── */
+  .cs-tip {
+    padding: 8px 18px 13px;
+    font-size: 10.5px; color: var(--tx-3);
+    font-family: var(--font-mono);
+    border-top: 1px solid var(--br-0);
+    display: flex; align-items: center; gap: 6px;
+    letter-spacing: .02em;
+  }
+
+  /* ── Modals ── */
+  .modal-content.cs-modal {
+    background: var(--bg-card);
+    border: 1px solid var(--br-2);
+    border-radius: var(--r-xl);
+    color: var(--tx-1);
+    box-shadow: var(--sh-3);
+  }
+
+  html[data-theme="dark"] .modal-content.cs-modal { background: var(--bg-card); }
+
+  .cs-modal .modal-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--br-0);
+    background: var(--bg-root);
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+  }
+
+  html[data-theme="dark"] .cs-modal .modal-header { background: rgba(0,0,0,.10); }
+
+  .cs-modal .modal-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 16px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--tx-1);
+  }
+
+  .cs-modal .modal-footer {
+    padding: 11px 20px 16px;
+    border-top: 1px solid var(--br-0);
+    gap: 7px; justify-content: flex-end;
+  }
+
+  .cs-modal .form-label {
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--tx-3); margin-bottom: 4px;
+    font-family: var(--font-mono); display: block;
+  }
+
+  .cs-modal .form-control,
+  .cs-modal .form-select {
+    background: var(--bg-inset);
+    border: 1px solid var(--br-1);
+    border-radius: var(--r-md);
+    color: var(--tx-1);
+    padding: 8px 11px;
+    font-family: var(--font-ui); font-size: 13px; width: 100%;
+    transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  .cs-modal .form-control::placeholder { color: var(--tx-3); }
+
+  .cs-modal .form-control:focus,
+  .cs-modal .form-select:focus {
+    outline: none; border-color: var(--ac-b);
+    background: var(--bg-card); box-shadow: var(--ac-glow); color: var(--tx-1);
+  }
+
+  .cs-modal .form-select option { background: var(--bg-card); color: var(--tx-1); }
+
+  /* Modal buttons */
+  .btn-cancel {
+    height: 36px; padding: 0 14px;
+    border: 1px solid var(--br-2); border-radius: var(--r-pill);
+    background: var(--bg-inset); color: var(--tx-2);
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    letter-spacing: .04em; cursor: pointer;
+    transition: background var(--t-fast), color var(--t-fast);
+  }
+
+  .btn-cancel:hover { background: var(--bg-raise); color: var(--tx-1); }
+
+  .btn-save {
+    height: 36px; padding: 0 18px;
+    border: 1px solid var(--ac-b); border-radius: var(--r-pill);
+    background: var(--ac); color: #fff;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+    letter-spacing: .04em; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: filter var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  .btn-save:hover { filter: brightness(1.12); box-shadow: 0 3px 12px rgba(40,87,164,.28); }
+  .btn-save:disabled { opacity: .42; cursor: not-allowed; filter: none !important; }
+
+  .btn-delete-confirm {
+    height: 36px; padding: 0 18px;
+    border: 1px solid rgba(201,64,64,.30); border-radius: var(--r-pill);
+    background: var(--red); color: #fff;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+    letter-spacing: .04em; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: filter var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  html[data-theme="dark"] .btn-delete-confirm { background: linear-gradient(160deg, #f87171, #ef4444); }
+  .btn-delete-confirm:hover { filter: brightness(1.10); box-shadow: 0 3px 12px rgba(201,64,64,.28); }
+
+  /* ── Toast ── */
+  #csToast.toast {
+    min-width: 260px; max-width: 340px;
+    border-radius: var(--r-lg); border: 1px solid var(--br-2);
+    box-shadow: var(--sh-2); overflow: hidden;
+  }
+
+  #csToast .toast-header { background: var(--bg-raise); border-bottom: 1px solid var(--br-0); }
+  #csToast .toast-body   { background: var(--bg-card); font-family: var(--font-mono); font-size: 12px; color: var(--tx-1); font-weight: 500; }
+  #csToast[data-kind="success"] #csToastIcon { color: var(--green); }
+  html[data-theme="dark"] #csToast[data-kind="success"] #csToastIcon { color: #4ade80; }
+  #csToast[data-kind="danger"]  #csToastIcon { color: var(--red); }
+  html[data-theme="dark"] #csToast[data-kind="danger"]  #csToastIcon { color: #f87171; }
+  #csToast[data-kind="info"]    #csToastIcon { color: var(--ac); }
+  html[data-theme="dark"] #csToast[data-kind="info"]    #csToastIcon { color: #5b85c8; }
+
+  /* ── Go top ── */
+  #goTopBtn {
+    position: fixed; right: 18px; bottom: 20px;
+    width: 38px; height: 38px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--br-2); background: var(--bg-raise);
+    color: var(--tx-1);
+    display: grid; place-items: center;
+    box-shadow: var(--sh-1);
+    z-index: 1200; cursor: pointer; font-size: 11px;
+    opacity: 0; transform: translateY(7px) scale(.94);
+    pointer-events: none;
+    transition: opacity .20s, transform .20s, background .13s;
+  }
+
+  #goTopBtn.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+  #goTopBtn:hover { background: var(--bg-hover); }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fa-spin { animation: spin .85s linear infinite; }
+
+  html[data-theme="dark"] .modal-content.cs-modal .btn-close {
+  filter: invert(1) grayscale(1) brightness(2);
+}
+.modal-content.cs-modal .btn-close {
+  filter: none;
+  opacity: .55;
+}
+
+</style>
+
+<div class="cs-page">
+
+  <!-- Hero -->
+  <div class="cs-hero">
+    <div class="cs-eyebrow">
+      <span class="cs-eyebrow-dot"></span>
+      Service Desk
+    </div>
+    <h1 class="cs-title">SD Cheat Sheet</h1>
+    <p class="cs-sub">Quick reference for common tickets, escalation paths, and contacts.</p>
+  </div>
+
+  <!-- Shell -->
+  <div class="cs-shell">
+
+    <!-- Toolbar -->
+    <div class="cs-toolbar">
+      <div class="tb-left">
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass search-ico"></i>
+          <input id="searchBox" type="text" placeholder="Search issue, action, contact…">
+        </div>
+        <div class="chips" id="filterGroup"></div>
+      </div>
+      <div class="tb-right">
+        <button type="button" class="btn-primary" id="addEntryBtn">
+          <i class="fas fa-plus"></i> Add Entry
+        </button>
+        <button type="button" class="btn-icon" id="refreshBtn" title="Refresh">
+          <i class="fas fa-rotate"></i>
+        </button>
+        <button type="button" class="btn-icon" id="clearBtn" title="Clear filters">
+          <i class="fas fa-filter-circle-xmark"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="cs-stats">
+      <span id="resultsCount">—</span>
+      <span id="activeFilterLabel" style="color:var(--tx-2);"></span>
+    </div>
+
+    <!-- Grid -->
+    <div class="cs-body">
+      <div class="cs-grid" id="cardsGrid">
+        <div class="cs-empty" style="grid-column:1/-1;">
+          <div class="cs-empty-ico"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+          <div class="cs-empty-lbl">Loading cheat sheet…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer tip -->
+    <div class="cs-tip">
+      <i class="fa-solid fa-circle-info" style="opacity:.5;"></i>
+      Use the search bar or category filters to quickly find the right escalation path.
+    </div>
+
+  </div>
+</div>
+
+<!-- Go top -->
+<button type="button" id="goTopBtn" aria-label="Back to top">
+  <i class="fa-solid fa-chevron-up"></i>
+</button>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal fade" id="entryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content cs-modal">
+      <div class="modal-header">
+        <h5 class="modal-title" id="entryModalTitle">
+          <i class="fa-solid fa-plus" style="color:var(--ac);margin-right:8px;"></i> Add Entry
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                style="filter:invert(1) grayscale(1) brightness(2);"></button>
+      </div>
+      <div class="modal-body px-4 pb-2">
+        <form id="entryForm">
+          <input type="hidden" id="edit_id">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Issue / Ticket Type <span style="color:var(--red);">*</span></label>
+              <input class="form-control" id="f_issue" placeholder="e.g. Oracle Access Request" autocomplete="off">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Category <span style="color:var(--red);">*</span></label>
+              <select class="form-select" id="f_cat">
+                <option value="">Select…</option>
+                <option value="access">Access</option>
+                <option value="hardware">Hardware</option>
+                <option value="software">Software</option>
+                <option value="network">Network</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Contact / Owner</label>
+              <input class="form-control" id="f_contact" placeholder="e.g. Steven Smith" autocomplete="off">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Action / Resolution <span style="color:var(--red);">*</span></label>
+              <textarea class="form-control" id="f_action" rows="3" placeholder="What should the SD do?"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Slack Channel</label>
+              <input class="form-control" id="f_channel" placeholder="e.g. #service-desk-team" autocomplete="off">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Ticket / Jira Link</label>
+              <input class="form-control" id="f_link" placeholder="https://…" autocomplete="off">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn-save" id="saveEntryBtn">
+          <i class="fas fa-floppy-disk"></i> Save Entry
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+    <div class="modal-content cs-modal">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa-solid fa-triangle-exclamation" style="color:var(--red);margin-right:8px;"></i> Delete Entry
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                style="filter:invert(1) grayscale(1) brightness(2);"></button>
+      </div>
+      <div class="modal-body px-4 py-3">
+        <div id="deleteModalText" style="color:var(--tx-2);font-size:13.5px;line-height:1.6;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="confirmDeleteBtn" class="btn-delete-confirm">
+          <i class="fas fa-trash"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:20000;">
+  <div id="csToast" class="toast" role="alert" aria-live="polite" aria-atomic="true">
+    <div class="toast-header">
+      <i id="csToastIcon" class="fa-solid fa-circle-info me-2"></i>
+      <strong id="csToastTitle" class="me-auto" style="color:var(--tx-1);font-size:12px;"></strong>
+      <button type="button" class="btn-close ms-2" data-bs-dismiss="toast" aria-label="Close"
+              style="filter:invert(1) grayscale(1) brightness(2);"></button>
+    </div>
+    <div id="csToastBody" class="toast-body">…</div>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const CATS = [
+    { key: 'all',      label: 'All'      },
+    { key: 'access',   label: 'Access'   },
+    { key: 'hardware', label: 'Hardware' },
+    { key: 'software', label: 'Software' },
+    { key: 'network',  label: 'Network'  },
+    { key: 'other',    label: 'Other'    },
+  ];
+
+  const $ = id => document.getElementById(id);
+
+  let entries    = [];
+  let activeCat  = 'all';
+  let editingId  = null;
+  let pendingDel = null;
+  let toastInst  = null;
+  let fetchToken = 0;
+
+  /* ── Utils ── */
+  function esc(s) {
+    return String(s ?? '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+
+  function unwrap(res) {
+    if (res && typeof res === 'object' && 'ok' in res) return res;
+    return { ok: true, data: res };
+  }
+
+  /* ── Toast ── */
+  function showToast(msg, kind = 'info', title = null) {
+    const el = $('csToast');
+    if (!el) return;
+    el.setAttribute('data-kind', kind);
+    const icons = { success: 'fa-circle-check', danger: 'fa-triangle-exclamation', info: 'fa-circle-info' };
+    $('csToastIcon').className  = `fa-solid ${icons[kind] || 'fa-circle-info'} me-2`;
+    $('csToastTitle').textContent = title || ({ success:'Saved', danger:'Error', info:'Notice' }[kind] || 'Notice');
+    $('csToastBody').textContent  = msg;
+    if (!toastInst) toastInst = bootstrap.Toast.getOrCreateInstance(el);
+    toastInst.show();
+  }
+
+  /* ── Filters ── */
+  function renderFilters() {
+    $('filterGroup').innerHTML = CATS.map(c =>
+      `<button class="chip${activeCat === c.key ? ' active' : ''}" onclick="setFilter('${c.key}')">${c.label}</button>`
+    ).join('');
+  }
+
+  window.setFilter = key => { activeCat = key; renderFilters(); renderCards(); };
+
+  function badgeCls(cat) {
+    return { access:'badge-access', hardware:'badge-hardware', software:'badge-software', network:'badge-network', other:'badge-other' }[cat] || 'badge-other';
+  }
+
+  function catLabel(cat) {
+    return CATS.find(c => c.key === cat)?.label || cat;
+  }
+
+  /* ── Load ── */
+  function loadEntries(spinner = true) {
+    const tok = ++fetchToken;
+
+    if (spinner) {
+      $('cardsGrid').innerHTML = `
+        <div class="cs-empty" style="grid-column:1/-1;">
+          <div class="cs-empty-ico"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+          <div class="cs-empty-lbl">Loading cheat sheet…</div>
+        </div>`;
+    }
+
+    google.script.run
+      .withSuccessHandler(res => {
+        if (tok !== fetchToken) return;
+        const out = unwrap(res);
+        if (!out.ok) { showToast(out.error || 'Failed to load.', 'danger'); return; }
+        entries = Array.isArray(out.data) ? out.data : [];
+        renderCards();
+      })
+      .withFailureHandler(err => {
+        if (tok !== fetchToken) return;
+        showToast(err?.message || 'Connection error.', 'danger');
+      })
+      .cheatsheet_list();
+  }
+
+  /* ── Render cards ── */
+  window.renderCards = function() {
+    const q      = ($('searchBox')?.value || '').toLowerCase().trim();
+    const grid   = $('cardsGrid');
+    const count  = $('resultsCount');
+    const flabel = $('activeFilterLabel');
+
+    const filtered = entries.filter(d => {
+      if (activeCat !== 'all' && d.cat !== activeCat) return false;
+      if (!q) return true;
+      return [d.issue, d.action, d.contact, d.channel, d.cat, d.link].join(' ').toLowerCase().includes(q);
+    });
+
+    count.textContent  = `${filtered.length} of ${entries.length} entries`;
+    flabel.textContent = activeCat !== 'all'
+      ? `Filtering: ${catLabel(activeCat)}`
+      : q ? `Searching: "${q}"` : '';
+
+    if (!filtered.length) {
+      grid.innerHTML = `
+        <div class="cs-empty">
+          <div class="cs-empty-ico"><i class="fa-solid fa-magnifying-glass"></i></div>
+          <div class="cs-empty-lbl">No entries found.</div>
+          <div class="cs-empty-hint">Try a different search or category.</div>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map((d, i) => {
+      const badge   = `<span class="badge ${badgeCls(d.cat)}"><span class="badge-dot"></span>${catLabel(d.cat)}</span>`;
+      const link    = d.link    ? `<a class="meta-link" href="${esc(d.link)}" target="_blank" rel="noopener"><i class="fas fa-arrow-up-right-from-square" style="font-size:9px;"></i> Open ticket</a>` : '';
+      const channel = d.channel ? `<span class="meta-channel"><i class="fas fa-hashtag" style="font-size:9px;opacity:.55;"></i>${esc(d.channel.replace(/^#/,''))}</span>` : '';
+      const contact = d.contact ? `<span class="meta-contact">${esc(d.contact)}</span>` : '';
+      const meta    = [link, channel, contact].filter(Boolean).join('');
+
+      return `
+        <div class="e-card" data-cat="${esc(d.cat)}" style="animation-delay:${i * 0.03}s">
+          <div class="e-head">
+            <div class="e-issue">${esc(d.issue)}</div>
+            ${badge}
+          </div>
+          <hr class="e-divider">
+          <div class="e-action">${esc(d.action)}</div>
+          ${meta ? `<div class="e-meta">${meta}</div>` : ''}
+          <div class="e-actions">
+            <button class="e-btn edit" onclick="openEdit('${esc(d.id)}')" title="Edit">
+              <i class="fas fa-pen"></i>
+            </button>
+            <button class="e-btn del" onclick="requestDelete('${esc(d.id)}','${esc(d.issue)}')" title="Delete">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>`;
+    }).join('');
+  };
+
+  /* ── Modal helpers ── */
+  function getModal(id) {
+    const el = $(id);
+    if (el && el.parentElement !== document.body) document.body.appendChild(el);
+    return bootstrap.Modal.getOrCreateInstance(el);
+  }
+
+  function clearForm() {
+    ['issue','cat','contact','action','channel','link'].forEach(k => {
+      const el = $('f_' + k);
+      if (el) el.value = '';
+    });
+    $('edit_id').value = '';
+  }
+
+  function setBusy(b) {
+    const btn = $('saveEntryBtn');
+    if (!btn) return;
+    btn.disabled = b;
+    btn.innerHTML = b
+      ? '<i class="fas fa-circle-notch fa-spin"></i> Saving…'
+      : '<i class="fas fa-floppy-disk"></i> Save Entry';
+  }
+
+  /* ── Add ── */
+  function openAdd() {
+    editingId = null;
+    clearForm();
+    $('entryModalTitle').innerHTML = '<i class="fa-solid fa-plus" style="color:#c4baff;margin-right:8px;"></i> Add Entry';
+    getModal('entryModal').show();
+    setTimeout(() => $('f_issue')?.focus(), 150);
+  }
+
+  /* ── Edit ── */
+  window.openEdit = function(id) {
+    const d = entries.find(e => String(e.id) === String(id));
+    if (!d) return;
+    editingId = String(d.id);
+    $('edit_id').value   = d.id;
+    $('f_issue').value   = d.issue   || '';
+    $('f_cat').value     = d.cat     || '';
+    $('f_action').value  = d.action  || '';
+    $('f_channel').value = d.channel || '';
+    $('f_contact').value = d.contact || '';
+    $('f_link').value    = d.link    || '';
+    $('entryModalTitle').innerHTML = '<i class="fa-solid fa-pen" style="color:#c4baff;margin-right:8px;"></i> Edit Entry';
+    getModal('entryModal').show();
+  };
+
+  /* ── Save ── */
+  function saveEntry() {
+    const issue  = $('f_issue')?.value.trim();
+    const cat    = $('f_cat')?.value.trim();
+    const action = $('f_action')?.value.trim();
+
+    if (!issue)  { showToast('Issue is required.',   'danger'); return; }
+    if (!cat)    { showToast('Category is required.','danger'); return; }
+    if (!action) { showToast('Action is required.',  'danger'); return; }
+
+    const payload = {
+      id: editingId || '', issue, cat, action,
+      channel: $('f_channel')?.value.trim() || '',
+      contact: $('f_contact')?.value.trim() || '',
+      link:    $('f_link')?.value.trim()    || '',
+    };
+
+    setBusy(true);
+    const method = editingId ? 'cheatsheet_update' : 'cheatsheet_add';
+
+    google.script.run
+      .withSuccessHandler(res => {
+        setBusy(false);
+        const out = unwrap(res);
+        if (!out.ok) { showToast(out.error || 'Save failed.', 'danger'); return; }
+        getModal('entryModal').hide();
+        showToast(editingId ? 'Entry updated.' : 'Entry added.', 'success');
+        editingId = null;
+        loadEntries(false);
+      })
+      .withFailureHandler(err => {
+        setBusy(false);
+        showToast(err?.message || 'Save failed.', 'danger');
+      })
+      [method](payload);
+  }
+
+  /* ── Delete ── */
+  window.requestDelete = function(id, issue) {
+    pendingDel = String(id);
+    $('deleteModalText').innerHTML = `Delete <b style="color:var(--tx-1);">${esc(issue)}</b>? This cannot be undone.`;
+    getModal('deleteModal').show();
+  };
+
+  function confirmDelete() {
+    if (!pendingDel) return;
+    const btn = $('confirmDeleteBtn');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Deleting…'; }
+
+    google.script.run
+      .withSuccessHandler(res => {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-trash"></i> Delete'; }
+        const out = unwrap(res);
+        if (!out.ok) { showToast(out.error || 'Delete failed.', 'danger'); return; }
+        getModal('deleteModal').hide();
+        pendingDel = null;
+        showToast('Entry deleted.', 'info');
+        loadEntries(false);
+      })
+      .withFailureHandler(err => {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-trash"></i> Delete'; }
+        showToast(err?.message || 'Delete failed.', 'danger');
+      })
+      .cheatsheet_delete(pendingDel);
+  }
+
+  /* ── Go top ── */
+  function setupGoTop() {
+    const btn = $('goTopBtn');
+    if (!btn) return;
+    let lastY = window.scrollY;
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      btn.classList.toggle('show', y > 220 && y < lastY);
+      lastY = y;
+    }, { passive: true });
+    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+
+  /* ── Init ── */
+  function init() {
+    ['entryModal','deleteModal'].forEach(id => {
+      const el = $(id);
+      if (el && el.parentElement !== document.body) document.body.appendChild(el);
+    });
+
+    renderFilters();
+    setupGoTop();
+
+    $('addEntryBtn')?.addEventListener('click', openAdd);
+    $('saveEntryBtn')?.addEventListener('click', saveEntry);
+    $('confirmDeleteBtn')?.addEventListener('click', confirmDelete);
+    $('refreshBtn')?.addEventListener('click', () => loadEntries(true));
+    $('clearBtn')?.addEventListener('click', () => {
+      $('searchBox').value = '';
+      activeCat = 'all';
+      renderFilters();
+      renderCards();
+    });
+    $('searchBox')?.addEventListener('input', renderCards);
+
+    window.__CHEATSHEET_CLEANUP__ = () => {
+      ['entryModal','deleteModal'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { try { bootstrap.Modal.getOrCreateInstance(el).hide(); } catch(_){} el.remove(); }
+      });
+      window.__CHEATSHEET_CLEANUP__ = null;
+    };
+
+    loadEntries(true);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>

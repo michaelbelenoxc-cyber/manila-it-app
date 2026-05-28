@@ -1,0 +1,1371 @@
+<!-- ============================================================
+     publish.html — Admin Publish Page (shell fragment)
+     No <html>, <head>, or <body> tags.
+     Matches home.html token system.
+     ============================================================ -->
+
+<style>
+  /* ── TOKENS ── */
+  .pub-page {
+    --pp-font:  'DM Serif Display', Georgia, serif;
+    --pp-body:  'Epilogue', system-ui, sans-serif;
+    --pp-mono:  'IBM Plex Mono', 'Courier New', monospace;
+
+    /* surfaces — warm paper (light default) */
+    --pp-bg:  #f5f2ec;
+    --pp-s1:  #f5f2ec;
+    --pp-s2:  #ede9e1;
+    --pp-s3:  #e4ded4;
+    --pp-s4:  #ddd6ca;
+
+    /* borders */
+    --pp-b0:  rgba(26,24,20,.07);
+    --pp-b1:  rgba(26,24,20,.12);
+    --pp-b2:  rgba(26,24,20,.18);
+    --pp-b3:  rgba(26,24,20,.28);
+
+    /* text */
+    --pp-t1:  rgba(26,24,20,.95);
+    --pp-t2:  rgba(74,71,64,.75);
+    --pp-t3:  rgba(138,134,128,.60);
+
+    /* primary accent — editorial blue */
+    --pp-blue:   #2857a4;
+    --pp-cyan:   #0e7490;
+    --pp-amber:  #b45309;
+    --pp-green:  #16a34a;
+    --pp-red:    #c94040;
+    --pp-purple: #6d28d9;
+
+    --pp-r:      10px;
+    --pp-r-sm:   7px;
+    --pp-r-pill: 999px;
+    --pp-ease:   cubic-bezier(.22,.68,0,1.2);
+  }
+
+  /* ── Dark mode ── */
+  html[data-theme="dark"] .pub-page {
+    --pp-bg:  #161410; --pp-s1:  #1a1814;
+    --pp-s2:  #1e1c18; --pp-s3:  #252220; --pp-s4:  #2c2a26;
+    --pp-b0:  rgba(240,236,227,.06); --pp-b1:  rgba(240,236,227,.10);
+    --pp-b2:  rgba(240,236,227,.16); --pp-b3:  rgba(240,236,227,.26);
+    --pp-t1:  rgba(240,236,227,.95); --pp-t2:  rgba(176,169,158,.75); --pp-t3:  rgba(106,100,92,.60);
+    --pp-blue:   #2857a4; --pp-cyan:  #0e7490;
+    --pp-amber:  #b45309; --pp-green: #16a34a;
+    --pp-red:    #c94040; --pp-purple:#6d28d9;
+  }
+
+  /* ── RESET ── */
+  .pub-page *, .pub-page *::before, .pub-page *::after {
+    box-sizing: border-box; margin: 0; padding: 0;
+  }
+
+  .pub-page {
+    font-family: var(--pp-body);
+    color: var(--pp-t1);
+    min-height: 100vh;
+    background: var(--pp-bg);
+    position: relative; overflow-x: hidden;
+  }
+
+  .pub-page::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 55% 38% at 6% 0%,  rgba(40,87,164,.04) 0%, transparent 58%),
+      radial-gradient(ellipse 40% 30% at 94% 100%, rgba(40,87,164,.03) 0%, transparent 55%);
+  }
+
+  .pub-page > * { position: relative; z-index: 1; }
+
+  /* ── LAYOUT ── */
+  .pp-wrap {
+    max-width: 1200px; margin: 0 auto;
+    padding: 96px 24px 68px;
+  }
+
+  /* ── HERO ── */
+  .pp-hero {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 18px;
+    margin-bottom: 30px; flex-wrap: wrap;
+    animation: pp-up .42s var(--pp-ease) both;
+  }
+
+  @keyframes pp-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .pp-eyebrow {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 3px 11px; border-radius: var(--pp-r-pill);
+    border: 1px solid var(--pp-b1); background: var(--pp-s3);
+    color: var(--pp-t3); font-family: var(--pp-mono);
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    margin-bottom: 11px;
+  }
+
+  .pp-title {
+    font-family: var(--pp-font);
+    font-size: clamp(26px, 3.2vw, 38px);
+    font-weight: 400; letter-spacing: -.02em;
+    line-height: 1.08; color: var(--pp-t1); margin-bottom: 6px;
+  }
+
+  /* gradient accent text on title */
+  .pp-title-accent {
+    display: inline-block;
+    background: linear-gradient(120deg, var(--pp-blue), #4a74c0);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .pp-sub {
+    font-size: 12.5px; font-family: var(--pp-mono);
+    color: var(--pp-t3); line-height: 1.65; letter-spacing: .01em;
+  }
+
+  /* ── SECTION LABEL ── */
+  .pp-section-label {
+    font-family: var(--pp-mono); font-size: 9.5px; font-weight: 700;
+    letter-spacing: .13em; text-transform: uppercase;
+    color: var(--pp-t3); margin-bottom: 13px;
+    display: flex; align-items: center; gap: 11px;
+  }
+
+  .pp-section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--pp-b1);
+  }
+
+  /* ── TOAST ── */
+  #pp-toast {
+    position: fixed; bottom: 22px; right: 22px; z-index: 9999;
+    display: flex; align-items: center; gap: 9px;
+    padding: 11px 17px; border-radius: var(--pp-r);
+    border: 1px solid var(--pp-b2); background: var(--pp-s2);
+    color: var(--pp-t1); font-size: 12.5px; font-weight: 600;
+    font-family: var(--pp-mono); letter-spacing: .02em;
+    box-shadow: 0 6px 24px rgba(26,24,20,.14);
+    transform: translateY(64px); opacity: 0;
+    transition: transform .28s var(--pp-ease), opacity .28s ease;
+    pointer-events: none; max-width: 320px;
+  }
+
+  #pp-toast.show { transform: translateY(0); opacity: 1; }
+  #pp-toast.success { border-color: rgba(22,163,74,.28); }
+  #pp-toast.error   { border-color: rgba(201,64,64,.28); }
+
+  html[data-theme="dark"] #pp-toast { background: var(--pp-s3); }
+  html[data-theme="dark"] #pp-toast.success { border-color: rgba(74,222,128,.28); }
+  html[data-theme="dark"] #pp-toast.error   { border-color: rgba(248,113,113,.28); }
+
+  .pp-toast-icon { font-size: 14px; flex-shrink: 0; }
+
+  /* ── TWO COLUMN GRID ── */
+  .pp-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 18px; align-items: start;
+    animation: pp-up .42s .08s var(--pp-ease) both;
+  }
+
+  @media (max-width: 960px) { .pp-grid { grid-template-columns: 1fr; } }
+
+  /* ── PANEL ── */
+  .pp-panel {
+    border-radius: var(--pp-r); border: 1px solid var(--pp-b1);
+    background: var(--pp-s1); overflow: hidden;
+  }
+
+  .pp-panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 20px 11px;
+    border-bottom: 1px solid var(--pp-b0);
+    background: var(--pp-bg);
+  }
+
+  html[data-theme="dark"] .pp-panel-head { background: rgba(0,0,0,.08); }
+
+  .pp-panel-title {
+    font-family: var(--pp-font); font-size: 14px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--pp-t1);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .pp-panel-title i { color: var(--pp-blue); font-size: 12px; }
+  html[data-theme="dark"] .pp-panel-title i { color: #5b85c8; }
+
+  .pp-panel-body { padding: 20px; }
+
+  /* ── FORM ELEMENTS ── */
+  .pp-field { margin-bottom: 16px; }
+
+  .pp-label {
+    display: block; font-family: var(--pp-mono);
+    font-size: 9.5px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--pp-t3); margin-bottom: 7px;
+  }
+
+  .pp-label span { color: var(--pp-red); margin-left: 2px; }
+  html[data-theme="dark"] .pp-label span { color: #f87171; }
+
+  .pp-input, .pp-textarea, .pp-select {
+    width: 100%; background: var(--pp-s3);
+    border: 1px solid var(--pp-b1); border-radius: var(--pp-r-sm);
+    color: var(--pp-t1); font-family: var(--pp-body);
+    font-size: 13px; padding: 9px 12px;
+    outline: none; transition: border-color .13s ease, background .13s ease;
+    appearance: none; -webkit-appearance: none;
+  }
+
+  .pp-input::placeholder, .pp-textarea::placeholder { color: var(--pp-t3); }
+
+  .pp-input:focus, .pp-textarea:focus, .pp-select:focus {
+    border-color: var(--pp-blue); background: var(--pp-s4);
+  }
+
+  .pp-textarea { resize: vertical; min-height: 124px; line-height: 1.62; }
+
+  .pp-select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(26,24,20,.40)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 11px center;
+    padding-right: 34px;
+  }
+
+  html[data-theme="dark"] .pp-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(240,236,227,.32)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  }
+
+  /* ── TYPE CHIPS ── */
+  .pp-type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; }
+
+  .pp-type-chip { position: relative; }
+  .pp-type-chip input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+
+  .pp-type-chip label {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 13px; border-radius: var(--pp-r-sm);
+    border: 1px solid var(--pp-b1); background: var(--pp-s3);
+    color: var(--pp-t2); font-size: 12.5px; font-weight: 500;
+    cursor: pointer; transition: all .13s ease; user-select: none;
+  }
+
+  .pp-type-chip label i { font-size: 12px; width: 15px; text-align: center; }
+
+  .pp-type-chip input:checked + label {
+    border-color: var(--pp-chip-color);
+    background: var(--pp-chip-bg); color: var(--pp-chip-color);
+  }
+
+  .pp-type-chip:hover label { border-color: var(--pp-b2); color: var(--pp-t1); }
+
+  /* chip colours — muted on light */
+  .pp-chip--announcement { --pp-chip-color: #2857a4; --pp-chip-bg: rgba(40,87,164,.10); }
+  .pp-chip--achievement  { --pp-chip-color: #b45309; --pp-chip-bg: rgba(180,83,9,.10);  }
+  .pp-chip--news         { --pp-chip-color: #0e7490; --pp-chip-bg: rgba(14,116,144,.10); }
+  .pp-chip--tip          { --pp-chip-color: #16a34a; --pp-chip-bg: rgba(22,163,74,.10);  }
+
+  html[data-theme="dark"] .pp-chip--announcement { --pp-chip-color: #5b85c8; --pp-chip-bg: rgba(40,87,164,.14); }
+  html[data-theme="dark"] .pp-chip--achievement  { --pp-chip-color: #fbbf24; --pp-chip-bg: rgba(245,158,11,.12); }
+  html[data-theme="dark"] .pp-chip--news         { --pp-chip-color: #22d3ee; --pp-chip-bg: rgba(6,182,212,.12); }
+  html[data-theme="dark"] .pp-chip--tip          { --pp-chip-color: #4ade80; --pp-chip-bg: rgba(34,197,94,.12); }
+
+  /* ── TOGGLE SWITCH ── */
+  .pp-toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 14px; border-radius: var(--pp-r-sm);
+    border: 1px solid var(--pp-b1); background: var(--pp-s3); margin-bottom: 16px;
+  }
+
+  .pp-toggle-info { flex: 1; }
+
+  .pp-toggle-label-text {
+    font-size: 13px; font-weight: 600; color: var(--pp-t1); margin-bottom: 2px;
+  }
+
+  .pp-toggle-desc { font-size: 10.5px; color: var(--pp-t3); font-family: var(--pp-mono); }
+
+  .pp-switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+  .pp-switch input { opacity: 0; width: 0; height: 0; }
+
+  .pp-switch-track {
+    position: absolute; inset: 0; border-radius: var(--pp-r-pill);
+    background: var(--pp-b2); cursor: pointer; transition: background .18s ease;
+  }
+
+  .pp-switch-track::after {
+    content: ''; position: absolute; left: 3px; top: 3px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--pp-t3); transition: transform .18s var(--pp-ease), background .18s ease;
+  }
+
+  html[data-theme="dark"] .pp-switch-track::after { background: rgba(240,236,227,.40); }
+
+  .pp-switch input:checked + .pp-switch-track { background: var(--pp-blue); }
+  .pp-switch input:checked + .pp-switch-track::after { transform: translateX(18px); background: #fff; }
+
+  /* ── CHAR COUNTER ── */
+  .pp-field-footer { display: flex; justify-content: flex-end; margin-top: 4px; }
+
+  .pp-char-count {
+    font-family: var(--pp-mono); font-size: 9.5px; color: var(--pp-t3);
+  }
+
+  .pp-char-count.warn { color: var(--pp-amber); }
+  html[data-theme="dark"] .pp-char-count.warn { color: #fbbf24; }
+  .pp-char-count.over { color: var(--pp-red); }
+  html[data-theme="dark"] .pp-char-count.over { color: #f87171; }
+
+  /* ── BUTTONS ── */
+  .pp-btn-row { display: flex; gap: 9px; flex-wrap: wrap; }
+
+  .pp-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px; border-radius: var(--pp-r-sm);
+    border: 1px solid var(--pp-b2); background: var(--pp-s3);
+    color: var(--pp-t2); font-family: var(--pp-mono);
+    font-size: 11px; font-weight: 600; letter-spacing: .04em;
+    cursor: pointer; transition: all .13s ease; white-space: nowrap;
+  }
+
+  .pp-btn:hover { border-color: var(--pp-b3); color: var(--pp-t1); }
+  .pp-btn:active { transform: scale(.98); }
+  .pp-btn:disabled { opacity: .38; cursor: not-allowed; pointer-events: none; }
+
+  .pp-btn--primary {
+    background: var(--pp-blue); border-color: var(--pp-blue);
+    color: #fff; flex: 1; justify-content: center;
+  }
+
+  .pp-btn--primary:hover { background: #1f479a; border-color: #1f479a; color: #fff; }
+
+  .pp-btn--danger {
+    background: rgba(201,64,64,.09); border-color: rgba(201,64,64,.22); color: var(--pp-red);
+  }
+  html[data-theme="dark"] .pp-btn--danger { color: #f87171; }
+  .pp-btn--danger:hover { background: rgba(201,64,64,.16); border-color: rgba(201,64,64,.38); color: var(--pp-red); }
+
+  .pp-btn--ghost { background: transparent; }
+
+  .pp-btn-spinner {
+    display: none; width: 12px; height: 12px;
+    border: 2px solid rgba(255,255,255,.3); border-top-color: #fff;
+    border-radius: 50%; animation: pp-spin .6s linear infinite;
+  }
+
+  @keyframes pp-spin { to { transform: rotate(360deg); } }
+  .pp-btn--primary.loading .pp-btn-spinner { display: block; }
+  .pp-btn--primary.loading .pp-btn-label   { opacity: .6; }
+
+  /* ── PREVIEW CARD ── */
+  .pp-preview {
+    border-radius: var(--pp-r); border: 1px solid var(--pp-b1);
+    background: var(--pp-s2); overflow: hidden;
+  }
+
+  .pp-preview-head {
+    padding: 10px 14px; border-bottom: 1px solid var(--pp-b0);
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--pp-bg);
+  }
+
+  html[data-theme="dark"] .pp-preview-head { background: rgba(0,0,0,.08); }
+
+  .pp-preview-label {
+    font-family: var(--pp-mono); font-size: 9.5px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--pp-t3);
+  }
+
+  .pp-preview-live {
+    display: flex; align-items: center; gap: 5px;
+    font-family: var(--pp-mono); font-size: 9px; color: var(--pp-green);
+  }
+
+  html[data-theme="dark"] .pp-preview-live { color: #4ade80; }
+
+  .pp-preview-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--pp-green); animation: pp-blink 1.9s ease infinite;
+  }
+
+  html[data-theme="dark"] .pp-preview-dot { background: #4ade80; }
+
+  @keyframes pp-blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+  .pp-preview-body { padding: 16px; }
+
+  .pp-post-mock {
+    border-radius: 10px; border: 1px solid var(--pp-b1);
+    background: var(--pp-s1); padding: 16px 18px;
+  }
+
+  .pp-post-mock-header {
+    display: flex; align-items: flex-start; gap: 11px; margin-bottom: 11px;
+  }
+
+  .pp-mock-avatar {
+    width: 34px; height: 34px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; font-family: var(--pp-mono);
+    flex-shrink: 0;
+  }
+
+  .pp-mock-meta { flex: 1; }
+  .pp-mock-author { font-size: 12.5px; font-weight: 700; color: var(--pp-t1); margin-bottom: 2px; }
+  .pp-mock-time   { font-family: var(--pp-mono); font-size: 9.5px; color: var(--pp-t3); }
+
+  .pp-mock-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--pp-mono); font-size: 8.5px; font-weight: 600;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 999px; border: 1px solid;
+  }
+
+  .pp-mock-title {
+    font-family: var(--pp-font); font-size: 14px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--pp-t1);
+    margin-bottom: 6px; line-height: 1.3;
+  }
+
+  .pp-mock-body { font-size: 12.5px; color: var(--pp-t2); line-height: 1.62; }
+
+  .pp-mock-empty {
+    text-align: center; font-family: var(--pp-mono);
+    font-size: 11px; color: var(--pp-t3); padding: 18px 0;
+  }
+
+  /* ── POSTS TABLE ── */
+  .pp-posts-section {
+    margin-top: 24px; animation: pp-up .42s .14s var(--pp-ease) both;
+  }
+
+  .pp-posts-toolbar {
+    display: flex; align-items: center; gap: 9px;
+    margin-bottom: 12px; flex-wrap: wrap;
+  }
+
+  .pp-search {
+    flex: 1; min-width: 170px;
+    background: var(--pp-s1); border: 1px solid var(--pp-b1);
+    border-radius: var(--pp-r-sm); color: var(--pp-t1);
+    font-family: var(--pp-mono); font-size: 11.5px;
+    padding: 7px 13px 7px 34px; outline: none;
+    transition: border-color .13s ease;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='rgba(26,24,20,.38)' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: 10px center;
+  }
+
+  html[data-theme="dark"] .pp-search {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='rgba(240,236,227,.28)' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  }
+
+  .pp-search:focus { border-color: var(--pp-blue); }
+
+  .pp-filter-select {
+    background: var(--pp-s1); border: 1px solid var(--pp-b1);
+    border-radius: var(--pp-r-sm); color: var(--pp-t2);
+    font-family: var(--pp-mono); font-size: 10.5px;
+    padding: 7px 30px 7px 11px; outline: none; cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(26,24,20,.35)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 9px center;
+  }
+
+  html[data-theme="dark"] .pp-filter-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(240,236,227,.28)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  }
+
+  /* ── TABLE ── */
+  .pp-table-wrap {
+    border-radius: var(--pp-r); border: 1px solid var(--pp-b1);
+    overflow: hidden; overflow-x: auto;
+  }
+
+  .pp-table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 620px; }
+
+  .pp-table thead th {
+    padding: 9px 14px; font-family: var(--pp-mono);
+    font-size: 9px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--pp-t3);
+    background: var(--pp-bg); border-bottom: 1px solid var(--pp-b1);
+    text-align: left; white-space: nowrap;
+  }
+
+  html[data-theme="dark"] .pp-table thead th { background: rgba(0,0,0,.08); }
+
+  .pp-table tbody td {
+    padding: 11px 14px; color: var(--pp-t1);
+    border-bottom: 1px solid var(--pp-b0); vertical-align: middle;
+  }
+
+  .pp-table tbody tr:last-child td { border-bottom: none; }
+
+  .pp-table tbody tr { background: var(--pp-s1); transition: background .11s ease; }
+  .pp-table tbody tr:hover { background: var(--pp-s2); }
+
+  .pp-table-empty {
+    text-align: center; padding: 36px;
+    color: var(--pp-t3); font-family: var(--pp-mono); font-size: 11.5px;
+    background: var(--pp-s1);
+  }
+
+  /* ── STATUS BADGE ── */
+  .pp-status {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--pp-mono); font-size: 9px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: var(--pp-r-pill); border: 1px solid;
+  }
+
+  /* light mode — muted */
+  .pp-status--published { color: #16a34a; background: rgba(22,163,74,.09);  border-color: rgba(22,163,74,.22); }
+  .pp-status--draft     { color: #b45309; background: rgba(180,83,9,.09);   border-color: rgba(180,83,9,.22); }
+  .pp-status--archived  { color: rgba(26,24,20,.40); background: rgba(26,24,20,.06); border-color: rgba(26,24,20,.12); }
+
+  html[data-theme="dark"] .pp-status--published { color: #4ade80; background: rgba(74,222,128,.10);  border-color: rgba(74,222,128,.22); }
+  html[data-theme="dark"] .pp-status--draft     { color: #fbbf24; background: rgba(245,158,11,.10); border-color: rgba(245,158,11,.22); }
+  html[data-theme="dark"] .pp-status--archived  { color: rgba(240,236,227,.28); background: rgba(240,236,227,.04); border-color: rgba(240,236,227,.10); }
+
+  /* ── TYPE PILL ── */
+  .pp-type-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--pp-mono); font-size: 9px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: var(--pp-r-pill); border: 1px solid;
+  }
+
+  /* light — muted */
+  .pp-pill--announcement { color: #2857a4; background: rgba(40,87,164,.09);  border-color: rgba(40,87,164,.20); }
+  .pp-pill--achievement  { color: #b45309; background: rgba(180,83,9,.09);   border-color: rgba(180,83,9,.20); }
+  .pp-pill--news         { color: #0e7490; background: rgba(14,116,144,.09); border-color: rgba(14,116,144,.20); }
+  .pp-pill--tip          { color: #16a34a; background: rgba(22,163,74,.09);  border-color: rgba(22,163,74,.20); }
+
+  /* dark — vivid */
+  html[data-theme="dark"] .pp-pill--announcement { color: #5b85c8; background: rgba(40,87,164,.14);  border-color: rgba(40,87,164,.28); }
+  html[data-theme="dark"] .pp-pill--achievement  { color: #fbbf24; background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.26); }
+  html[data-theme="dark"] .pp-pill--news         { color: #22d3ee; background: rgba(6,182,212,.12);  border-color: rgba(6,182,212,.24); }
+  html[data-theme="dark"] .pp-pill--tip          { color: #4ade80; background: rgba(34,197,94,.12);  border-color: rgba(34,197,94,.24); }
+
+  /* ── PIN ICON ── */
+  .pp-pin-icon { color: var(--pp-blue); font-size: 10.5px; }
+  html[data-theme="dark"] .pp-pin-icon { color: #5b85c8; }
+
+  /* ── ACTION BUTTONS ── */
+  .pp-action-row { display: flex; align-items: center; gap: 5px; }
+
+  .pp-action-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 6px;
+    border: 1px solid var(--pp-b1); background: transparent;
+    color: var(--pp-t3); font-size: 11px;
+    cursor: pointer; transition: all .11s ease;
+  }
+
+  .pp-action-btn:hover { border-color: var(--pp-b2); color: var(--pp-t1); background: var(--pp-b0); }
+  .pp-action-btn.edit:hover    { color: var(--pp-blue); border-color: rgba(40,87,164,.28); }
+  html[data-theme="dark"] .pp-action-btn.edit:hover { color: #5b85c8; }
+  .pp-action-btn.archive:hover { color: var(--pp-amber); border-color: rgba(180,83,9,.28); }
+  html[data-theme="dark"] .pp-action-btn.archive:hover { color: #fbbf24; }
+  .pp-action-btn.delete:hover  { color: var(--pp-red);   border-color: rgba(201,64,64,.28); }
+  html[data-theme="dark"] .pp-action-btn.delete:hover  { color: #f87171; }
+  .pp-action-btn.restore:hover { color: var(--pp-green); border-color: rgba(22,163,74,.28); }
+  html[data-theme="dark"] .pp-action-btn.restore:hover { color: #4ade80; }
+
+  /* ── EDIT MODE BAR ── */
+  .pp-mode-bar {
+    display: none; align-items: center; gap: 9px;
+    padding: 9px 14px; border-radius: var(--pp-r-sm);
+    background: rgba(180,83,9,.09); border: 1px solid rgba(180,83,9,.22);
+    margin-bottom: 16px; font-size: 12px; color: var(--pp-amber); font-weight: 600;
+    font-family: var(--pp-mono);
+  }
+
+  html[data-theme="dark"] .pp-mode-bar { background: rgba(245,158,11,.10); color: #fbbf24; }
+  .pp-mode-bar.visible { display: flex; }
+
+  /* ── LOADING SKELETON ── */
+  @keyframes pp-shimmer {
+    0%   { background-position: -600px 0; }
+    100% { background-position:  600px 0; }
+  }
+
+  .pp-skeleton {
+    border-radius: 5px;
+    background: linear-gradient(90deg, var(--pp-s3) 25%, var(--pp-s4) 50%, var(--pp-s3) 75%);
+    background-size: 1200px 100%;
+    animation: pp-shimmer 1.4s infinite;
+  }
+
+  /* ── CONFIRM DIALOG ── */
+  .pp-confirm-backdrop {
+    display: none; position: fixed; inset: 0; z-index: 9000;
+    background: rgba(26,24,20,.42);
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  html[data-theme="dark"] .pp-confirm-backdrop { background: rgba(0,0,0,.58); }
+  .pp-confirm-backdrop.open { display: flex; }
+
+  .pp-confirm-box {
+    background: var(--pp-s1); border: 1px solid var(--pp-b2);
+    border-radius: var(--pp-r); padding: 24px 26px 20px;
+    max-width: 360px; width: 90%; text-align: center;
+    box-shadow: 0 12px 40px rgba(26,24,20,.16);
+  }
+
+  html[data-theme="dark"] .pp-confirm-box { box-shadow: 0 12px 40px rgba(0,0,0,.55); }
+
+  .pp-confirm-icon { font-size: 24px; margin-bottom: 10px; color: var(--pp-red); }
+  html[data-theme="dark"] .pp-confirm-icon { color: #f87171; }
+
+  .pp-confirm-title {
+    font-family: var(--pp-font); font-size: 16px; font-weight: 400;
+    color: var(--pp-t1); margin-bottom: 7px; letter-spacing: -.01em;
+  }
+
+  .pp-confirm-msg {
+    font-size: 12px; font-family: var(--pp-mono);
+    color: var(--pp-t3); line-height: 1.58; margin-bottom: 20px;
+  }
+
+  .pp-confirm-actions { display: flex; gap: 9px; }
+  .pp-confirm-actions .pp-btn { flex: 1; justify-content: center; }
+</style>
+
+<div class="pub-page">
+  <div class="pp-wrap">
+
+    <!-- HERO -->
+    <div class="pp-hero">
+      <div>
+        <div class="pp-eyebrow">
+          <i class="fa-solid fa-pen-to-square"></i>
+          Admin · Publish Center
+        </div>
+        <h1 class="pp-title">
+          Home <span class="pp-title-accent">Publisher</span>
+        </h1>
+        <p class="pp-sub">Create, edit, and manage posts that appear on the home feed.</p>
+      </div>
+    </div>
+
+    <!-- MAIN GRID: form + preview -->
+    <div class="pp-grid">
+
+      <!-- LEFT: FORM -->
+      <div>
+        <div class="pp-section-label">Compose Post</div>
+
+        <!-- Edit mode indicator -->
+        <div class="pp-mode-bar" id="pp-edit-bar">
+          <i class="fa-solid fa-pen"></i>
+          Editing existing post — <strong id="pp-edit-title-ref"></strong>
+          <button class="pp-btn pp-btn--ghost" style="margin-left:auto;padding:4px 10px;font-size:11px;" id="pp-cancel-edit-btn">
+            Cancel edit
+          </button>
+        </div>
+
+        <div class="pp-panel">
+          <div class="pp-panel-head">
+            <div class="pp-panel-title">
+              <i class="fa-solid fa-layer-group"></i> Post Details
+            </div>
+          </div>
+          <div class="pp-panel-body">
+
+            <!-- TYPE -->
+            <div class="pp-field">
+              <label class="pp-label">Post Type <span>*</span></label>
+              <div class="pp-type-grid">
+                <div class="pp-type-chip pp-chip--announcement">
+                  <input type="radio" name="pp-type" id="type-announcement" value="announcement" checked>
+                  <label for="type-announcement"><i class="fa-solid fa-bullhorn"></i> Announcement</label>
+                </div>
+                <div class="pp-type-chip pp-chip--achievement">
+                  <input type="radio" name="pp-type" id="type-achievement" value="achievement">
+                  <label for="type-achievement"><i class="fa-solid fa-trophy"></i> Achievement</label>
+                </div>
+                <div class="pp-type-chip pp-chip--news">
+                  <input type="radio" name="pp-type" id="type-news" value="news">
+                  <label for="type-news"><i class="fa-solid fa-newspaper"></i> IT News</label>
+                </div>
+                <div class="pp-type-chip pp-chip--tip">
+                  <input type="radio" name="pp-type" id="type-tip" value="tip">
+                  <label for="type-tip"><i class="fa-solid fa-lightbulb"></i> IT Tip</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- TITLE -->
+            <div class="pp-field">
+              <label class="pp-label" for="pp-title-input">Title <span>*</span></label>
+              <input class="pp-input" id="pp-title-input" type="text"
+                     placeholder="e.g. System maintenance this Sunday" maxlength="120">
+              <div class="pp-field-footer">
+                <span class="pp-char-count" id="pp-title-count">0 / 120</span>
+              </div>
+            </div>
+
+            <!-- BODY -->
+            <div class="pp-field">
+              <label class="pp-label" for="pp-body-input">Body <span>*</span></label>
+              <textarea class="pp-textarea" id="pp-body-input"
+                        placeholder="Write the full post content here…" maxlength="1000"></textarea>
+              <div class="pp-field-footer">
+                <span class="pp-char-count" id="pp-body-count">0 / 1000</span>
+              </div>
+            </div>
+
+            <!-- AUTHOR -->
+            <div class="pp-field">
+              <label class="pp-label" for="pp-author-input">Author / Source</label>
+              <input class="pp-input" id="pp-author-input" type="text"
+                     placeholder="e.g. Manila IT Admin" maxlength="60">
+            </div>
+
+            <!-- STATUS -->
+            <div class="pp-field">
+              <label class="pp-label" for="pp-status-select">Status</label>
+              <select class="pp-select" id="pp-status-select">
+                <option value="published">Published — visible on Home</option>
+                <option value="draft">Draft — hidden, save for later</option>
+              </select>
+            </div>
+
+            <!-- PINNED TOGGLE -->
+            <div class="pp-toggle-row">
+              <div class="pp-toggle-info">
+                <div class="pp-toggle-label-text">Pin to top of Home</div>
+                <div class="pp-toggle-desc">Replaces current pinned item</div>
+              </div>
+              <label class="pp-switch">
+                <input type="checkbox" id="pp-pinned-toggle">
+                <span class="pp-switch-track"></span>
+              </label>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="pp-btn-row">
+              <button class="pp-btn pp-btn--ghost" id="pp-clear-btn" type="button">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+              </button>
+              <button class="pp-btn pp-btn--primary" id="pp-submit-btn" type="button">
+                <span class="pp-btn-spinner"></span>
+                <span class="pp-btn-label" id="pp-submit-label">
+                  <i class="fa-solid fa-paper-plane"></i> Publish Post
+                </span>
+              </button>
+            </div>
+
+          </div><!-- /.pp-panel-body -->
+        </div><!-- /.pp-panel -->
+      </div>
+
+      <!-- RIGHT: PREVIEW + TIPS -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+
+        <!-- LIVE PREVIEW -->
+        <div class="pp-section-label">Live Preview</div>
+        <div class="pp-preview">
+          <div class="pp-preview-head">
+            <span class="pp-preview-label">As seen on Home</span>
+            <span class="pp-preview-live">
+              <span class="pp-preview-dot"></span> Live preview
+            </span>
+          </div>
+          <div class="pp-preview-body">
+            <div class="pp-post-mock" id="pp-preview-card">
+              <div class="pp-mock-empty">Start typing to see a preview…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUICK GUIDELINES -->
+        <div class="pp-panel">
+          <div class="pp-panel-head">
+            <div class="pp-panel-title"><i class="fa-solid fa-circle-info"></i> Guidelines</div>
+          </div>
+          <div class="pp-panel-body" style="padding:16px 20px;">
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;gap:10px;align-items:flex-start;">
+                <div style="width:24px;height:24px;border-radius:6px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#3b82f6;"><i class="fa-solid fa-bullhorn"></i></div>
+                <div><div style="font-size:12px;font-weight:600;color:var(--pp-t1);margin-bottom:2px;">Announcements</div><div style="font-size:11px;color:var(--pp-t3);font-family:var(--pp-mono);">Policy changes, maintenance, reminders</div></div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:flex-start;">
+                <div style="width:24px;height:24px;border-radius:6px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#f59e0b;"><i class="fa-solid fa-trophy"></i></div>
+                <div><div style="font-size:12px;font-weight:600;color:var(--pp-t1);margin-bottom:2px;">Achievements</div><div style="font-size:11px;color:var(--pp-t3);font-family:var(--pp-mono);">Team wins, milestones, recognitions</div></div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:flex-start;">
+                <div style="width:24px;height:24px;border-radius:6px;background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#06b6d4;"><i class="fa-solid fa-newspaper"></i></div>
+                <div><div style="font-size:12px;font-weight:600;color:var(--pp-t1);margin-bottom:2px;">IT News</div><div style="font-size:11px;color:var(--pp-t3);font-family:var(--pp-mono);">Industry updates, new tools, releases</div></div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:flex-start;">
+                <div style="width:24px;height:24px;border-radius:6px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#22c55e;"><i class="fa-solid fa-lightbulb"></i></div>
+                <div><div style="font-size:12px;font-weight:600;color:var(--pp-t1);margin-bottom:2px;">IT Tips</div><div style="font-size:11px;color:var(--pp-t3);font-family:var(--pp-mono);">Security reminders, best practices</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /.pp-grid -->
+
+    <!-- POSTS TABLE -->
+    <div class="pp-posts-section">
+      <div class="pp-section-label">All Posts</div>
+
+      <div class="pp-posts-toolbar">
+        <input class="pp-search" type="text" id="pp-search-input" placeholder="Search posts…">
+        <select class="pp-filter-select" id="pp-type-filter">
+          <option value="">All Types</option>
+          <option value="announcement">Announcement</option>
+          <option value="achievement">Achievement</option>
+          <option value="news">IT News</option>
+          <option value="tip">IT Tip</option>
+        </select>
+        <select class="pp-filter-select" id="pp-status-filter">
+          <option value="">All Status</option>
+          <option value="published">Published</option>
+          <option value="draft">Draft</option>
+          <option value="archived">Archived</option>
+        </select>
+        <button class="pp-btn" id="pp-refresh-btn" style="padding:8px 14px;">
+          <i class="fa-solid fa-rotate-right"></i> Refresh
+        </button>
+      </div>
+
+      <div class="pp-table-wrap">
+        <table class="pp-table" id="pp-posts-table">
+          <thead>
+            <tr>
+              <th>Pin</th>
+              <th>Type</th>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pp-table-body">
+            <tr>
+              <td colspan="7" class="pp-table-empty">
+                <i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>
+                Loading posts…
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /.pp-wrap -->
+</div><!-- /.pub-page -->
+
+<!-- CONFIRM DIALOG -->
+<div class="pp-confirm-backdrop" id="pp-confirm">
+  <div class="pp-confirm-box">
+    <div class="pp-confirm-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <div class="pp-confirm-title" id="pp-confirm-title">Are you sure?</div>
+    <div class="pp-confirm-msg" id="pp-confirm-msg">This action cannot be undone.</div>
+    <div class="pp-confirm-actions">
+      <button class="pp-btn pp-btn--ghost" id="pp-confirm-cancel">Cancel</button>
+      <button class="pp-btn pp-btn--danger" id="pp-confirm-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="pp-toast">
+  <span class="pp-toast-icon" id="pp-toast-icon"></span>
+  <span id="pp-toast-msg"></span>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const PAGE_KEY = 'publish';
+
+  /* ─────────────────────────────────────────────────────────
+   * DEMO DATA — replace with google.script.run calls
+   * ───────────────────────────────────────────────────────── */
+let POSTS  = [];
+let editId = null;
+let confirmCallback = null;
+
+  const state = { mounted: false };
+  const EL    = {};
+
+  /* ─── DOM CACHE ─────────────────────────────────────────── */
+  function cacheDom() {
+    EL.titleInput    = document.getElementById('pp-title-input');
+    EL.bodyInput     = document.getElementById('pp-body-input');
+    EL.authorInput   = document.getElementById('pp-author-input');
+    EL.statusSelect  = document.getElementById('pp-status-select');
+    EL.pinnedToggle  = document.getElementById('pp-pinned-toggle');
+    EL.submitBtn     = document.getElementById('pp-submit-btn');
+    EL.submitLabel   = document.getElementById('pp-submit-label');
+    EL.clearBtn      = document.getElementById('pp-clear-btn');
+    EL.titleCount    = document.getElementById('pp-title-count');
+    EL.bodyCount     = document.getElementById('pp-body-count');
+    EL.previewCard   = document.getElementById('pp-preview-card');
+    EL.tableBody     = document.getElementById('pp-table-body');
+    EL.searchInput   = document.getElementById('pp-search-input');
+    EL.typeFilter    = document.getElementById('pp-type-filter');
+    EL.statusFilter  = document.getElementById('pp-status-filter');
+    EL.refreshBtn    = document.getElementById('pp-refresh-btn');
+    EL.editBar       = document.getElementById('pp-edit-bar');
+    EL.editTitleRef  = document.getElementById('pp-edit-title-ref');
+    EL.cancelEditBtn = document.getElementById('pp-cancel-edit-btn');
+    EL.confirm       = document.getElementById('pp-confirm');
+    EL.confirmTitle  = document.getElementById('pp-confirm-title');
+    EL.confirmMsg    = document.getElementById('pp-confirm-msg');
+    EL.confirmOk     = document.getElementById('pp-confirm-ok');
+    EL.confirmCancel = document.getElementById('pp-confirm-cancel');
+    EL.toast         = document.getElementById('pp-toast');
+    EL.toastMsg      = document.getElementById('pp-toast-msg');
+    EL.toastIcon     = document.getElementById('pp-toast-icon');
+  }
+
+  /* ─── HELPERS ───────────────────────────────────────────── */
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function getSelectedType() {
+    const el = document.querySelector('input[name="pp-type"]:checked');
+    return el ? el.value : 'announcement';
+  }
+
+  function setSelectedType(v) {
+    const el = document.getElementById('type-' + v);
+    if (el) el.checked = true;
+  }
+
+  function formData() {
+    return {
+      type:    getSelectedType(),
+      title:   EL.titleInput?.value.trim()   || '',
+      body:    EL.bodyInput?.value.trim()     || '',
+      author:  EL.authorInput?.value.trim()  || 'Manila IT Admin',
+      status:  EL.statusSelect?.value        || 'published',
+      pinned:  EL.pinnedToggle?.checked      || false,
+    };
+  }
+
+  function clearForm() {
+    if (EL.titleInput)   EL.titleInput.value   = '';
+    if (EL.bodyInput)    EL.bodyInput.value    = '';
+    if (EL.authorInput)  EL.authorInput.value  = '';
+    if (EL.statusSelect) EL.statusSelect.value = 'published';
+    if (EL.pinnedToggle) EL.pinnedToggle.checked = false;
+    setSelectedType('announcement');
+    updateCounts();
+    updatePreview();
+    exitEditMode();
+  }
+
+  function todayLabel() {
+    return new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  }
+
+  /* ─── CHAR COUNTER ──────────────────────────────────────── */
+  function updateCounts() {
+    const tc = EL.titleInput?.value.length || 0;
+    const bc = EL.bodyInput?.value.length  || 0;
+
+    if (EL.titleCount) {
+      EL.titleCount.textContent = `${tc} / 120`;
+      EL.titleCount.className = 'pp-char-count' + (tc > 110 ? ' over' : tc > 90 ? ' warn' : '');
+    }
+    if (EL.bodyCount) {
+      EL.bodyCount.textContent = `${bc} / 1000`;
+      EL.bodyCount.className = 'pp-char-count' + (bc > 950 ? ' over' : bc > 800 ? ' warn' : '');
+    }
+  }
+
+  /* ─── BADGE CONFIG ──────────────────────────────────────── */
+  const BADGE = {
+    announcement: { cls:'announcement', icon:'fa-bullhorn',  label:'Announcement', color:'#3b82f6', bg:'rgba(59,130,246,.15)' },
+    achievement:  { cls:'achievement',  icon:'fa-trophy',    label:'Achievement',  color:'#f59e0b', bg:'rgba(245,158,11,.15)' },
+    news:         { cls:'news',         icon:'fa-newspaper', label:'IT News',      color:'#06b6d4', bg:'rgba(6,182,212,.15)'  },
+    tip:          { cls:'tip',          icon:'fa-lightbulb', label:'IT Tip',       color:'#22c55e', bg:'rgba(34,197,94,.15)'  },
+  };
+
+  function badgeCfg(t) { return BADGE[t] || BADGE['news']; }
+
+  function getInitials(author) {
+    return String(author || 'IT').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  }
+
+  /* ─── LIVE PREVIEW ──────────────────────────────────────── */
+  function updatePreview() {
+    if (!EL.previewCard) return;
+    const d = formData();
+
+    if (!d.title && !d.body) {
+      EL.previewCard.innerHTML = '<div class="pp-mock-empty">Start typing to see a preview…</div>';
+      return;
+    }
+
+    const cfg      = badgeCfg(d.type);
+    const initials = getInitials(d.author);
+
+    EL.previewCard.innerHTML = `
+      <div class="pp-post-mock-header">
+        <div class="pp-mock-avatar" style="background:${cfg.bg};color:${cfg.color};">${esc(initials)}</div>
+        <div class="pp-mock-meta">
+          <div class="pp-mock-author">${esc(d.author || 'Author')}</div>
+          <div class="pp-mock-time">Just now</div>
+        </div>
+        <span class="pp-mock-badge pp-badge--${cfg.cls}"
+              style="color:${cfg.color};background:${cfg.bg};border-color:${cfg.color}44;">
+          <i class="fa-solid ${cfg.icon}"></i> ${cfg.label}
+        </span>
+      </div>
+      ${d.title ? `<div class="pp-mock-title">${esc(d.title)}</div>` : ''}
+      ${d.body  ? `<div class="pp-mock-body">${esc(d.body)}</div>`   : ''}
+      ${d.pinned ? `<div style="margin-top:10px;display:flex;align-items:center;gap:5px;font-size:11px;color:var(--pp-blue);font-family:var(--pp-mono);"><i class="fa-solid fa-thumbtack"></i> Pinned to top</div>` : ''}
+    `;
+  }
+
+  /* ─── TOAST ─────────────────────────────────────────────── */
+  let toastTimer = null;
+
+  function showToast(msg, type = 'success') {
+    if (!EL.toast) return;
+    EL.toastMsg.textContent  = msg;
+    EL.toastIcon.innerHTML   = type === 'success'
+      ? '<i class="fa-solid fa-circle-check" style="color:#22c55e;"></i>'
+      : '<i class="fa-solid fa-circle-exclamation" style="color:#ef4444;"></i>';
+    EL.toast.className = `show ${type}`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { if (EL.toast) EL.toast.className = type; }, 3200);
+  }
+
+  /* ─── CONFIRM DIALOG ────────────────────────────────────── */
+  function openConfirm(title, msg, cb) {
+    if (!EL.confirm) return;
+    EL.confirmTitle.textContent = title;
+    EL.confirmMsg.textContent   = msg;
+    confirmCallback = cb;
+    EL.confirm.classList.add('open');
+  }
+
+  function closeConfirm() {
+    if (EL.confirm) EL.confirm.classList.remove('open');
+    confirmCallback = null;
+  }
+
+  /* ─── EDIT MODE ─────────────────────────────────────────── */
+  function enterEditMode(post) {
+    editId = post.id;
+    setSelectedType(post.type);
+    if (EL.titleInput)   EL.titleInput.value   = post.title;
+    if (EL.bodyInput)    EL.bodyInput.value    = post.body;
+    if (EL.authorInput)  EL.authorInput.value  = post.author;
+    if (EL.statusSelect) EL.statusSelect.value = post.status;
+    if (EL.pinnedToggle) EL.pinnedToggle.checked = post.pinned;
+
+    if (EL.editBar)      EL.editBar.classList.add('visible');
+    if (EL.editTitleRef) EL.editTitleRef.textContent = post.title.slice(0, 40) + (post.title.length > 40 ? '…' : '');
+    if (EL.submitLabel)  EL.submitLabel.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+
+    updateCounts();
+    updatePreview();
+    EL.titleInput?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function exitEditMode() {
+    editId = null;
+    if (EL.editBar)     EL.editBar.classList.remove('visible');
+    if (EL.submitLabel) EL.submitLabel.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publish Post';
+  }
+
+  /* ─── SUBMIT ────────────────────────────────────────────── */
+  function handleSubmit() {
+  const d = formData();
+  if (!d.title) { showToast('Title is required.', 'error'); EL.titleInput?.focus(); return; }
+  if (!d.body)  { showToast('Body is required.',  'error'); EL.bodyInput?.focus();  return; }
+
+  setSubmitLoading(true);
+
+  const payload = editId !== null ? { id: editId, ...d } : d;
+
+  google.script.run
+    .withSuccessHandler(res => {
+      setSubmitLoading(false);
+      if (!res || !res.ok) { showToast(res?.error || 'Failed to save.', 'error'); return; }
+      showToast(editId !== null ? 'Post updated!' : 'Post published to Home!');
+      clearForm();
+      loadPostsFromSheet();
+    })
+    .withFailureHandler(err => {
+      setSubmitLoading(false);
+      showToast(err?.message || 'Failed to save.', 'error');
+    })
+    .savePost(payload);
+}
+
+  function setSubmitLoading(on) {
+    if (!EL.submitBtn) return;
+    EL.submitBtn.classList.toggle('loading', on);
+    EL.submitBtn.disabled = on;
+  }
+
+  /* ─── TABLE ─────────────────────────────────────────────── */
+  function filteredPosts() {
+    const search = EL.searchInput?.value.toLowerCase() || '';
+    const type   = EL.typeFilter?.value   || '';
+    const status = EL.statusFilter?.value || '';
+
+    return POSTS.filter(p => {
+      if (type   && p.type   !== type)   return false;
+      if (status && p.status !== status) return false;
+      if (search && !p.title.toLowerCase().includes(search) &&
+                    !p.body.toLowerCase().includes(search)  &&
+                    !p.author.toLowerCase().includes(search)) return false;
+      return true;
+    });
+  }
+
+  function renderTable() {
+    if (!EL.tableBody) return;
+    const posts = filteredPosts();
+
+    if (!posts.length) {
+      EL.tableBody.innerHTML = `<tr><td colspan="7" class="pp-table-empty">No posts found.</td></tr>`;
+      return;
+    }
+
+    EL.tableBody.innerHTML = posts.map(p => {
+      const cfg  = badgeCfg(p.type);
+      const isArchived = p.status === 'archived';
+      return `
+        <tr data-id="${p.id}">
+          <td style="text-align:center;">
+            ${p.pinned ? '<i class="fa-solid fa-thumbtack pp-pin-icon"></i>' : '<span style="color:var(--pp-b2);">—</span>'}
+          </td>
+          <td>
+            <span class="pp-type-pill pp-pill--${cfg.cls}">
+              <i class="fa-solid ${cfg.icon}"></i> ${cfg.label}
+            </span>
+          </td>
+          <td style="max-width:260px;">
+            <div style="font-weight:600;font-size:13px;color:var(--pp-t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(p.title)}</div>
+            <div style="font-size:11px;color:var(--pp-t3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(p.body.slice(0, 60))}${p.body.length > 60 ? '…' : ''}</div>
+          </td>
+          <td style="font-size:12px;color:var(--pp-t2);white-space:nowrap;">${esc(p.author)}</td>
+          <td style="font-family:var(--pp-mono);font-size:11px;color:var(--pp-t3);white-space:nowrap;">${esc(p.date)}</td>
+          <td><span class="pp-status pp-status--${p.status}">${p.status}</span></td>
+          <td>
+            <div class="pp-action-row">
+              ${!isArchived ? `<button class="pp-action-btn edit" data-action="edit" data-id="${p.id}" title="Edit"><i class="fa-solid fa-pen"></i></button>` : ''}
+              ${p.status !== 'published' && !isArchived ? `<button class="pp-action-btn" data-action="publish" data-id="${p.id}" title="Publish" style="color:var(--pp-green);"><i class="fa-solid fa-paper-plane"></i></button>` : ''}
+              ${!isArchived ? `<button class="pp-action-btn archive" data-action="archive" data-id="${p.id}" title="Archive"><i class="fa-solid fa-box-archive"></i></button>` : `<button class="pp-action-btn restore" data-action="restore" data-id="${p.id}" title="Restore"><i class="fa-solid fa-rotate-left"></i></button>`}
+              <button class="pp-action-btn delete" data-action="delete" data-id="${p.id}" title="Delete"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+
+    /* bind table actions */
+    EL.tableBody.querySelectorAll('[data-action]').forEach(btn => {
+      btn.addEventListener('click', () => handleTableAction(btn.dataset.action, Number(btn.dataset.id)));
+    });
+  }
+
+  function handleTableAction(action, id) {
+  const post = POSTS.find(p => p.id === id);
+  if (!post) return;
+
+  if (action === 'edit') {
+    enterEditMode(post); return;
+  }
+
+  if (action === 'publish') {
+    google.script.run
+      .withSuccessHandler(res => {
+        if (!res?.ok) { showToast(res?.error || 'Failed.', 'error'); return; }
+        showToast('Post published!');
+        loadPostsFromSheet();
+      })
+      .withFailureHandler(err => showToast(err?.message || 'Failed.', 'error'))
+      .savePost({ id, status: 'published' });
+    return;
+  }
+
+  if (action === 'restore') {
+    google.script.run
+      .withSuccessHandler(res => {
+        if (!res?.ok) { showToast(res?.error || 'Failed.', 'error'); return; }
+        showToast('Post restored to Draft.');
+        loadPostsFromSheet();
+      })
+      .withFailureHandler(err => showToast(err?.message || 'Failed.', 'error'))
+      .restorePost(id);
+    return;
+  }
+
+  if (action === 'archive') {
+    openConfirm('Archive post?', `"${post.title.slice(0,50)}" will be hidden from Home.`, () => {
+      closeConfirm();
+      google.script.run
+        .withSuccessHandler(res => {
+          if (!res?.ok) { showToast(res?.error || 'Failed.', 'error'); return; }
+          showToast('Post archived.');
+          loadPostsFromSheet();
+        })
+        .withFailureHandler(err => showToast(err?.message || 'Failed.', 'error'))
+        .archivePost(id);
+    });
+    return;
+  }
+
+  if (action === 'delete') {
+    openConfirm('Delete post?', 'This is permanent and cannot be undone.', () => {
+      closeConfirm();
+      google.script.run
+        .withSuccessHandler(res => {
+          if (!res?.ok) { showToast(res?.error || 'Failed.', 'error'); return; }
+          showToast('Post deleted.');
+          loadPostsFromSheet();
+        })
+        .withFailureHandler(err => showToast(err?.message || 'Failed.', 'error'))
+        .deletePost(id);
+    });
+  }
+}
+
+
+function loadPostsFromSheet() {
+  if (EL.tableBody) {
+    EL.tableBody.innerHTML = `<tr><td colspan="7" class="pp-table-empty">
+      <i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>Loading posts…
+    </td></tr>`;
+  }
+
+  google.script.run
+    .withSuccessHandler(res => {
+      if (!res || !res.ok) {
+        showToast(res?.error || 'Could not load posts.', 'error');
+        if (EL.tableBody) {
+          EL.tableBody.innerHTML = `<tr><td colspan="7" class="pp-table-empty">
+            <i class="fa-solid fa-triangle-exclamation" style="margin-right:8px;"></i>
+            ${res?.error || 'Could not load posts.'}
+          </td></tr>`;
+        }
+        return;
+      }
+      POSTS = (res.data || []).map(p => ({
+        ...p,
+        id:     Number(p.id) || 0,
+        pinned: p.pinned === true || String(p.pinned).toLowerCase() === 'true',
+        body:   String(p.body   || ''),
+        title:  String(p.title  || ''),
+        author: String(p.author || ''),
+        date:   String(p.date   || ''),
+        type:   String(p.type   || 'announcement'),
+        status: String(p.status || 'draft'),
+      }));
+      renderTable();
+    })
+    .withFailureHandler(err => {
+      showToast(err?.message || 'Could not load posts.', 'error');
+      if (EL.tableBody) {
+        EL.tableBody.innerHTML = `<tr><td colspan="7" class="pp-table-empty">
+          <i class="fa-solid fa-triangle-exclamation" style="margin-right:8px;"></i>
+          Failed to load posts.
+        </td></tr>`;
+      }
+    })
+    .getPosts();
+}
+
+  /* ─── BIND EVENTS ───────────────────────────────────────── */
+  function bindEvents() {
+    /* form inputs → live preview */
+    ['input','change'].forEach(ev => {
+      EL.titleInput?.addEventListener(ev, () => { updateCounts(); updatePreview(); });
+      EL.bodyInput?.addEventListener(ev,  () => { updateCounts(); updatePreview(); });
+    });
+    EL.authorInput?.addEventListener('input',  updatePreview);
+    EL.pinnedToggle?.addEventListener('change', updatePreview);
+    document.querySelectorAll('input[name="pp-type"]').forEach(r =>
+      r.addEventListener('change', updatePreview)
+    );
+
+    EL.submitBtn?.addEventListener('click', handleSubmit);
+    EL.clearBtn?.addEventListener('click',  clearForm);
+    EL.cancelEditBtn?.addEventListener('click', () => { clearForm(); });
+
+    /* table filters */
+    EL.searchInput?.addEventListener('input',  renderTable);
+    EL.typeFilter?.addEventListener('change',  renderTable);
+    EL.statusFilter?.addEventListener('change',renderTable);
+    EL.refreshBtn?.addEventListener('click', () => {
+  loadPostsFromSheet();
+  showToast('Table refreshed.');
+});
+
+    /* confirm dialog */
+    EL.confirmOk?.addEventListener('click',     () => confirmCallback?.());
+    EL.confirmCancel?.addEventListener('click', closeConfirm);
+    EL.confirm?.addEventListener('click', e => { if (e.target === EL.confirm) closeConfirm(); });
+  }
+
+  /* ─── LIFECYCLE ─────────────────────────────────────────── */
+  function mount() {
+  if (state.mounted) return;
+  state.mounted = true;
+
+  if (!document.getElementById('pp-fonts')) {
+    const l = document.createElement('link');
+    l.id   = 'pp-fonts';
+    l.rel  = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap';
+    document.head.appendChild(l);
+  }
+
+  cacheDom();
+  bindEvents();
+  updateCounts();
+  loadPostsFromSheet();  // ← replaces renderTable() with demo data
+}
+
+  function unmount() { state.mounted = false; }
+function refresh() {
+  if (!state.mounted) return;
+  loadPostsFromSheet();
+}
+
+  /* ─── REGISTER ──────────────────────────────────────────── */
+  window.PublishPage = { mount, unmount, refresh };
+  if (typeof window.registerPageModule === 'function') {
+    window.registerPageModule(PAGE_KEY, { mount, unmount, refresh });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mount, { once: true });
+  } else {
+    mount();
+  }
+
+
+  window.__PUBLISH_CLEANUP__ = function() {
+  if (toastTimer) clearTimeout(toastTimer);
+  if (EL.confirm) EL.confirm.classList.remove('open');
+};
+
+
+})();
+
+
+</script>

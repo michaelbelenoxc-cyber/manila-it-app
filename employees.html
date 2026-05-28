@@ -1,0 +1,2850 @@
+<style>
+  /* ============================================================
+   * FONTS
+   * ============================================================ */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  /* ============================================================
+   * DESIGN TOKENS
+   * ============================================================ */
+  :root {
+    --font-ui:   'Epilogue', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+    /* surfaces — warm paper (light default) */
+    --bg-0: #f5f2ec;
+    --bg-1: #f5f2ec;
+    --bg-2: #ede9e1;
+    --bg-3: #e4ded4;
+    --bg-4: #ddd6ca;
+    --bg-5: #d4cbbe;
+
+    /* borders */
+    --b-0: rgba(26,24,20,.08);
+    --b-1: rgba(26,24,20,.12);
+    --b-2: rgba(26,24,20,.18);
+    --b-3: rgba(26,24,20,.28);
+
+    /* text */
+    --t-1: rgba(26,24,20,.95);
+    --t-2: rgba(74,71,64,.80);
+    --t-3: rgba(138,134,128,.70);
+
+    /* primary accent — editorial blue */
+    --em:    #2857a4;
+    --em-2:  #3a6bc5;
+    --em-d:  rgba(40,87,164,.10);
+    --em-b:  rgba(40,87,164,.32);
+    --em-glow: 0 0 0 1px rgba(40,87,164,.22), 0 4px 16px rgba(40,87,164,.12);
+
+    /* status colours */
+    --s-active:   #16a34a;
+    --s-inactive: #c94040;
+    --s-onleave:  #b45309;
+
+    /* supporting */
+    --blue:     #2857a4;
+    --red:      #c94040;
+    --red-2:    #e05252;
+    --yellow:   #b45309;
+    --yellow-2: #d97706;
+
+    /* geometry */
+    --r-xl:  16px;
+    --r-lg:  10px;
+    --r-md:   7px;
+    --r-sm:   5px;
+    --r-pill: 999px;
+
+    /* shadows */
+    --sh-0: 0 1px 3px rgba(26,24,20,.08);
+    --sh-1: 0 4px 16px rgba(26,24,20,.10);
+    --sh-2: 0 8px 32px rgba(26,24,20,.12);
+    --sh-3: 0 16px 48px rgba(26,24,20,.15);
+
+    /* transitions */
+    --t-fast: .14s ease;
+    --t-med:  .22s ease;
+    --t-slow: .36s cubic-bezier(0.2,0.8,0.2,1);
+
+    --shell-nav-height: 60px;
+
+    /* legacy compat aliases */
+    --surface:         var(--bg-2);
+    --surface-raised:  var(--bg-3);
+    --surface-inset:   rgba(26,24,20,.06);
+    --border:          var(--b-1);
+    --border-strong:   var(--b-2);
+    --text-primary:    var(--t-1);
+    --text-secondary:  var(--t-2);
+    --text-tertiary:   var(--t-3);
+    --accent-blue:     var(--em);
+    --accent-blue-dim: var(--em-d);
+    --accent-blue-glow: rgba(40,87,164,.20);
+    --accent-green:    var(--s-active);
+    --accent-red:      var(--red);
+    --accent-yellow:   var(--yellow);
+    --accent-orange:   #c2410c;
+    --radius-sm: var(--r-sm);
+    --radius-md: var(--r-md);
+    --radius-lg: var(--r-lg);
+    --radius-xl: var(--r-xl);
+    --shadow-sm: var(--sh-0);
+    --shadow-md: var(--sh-1);
+    --shadow-lg: var(--sh-2);
+    --blur-sm: blur(8px);
+    --blur-md: blur(16px);
+    --blur-lg: blur(24px);
+  }
+
+  /* ── Dark mode ─────────────────────────────── */
+  html[data-theme="dark"] {
+    --bg-0: #161410; --bg-1: #1a1814; --bg-2: #1e1c18;
+    --bg-3: #252220; --bg-4: #2c2a26; --bg-5: #33302b;
+    --b-0: rgba(240,236,227,.06); --b-1: rgba(240,236,227,.10);
+    --b-2: rgba(240,236,227,.16); --b-3: rgba(240,236,227,.26);
+    --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.80); --t-3: rgba(106,100,92,.70);
+    --surface: var(--bg-2); --surface-raised: var(--bg-3);
+    --surface-inset: rgba(0,0,0,.18);
+    --border: var(--b-1); --border-strong: var(--b-2);
+    --text-primary: var(--t-1); --text-secondary: var(--t-2); --text-tertiary: var(--t-3);
+    --sh-0: 0 1px 3px rgba(0,0,0,.35);
+    --sh-1: 0 4px 16px rgba(0,0,0,.45);
+    --sh-2: 0 8px 32px rgba(0,0,0,.55);
+    --sh-3: 0 16px 48px rgba(0,0,0,.65);
+    --em:   #2857a4;
+    --em-2: #5b85c8;
+    --em-d: rgba(40,87,164,.16);
+    --em-b: rgba(40,87,164,.40);
+    --em-glow: 0 0 0 1px rgba(40,87,164,.32), 0 4px 16px rgba(40,87,164,.18);
+  }
+
+  /* ============================================================
+   * BASE
+   * ============================================================ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-ui);
+    font-size: 14px;
+    color: var(--t-1);
+    background: var(--bg-0);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 40% at 10% 0%,  rgba(40,87,164,.04) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 35% at 90% 100%, rgba(40,87,164,.03) 0%, transparent 60%);
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  :focus-visible {
+    outline: 2px solid var(--em);
+    outline-offset: 2px;
+    border-radius: var(--r-sm);
+  }
+
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0);
+    white-space: nowrap; border: 0;
+  }
+
+  /* ============================================================
+   * PAGE LAYOUT
+   * ============================================================ */
+  .container-main {
+    width: 100%;
+    max-width: 1500px;
+    margin-top: var(--shell-nav-height);
+    padding: 44px 28px 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeUp .38s ease-out both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(26px, 3vw, 38px);
+    font-weight: 400;
+    letter-spacing: -.02em;
+    color: var(--t-1);
+    margin: 0 0 6px;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  .sub {
+    font-size: 13px;
+    font-family: var(--font-mono);
+    color: var(--t-3);
+    margin: 0 0 28px;
+    text-align: center;
+    max-width: 500px;
+    line-height: 1.6;
+    letter-spacing: .01em;
+  }
+
+  /* ============================================================
+   * CARD WRAP
+   * ============================================================ */
+  .tableWrap {
+    width: 100%;
+    background: var(--bg-1);
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-xl);
+    box-shadow: var(--sh-1);
+    overflow: visible;
+    isolation: isolate;
+  }
+
+  /* ============================================================
+   * TOOLBAR
+   * ============================================================ */
+  .pageHeader {
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid var(--b-1);
+    background: var(--bg-0);
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+  }
+
+  html[data-theme="dark"] .pageHeader {
+    background: rgba(0,0,0,.10);
+  }
+
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .toolbar-left, .toolbar-right {
+    display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  }
+
+  /* Search */
+  .search-wrap { position: relative; display: flex; align-items: center; }
+
+  .search-icon {
+    position: absolute; left: 10px;
+    color: var(--t-3); font-size: 11px; pointer-events: none;
+    transition: color var(--t-fast);
+  }
+
+  .search-wrap:focus-within .search-icon { color: var(--em-2); }
+
+  #searchBox {
+    height: 34px; width: 250px;
+    padding: 0 12px 0 30px;
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-lg);
+    background: var(--bg-2);
+    color: var(--t-1);
+    font-family: var(--font-mono);
+    font-size: 12px; font-weight: 400;
+    outline: none;
+    transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  #searchBox:focus {
+    border-color: var(--em-b);
+    background: var(--bg-1);
+    box-shadow: var(--em-glow);
+  }
+
+  #searchBox::placeholder { color: var(--t-3); }
+
+  /* ── Buttons ─────────────────────────────────── */
+  .controlBtn {
+    height: 34px; padding: 0 12px;
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-lg);
+    background: var(--bg-2);
+    color: var(--t-2);
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: .04em;
+    cursor: pointer; white-space: nowrap;
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+  }
+
+  .controlBtn:hover {
+    background: var(--bg-3); border-color: var(--b-2); color: var(--t-1);
+  }
+
+  .controlBtn:active { opacity: .85; }
+  .controlBtn:disabled { opacity: .40; cursor: not-allowed; }
+  .controlBtn i { font-size: 11px; }
+
+  .controlBtn.btn-icon {
+    width: 34px; padding: 0;
+    justify-content: center;
+  }
+
+  /* primary */
+  .controlBtn-primary,
+  #addEmployeeBtn {
+    background: var(--em-d);
+    border-color: var(--em-b);
+    color: var(--em);
+  }
+
+  html[data-theme="dark"] .controlBtn-primary,
+  html[data-theme="dark"] #addEmployeeBtn { color: var(--em-2); }
+
+  .controlBtn-primary:hover,
+  #addEmployeeBtn:hover {
+    background: rgba(40,87,164,.16);
+    border-color: rgba(40,87,164,.45);
+    color: var(--em);
+    box-shadow: 0 2px 10px rgba(40,87,164,.18);
+  }
+
+  html[data-theme="dark"] .controlBtn-primary:hover,
+  html[data-theme="dark"] #addEmployeeBtn:hover { color: var(--em-2); }
+
+  /* export */
+  #exportBtn {
+    background: var(--em-d);
+    border-color: var(--em-b);
+    color: var(--em);
+  }
+
+  html[data-theme="dark"] #exportBtn { color: var(--em-2); }
+
+  #exportBtn:hover {
+    background: rgba(40,87,164,.16);
+    box-shadow: 0 2px 10px rgba(40,87,164,.18);
+  }
+
+  /* export split */
+  .btn-group { display: flex; }
+
+  .btn-group #exportBtn {
+    border-radius: var(--r-lg) 0 0 var(--r-lg);
+    border-right: none;
+  }
+
+  .btn-group .dropdown-toggle-split {
+    height: 34px; width: 26px; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px;
+    border: 1px solid var(--em-b);
+    border-radius: 0 var(--r-lg) var(--r-lg) 0;
+    background: var(--em-d);
+    color: var(--em);
+    cursor: pointer;
+    transition: background var(--t-fast);
+  }
+
+  html[data-theme="dark"] .btn-group .dropdown-toggle-split { color: var(--em-2); }
+  .btn-group .dropdown-toggle-split:hover { background: rgba(40,87,164,.16); }
+
+  /* Column selector */
+  .column-selector-wrap { position: relative; }
+
+  #columnSelector {
+    position: absolute; top: calc(100% + 5px); right: 0;
+    width: 210px;
+    background: var(--bg-1);
+    border: 1px solid var(--b-2);
+    border-radius: var(--r-lg);
+    padding: 7px;
+    z-index: 1400;
+    box-shadow: var(--sh-2);
+    display: none;
+  }
+
+  #columnSelector label {
+    display: flex; align-items: center; gap: 9px;
+    padding: 6px 9px;
+    border-radius: var(--r-md);
+    cursor: pointer;
+    font-size: 12px; font-weight: 500;
+    font-family: var(--font-mono);
+    color: var(--t-1); margin: 0;
+    transition: background var(--t-fast);
+  }
+
+  #columnSelector label:hover { background: var(--bg-3); }
+  #columnSelector input { accent-color: var(--em); margin: 0; }
+
+  /* ============================================================
+   * TABLE
+   * ============================================================ */
+  .table-scroll-container { overflow-x: auto; width: 100%; }
+
+  .table-scroll-container::-webkit-scrollbar { height: 5px; }
+  .table-scroll-container::-webkit-scrollbar-track { background: transparent; }
+  .table-scroll-container::-webkit-scrollbar-thumb { background: var(--b-2); border-radius: 4px; }
+
+  #employeeTable {
+    width: 100%; border-collapse: collapse; font-size: 12.5px;
+  }
+
+  #employeeTable thead th {
+    padding: 10px 13px;
+    color: var(--t-3);
+    font-size: 9.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .10em;
+    border-bottom: 1px solid var(--b-1);
+    background: var(--bg-0);
+    white-space: nowrap;
+    user-select: none; cursor: pointer;
+    transition: color var(--t-fast);
+    font-family: var(--font-mono);
+  }
+
+  html[data-theme="dark"] #employeeTable thead th { background: var(--bg-1); }
+
+  #employeeTable thead th:hover { color: var(--t-1); }
+  #employeeTable thead th[data-key="actions"] { cursor: default; }
+  #employeeTable thead th[data-key="actions"]:hover { color: var(--t-3); }
+
+  #employeeTable tbody td {
+    padding: 11px 13px;
+    border-bottom: 1px solid var(--b-0);
+    color: var(--t-1);
+    vertical-align: middle;
+    white-space: nowrap;
+    transition: background var(--t-fast);
+  }
+
+  #employeeTable tbody tr:last-child td { border-bottom: none; }
+  #employeeTable tbody tr { transition: background var(--t-fast); }
+  #employeeTable tbody tr:hover td { background: rgba(40,87,164,.05); }
+  html[data-theme="dark"] #employeeTable tbody tr:hover td { background: rgba(40,87,164,.08); }
+
+  #employeeTable th[data-key="status"],
+  #employeeTable td[data-key="status"],
+  #employeeTable th[data-key="actions"],
+  #employeeTable td[data-key="actions"] { text-align: center; }
+
+  .th-sort-icon {
+    opacity: .28; margin-left: 5px; font-size: 9px;
+    font-family: var(--font-mono);
+    transition: opacity var(--t-fast), color var(--t-fast);
+  }
+
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateY(2px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  #employeeTable tbody tr { animation: rowIn .18s ease-out both; }
+
+  /* ============================================================
+   * STATUS TAGS
+   * ============================================================ */
+  .status-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 9px;
+    border-radius: var(--r-pill);
+    font-size: 10px; font-weight: 600;
+    letter-spacing: .07em; text-transform: uppercase;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    border: 1px solid transparent;
+  }
+
+  .status-tag .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%; flex-shrink: 0;
+  }
+
+  /* Active */
+  .tag-active {
+    background: rgba(22,163,74,.10);
+    color: #16a34a;
+    border-color: rgba(22,163,74,.25);
+  }
+  html[data-theme="dark"] .tag-active { color: #4ade80; border-color: rgba(74,222,128,.25); }
+  .tag-active .dot { background: #16a34a; }
+  html[data-theme="dark"] .tag-active .dot { background: #4ade80; box-shadow: 0 0 5px rgba(74,222,128,.5); }
+
+  /* Inactive */
+  .tag-inactive {
+    background: rgba(100,116,139,.10);
+    color: #475569;
+    border-color: rgba(100,116,139,.22);
+  }
+  html[data-theme="dark"] .tag-inactive { color: #94a3b8; border-color: rgba(148,163,184,.22); }
+  .tag-inactive .dot { background: #475569; }
+  html[data-theme="dark"] .tag-inactive .dot { background: #94a3b8; }
+
+  /* Not started yet */
+  .tag-notstarted {
+    background: rgba(40,87,164,.10);
+    color: #2857a4;
+    border-color: rgba(40,87,164,.24);
+  }
+  html[data-theme="dark"] .tag-notstarted { color: #93c5fd; border-color: rgba(147,197,253,.24); }
+  .tag-notstarted .dot { background: #2857a4; }
+  html[data-theme="dark"] .tag-notstarted .dot { background: #93c5fd; box-shadow: 0 0 5px rgba(147,197,253,.5); }
+
+  /* Maternity leave */
+  .tag-maternity {
+    background: rgba(219,39,119,.10);
+    color: #be185d;
+    border-color: rgba(219,39,119,.22);
+  }
+  html[data-theme="dark"] .tag-maternity { color: #f9a8d4; border-color: rgba(249,168,212,.22); }
+  .tag-maternity .dot { background: #be185d; }
+  html[data-theme="dark"] .tag-maternity .dot { background: #f9a8d4; box-shadow: 0 0 5px rgba(249,168,212,.5); }
+
+  /* Paternity leave */
+  .tag-paternity {
+    background: rgba(6,182,212,.10);
+    color: #0e7490;
+    border-color: rgba(6,182,212,.22);
+  }
+  html[data-theme="dark"] .tag-paternity { color: #67e8f9; border-color: rgba(103,232,249,.22); }
+  .tag-paternity .dot { background: #0e7490; }
+  html[data-theme="dark"] .tag-paternity .dot { background: #67e8f9; box-shadow: 0 0 5px rgba(103,232,249,.5); }
+
+  /* Rendering */
+  .tag-rendering {
+    background: rgba(180,83,9,.10);
+    color: #b45309;
+    border-color: rgba(180,83,9,.24);
+  }
+  html[data-theme="dark"] .tag-rendering { color: #fcd34d; border-color: rgba(252,211,77,.24); }
+  .tag-rendering .dot { background: #b45309; animation: dotPulse 1.6s infinite; }
+  html[data-theme="dark"] .tag-rendering .dot { background: #fcd34d; }
+
+  /* Offboarded */
+  .tag-offboarded {
+    background: rgba(201,64,64,.10);
+    color: #c94040;
+    border-color: rgba(201,64,64,.24);
+  }
+  html[data-theme="dark"] .tag-offboarded { color: #fca5a5; border-color: rgba(252,165,165,.24); }
+  .tag-offboarded .dot { background: #c94040; }
+  html[data-theme="dark"] .tag-offboarded .dot { background: #fca5a5; }
+
+  @keyframes dotPulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: .25; }
+  }
+
+  .mono-cell {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--t-2);
+  }
+
+  /* ============================================================
+   * ACTION BUTTONS
+   * ============================================================ */
+  .row-actions {
+    display: flex; align-items: center; justify-content: center; gap: 3px;
+  }
+
+  .actionBtn {
+    width: 27px; height: 27px;
+    border-radius: var(--r-md);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--t-3);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 11px;
+    transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  }
+
+  .actionBtn:focus-visible { outline: 2px solid var(--em); outline-offset: 2px; }
+
+  .editBtn:hover {
+    background: rgba(40,87,164,.10);
+    color: var(--em);
+    border-color: rgba(40,87,164,.24);
+  }
+
+  html[data-theme="dark"] .editBtn:hover { color: var(--em-2); }
+
+  .deleteBtn:hover {
+    background: rgba(201,64,64,.10);
+    color: var(--red);
+    border-color: rgba(201,64,64,.24);
+  }
+
+  html[data-theme="dark"] .deleteBtn:hover { color: var(--red-2); }
+
+  /* ============================================================
+   * PAGINATION
+   * ============================================================ */
+  .pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--b-1);
+    flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--t-3);
+  }
+
+  .pagination-bar:empty { display: none; }
+
+  /* ============================================================
+   * DROPDOWN MENU
+   * ============================================================ */
+  .dropdown-menu {
+    background: var(--bg-1) !important;
+    border: 1px solid var(--b-2) !important;
+    border-radius: var(--r-lg) !important;
+    box-shadow: var(--sh-2) !important;
+    padding: 5px !important;
+  }
+
+  .dropdown-item {
+    color: var(--t-1) !important;
+    border-radius: var(--r-md) !important;
+    padding: 7px 11px !important;
+    font-family: var(--font-mono) !important;
+    font-size: 11px !important; font-weight: 500 !important;
+    letter-spacing: .03em !important;
+    transition: background var(--t-fast) !important;
+  }
+
+  .dropdown-item:hover, .dropdown-item:focus {
+    background: var(--em-d) !important;
+    color: var(--em) !important;
+  }
+
+  html[data-theme="dark"] .dropdown-item:hover,
+  html[data-theme="dark"] .dropdown-item:focus { color: var(--em-2) !important; }
+
+  .dropdown-divider { border-top: 1px solid var(--b-1) !important; margin: 4px !important; }
+
+  /* ============================================================
+   * MODALS
+   * ============================================================ */
+  .modal-content.apple-modal {
+    background: var(--bg-1);
+    border: 1px solid var(--b-2);
+    border-radius: var(--r-xl);
+    color: var(--t-1);
+    box-shadow: var(--sh-3);
+  }
+
+  .modal-header.apple-header,
+  .modal-footer.apple-footer { border-color: var(--b-1); }
+
+  .modal-header.apple-header {
+    padding: 18px 22px 12px;
+    background: var(--bg-0);
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+  }
+
+  html[data-theme="dark"] .modal-header.apple-header {
+    background: rgba(0,0,0,.14);
+  }
+
+  .modal-footer.apple-footer {
+    padding: 12px 22px 18px;
+    gap: 8px; justify-content: flex-end; align-items: center;
+  }
+
+  .modal-title.apple-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 17px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1);
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .modal-title.apple-title i { color: var(--em); }
+  html[data-theme="dark"] .modal-title.apple-title i { color: var(--em-2); }
+
+  .apple-header .btn-close,
+  .apple-close {
+    filter: none;
+    opacity: .55;
+    transition: opacity var(--t-fast);
+  }
+
+  .apple-header .btn-close:hover,
+  .apple-close:hover { opacity: 1; }
+
+  html[data-theme="dark"] .apple-header .btn-close,
+  html[data-theme="dark"] .apple-close {
+    filter: invert(1) grayscale(1) brightness(2);
+    opacity: .6;
+  }
+
+  .apple-modal .form-label {
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: .10em; text-transform: uppercase;
+    color: var(--t-3); margin-bottom: 5px;
+    font-family: var(--font-mono);
+  }
+
+  .apple-modal .form-control,
+  .apple-modal .form-select {
+    background: var(--bg-2);
+    border: 1px solid var(--b-1);
+    border-radius: var(--r-md);
+    color: var(--t-1);
+    padding: 8px 11px;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  .apple-modal .form-control::placeholder { color: var(--t-3); }
+
+  .apple-modal .form-control:focus,
+  .apple-modal .form-select:focus {
+    outline: none;
+    background: var(--bg-1);
+    border-color: var(--em-b);
+    box-shadow: var(--em-glow);
+    color: var(--t-1);
+  }
+
+  .apple-modal .form-select option { background: var(--bg-2); color: var(--t-1); }
+
+  /* Modal buttons */
+  .apple-btn-secondary {
+    height: 36px; padding: 0 14px;
+    border: 1px solid var(--b-2);
+    border-radius: var(--r-pill);
+    background: var(--bg-2);
+    color: var(--t-2);
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: .04em;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 7px; min-width: 80px;
+    transition: background var(--t-fast), color var(--t-fast);
+  }
+
+  .apple-btn-secondary:hover { background: var(--bg-3); color: var(--t-1); }
+
+  .apple-btn-primary {
+    height: 36px; padding: 0 18px;
+    border: 1px solid var(--em-b);
+    border-radius: var(--r-pill);
+    background: var(--em);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .04em;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 7px; min-width: 100px;
+    transition: filter var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  .apple-btn-primary:hover {
+    filter: brightness(1.10);
+    box-shadow: 0 4px 14px rgba(40,87,164,.28);
+  }
+
+  .apple-btn-primary:disabled {
+    opacity: .42; cursor: not-allowed;
+    filter: none !important; box-shadow: none !important;
+  }
+
+  .apple-btn-danger {
+    height: 36px; padding: 0 18px;
+    border: 1px solid rgba(201,64,64,.32);
+    border-radius: var(--r-pill);
+    background: var(--red);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .04em;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 7px; min-width: 100px;
+    transition: filter var(--t-fast), box-shadow var(--t-fast);
+  }
+
+  .apple-btn-danger:hover {
+    filter: brightness(1.10);
+    box-shadow: 0 4px 14px rgba(201,64,64,.28);
+  }
+
+  .apple-btn-danger:disabled {
+    opacity: .42; cursor: not-allowed;
+    filter: none !important; box-shadow: none !important;
+  }
+
+  /* ============================================================
+   * TOASTS
+   * ============================================================ */
+  .toast-host {
+    position: fixed;
+    top: calc(var(--shell-nav-height) + 24px);
+    right: 18px;
+    z-index: 20000;
+    display: flex; flex-direction: column;
+    gap: 7px;
+    width: min(330px, calc(100vw - 24px));
+    pointer-events: none;
+  }
+
+  .toast-card {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 13px;
+    border-radius: var(--r-lg);
+    color: var(--t-1);
+    background: var(--bg-1);
+    border: 1px solid var(--b-2);
+    box-shadow: var(--sh-2);
+    pointer-events: auto;
+    opacity: 0; transform: translateY(-7px) scale(.98);
+    animation: toastIn .20s ease forwards;
+  }
+
+  html[data-theme="dark"] .toast-card { background: var(--bg-3); }
+
+  .toast-card.hide { animation: toastOut .16s ease forwards; }
+
+  .toast-icon {
+    width: 18px; min-width: 18px;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px; font-size: 12px;
+  }
+
+  .toast-content { flex: 1; min-width: 0; }
+
+  .toast-title {
+    font-size: 12.5px; font-weight: 700;
+    font-family: var(--font-mono);
+    margin-bottom: 2px;
+    letter-spacing: .02em;
+  }
+
+  .toast-message { font-size: 12px; line-height: 1.45; color: var(--t-2); }
+
+  .toast-close {
+    border: none; background: transparent;
+    color: var(--t-3); font-size: 12px; line-height: 1;
+    padding: 0; width: 17px; height: 17px;
+    border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: color var(--t-fast);
+  }
+
+  .toast-close:hover { color: var(--t-1); }
+
+  .toast-success .toast-icon { color: #16a34a; }
+  html[data-theme="dark"] .toast-success .toast-icon { color: #4ade80; }
+  .toast-error   .toast-icon { color: var(--red); }
+  html[data-theme="dark"] .toast-error .toast-icon { color: var(--red-2); }
+  .toast-warning .toast-icon { color: var(--yellow); }
+  html[data-theme="dark"] .toast-warning .toast-icon { color: var(--yellow-2); }
+  .toast-info    .toast-icon { color: var(--em); }
+  html[data-theme="dark"] .toast-info .toast-icon { color: var(--em-2); }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(-7px) scale(.98); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
+  }
+
+  @keyframes toastOut {
+    from { opacity: 1; transform: translateY(0)    scale(1); }
+    to   { opacity: 0; transform: translateY(-5px) scale(.98); }
+  }
+
+  /* ============================================================
+   * INLINE VALIDATION
+   * ============================================================ */
+  .field-error {
+    margin-top: 4px; font-size: 11.5px;
+    color: var(--red); line-height: 1.35;
+    font-family: var(--font-mono);
+  }
+
+  html[data-theme="dark"] .field-error { color: var(--red-2); }
+
+  .form-control.is-invalid,
+  .form-select.is-invalid {
+    border-color: rgba(201,64,64,.70) !important;
+    box-shadow: 0 0 0 3px rgba(201,64,64,.12) !important;
+  }
+
+  /* ============================================================
+   * EMPTY STATE
+   * ============================================================ */
+  .empty-state {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 48px 20px; color: var(--t-2); gap: 8px;
+  }
+
+  .empty-icon  { font-size: 28px; opacity: .35; }
+  .empty-label { font-size: 13.5px; font-weight: 600; color: var(--t-1); }
+  .empty-hint  { font-size: 11.5px; color: var(--t-2); }
+
+  /* ============================================================
+   * TIP ROW
+   * ============================================================ */
+  .tip-row {
+    padding: 7px 18px 12px;
+    font-size: 10.5px; color: var(--t-3); font-weight: 500;
+    font-family: var(--font-mono);
+  }
+
+  /* ============================================================
+   * GO TO TOP
+   * ============================================================ */
+  #goTopBtn {
+    position: fixed; right: 20px; bottom: 20px;
+    width: 38px; height: 38px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--b-2);
+    background: var(--bg-2);
+    color: var(--t-1);
+    display: grid; place-items: center;
+    box-shadow: var(--sh-1);
+    z-index: 1200; cursor: pointer; font-size: 12px;
+    opacity: 0; transform: translateY(6px) scale(.96);
+    pointer-events: none;
+    transition: opacity .20s, transform .20s, background .14s;
+  }
+
+  #goTopBtn.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+  #goTopBtn:hover { background: var(--bg-3); border-color: var(--em-b); }
+
+  /* ============================================================
+   * TOM SELECT
+   * ============================================================ */
+  .ts-control {
+    background: var(--bg-2) !important;
+    border: 1px solid var(--b-1) !important;
+    border-radius: var(--r-md) !important;
+    color: var(--t-1) !important;
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+    font-family: var(--font-ui) !important;
+    box-shadow: none !important;
+    min-height: 38px !important;
+  }
+
+  .ts-control:focus-within,
+  .ts-wrapper.focus .ts-control {
+    border-color: var(--em-b) !important;
+    background: var(--bg-1) !important;
+    box-shadow: var(--em-glow) !important;
+  }
+
+  .ts-control input { color: var(--t-1) !important; font-family: var(--font-ui) !important; font-size: 13px !important; }
+  .ts-control input::placeholder { color: var(--t-3) !important; }
+
+  .ts-dropdown {
+    background: var(--bg-2) !important;
+    border: 1px solid var(--b-2) !important;
+    border-radius: var(--r-md) !important;
+    z-index: 9999 !important;
+    box-shadow: var(--sh-2) !important;
+  }
+
+  .ts-dropdown .option { color: var(--t-1) !important; font-size: 12.5px !important; padding: 7px 11px !important; }
+  .ts-dropdown .option:hover,
+  .ts-dropdown .active { background: var(--em-d) !important; color: var(--em) !important; }
+  html[data-theme="dark"] .ts-dropdown .active { color: var(--em-2) !important; }
+
+  /* ============================================================
+   * MODAL TIP
+   * ============================================================ */
+  .modal-tip {
+    margin-top: 12px;
+    padding: 8px 0 0;
+    font-size: 10.5px;
+    color: var(--t-3);
+    font-weight: 500;
+    font-family: var(--font-mono);
+  }
+
+  .modal-tip i { margin-right: 5px; opacity: .7; }
+
+  .confirm-message {
+    color: var(--t-1);
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+
+  /* ============================================================
+   * RESPONSIVE
+   * ============================================================ */
+  @media (max-width: 768px) {
+    .container-main { padding: 36px 14px 56px; }
+    #searchBox { width: 100%; max-width: 100%; }
+    .control-group { justify-content: stretch; }
+    .controlBtn, .btn-group { width: 100%; }
+    .btn-group .controlBtn { flex: 1; }
+    #columnSelector { left: 0; right: auto; width: min(100%, 240px); }
+    .apple-footer { flex-direction: column-reverse; }
+    .apple-btn-secondary, .apple-btn-primary, .apple-btn-danger { width: 100%; min-width: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fa-spin { animation: spin .85s linear infinite; }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
+
+<div class="container-main">
+  <h1 class="page-title">Employee Directory</h1>
+  <p class="sub" id="subText">View and manage all employees with selectable columns.</p>
+
+  <div class="tableWrap">
+
+    <!-- ═══ TOOLBAR ═══ -->
+    <div class="pageHeader" role="toolbar" aria-label="Employee list controls">
+      <div class="control-group">
+
+        <div class="toolbar-left" role="search">
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+            <label class="visually-hidden" for="searchBox">Search employees</label>
+            <input id="searchBox" type="text"
+                   placeholder="Search employees…"
+                   autocomplete="off"
+                   aria-label="Search employees by name, email, or department">
+          </div>
+        </div>
+
+        <div class="toolbar-right" aria-label="Employee actions">
+
+          <button type="button" class="controlBtn controlBtn-primary" id="addEmployeeBtn"
+                  title="Add New Employee" aria-label="Add new employee">
+            <i class="fas fa-plus" aria-hidden="true"></i> Add Employee
+          </button>
+
+          <div class="btn-group dropdown">
+            <button type="button" class="controlBtn" id="exportBtn"
+                    title="Export" aria-label="Export current page">
+              <i class="fas fa-file-export" aria-hidden="true"></i> Export
+            </button>
+            <button type="button"
+                    class="controlBtn dropdown-toggle dropdown-toggle-split"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    aria-label="Toggle export options">
+              <i class="fa-solid fa-chevron-down" style="font-size:9px;" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" style="min-width:220px;">
+              <li>
+                <button class="dropdown-item" type="button" id="exportCurrentPageOpt">
+                  <i class="fa-solid fa-file-lines me-2" aria-hidden="true"></i> Export current page
+                </button>
+              </li>
+              <li>
+                <button class="dropdown-item" type="button" id="exportAllOpt">
+                  <i class="fa-solid fa-table me-2" aria-hidden="true"></i> Export all (filtered)
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <button type="button" class="controlBtn btn-icon" id="refreshBtn"
+                  title="Refresh" aria-label="Refresh data">
+            <i class="fas fa-rotate" aria-hidden="true"></i>
+          </button>
+
+          <button type="button" class="controlBtn btn-icon" id="clearBtn"
+                  title="Clear filters" aria-label="Clear filters">
+            <i class="fas fa-filter-circle-xmark" aria-hidden="true"></i>
+          </button>
+
+          <div class="column-selector-wrap">
+            <button type="button" id="toggleColsBtn" class="controlBtn"
+                    aria-haspopup="true" aria-expanded="false"
+                    aria-label="Toggle column visibility">
+              <i class="fas fa-table-columns" aria-hidden="true"></i> Columns
+            </button>
+            <div id="columnSelector" role="menu" aria-label="Visible columns"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TABLE ═══ -->
+    <div class="table-scroll-container">
+      <table id="employeeTable">
+        <caption class="visually-hidden">
+          Employee directory. Click column headers to sort. Use the Columns button to show or hide fields.
+        </caption>
+        <thead>
+          <tr id="employeeHeaderRow"></tr>
+        </thead>
+        <tbody id="employeeBody">
+          <tr>
+            <td colspan="20">
+              <div class="empty-state">
+                <div class="empty-icon"><i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i></div>
+                <div class="empty-label">Loading employees…</div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══ PAGINATION ═══ -->
+    <div class="pagination-bar" id="paginationBar" style="display:none;"
+         role="status" aria-live="polite" aria-label="Pagination status">
+      <button class="controlBtn" id="btnPrev" type="button" aria-label="Previous page">
+        <i class="fa-solid fa-chevron-left" aria-hidden="true"></i> Prev
+      </button>
+      <div id="paginationInfo"></div>
+      <button class="controlBtn" id="btnNext" type="button" aria-label="Next page">
+        Next <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="tip-row">
+      <i class="fa-solid fa-circle-info" style="margin-right:5px;" aria-hidden="true"></i>
+      Click any column header to sort. Use the Columns button to show or hide fields.
+    </div>
+
+  </div>
+</div>
+
+<!-- GO TO TOP -->
+<button type="button" id="goTopBtn" aria-label="Back to top">
+  <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
+</button>
+
+<!-- TOAST HOST -->
+<div class="toast-host" id="toastHost" role="region" aria-live="polite" aria-label="Notifications"></div>
+
+
+
+<script>
+  (() => {
+    "use strict";
+
+    const state = {
+      employeeList: [],
+      tsManagerInstance: null,
+      debouncedSearch: null,
+      fetchSeq: 0,
+      editSeq: 0,
+
+      rbac: {
+        loaded: false,
+        canPage: true,
+        canManage: false,
+        canDelete: false
+      },
+
+      columnVisibility: {},
+      currentSortColumn: "displayName",
+      isAscending: true,
+
+      currentPage: 1,
+      pageSize: 25,
+      totalRows: 0,
+      lastPageData: [],
+
+       editingEmployeeId: null,
+      editingRowIndex: null,
+      addModalInstance: null,
+      confirmDeleteModalInstance: null,
+      pendingDeleteId: null,
+      pendingDeleteRowIndex: null
+    };
+
+    const COLUMN_MAP = {
+      employeeId: "Employee ID",
+      displayName: "Display Name",
+      email: "Email",
+      alias: "Alias",
+      department: "Department",
+      manager: "Manager",
+      title: "Title",
+      location: "Location",
+      status: "Status",
+      startDate: "Start Date",
+      eod: "EOD",
+      personalEmail: "Personal Email",
+      actions: "Actions"
+    };
+
+    const DATA_KEYS = Object.keys(COLUMN_MAP).filter((key) => key !== "actions");
+    const ALL_KEYS = [...DATA_KEYS, "actions"];
+    const REQUIRED_FIELDS = ["displayName", "email", "department", "status"];
+
+    const $ = (id) => document.getElementById(id);
+
+    const els = {
+      get subText() { return $("subText"); },
+      get employeeBody() { return $("employeeBody"); },
+      get employeeHeaderRow() { return $("employeeHeaderRow"); },
+      get columnSelector() { return $("columnSelector"); },
+      get searchBox() { return $("searchBox"); },
+      get paginationBar() { return $("paginationBar"); },
+      get toggleColsBtn() { return $("toggleColsBtn"); },
+      get refreshBtn() { return $("refreshBtn"); },
+      get clearBtn() { return $("clearBtn"); },
+      get exportBtn() { return $("exportBtn"); },
+      get exportCurrentPageOpt() { return $("exportCurrentPageOpt"); },
+      get exportAllOpt() { return $("exportAllOpt"); },
+      get addEmployeeBtn() { return $("addEmployeeBtn"); },
+      get saveAddBtn() { return $("saveAddBtn"); },
+      get addEmployeeForm() { return $("addEmployeeForm"); },
+      get addEmployeeFields() { return $("addEmployeeFields"); },
+      get addEmployeeModal() { return $("addEmployeeModal"); },
+      get goTopBtn() { return $("goTopBtn"); },
+      get tableWrap() { return document.querySelector(".tableWrap"); },
+      get toastHost() { return $("toastHost"); },
+      get confirmDeleteModal() { return $("confirmDeleteModal"); },
+      get confirmDeleteBtn() { return $("confirmDeleteBtn"); },
+      get confirmDeleteText() { return $("confirmDeleteText"); }
+    };
+
+    function normalizeText(value) {
+      return String(value ?? "").trim();
+    }
+
+    function escapeAttr(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function debounce(fn, delay = 300) {
+  let timer = null;
+  function debounced(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  }
+  debounced.cancel = () => {
+    clearTimeout(timer);
+    timer = null;
+  };
+  return debounced;
+}
+
+    function setSub(text) {
+      if (els.subText) els.subText.innerHTML = text || "";
+    }
+
+    function setBtnVisible(id, visible) {
+      const el = $(id);
+      if (!el) return;
+      el.style.display = visible ? "" : "none";
+    }
+
+    function isAppsScriptReady() {
+      return !!(window.google && google.script && google.script.run);
+    }
+
+    function unwrapResponse(response) {
+      if (Array.isArray(response)) {
+        return { ok: true, data: response, total: response.length };
+      }
+
+      if (typeof response === "string" && /^https?:/i.test(response)) {
+        return { ok: true, data: response };
+      }
+
+      if (response && typeof response === "object") {
+        if ("ok" in response) return response;
+
+        if (Array.isArray(response.data)) {
+          return {
+            ok: true,
+            data: response.data,
+            total: Number(response.total || response.data.length)
+          };
+        }
+      }
+
+      return { ok: false, error: "Unexpected server response." };
+    }
+
+    function runServer(method, payload) {
+      return new Promise((resolve, reject) => {
+        if (!isAppsScriptReady()) {
+          reject(new Error("Apps Script bridge not available."));
+          return;
+        }
+
+        let runner = google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(reject);
+
+        if (typeof runner[method] !== "function") {
+          reject(new Error(`Server method "${method}" is not available.`));
+          return;
+        }
+
+        if (typeof payload === "undefined") {
+          runner[method]();
+        } else {
+          runner[method](payload);
+        }
+      });
+    }
+
+    /* =========================
+       TOASTS
+       ========================= */
+    function showToast({
+      type = "info",
+      title = "Notice",
+      message = "",
+      duration = 3200
+    } = {}) {
+      const host = els.toastHost;
+      if (!host) return;
+
+      const iconMap = {
+        success: "fa-circle-check",
+        error: "fa-circle-xmark",
+        warning: "fa-triangle-exclamation",
+        info: "fa-circle-info"
+      };
+
+      const toast = document.createElement("div");
+      toast.className = `toast-card toast-${type}`;
+      toast.innerHTML = `
+        <div class="toast-icon">
+          <i class="fas ${iconMap[type] || iconMap.info}"></i>
+        </div>
+        <div class="toast-content">
+          <div class="toast-title">${escapeAttr(title)}</div>
+          <div class="toast-message">${escapeAttr(message)}</div>
+        </div>
+        <button type="button" class="toast-close" aria-label="Close">
+          <i class="fas fa-xmark"></i>
+        </button>
+      `;
+
+      const removeToast = () => {
+        toast.classList.add("hide");
+        setTimeout(() => toast.remove(), 180);
+      };
+
+      toast.querySelector(".toast-close")?.addEventListener("click", removeToast);
+      host.appendChild(toast);
+
+      if (duration > 0) {
+        setTimeout(removeToast, duration);
+      }
+    }
+
+    /* =========================
+       VALIDATION
+       ========================= */
+    function clearInlineErrors() {
+      const form = els.addEmployeeForm;
+      if (!form) return;
+
+      form.querySelectorAll(".is-invalid").forEach((el) => el.classList.remove("is-invalid"));
+      form.querySelectorAll(".field-error").forEach((el) => el.remove());
+    }
+
+    function setFieldError(fieldName, message) {
+      const form = els.addEmployeeForm;
+      if (!form) return;
+
+      const field = form.querySelector(`[name="${fieldName}"]`);
+      if (!field) return;
+
+      field.classList.add("is-invalid");
+
+      const existing = field.parentElement?.querySelector(".field-error");
+      if (existing) existing.remove();
+
+      const err = document.createElement("div");
+      err.className = "field-error";
+      err.textContent = message;
+
+      field.parentElement?.appendChild(err);
+    }
+
+    function validateEmailFormat(value) {
+      if (!value) return true;
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function validateForm(payload) {
+      clearInlineErrors();
+
+      let firstInvalid = null;
+      const errors = {};
+
+      REQUIRED_FIELDS.forEach((key) => {
+        if (!normalizeText(payload[key])) {
+          errors[key] = `${COLUMN_MAP[key]} is required.`;
+        }
+      });
+
+      if (payload.email && !validateEmailFormat(payload.email)) {
+        errors.email = "Enter a valid company email address.";
+      }
+
+      if (payload.personalEmail && !validateEmailFormat(payload.personalEmail)) {
+        errors.personalEmail = "Enter a valid personal email address.";
+      }
+
+      if (payload.manager && !validateEmailFormat(payload.manager)) {
+  errors.manager = "Enter a valid manager email address.";
+}
+
+      Object.entries(errors).forEach(([key, message]) => {
+        setFieldError(key, message);
+        if (!firstInvalid) {
+          firstInvalid = els.addEmployeeForm?.querySelector(`[name="${key}"]`);
+        }
+      });
+
+      if (firstInvalid) firstInvalid.focus();
+
+      return {
+        ok: Object.keys(errors).length === 0,
+        errors
+      };
+    }
+
+    /* =========================
+       COLUMN VISIBILITY
+       ========================= */
+    function isColumnVisible(key) {
+      if (key === "actions") return !!state.rbac.canManage;
+      return state.columnVisibility[key] !== false;
+    }
+
+    function getVisibleKeys() {
+      return ALL_KEYS.filter(isColumnVisible);
+    }
+
+    function getVisibleColspan() {
+      return getVisibleKeys().length || 1;
+    }
+
+    function resetColumnVisibility() {
+      DATA_KEYS.forEach((key) => {
+        state.columnVisibility[key] = true;
+      });
+    }
+
+    function applyHeaderVisibility() {
+      const row = els.employeeHeaderRow;
+      if (!row) return;
+
+      row.querySelectorAll("th[data-key]").forEach((th) => {
+        const key = th.getAttribute("data-key");
+        th.style.display = isColumnVisible(key) ? "table-cell" : "none";
+      });
+    }
+
+    function generateTableHeaders() {
+      const row = els.employeeHeaderRow;
+      if (!row) return;
+
+      row.innerHTML = "";
+
+      ALL_KEYS.forEach((key) => {
+        const th = document.createElement("th");
+        th.dataset.key = key;
+        th.style.display = isColumnVisible(key) ? "table-cell" : "none";
+
+        if (key === "actions") th.style.cursor = "default";
+
+        th.innerHTML = `
+          <span class="th-label">${escapeAttr(COLUMN_MAP[key] || key)}</span>
+          ${key !== "actions" ? '<i class="fas fa-sort th-sort-icon" style="margin-left:6px;opacity:.2;"></i>' : ""}
+        `;
+
+        row.appendChild(th);
+      });
+
+      updateSortIcons();
+    }
+
+    function generateColumnCheckboxes() {
+      const selector = els.columnSelector;
+      if (!selector) return;
+
+      selector.innerHTML = DATA_KEYS.map((key) => {
+        const checked = state.columnVisibility[key] !== false ? "checked" : "";
+        return `
+          <label>
+            <input type="checkbox" data-key="${escapeAttr(key)}" ${checked}>
+            <span>${escapeAttr(COLUMN_MAP[key])}</span>
+          </label>
+        `;
+      }).join("");
+
+      selector.querySelectorAll('input[type="checkbox"][data-key]').forEach((cb) => {
+        cb.addEventListener("change", () => {
+          const key = cb.dataset.key;
+          state.columnVisibility[key] = cb.checked;
+          applyHeaderVisibility();
+          renderEmployees(state.lastPageData);
+          renderPaginationBar();
+        });
+      });
+    }
+
+    function toggleColumnSelector() {
+  const el  = document.getElementById("columnSelector");
+  const btn = document.getElementById("toggleColsBtn");
+  if (!el || !btn) return;
+
+  const isOpen = el.style.display === "block";
+
+  if (isOpen) {
+    el.style.display = "none";
+    btn.setAttribute("aria-expanded", "false");
+    btn.focus();                        // return focus to trigger button on close
+  } else {
+    el.style.display = "block";
+    btn.setAttribute("aria-expanded", "true");
+
+    // Move focus to first checkbox inside the dropdown
+    const firstCheck = el.querySelector('input[type="checkbox"]');
+    if (firstCheck) firstCheck.focus();
+  }
+}
+
+    function hideColumnSelectorIfClickedOutside(event) {
+  const selector = els.columnSelector;
+  const toggle   = els.toggleColsBtn;
+  if (!selector || !toggle) return;
+  if (selector.style.display !== "block") return;
+  if (selector.contains(event.target) || toggle.contains(event.target)) return;
+  selector.style.display = "none";
+  toggle.setAttribute("aria-expanded", "false");
+}
+
+    /* =========================
+       STATUS / TABLE STATE
+       ========================= */
+function getStatusTag(status) {
+  const raw = String(status || "").trim();
+  const text = raw.toLowerCase();
+
+  let cls;
+  if (text === "active")                                         cls = "tag-active";
+  else if (text === "inactive" || text === "disabled")           cls = "tag-inactive";
+  else if (text === "not started yet" || text === "notstarted")  cls = "tag-notstarted";
+  else if (text === "maternity leave" || text === "maternity")   cls = "tag-maternity";
+  else if (text === "paternity leave" || text === "paternity")   cls = "tag-paternity";
+  else if (text === "rendering")                                 cls = "tag-rendering";
+  else if (text === "offboarded")                                cls = "tag-offboarded";
+  else                                                           cls = "tag-inactive";
+
+  const displayText = raw || "—";
+  return `<span class="status-tag ${cls}"><span class="dot"></span>${escapeAttr(displayText)}</span>`;
+}
+
+
+    function renderMessageRow(message, color = "var(--text-secondary)") {
+      const tbody = els.employeeBody;
+      if (!tbody) return;
+
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="${getVisibleColspan()}" style="text-align:center;color:${color};padding:40px 20px;">
+            ${message}
+          </td>
+        </tr>
+      `;
+    }
+
+    function showLoadingRow(message = "Loading...") {
+      renderMessageRow(`<i class="fas fa-circle-notch fa-spin"></i> ${escapeAttr(message)}`);
+    }
+
+    function showLoadError(message = "Unable to load data.") {
+      renderMessageRow(escapeAttr(message), "#ff8888");
+    }
+
+    /* =========================
+       SORT
+       ========================= */
+    function updateSortIcons() {
+      const row = els.employeeHeaderRow;
+      if (!row) return;
+
+      row.querySelectorAll("th[data-key]").forEach((th) => {
+        const key = th.dataset.key;
+        const icon = th.querySelector(".th-sort-icon");
+        if (!icon || key === "actions") return;
+
+        const isActive = key === state.currentSortColumn;
+        icon.className = `fas ${isActive ? (state.isAscending ? "fa-sort-up" : "fa-sort-down") : "fa-sort"} th-sort-icon`;
+        icon.style.opacity = isActive ? "1" : "0.2";
+        icon.style.color = isActive ? "var(--accent-blue)" : "";
+      });
+    }
+
+    function sortTable(key) {
+      if (!key || key === "actions") return;
+
+      if (state.currentSortColumn === key) {
+        state.isAscending = !state.isAscending;
+      } else {
+        state.currentSortColumn = key;
+        state.isAscending = true;
+      }
+
+      updateSortIcons();
+      fetchPage(1);
+    }
+
+    /* =========================
+       RBAC
+       ========================= */
+    function applyEmployeesRbacUi() {
+      if (!state.rbac.canPage) {
+        if (els.tableWrap) {
+          els.tableWrap.innerHTML = `
+            <div style="padding:50px;text-align:center;">
+              <div style="font-size:22px;font-weight:700;margin-bottom:8px;">Access Denied</div>
+              <div style="color:var(--text-secondary);">
+                You do not have permission to view the Employees page.
+              </div>
+            </div>
+          `;
+        }
+
+        setSub("You do not have permission to access this page.");
+        return;
+      }
+
+      setBtnVisible("addEmployeeBtn", state.rbac.canManage);
+
+      if (els.saveAddBtn) {
+        els.saveAddBtn.style.display = state.rbac.canManage ? "" : "none";
+      }
+
+      generateTableHeaders();
+      generateColumnCheckboxes();
+      applyHeaderVisibility();
+    }
+
+    async function loadEmployeesRbac(done) {
+      if (!isAppsScriptReady()) {
+        state.rbac.loaded = true;
+        state.rbac.canPage = true;
+        state.rbac.canManage = false;
+        applyEmployeesRbacUi();
+        if (typeof done === "function") done();
+        return;
+      }
+
+      try {
+        const res = await runServer("getMyPermissions");
+        const payload = res && res.data ? res.data : (res || {});
+        const pages = payload.pages || {};
+        const actions = payload.actions || {};
+
+        state.rbac.loaded = true;
+        state.rbac.canPage = !!(
+          pages["employees"] === true ||
+          Object.keys(pages).some(k => k.toLowerCase() === "employees" && pages[k] === true)
+        );
+        state.rbac.canManage = !!(
+          actions["employees.manage"] === true ||
+          Object.keys(actions).some(k => k.toLowerCase() === "employees.manage" && actions[k] === true)
+        );
+        state.rbac.canDelete = !!(
+          actions["employees.delete"] === true ||
+          Object.keys(actions).some(k => k.toLowerCase() === "employees.delete" && actions[k] === true)
+        );
+
+      } catch (err) {
+        console.error("RBAC load failed:", err);
+        state.rbac.loaded = true;
+        state.rbac.canPage = true;
+        state.rbac.canManage = false;
+      }
+
+      applyEmployeesRbacUi();
+      if (typeof done === "function") done();
+    }
+
+    /* =========================
+       TABLE RENDER
+       ========================= */
+    function renderEmployees(data) {
+      const tbody = els.employeeBody;
+      if (!tbody) return;
+
+      const visibleKeys = getVisibleKeys();
+      const colspan = visibleKeys.length || 1;
+
+      if (!Array.isArray(data) || data.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="${colspan}" style="text-align:center;color:var(--text-secondary);padding:40px;">
+              No matching records found.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = data.map((item) => {
+        const cells = visibleKeys.map((key) => {
+          if (key === "status") {
+  return `<td data-key="status">${getStatusTag(item.status)}</td>`;
+}
+          if (key === "actions") {
+            if (!state.rbac.canManage) return "<td data-key=\"actions\"></td>";
+
+            const safeId       = escapeAttr(item.employeeId ?? "");
+            const safeRowIndex = item._rowIndex != null ? String(item._rowIndex) : "";
+
+            return "<td data-key=\"actions\" style=\"white-space:nowrap;\">" +
+              (state.rbac.canManage
+                ? "<button class=\"actionBtn editBtn\" data-action=\"edit\"" +
+                  " data-id=\"" + safeId + "\" data-row-index=\"" + safeRowIndex + "\"" +
+                  " title=\"Edit Employee\"><i class=\"fas fa-pen\"></i></button>"
+                : "") +
+              (state.rbac.canDelete
+                ? "<button class=\"actionBtn deleteBtn\" data-action=\"delete\"" +
+                  " data-id=\"" + safeId + "\" data-row-index=\"" + safeRowIndex + "\"" +
+                  " title=\"Delete Employee\"><i class=\"fas fa-trash\"></i></button>"
+                : "") +
+              "</td>";
+          }
+
+          return `
+            <td data-key="${escapeAttr(key)}">
+              ${escapeAttr(item[key] ?? "")}
+            </td>
+          `;
+        }).join("");
+
+        return `<tr>${cells}</tr>`;
+      }).join("");
+    }
+
+    /* =========================
+       PAGINATION
+       ========================= */
+    function getTotalPages() {
+      return Math.max(1, Math.ceil((state.totalRows || 0) / state.pageSize));
+    }
+
+    function renderPaginationBar() {
+  const bar  = $("paginationBar");
+  const info = $("paginationInfo");
+  const prev = $("btnPrev");
+  const next = $("btnNext");
+  if (!bar) return;
+
+  const total     = state.totalRows || 0;
+  const totalPages = getTotalPages();
+
+  // Hide the whole bar when everything fits on one page —
+  // but NEVER destroy innerHTML, that would kill the static buttons
+  if (total <= state.pageSize) {
+    bar.style.display = "none";
+    return;
+  }
+
+  bar.style.display = "flex";
+
+  const start = (state.currentPage - 1) * state.pageSize + 1;
+  const end   = Math.min(state.currentPage * state.pageSize, total);
+
+  if (info) {
+    info.textContent = "";           // clear first
+    info.innerHTML   =
+      `Showing <b>${start}–${end}</b> of <b>${total}</b> · ` +
+      `Page <b>${state.currentPage}</b> / ${totalPages}`;
+  }
+
+  if (prev) prev.disabled = state.currentPage <= 1;
+  if (next) next.disabled = state.currentPage >= totalPages;
+}
+
+    /* =========================
+       FETCH
+       ========================= */
+    async function fetchPage(page = 1) {
+      const mySeq = ++state.fetchSeq;
+      state.currentPage = Math.max(1, Number(page) || 1);
+
+      const payload = {
+        page: state.currentPage,
+        pageSize: state.pageSize,
+        query: normalizeText(els.searchBox?.value),
+        sortKey: state.currentSortColumn,
+        asc: state.isAscending
+      };
+
+      const loadingTimer = setTimeout(() => {
+        if (mySeq === state.fetchSeq) showLoadingRow("Loading...");
+      }, 150);
+
+      try {
+        const res = await runServer("employees_list_paged", payload);
+        clearTimeout(loadingTimer);
+
+        if (mySeq !== state.fetchSeq) return;
+
+        const out = unwrapResponse(res);
+        if (!out.ok) {
+          showLoadError(`Unable to load data: ${out.error || "Unknown error"}`);
+          setSub("Unable to load employees.");
+          showToast({
+            type: "error",
+            title: "Load failed",
+            message: out.error || "Unable to load employees."
+          });
+          return;
+        }
+
+        state.lastPageData = Array.isArray(out.data) ? out.data : [];
+        state.totalRows = Number(out.total || 0) || 0;
+
+        setSub(
+          state.totalRows
+            ? `Showing page <b>${state.currentPage}</b> • Total <b>${state.totalRows}</b> employees.`
+            : "No matching records found."
+        );
+
+        renderEmployees(state.lastPageData);
+        renderPaginationBar();
+      } catch (err) {
+        clearTimeout(loadingTimer);
+        if (mySeq !== state.fetchSeq) return;
+
+        console.error(err);
+        showLoadError("Unable to load data. Please check connection.");
+        setSub("Unable to load employees.");
+        showToast({
+          type: "error",
+          title: "Connection error",
+          message: err?.message || "Unable to load employees."
+        });
+      }
+    }
+
+    /* =========================
+       EXPORT
+       ========================= */
+    function getVisibleExportConfig() {
+      const visibleKeys = DATA_KEYS.filter((key) => isColumnVisible(key));
+      return {
+        visibleKeys,
+        visibleHeaders: visibleKeys.map((key) => COLUMN_MAP[key])
+      };
+    }
+
+    function setExportBusy(isBusy, text = "Exporting...") {
+      const btn = els.exportBtn;
+      if (!btn) return;
+
+      btn.disabled = !!isBusy;
+      btn.innerHTML = isBusy
+        ? `<i class="fas fa-circle-notch fa-spin"></i> ${escapeAttr(text)}`
+        : `<i class="fas fa-file-export"></i> Export`;
+    }
+
+    async function exportCurrentPage() {
+      if (!state.lastPageData.length) {
+        showToast({
+          type: "warning",
+          title: "Nothing to export",
+          message: "The current page has no data."
+        });
+        return;
+      }
+
+      const { visibleKeys, visibleHeaders } = getVisibleExportConfig();
+      const exportConfig = {
+        title: `Employee Directory (Page ${state.currentPage})`,
+        headers: visibleHeaders,
+        keys: visibleKeys,
+        data: state.lastPageData
+      };
+
+      setExportBusy(true, "Exporting page...");
+
+      try {
+        const url = await runServer("generateEmployeeExport", exportConfig);
+        if (url) {
+          window.open(url, "_blank");
+          showToast({
+            type: "success",
+            title: "Export ready",
+            message: "Current page export opened in a new tab."
+          });
+        }
+      } catch (err) {
+        showToast({
+          type: "error",
+          title: "Export failed",
+          message: err?.message || "Unable to export current page."
+        });
+      } finally {
+        setExportBusy(false);
+      }
+    }
+
+    async function exportAllFiltered() {
+      const { visibleKeys, visibleHeaders } = getVisibleExportConfig();
+
+      const exportRequest = {
+        title: "Employee Directory (All Results)",
+        headers: visibleHeaders,
+        keys: visibleKeys,
+        query: normalizeText(els.searchBox?.value),
+        sortKey: state.currentSortColumn,
+        asc: state.isAscending
+      };
+
+      setExportBusy(true, "Exporting all...");
+
+      try {
+        const res = await runServer("employees_export_all", exportRequest);
+        const out = unwrapResponse(res);
+
+        if (!out.ok) {
+          showToast({
+            type: "error",
+            title: "Export failed",
+            message: out.error || "Unknown export error."
+          });
+          return;
+        }
+
+        if (out.data) {
+          window.open(out.data, "_blank");
+          showToast({
+            type: "success",
+            title: "Export ready",
+            message: "Filtered export opened in a new tab."
+          });
+        }
+      } catch (err) {
+        showToast({
+          type: "error",
+          title: "Export failed",
+          message: err?.message || "Unable to export filtered results."
+        });
+      } finally {
+        setExportBusy(false);
+      }
+    }
+
+    /* =========================
+       CLEAR / REFRESH
+       ========================= */
+    function clearAllFilters() {
+  // Cancel any pending debounced search before resetting —
+  // prevents a stale search firing after clear
+  if (state.debouncedSearch) state.debouncedSearch.cancel();
+
+  if (els.searchBox) els.searchBox.value = "";
+
+  resetColumnVisibility();
+  state.currentSortColumn = "displayName";
+  state.isAscending       = true;
+
+  generateColumnCheckboxes();
+  generateTableHeaders();
+  applyHeaderVisibility();
+  updateSortIcons();
+  fetchPage(1);
+
+  showToast({
+    type: "info",
+    title: "Filters cleared",
+    message: "Search, sorting, and visible columns were reset."
+  });
+}
+
+    /* =========================
+       GO TO TOP
+       ========================= */
+    function setupGoTop(signal) {
+  const btn = els.goTopBtn;
+  if (!btn) return;
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let lastY = window.scrollY;
+  let idleTimer = null;
+  const threshold = 220;
+
+  function show() { btn.classList.add("show"); }
+  function hide() { btn.classList.remove("show"); }
+
+  function onScroll() {
+    const y = window.scrollY;
+    const scrollingUp = y < lastY;
+    if (y <= threshold) {
+      hide();
+    } else {
+      if (scrollingUp) show();
+      else hide();
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        if (window.scrollY > threshold) show();
+      }, 180);
+    }
+    lastY = y;
+  }
+
+  btn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  }, { signal });
+
+  window.addEventListener("scroll", onScroll, { passive: true, signal });
+  onScroll();
+}
+
+
+
+
+
+
+function loadEmployeeListForPicker() {
+  if (!isAppsScriptReady()) return;
+
+  // Try sessionStorage first — 10 minute client cache
+  try {
+    var cached = sessionStorage.getItem('emp_picker_cache');
+    if (cached) {
+      var parsed = JSON.parse(cached);
+      var age = Date.now() - (parsed._ts || 0);
+      if (age < 10 * 60 * 1000 && Array.isArray(parsed.data)) {
+        state.employeeList = parsed.data;
+        return;
+      }
+    }
+  } catch (_) {}
+
+  google.script.run
+    .withSuccessHandler((res) => {
+      const out = unwrapResponse(res);
+      if (out.ok && Array.isArray(out.data)) {
+        state.employeeList = out.data;
+        try {
+          sessionStorage.setItem('emp_picker_cache', JSON.stringify({
+            data: out.data,
+            _ts: Date.now()
+          }));
+        } catch (_) {}
+      }
+    })
+    .withFailureHandler((err) => console.warn("Employee picker load failed:", err?.message || err))
+    .employees_list();
+}
+
+function destroyManagerTomSelect() {
+  if (state.tsManagerInstance) {
+    try { state.tsManagerInstance.destroy(); } catch (_) {}
+    state.tsManagerInstance = null;
+  }
+}
+
+function buildManagerTomSelect() {
+  destroyManagerTomSelect();
+  const sel = $("add_manager_select");
+  if (!sel) return;
+
+  state.tsManagerInstance = new TomSelect(sel, {
+    placeholder: "Search manager by name…",
+    allowEmptyOption: true,
+    closeAfterSelect: true,
+    maxOptions: 2000,
+    onChange(value) {
+      const hidden = $("add_manager");
+      if (hidden) hidden.value = value || ""; // value is now the email
+    }
+  });
+
+  // Toggle: switch to manual email input
+  $("manager_manual_toggle")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    $("manager_picker_wrap").style.display = "none";
+    $("manager_manual_wrap").style.display = "";
+    $("manager_manual_input").focus();
+
+    // Sync hidden input from manual field on input
+    $("manager_manual_input").addEventListener("input", () => {
+      const hidden = $("add_manager");
+      if (hidden) hidden.value = $("manager_manual_input").value.trim();
+    });
+
+    // Clear picker value so hidden input is driven by manual field
+    if (state.tsManagerInstance) state.tsManagerInstance.setValue("", true);
+    const hidden = $("add_manager");
+    if (hidden) hidden.value = "";
+  });
+
+  // Toggle: switch back to dropdown picker
+  $("manager_picker_toggle")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    $("manager_manual_wrap").style.display = "none";
+    $("manager_picker_wrap").style.display = "";
+
+    // Clear manual input and reset hidden
+    const manualInput = $("manager_manual_input");
+    if (manualInput) manualInput.value = "";
+    const hidden = $("add_manager");
+    if (hidden) hidden.value = "";
+    if (state.tsManagerInstance) state.tsManagerInstance.setValue("", true);
+  });
+}
+
+
+
+    /* =========================
+       MODALS
+       ========================= */
+function buildModalFields() {
+  const wrap = els.addEmployeeFields;
+  const form = els.addEmployeeForm;
+  if (!wrap || !form) return;
+
+  wrap.innerHTML = DATA_KEYS.map((key) => {
+    const label = COLUMN_MAP[key] || key;
+    const id = `add_${key}`;
+    const required = REQUIRED_FIELDS.includes(key);
+    const requiredAttr = required ? "required" : "";
+
+    let fieldHtml = "";
+
+    if (key === "status") {
+      fieldHtml = `
+  <select class="form-select" id="${id}" name="${key}" ${requiredAttr}>
+    <option value="">Select...</option>
+    <option>Active</option>
+    <option>Inactive</option>
+    <option>Not started yet</option>
+    <option>Maternity Leave</option>
+    <option>Paternity Leave</option>
+    <option>Rendering</option>
+    <option>Offboarded</option>
+  </select>
+`;
+
+    } else if (key === "manager") {
+      const managerOptions = state.employeeList.filter(function(emp) {
+        return String(emp.title || "").toLowerCase().includes("manager");
+      });
+
+      fieldHtml = `
+        <input type="hidden" id="add_manager" name="manager" value="">
+
+        <div id="manager_picker_wrap">
+          <select id="add_manager_select">
+            <option value="">Search manager by name…</option>
+            ${managerOptions.map((emp) => `
+              <option value="${escapeAttr(emp.email || "")}"
+                      data-name="${escapeAttr(emp.displayName || "")}">
+                ${escapeAttr(emp.displayName || "")}${emp.email ? ` — ${escapeAttr(emp.email)}` : ""}
+              </option>
+            `).join("")}
+          </select>
+          <div style="margin-top:6px;">
+            <a href="#" id="manager_manual_toggle"
+               style="font-size:11px;color:var(--em);text-decoration:none;">
+              ✏️ Type email manually instead
+            </a>
+          </div>
+        </div>
+
+        <div id="manager_manual_wrap" style="display:none;">
+          <input class="form-control" type="email" id="manager_manual_input"
+                 placeholder="manager@company.com">
+          <div style="margin-top:6px;">
+            <a href="#" id="manager_picker_toggle"
+               style="font-size:11px;color:var(--em);text-decoration:none;">
+              🔍 Search from list instead
+            </a>
+          </div>
+        </div>
+      `;
+
+    } else if (key === "startDate" || key === "eod") {
+      fieldHtml = `
+        <input class="form-control" id="${id}" name="${key}" placeholder="MM/DD/YYYY" ${requiredAttr}>
+      `;
+
+    } else if (key === "email" || key === "personalEmail") {
+      fieldHtml = `
+        <input class="form-control" type="email" id="${id}" name="${key}" placeholder="${escapeAttr(label)}" ${requiredAttr}>
+      `;
+
+    } else {
+      fieldHtml = `
+        <input class="form-control" id="${id}" name="${key}" placeholder="${escapeAttr(label)}" ${requiredAttr}>
+      `;
+    }
+
+    return `
+      <div class="col-12 col-md-6 col-lg-4" data-key="${escapeAttr(key)}">
+        <label class="form-label" for="${id}">
+          ${escapeAttr(label)}${required ? ' <span class="text-danger">*</span>' : ""}
+        </label>
+        ${fieldHtml}
+      </div>
+    `;
+  }).join("");
+
+  form.reset();
+  clearInlineErrors();
+
+  const statusEl = $("add_status");
+  if (statusEl && !statusEl.value) statusEl.value = "Active";
+
+  // Wire TomSelect for manager picker after DOM is ready
+  requestAnimationFrame(() => buildManagerTomSelect());
+}
+
+
+    function collectForm() {
+      const form = els.addEmployeeForm;
+      if (!form) return null;
+
+      const fd = new FormData(form);
+      const payload = {};
+
+      DATA_KEYS.forEach((key) => {
+        payload[key] = normalizeText(fd.get(key));
+      });
+
+      return payload;
+    }
+
+    function setModalTitle(html) {
+      const titleEl = els.addEmployeeModal?.querySelector(".modal-title");
+      if (titleEl) titleEl.innerHTML = html;
+    }
+
+    function setSaveButtonState({ disabled, html, visible = true }) {
+      const btn = els.saveAddBtn;
+      if (!btn) return;
+
+      btn.disabled = !!disabled;
+      btn.innerHTML = html;
+      btn.style.display = visible ? "" : "none";
+    }
+
+function getAddModalInstance() {
+  const el = els.addEmployeeModal;
+  if (!el) return null;
+
+  // Move to body if not already there to fix stacking context in shell
+  if (el.parentElement !== document.body) {
+    document.body.appendChild(el);
+  }
+
+  state.addModalInstance = bootstrap.Modal.getOrCreateInstance(el);
+  return state.addModalInstance;
+}
+
+function getConfirmDeleteModalInstance() {
+  const el = els.confirmDeleteModal;
+  if (!el) return null;
+
+  if (el.parentElement !== document.body) {
+    document.body.appendChild(el);
+  }
+
+  state.confirmDeleteModalInstance = bootstrap.Modal.getOrCreateInstance(el);
+  return state.confirmDeleteModalInstance;
+}
+
+    function openAddModal() {
+      if (!state.rbac.canManage) {
+        showToast({
+          type: "warning",
+          title: "Access denied",
+          message: "You do not have permission to add employees."
+        });
+        return;
+      }
+
+      state.editingEmployeeId = null;
+      state.editingRowIndex = null;
+      buildModalFields();
+      setModalTitle(`<i class="fa-solid fa-user-plus"></i> Add New Employee`);
+      setSaveButtonState({
+        disabled: false,
+        html: `<i class="fas fa-save"></i> Save`,
+        visible: true
+      });
+
+      const modal = getAddModalInstance();
+      if (modal) modal.show();
+    }
+
+    async function openEditModal(employeeId, rowIndex = null) {
+  if (!state.rbac.canManage) {
+    showToast({
+      type: "warning",
+      title: "Access denied",
+      message: "You do not have permission to edit employees."
+    });
+    return;
+  }
+
+  const id = normalizeText(employeeId);
+
+  const myEditSeq = ++state.editSeq;
+  state.editingEmployeeId = id;
+  state.editingRowIndex = rowIndex;
+
+  buildModalFields();
+  setModalTitle(`<i class="fa-solid fa-user-pen"></i> Edit Employee`);
+  setSaveButtonState({
+    disabled: true,
+    html: `<i class="fas fa-circle-notch fa-spin"></i> Loading...`,
+    visible: true
+  });
+
+  const modal = getAddModalInstance();
+  if (modal) modal.show();
+
+  try {
+    const res = await runServer("employees_get", { employeeId: id, _rowIndex: state.editingRowIndex });
+    if (myEditSeq !== state.editSeq) return;
+
+    const out = unwrapResponse(res);
+    if (!out.ok || !out.data) {
+      setSaveButtonState({
+        disabled: false,
+        html: `<i class="fas fa-save"></i> Update`,
+        visible: true
+      });
+      showToast({
+        type: "error",
+        title: "Load failed",
+        message: out.error || "Employee not found."
+      });
+      return;
+    }
+
+    const emp = out.data;
+    state.editingRowIndex = emp._rowIndex != null ? emp._rowIndex : null;
+    const form = els.addEmployeeForm;
+    if (!form) return;
+
+    DATA_KEYS.forEach((key) => {
+      if (key === "manager") {
+  const value = emp[key] ?? "";
+  const hidden = $("add_manager");
+  if (hidden) hidden.value = value;
+
+  // Try to match by email in the picker first
+  if (state.tsManagerInstance && value) {
+    state.tsManagerInstance.setValue(value, true);
+    // If no match found, fall back to manual input
+    if (!state.tsManagerInstance.getValue()) {
+      $("manager_picker_wrap").style.display = "none";
+      $("manager_manual_wrap").style.display = "";
+      const manualInput = $("manager_manual_input");
+      if (manualInput) manualInput.value = value;
+    }
+  }
+  return;
+}
+      const input = form.querySelector(`[name="${key}"]`);
+      if (input) input.value = emp[key] ?? "";
+    });
+
+    clearInlineErrors();
+
+    setSaveButtonState({
+      disabled: false,
+      html: `<i class="fas fa-save"></i> Update`,
+      visible: true
+    });
+  } catch (err) {
+    if (myEditSeq !== state.editSeq) return;
+
+    setSaveButtonState({
+      disabled: false,
+      html: `<i class="fas fa-save"></i> Update`,
+      visible: true
+    });
+
+    showToast({
+      type: "error",
+      title: "Load failed",
+      message: err?.message || "Unable to load employee details."
+    });
+  }
+}
+
+    async function saveEmployee() {
+  if (!state.rbac.canManage) {
+    showToast({
+      type: "warning",
+      title: "Access denied",
+      message: "You do not have permission to save employee changes."
+    });
+    return;
+  }
+
+  const btn = els.saveAddBtn;
+  const payload = collectForm();
+  if (!btn || !payload) return;
+
+  const validation = validateForm(payload);
+  if (!validation.ok) {
+    showToast({
+      type: "warning",
+      title: "Form incomplete",
+      message: "Please fix the highlighted fields before saving."
+    });
+    return;
+  }
+
+  const originalHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Saving...`;
+
+  // Use !== null so blank-ID employees (editingEmployeeId === "") are still
+  // treated as edits, not new additions
+  const isEditing = state.editingEmployeeId !== null;
+
+  try {
+    const method = isEditing ? "employees_update" : "employees_add";
+    const requestPayload = isEditing
+      ? { ...payload, _originalEmployeeId: state.editingEmployeeId, _rowIndex: state.editingRowIndex }
+      : payload;
+
+    const res = await runServer(method, requestPayload);
+    const out = unwrapResponse(res);
+
+    if (!out.ok) {
+      showToast({
+        type: "error",
+        title: "Save failed",
+        message: out.error || "Unknown error while saving."
+      });
+      return;
+    }
+
+    if (state.addModalInstance) state.addModalInstance.hide();
+
+    const reloadPage = isEditing ? state.currentPage : 1;
+    state.editingEmployeeId = null;
+    state.editingRowIndex   = null;
+
+    // Bust the picker cache so the next modal open reflects this change
+    try { sessionStorage.removeItem("emp_picker_cache"); } catch (_) {}
+    state.employeeList = [];
+    loadEmployeeListForPicker();
+
+    fetchPage(reloadPage);
+
+    showToast({
+      type: "success",
+      title: isEditing ? "Employee updated" : "Employee added",
+      message: isEditing
+        ? "Employee details were updated successfully."
+        : "New employee was added successfully."
+    });
+  } catch (err) {
+    showToast({
+      type: "error",
+      title: "Save failed",
+      message: err?.message || "Unable to save employee."
+    });
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+}
+
+    function requestDeleteEmployee(employeeId, rowIndex = null) {
+      if (!state.rbac.canDelete) {
+        showToast({
+          type: "warning",
+          title: "Access denied",
+          message: "You do not have permission to delete employees."
+        });
+        return;
+      }
+
+      const id = normalizeText(employeeId);
+
+      state.pendingDeleteId = id;
+      state.pendingDeleteRowIndex = rowIndex;
+
+      if (els.confirmDeleteText) {
+        els.confirmDeleteText.innerHTML = `
+          Are you sure you want to delete employee
+          <b style="color:var(--text-primary)">${escapeAttr(id)}</b>?
+          This action cannot be undone.
+        `;
+      }
+
+      const modal = getConfirmDeleteModalInstance();
+      if (modal) modal.show();
+    }
+
+
+    async function confirmDeleteEmployee() {
+       const id = normalizeText(state.pendingDeleteId);
+      const btn = els.confirmDeleteBtn;
+      if (!btn) return;
+      if (!id && state.pendingDeleteRowIndex == null) return;
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Deleting...`;
+
+      try {
+        const removePayload = id
+          ? id
+          : { employeeId: "", _rowIndex: state.pendingDeleteRowIndex };
+        const res = await runServer("employees_remove", removePayload);
+        const out = unwrapResponse(res);
+
+        if (!out.ok) {
+          showToast({
+            type: "error",
+            title: "Delete failed",
+            message: out.error || "Unable to delete employee."
+          });
+          return;
+        }
+
+        if (state.confirmDeleteModalInstance) {
+          state.confirmDeleteModalInstance.hide();
+        }
+
+        const remainingOnPage = Math.max(0, (state.lastPageData?.length || 0) - 1);
+        const targetPage = remainingOnPage === 0 && state.currentPage > 1
+          ? state.currentPage - 1
+          : state.currentPage;
+
+        state.pendingDeleteId    = null;
+        state.pendingDeleteRowIndex = null;
+
+        // Bust the picker cache so offboarded employees
+        // don't appear as selectable managers next open
+        try { sessionStorage.removeItem("emp_picker_cache"); } catch (_) {}
+        state.employeeList = [];
+        loadEmployeeListForPicker();
+
+        fetchPage(targetPage);
+
+        showToast({
+          type: "success",
+          title: "Employee deleted",
+          message: `Employee ${id} was removed successfully.`
+        });
+      } catch (err) {
+        showToast({
+          type: "error",
+          title: "Delete failed",
+          message: err?.message || "Unable to delete employee."
+        });
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fas fa-trash"></i> Delete`;
+      }
+    }
+
+    /* =========================
+       EVENTS
+       ========================= */
+    function wireStaticEvents(signal) {
+  const sig = { signal };
+
+  document.addEventListener("click", hideColumnSelectorIfClickedOutside, sig);
+
+  els.toggleColsBtn?.addEventListener("click", toggleColumnSelector, sig);
+  // Escape closes column selector and returns focus to trigger button
+  document.addEventListener("keydown", (event) => {
+    const selector = els.columnSelector;
+    const toggle   = els.toggleColsBtn;
+    if (!selector || selector.style.display !== "block") return;
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      selector.style.display = "none";
+      toggle?.setAttribute("aria-expanded", "false");
+      toggle?.focus();
+      return;
+    }
+
+    // Tab focus trap — keep Tab and Shift+Tab inside the dropdown
+    if (event.key === "Tab") {
+      const focusable = Array.from(
+        selector.querySelectorAll('input[type="checkbox"]')
+      ).filter(el => !el.disabled);
+
+      if (!focusable.length) return;
+
+      const first = focusable[0];
+      const last  = focusable[focusable.length - 1];
+
+      if (event.shiftKey) {
+        // Shift+Tab from first checkbox → wrap to last
+        if (document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        }
+      } else {
+        // Tab from last checkbox → wrap to first
+        if (document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    }
+  }, sig);
+  state.debouncedSearch = debounce(() => fetchPage(1), 400);
+  els.searchBox?.addEventListener("input", state.debouncedSearch, sig);
+  els.refreshBtn?.addEventListener("click", () => {
+    if (state.debouncedSearch) state.debouncedSearch.cancel();
+    fetchPage(state.currentPage);
+  }, sig);
+  els.clearBtn?.addEventListener("click", clearAllFilters, sig);
+
+  els.exportBtn?.addEventListener("click", exportCurrentPage, sig);
+  els.exportCurrentPageOpt?.addEventListener("click", exportCurrentPage, sig);
+  els.exportAllOpt?.addEventListener("click", exportAllFiltered, sig);
+
+  els.addEmployeeBtn?.addEventListener("click", openAddModal, sig);
+  els.saveAddBtn?.addEventListener("click", saveEmployee, sig);
+  els.confirmDeleteBtn?.addEventListener("click", confirmDeleteEmployee, sig);
+  els.addEmployeeModal?.addEventListener("hidden.bs.modal", destroyManagerTomSelect, sig);
+
+  els.employeeHeaderRow?.addEventListener("click", (event) => {
+    const th = event.target.closest("th[data-key]");
+    if (!th) return;
+    sortTable(th.dataset.key);
+  }, sig);
+
+  // Row action buttons (edit, delete)
+  els.employeeBody?.addEventListener("click", (event) => {
+  const btn = event.target.closest("button[data-action][data-id]");
+  if (!btn) return;
+  const { action, id } = btn.dataset;
+  const rowIndex = btn.dataset.rowIndex != null && btn.dataset.rowIndex !== ""
+    ? parseInt(btn.dataset.rowIndex, 10)
+    : null;
+
+  if (!id && rowIndex == null) {
+    showToast({
+      type: "error",
+      title: "Cannot proceed",
+      message: "Row is missing an identifier. Please refresh the page."
+    });
+    return;
+  }
+
+  if (action === "edit")   openEditModal(id, rowIndex);
+  if (action === "delete") requestDeleteEmployee(id, rowIndex);
+}, sig);
+
+
+  // Pagination — static buttons, no data-page delegation
+  document.getElementById("btnPrev")?.addEventListener("click", () => {
+    if (state.currentPage > 1) fetchPage(state.currentPage - 1);
+  }, sig);
+
+  document.getElementById("btnNext")?.addEventListener("click", () => {
+    if (state.currentPage < getTotalPages()) fetchPage(state.currentPage + 1);
+  }, sig);
+
+  els.addEmployeeForm?.addEventListener("input", (event) => {
+    const target = event.target;
+    if (!target || typeof target.closest !== "function") return;
+    const field = target.closest(".is-invalid");
+    if (!field) return;
+    field.classList.remove("is-invalid");
+    field.parentElement?.querySelector(".field-error")?.remove();
+  }, sig);
+    }
+
+
+function initEmployeesPage() {
+  const ac = new AbortController();
+
+  window.__EMPLOYEES_CLEANUP__ = () => {
+    ac.abort();
+
+    // Destroy TomSelect manager picker
+    destroyManagerTomSelect();
+
+    // Hide and remove modals from body
+    [state.addModalInstance, state.confirmDeleteModalInstance].forEach(m => {
+      try { m?.hide(); } catch(_) {}
+    });
+
+    // Remove modal elements from body if they were moved there
+    ["addEmployeeModal", "confirmDeleteModal"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.parentElement === document.body) el.remove();
+    });
+
+    state.addModalInstance = null;
+    state.confirmDeleteModalInstance = null;
+    window.__EMPLOYEES_CLEANUP__ = null;
+  };
+
+  initDefaults();
+  setupGoTop(ac.signal);
+  wireStaticEvents(ac.signal);
+
+  loadEmployeesRbac(() => {
+    if (state.rbac.canPage) {
+      updateSortIcons();
+      loadEmployeeListForPicker();
+      fetchPage(1);
+    }
+  });
+}
+
+function initDefaults() {
+  resetColumnVisibility();
+
+  // Hide these columns on initial load
+  state.columnVisibility.alias         = false;
+  state.columnVisibility.title         = false;
+  state.columnVisibility.personalEmail = false;
+  state.columnVisibility.location = false;
+
+  generateTableHeaders();
+  generateColumnCheckboxes();
+  applyHeaderVisibility();
+}
+
+// Shell injects this as innerHTML so DOMContentLoaded has already fired.
+// The readyState check handles both shell mode and direct doGet load.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initEmployeesPage);
+} else {
+  initEmployeesPage();
+}
+
+    window.openAddModal = openAddModal;
+    window.openEditModal = openEditModal;
+    window.deleteEmployee = requestDeleteEmployee;
+    window.saveEmployee = saveEmployee;
+    window.fetchPage = fetchPage;
+  })();
+</script>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1"
+     role="dialog"
+     aria-labelledby="addEmployeeTitle"
+     aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content apple-modal">
+      <div class="modal-header apple-header">
+        <h2 class="modal-title apple-title" id="addEmployeeTitle">
+          <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+          <span>Add New Employee</span>
+        </h2>
+        <button type="button" class="btn-close apple-close"
+                data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="addEmployeeForm" onsubmit="return false;" novalidate>
+          <div class="row g-3" id="addEmployeeFields"></div>
+        </form>
+        <div class="modal-tip" id="addEmployeeTip">
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          Employee ID should be unique.
+        </div>
+      </div>
+
+      <div class="modal-footer apple-footer">
+        <button type="button" class="apple-btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button type="button" class="apple-btn-primary" id="saveAddBtn"
+                aria-describedby="addEmployeeTip">
+          <i class="fas fa-save" aria-hidden="true"></i> Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1"
+     role="dialog"
+     aria-labelledby="confirmDeleteTitle"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content apple-modal">
+      <div class="modal-header apple-header">
+        <h2 class="modal-title apple-title" id="confirmDeleteTitle">
+          <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"
+             style="color:var(--red-2);"></i>
+          <span>Confirm Delete</span>
+        </h2>
+        <button type="button" class="btn-close apple-close"
+                data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body px-4 pb-2">
+        <div id="confirmDeleteText" class="confirm-message">
+          Are you sure you want to delete this employee?
+        </div>
+      </div>
+
+      <div class="modal-footer apple-footer">
+        <button type="button" class="apple-btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button type="button" class="apple-btn-danger" id="confirmDeleteBtn">
+          <i class="fas fa-trash" aria-hidden="true"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST HOST -->
+<div id="toastHost" class="toast-host"
+     role="region"
+     aria-live="polite"
+     aria-atomic="true"
+     aria-label="Notifications"></div>

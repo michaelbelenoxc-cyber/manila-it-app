@@ -1,0 +1,1420 @@
+  <style>
+  /* ═══════════════════════════════════════════════
+     FONTS
+  ═══════════════════════════════════════════════ */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  /* ═══════════════════════════════════════════════
+     TOKENS
+  ═══════════════════════════════════════════════ */
+  :root {
+    --font-ui:   'Epilogue', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    /* surfaces — warm paper (light default) */
+    --bg-0: #f5f2ec;
+    --bg-1: #f5f2ec;
+    --bg-2: #ede9e1;
+    --bg-3: #e4ded4;
+    --bg-4: #ddd6ca;
+
+    /* borders */
+    --b-0: rgba(26,24,20,.07);
+    --b-1: rgba(26,24,20,.12);
+    --b-2: rgba(26,24,20,.18);
+    --b-3: rgba(26,24,20,.28);
+
+    /* text */
+    --t-1: rgba(26,24,20,.95);
+    --t-2: rgba(74,71,64,.75);
+    --t-3: rgba(138,134,128,.60);
+
+    /* primary accent — editorial blue */
+    --blue:   #2857a4;
+    --blue-d: rgba(40,87,164,.10);
+    --blue-b: rgba(40,87,164,.30);
+
+    --green:  #16a34a;
+    --yellow: #b45309;
+    --red:    #c94040;
+    --orange: #c2520a;
+    --slate:  #64748b;
+
+    /* geometry */
+    --r-xl:  14px;
+    --r-lg:  10px;
+    --r-md:   7px;
+    --r-sm:   5px;
+    --r-pill: 999px;
+
+    /* shadows */
+    --sh-0:        0 1px 2px rgba(26,24,20,.07);
+    --sh-1:        0 2px 8px rgba(26,24,20,.09);
+    --sh-2:        0 6px 24px rgba(26,24,20,.10);
+    --sh-glow-blue: 0 0 0 1px rgba(40,87,164,.22), 0 4px 16px rgba(40,87,164,.12);
+  }
+
+  /* ── Dark mode ───────────────────────────── */
+  html[data-theme="dark"] {
+    --bg-0: #161410; --bg-1: #1a1814; --bg-2: #1e1c18; --bg-3: #252220; --bg-4: #2c2a26;
+    --b-0: rgba(240,236,227,.06); --b-1: rgba(240,236,227,.10);
+    --b-2: rgba(240,236,227,.16); --b-3: rgba(240,236,227,.26);
+    --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.75); --t-3: rgba(106,100,92,.60);
+    --blue-d: rgba(40,87,164,.16); --blue-b: rgba(40,87,164,.40);
+    --green:  #16a34a; --yellow: #b45309; --red: #c94040;
+    --sh-0: 0 1px 2px rgba(0,0,0,.30); --sh-1: 0 2px 8px rgba(0,0,0,.38); --sh-2: 0 6px 24px rgba(0,0,0,.45);
+    --sh-glow-blue: 0 0 0 1px rgba(40,87,164,.32), 0 4px 16px rgba(40,87,164,.18);
+  }
+
+  /* ═══════════════════════════════════════════════
+     BASE
+  ═══════════════════════════════════════════════ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    min-height: 100vh; padding-top: 80px;
+    overflow-x: hidden;
+    font-family: var(--font-ui); font-size: 14px;
+    color: var(--t-1); background: var(--bg-0);
+    -webkit-font-smoothing: antialiased; position: relative;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 55% 40% at 14% -4%, rgba(40,87,164,.04) 0%, transparent 55%),
+      radial-gradient(ellipse 45% 35% at 88% 96%, rgba(40,87,164,.03) 0%, transparent 55%);
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  /* ═══════════════════════════════════════════════
+     PAGE LAYOUT
+  ═══════════════════════════════════════════════ */
+  .page {
+    width: min(100%, 1440px); margin: 0 auto;
+    padding: 40px 32px 68px;
+    animation: fadeUp .38s ease-out both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Page head ── */
+  .page-head {
+    display: flex; align-items: flex-end;
+    justify-content: space-between; gap: 18px;
+    flex-wrap: wrap; margin-bottom: 24px;
+  }
+
+  .page-eyebrow {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 5px;
+    font-family: var(--font-mono);
+  }
+
+  html[data-theme="dark"] .page-eyebrow { color: #5b85c8; }
+
+  .page-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(26px, 3.5vw, 38px);
+    font-weight: 400; letter-spacing: -.02em;
+    line-height: 1.06; color: var(--t-1);
+  }
+
+  .page-sub {
+    margin-top: 6px; font-size: 12.5px;
+    font-family: var(--font-mono);
+    color: var(--t-3); line-height: 1.6; letter-spacing: .01em;
+  }
+
+  /* ── Card shell ── */
+  .card-shell {
+    background: var(--bg-1); border: 1px solid var(--b-1);
+    border-radius: var(--r-xl); box-shadow: var(--sh-1); overflow: hidden;
+  }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 11px; flex-wrap: wrap; padding: 13px 18px;
+    border-bottom: 1px solid var(--b-0);
+    background: var(--bg-0);
+  }
+
+  html[data-theme="dark"] .toolbar { background: rgba(0,0,0,.10); }
+
+  .toolbar-left  { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  .toolbar-right { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+
+  /* search */
+  .search-field { position: relative; }
+
+  .search-field i {
+    position: absolute; left: 10px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--t-3); font-size: 11px; pointer-events: none;
+  }
+
+  #searchBox {
+    width: 255px; height: 33px;
+    padding: 0 12px 0 30px;
+    border: 1px solid var(--b-1); border-radius: var(--r-lg);
+    background: var(--bg-2); color: var(--t-1);
+    font-family: var(--font-mono); font-size: 11.5px; outline: none;
+    transition: width .18s, border-color .13s, box-shadow .13s, background .13s;
+  }
+
+  #searchBox:focus {
+    width: 298px; border-color: var(--blue-b);
+    background: var(--bg-1); box-shadow: var(--sh-glow-blue);
+  }
+
+  #searchBox::placeholder { color: var(--t-3); }
+
+  /* buttons */
+  .btn-tool {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 33px; padding: 0 12px;
+    border: 1px solid var(--b-1); border-radius: var(--r-lg);
+    background: var(--bg-2); color: var(--t-2);
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    letter-spacing: .04em;
+    cursor: pointer; white-space: nowrap;
+    transition: background .13s, border-color .13s, color .13s;
+  }
+
+  .btn-tool:hover { background: var(--bg-3); border-color: var(--b-2); color: var(--t-1); }
+  .btn-tool:active { transform: scale(.98); }
+  .btn-tool i { font-size: 10px; }
+  .btn-tool.icon-only { width: 33px; padding: 0; justify-content: center; }
+
+  .btn-primary {
+    background: var(--blue-d); border-color: var(--blue-b); color: var(--blue);
+  }
+  .btn-primary:hover { background: rgba(40,87,164,.16); border-color: rgba(40,87,164,.44); color: var(--blue); }
+  html[data-theme="dark"] .btn-primary { color: #5b85c8; }
+
+  /* row count */
+  .row-count {
+    font-family: var(--font-mono); font-size: 10.5px;
+    color: var(--t-3); white-space: nowrap;
+  }
+
+  /* ═══════════════════════════════════════════════
+     TABLE
+  ═══════════════════════════════════════════════ */
+  .table-scroll { width: 100%; overflow-x: auto; }
+  .table-scroll::-webkit-scrollbar { height: 3px; }
+  .table-scroll::-webkit-scrollbar-thumb { background: var(--b-2); border-radius: 4px; }
+
+  #tasksTable { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+  #tasksTable thead th {
+    padding: 9px 16px; text-align: left; white-space: nowrap;
+    font-size: 9px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--t-3);
+    border-bottom: 1px solid var(--b-1);
+    background: var(--bg-0);
+    user-select: none; font-family: var(--font-mono);
+  }
+
+  html[data-theme="dark"] #tasksTable thead th { background: rgba(0,0,0,.08); }
+
+  #tasksTable thead th:nth-child(4),
+  #tasksTable thead th:nth-child(5) { text-align: center; }
+
+  #tasksTable tbody td {
+    padding: 12px 16px; border-bottom: 1px solid var(--b-0);
+    color: var(--t-1); vertical-align: middle; transition: background .11s;
+  }
+
+  #tasksTable tbody tr:last-child td { border-bottom: none; }
+  #tasksTable tbody tr:hover td { background: rgba(40,87,164,.03); }
+  html[data-theme="dark"] #tasksTable tbody tr:hover td { background: rgba(40,87,164,.06); }
+
+  #tasksTable td:nth-child(4),
+  #tasksTable td:nth-child(5) { text-align: center; }
+
+  .table-state {
+    padding: 56px 20px !important; text-align: center !important;
+    color: var(--t-3) !important; font-size: 12.5px !important;
+    font-family: var(--font-mono);
+  }
+
+  .date-cell { font-family: var(--font-mono); font-size: 11.5px; color: var(--t-2); }
+  .note-cell { font-size: 12px; color: var(--t-2); max-width: 230px; }
+  .task-desc { font-weight: 700; color: var(--t-1); max-width: 270px; }
+
+  /* ═══════════════════════════════════════════════
+     STATUS BADGES
+  ═══════════════════════════════════════════════ */
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px; border-radius: var(--r-pill);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: .06em; white-space: nowrap;
+    font-family: var(--font-mono);
+  }
+
+  .status-badge::before {
+    content: ''; width: 4px; height: 4px;
+    border-radius: 50%; flex-shrink: 0;
+  }
+
+  /* light mode — muted ink-friendly */
+  .s-completed {
+    background: rgba(22,163,74,.09); border: 1px solid rgba(22,163,74,.22); color: #16a34a;
+  }
+  .s-completed::before { background: #16a34a; }
+
+  .s-inprogress {
+    background: rgba(40,87,164,.09); border: 1px solid rgba(40,87,164,.22); color: var(--blue);
+  }
+  .s-inprogress::before { background: var(--blue); }
+
+  .s-pending {
+    background: rgba(180,83,9,.09); border: 1px solid rgba(180,83,9,.22); color: #b45309;
+  }
+  .s-pending::before { background: #b45309; }
+
+  .s-overdue {
+    background: rgba(201,64,64,.09); border: 1px solid rgba(201,64,64,.22); color: #c94040;
+  }
+  .s-overdue::before { background: #c94040; animation: pulse 1.6s infinite; }
+
+  .s-na {
+    background: rgba(100,116,139,.09); border: 1px solid rgba(100,116,139,.20); color: var(--slate);
+  }
+  .s-na::before { background: var(--slate); }
+
+  /* dark mode — vivid */
+  html[data-theme="dark"] .s-completed  { background: rgba(74,222,128,.10); border-color: rgba(74,222,128,.22);  color: #4ade80; }
+  html[data-theme="dark"] .s-inprogress { background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.26);  color: #60a5fa; }
+  html[data-theme="dark"] .s-pending    { background: rgba(245,158,11,.10); border-color: rgba(245,158,11,.22);  color: #fbbf24; }
+  html[data-theme="dark"] .s-overdue    { background: rgba(248,113,113,.11);border-color: rgba(248,113,113,.24); color: #f87171; }
+  html[data-theme="dark"] .s-completed::before  { background: #4ade80; }
+  html[data-theme="dark"] .s-inprogress::before { background: #60a5fa; }
+  html[data-theme="dark"] .s-pending::before    { background: #fbbf24; }
+  html[data-theme="dark"] .s-overdue::before    { background: #f87171; }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+  /* ═══════════════════════════════════════════════
+     EMPLOYEE CHIPS
+  ═══════════════════════════════════════════════ */
+  .emp-chips { display: flex; flex-wrap: wrap; gap: 4px; max-width: 340px; }
+
+  .emp-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: var(--r-pill);
+    font-size: 11px; font-weight: 600;
+    color: var(--blue); background: var(--blue-d);
+    border: 1px solid var(--blue-b); white-space: nowrap;
+    max-width: 170px; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  html[data-theme="dark"] .emp-chip { color: #5b85c8; }
+
+  .emp-chip-dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--blue); flex-shrink: 0;
+  }
+
+  html[data-theme="dark"] .emp-chip-dot { background: #5b85c8; }
+
+  .emp-chip-more {
+    color: var(--t-3); background: var(--b-0); border: 1px solid var(--b-1);
+    cursor: pointer; transition: background .13s, color .13s;
+  }
+
+  .emp-chip-more:hover { background: var(--b-1); color: var(--t-2); }
+
+  /* ═══════════════════════════════════════════════
+     ACTION BUTTONS (table row)
+  ═══════════════════════════════════════════════ */
+  .row-actions { display: flex; align-items: center; gap: 3px; }
+
+  .act-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border: none; border-radius: var(--r-md);
+    cursor: pointer; font-size: 10.5px;
+    background: transparent; color: var(--t-3);
+    transition: background .12s, color .12s;
+  }
+
+  .act-edit:hover  { background: var(--blue-d); color: var(--blue); }
+  html[data-theme="dark"] .act-edit:hover { color: #5b85c8; }
+  .act-delete:hover { background: rgba(201,64,64,.09); color: var(--red); }
+  html[data-theme="dark"] .act-delete:hover { color: #f87171; }
+
+  /* ═══════════════════════════════════════════════
+     MODALS
+  ═══════════════════════════════════════════════ */
+  .modal-content {
+    background: var(--bg-1); border: 1px solid var(--b-2);
+    border-radius: var(--r-xl); color: var(--t-1); box-shadow: var(--sh-2);
+  }
+
+  .modal-header {
+    padding: 18px 22px 14px; border-bottom: 1px solid var(--b-0);
+    background: var(--bg-0);
+  }
+
+  html[data-theme="dark"] .modal-header { background: rgba(0,0,0,.08); }
+
+  .modal-footer {
+    padding: 13px 22px 18px; border-top: 1px solid var(--b-0); gap: 7px;
+  }
+
+  .modal-body { padding: 18px 22px; }
+
+  .modal-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 15px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1);
+  }
+
+  /* btn-close: none on light (ink bg), invert on dark */
+  .btn-close { filter: none; opacity: .45; transition: opacity .13s; }
+  .btn-close:hover { opacity: .80; }
+  html[data-theme="dark"] .btn-close { filter: invert(1) opacity(.45); }
+  html[data-theme="dark"] .btn-close:hover { filter: invert(1) opacity(.80); }
+
+  /* form controls */
+  .form-label {
+    display: block; margin-bottom: 5px;
+    font-size: 9.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .12em;
+    color: var(--t-3); font-family: var(--font-mono);
+  }
+
+  .form-control,
+  .form-select {
+    background: var(--bg-2); border: 1px solid var(--b-1);
+    border-radius: var(--r-lg); color: var(--t-1);
+    font-family: var(--font-ui); font-size: 13px;
+    padding: 8px 11px;
+    transition: border-color .13s, box-shadow .13s, background .13s;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    background: var(--bg-1); border-color: var(--blue-b);
+    box-shadow: var(--sh-glow-blue); color: var(--t-1); outline: none;
+  }
+
+  .form-control::placeholder { color: var(--t-3); }
+  .form-select option { background: var(--bg-2); color: var(--t-1); }
+
+  /* radio group */
+  .radio-group { display: flex; gap: 7px; }
+
+  .radio-chip {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: var(--r-lg);
+    border: 1px solid var(--b-1); background: var(--bg-2);
+    cursor: pointer; font-size: 12.5px; font-weight: 500;
+    color: var(--t-2); font-family: var(--font-mono);
+    transition: border-color .13s, background .13s, color .13s;
+    user-select: none;
+  }
+
+  .radio-chip:has(input:checked) {
+    border-color: var(--blue-b); background: var(--blue-d); color: var(--blue);
+  }
+
+  html[data-theme="dark"] .radio-chip:has(input:checked) { color: #5b85c8; }
+  .radio-chip input { display: none; }
+
+  /* modal buttons */
+  .btn-m {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 35px; padding: 0 14px;
+    border-radius: var(--r-lg);
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    letter-spacing: .04em;
+    cursor: pointer; transition: background .13s, border-color .13s;
+  }
+
+  .btn-m-cancel {
+    background: var(--bg-2); border: 1px solid var(--b-1); color: var(--t-2);
+  }
+  .btn-m-cancel:hover { background: var(--bg-3); border-color: var(--b-2); color: var(--t-1); }
+
+  .btn-m-save {
+    background: var(--blue-d); border: 1px solid var(--blue-b); color: var(--blue);
+  }
+  html[data-theme="dark"] .btn-m-save { color: #5b85c8; }
+  .btn-m-save:hover { background: rgba(40,87,164,.16); border-color: rgba(40,87,164,.44); }
+
+  .btn-m-danger {
+    background: rgba(201,64,64,.09); border: 1px solid rgba(201,64,64,.22); color: var(--red);
+  }
+  html[data-theme="dark"] .btn-m-danger { color: #f87171; }
+  .btn-m-danger:hover { background: rgba(201,64,64,.16); border-color: rgba(201,64,64,.36); }
+
+  .modal-hint { font-size: 11px; font-family: var(--font-mono); color: var(--t-3); margin-top: 5px; }
+
+  /* delete confirm */
+  .delete-body { display: flex; align-items: flex-start; gap: 13px; }
+
+  .delete-icon {
+    flex-shrink: 0; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: var(--r-md);
+    background: rgba(201,64,64,.09); border: 1px solid rgba(201,64,64,.20);
+    color: var(--red); font-size: 14px;
+  }
+
+  html[data-theme="dark"] .delete-icon { color: #f87171; }
+
+  .delete-text strong {
+    display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 4px;
+  }
+
+  .delete-text p { font-size: 12.5px; color: var(--t-2); margin: 0; line-height: 1.55; }
+
+  /* ═══════════════════════════════════════════════
+     TOASTS
+  ═══════════════════════════════════════════════ */
+  .toast-container {
+    position: fixed; top: 86px; right: 18px;
+    z-index: 2000; display: flex; flex-direction: column;
+    gap: 7px; pointer-events: none;
+  }
+
+  .toast {
+    min-width: 280px; pointer-events: auto;
+    border-radius: var(--r-lg);
+    background: var(--bg-2); border: 1px solid var(--b-2);
+    box-shadow: var(--sh-2); overflow: hidden;
+  }
+
+  html[data-theme="dark"] .toast { background: var(--bg-3); }
+
+  .toast-header {
+    display: flex; align-items: center; gap: 9px;
+    padding: 9px 13px; background: transparent;
+    border-bottom: 1px solid var(--b-0);
+  }
+
+  .toast-icon {
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: var(--r-sm); font-size: 10px; flex-shrink: 0;
+  }
+
+  .ti-info    { background: var(--blue-d);                    color: var(--blue); }
+  .ti-success { background: rgba(22,163,74,.09);              color: var(--green); }
+  .ti-warn    { background: rgba(180,83,9,.09);               color: var(--yellow); }
+  .ti-error   { background: rgba(201,64,64,.09);              color: var(--red); }
+
+  html[data-theme="dark"] .ti-info    { color: #60a5fa; }
+  html[data-theme="dark"] .ti-success { background: rgba(74,222,128,.11);  color: #4ade80; }
+  html[data-theme="dark"] .ti-warn    { background: rgba(245,158,11,.11);  color: #fbbf24; }
+  html[data-theme="dark"] .ti-error   { background: rgba(248,113,113,.11); color: #f87171; }
+
+  .toast-title { flex: 1; font-size: 12.5px; font-weight: 700; color: var(--t-1); }
+  .toast-close { background: none; border: none; color: var(--t-3); cursor: pointer; font-size: 13px; padding: 0; line-height: 1; transition: color .13s; }
+  .toast-close:hover { color: var(--t-1); }
+  .toast-body { padding: 8px 13px; font-size: 12px; color: var(--t-2); font-family: var(--font-mono); }
+
+  /* ═══════════════════════════════════════════════
+     UTILITIES
+  ═══════════════════════════════════════════════ */
+  .hidden { display: none !important; }
+
+  @keyframes spin  { to { transform: rotate(360deg); } }
+  .fa-spin { animation: spin .85s linear infinite; }
+
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateY(3px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  #tasksBody tr { animation: rowIn .22s ease-out both; }
+
+  /* ═══════════════════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════════════════ */
+  @media (max-width: 900px) { .page { padding: 28px 18px 52px; } }
+
+  @media (max-width: 640px) {
+    .page { padding: 22px 13px 46px; }
+    #searchBox, #searchBox:focus { width: 100%; }
+    .toolbar { flex-direction: column; align-items: stretch; }
+    .toolbar-left, .toolbar-right { width: 100%; }
+    .toast-container { left: 13px; right: 13px; }
+    .toast { min-width: unset; width: 100%; }
+  }
+</style>
+
+
+  <!-- Toasts -->
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+  <main class="page">
+
+    <!-- Head -->
+    <div class="page-head">
+      <div>
+        <div class="page-eyebrow">Manila IT Inventory</div>
+        <h1 class="page-title">Tasks</h1>
+        <p class="page-sub">Live data pulled from your Tasks sheet.</p>
+      </div>
+    </div>
+
+    <!-- Card -->
+    <div class="card-shell">
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <div class="search-field">
+            <i class="fas fa-magnifying-glass"></i>
+            <input type="text" id="searchBox" placeholder="Search tasks…" aria-label="Search tasks">
+          </div>
+
+          <button class="btn-tool icon-only" id="btnRefreshTasks" title="Refresh">
+            <i class="fas fa-rotate"></i>
+          </button>
+
+         <button class="btn-tool hidden" id="btnSendReminders" title="Send reminder emails">
+            <i class="fas fa-paper-plane"></i>
+            Send Reminders
+          </button>
+        </div>
+
+        <div class="toolbar-right">
+          <span class="row-count" id="rowCount"></span>
+
+          <button class="btn-tool btn-primary hidden" id="btnAdd">
+            <i class="fas fa-plus"></i>
+            New Task
+          </button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-scroll">
+        <table id="tasksTable">
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Task</th>
+              <th>Due Date</th>
+              <th>Submitted</th>
+              <th>Status</th>
+              <th>Note</th>
+              <th id="thActions" class="hidden" style="width:80px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tasksBody">
+            <tr>
+              <td colspan="7" class="table-state">
+                <i class="fas fa-circle-notch fa-spin"></i>&ensp;Loading…
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /.card-shell -->
+  </main>
+
+  <!-- ═══ Add / Edit Modal ═══════════════════════════════ -->
+  <div class="modal fade" id="tasksModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <div class="modal-title" id="tasksModalTitle">New Task</div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <input type="hidden" id="rowId">
+
+          <!-- Employee mode -->
+          <div class="mb-4">
+            <label class="form-label">Employee Mode</label>
+            <div class="radio-group">
+              <label class="radio-chip">
+                <input type="radio" name="empMode" id="empSingle" checked>
+                <i class="fas fa-user"></i> Single
+              </label>
+              <label class="radio-chip hidden" id="bulkRadioWrap">
+                <input type="radio" name="empMode" id="empBulk">
+                <i class="fas fa-users"></i> Bulk
+              </label>
+            </div>
+          </div>
+
+          <!-- Single employee -->
+          <div class="mb-3" id="singleEmployeeWrap">
+            <label class="form-label" for="employeeInput">Employee</label>
+            <select id="employeeInput" class="form-select">
+              <option value="">Select employee…</option>
+            </select>
+          </div>
+
+          <!-- Bulk employees -->
+          <div class="mb-3 hidden" id="bulkEmployeeWrap">
+            <label class="form-label" for="employeeBulkInput">Employees</label>
+            <select id="employeeBulkInput" class="form-select" multiple size="5"></select>
+            <div class="modal-hint">Hold Ctrl / Cmd to select multiple.</div>
+          </div>
+
+          <!-- Task description -->
+          <div class="mb-3">
+            <label class="form-label" for="taskDescInput">Task Description</label>
+            <input type="text" id="taskDescInput" class="form-control" placeholder="Describe the task…">
+          </div>
+
+          <!-- Dates -->
+          <div class="row g-3 mb-3">
+            <div class="col-6">
+              <label class="form-label" for="dateRequiredInput">Date Required</label>
+              <input type="date" id="dateRequiredInput" class="form-control">
+            </div>
+            <div class="col-6">
+              <label class="form-label" for="dateSubmittedInput">Date Submitted</label>
+              <input type="date" id="dateSubmittedInput" class="form-control">
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="mb-3">
+            <label class="form-label" for="statusInput">Status</label>
+            <select id="statusInput" class="form-select">
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Overdue">Overdue</option>
+              <option value="N/A">N/A</option>
+            </select>
+          </div>
+
+          <!-- Note -->
+          <div class="mb-1">
+            <label class="form-label" for="noteInput">Note</label>
+            <input type="text" id="noteInput" class="form-control" placeholder="Optional note…">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-m btn-m-cancel" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn-m btn-m-save" id="saveBtn" onclick="saveTask()">
+            <i class="fas fa-check"></i> Save
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Delete Modal ════════════════════════════════════ -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <div class="modal-title">Delete Record</div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="delete-body">
+            <div class="delete-icon"><i class="fas fa-trash"></i></div>
+            <div class="delete-text">
+              <strong>This action is permanent.</strong>
+              <p>The selected record will be permanently removed. Are you sure you want to continue?</p>
+            </div>
+          </div>
+          <input type="hidden" id="deleteRowId">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-m btn-m-cancel" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn-m btn-m-danger" id="confirmDeleteBtn" onclick="confirmDelete()">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Reminder Modal ══════════════════════════════════ -->
+  <div class="modal fade" id="reminderModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <div class="modal-title">Send Reminders</div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <p style="font-size:13px; color:var(--t-2); margin-bottom:16px; line-height:1.6;">
+            Select a task to send reminder emails to all assigned employees.
+          </p>
+
+          <label class="form-label">Select Task</label>
+          <select id="reminderTaskSelect" class="form-select">
+            <option value="">Select task…</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-m btn-m-cancel" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn-m btn-m-save" id="reminderSendBtn" onclick="confirmSendReminders()">
+            <i class="fas fa-paper-plane"></i> Send
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* ═══════════════════════════════════════════════════════════════
+     CONFIG / STATE
+  ═══════════════════════════════════════════════════════════════ */
+  const TASKS_PAGE_KEY        = "tasks";
+  const TASKS_MANAGE_ACTION   = "tasks.manage";
+  const TASKS_BULK_ACTION     = "tasks.bulk";
+  const TASKS_REMINDERS_ACTION = "tasks.reminders";
+
+  const app = {
+    mounted: false,
+    permissions: { canView: false, canManage: false, canBulk: false, canSendReminders: false },
+    currentUser: { email: "", role: "", permissions: { pages: {}, actions: {} } },
+    tasks: [],
+    modals: { tasks: null, delete: null, reminder: null }
+  };
+
+  /* ── DOM helpers ─────────────────────────────────────────────── */
+  const $  = id => document.getElementById(id);
+  const eh = v  => String(v ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+
+  function hasServer_() { return !!(window.google && google.script && google.script.run); }
+  function getActionColspan_() { return app.permissions.canManage ? 7 : 6; }
+
+  function setHtml_(id, html)     { const e = $(id); if (e) e.innerHTML = html; }
+  function setHidden_(id, hidden) { const e = $(id); if (e) e.classList.toggle("hidden", !!hidden); }
+
+  function setButtonBusy_(btn, busy, text, orig) {
+    if (!btn) return;
+    btn.disabled = !!busy;
+    btn.innerHTML = busy
+      ? `<i class="fas fa-circle-notch fa-spin"></i> ${eh(text || "Processing…")}`
+      : (orig || btn.innerHTML);
+  }
+
+  function tableMsg_(msg, isErr) {
+    const style = isErr ? ` style="color:#f87171;"` : "";
+    return `<tr><td colspan="${getActionColspan_()}" class="table-state"${style}>${msg}</td></tr>`;
+  }
+
+  function normalizeKey_(v) {
+    return String(v||"").replace(/\u00A0/g," ").replace(/[\u200B-\u200D\uFEFF]/g,"").replace(/\s+/g," ").trim().toLowerCase();
+  }
+
+  function getSessionUserEmail_() {
+    return (sessionStorage.getItem("user_email")||localStorage.getItem("user_email")||sessionStorage.getItem("email")||localStorage.getItem("email")||"").trim();
+  }
+
+  /* ── Toasts ──────────────────────────────────────────────────── */
+  function toast_(type, title, message, opts = {}) {
+    const c = $("toastContainer");
+    if (!c) return;
+
+    const id = "t_" + Math.random().toString(16).slice(2);
+    const iconMap = { success:"fa-check", info:"fa-circle-info", warn:"fa-triangle-exclamation", error:"fa-circle-xmark" };
+    const clsMap  = { success:"ti-success", info:"ti-info", warn:"ti-warn", error:"ti-error" };
+
+    c.insertAdjacentHTML("beforeend", `
+      <div id="${id}" class="toast" role="alert">
+        <div class="toast-header">
+          <span class="toast-icon ${clsMap[type]||"ti-info"}">
+            <i class="fas ${iconMap[type]||iconMap.info}"></i>
+          </span>
+          <span class="toast-title">${eh(title||"Notice")}</span>
+          <button class="toast-close" onclick="removeToast_('${id}')">&times;</button>
+        </div>
+        <div class="toast-body">${eh(message||"")}</div>
+      </div>`);
+
+    const delay = Number.isFinite(opts.delay) ? opts.delay : 3500;
+    if (opts.autohide !== false) setTimeout(() => removeToast_(id), delay);
+  }
+
+  function removeToast_(id) {
+    const el = $(id);
+    if (el) { el.style.opacity="0"; el.style.transition="opacity .3s"; setTimeout(() => el.remove(), 320); }
+  }
+
+  /* ── Modals ──────────────────────────────────────────────────── */
+  function getTasksModal_() {
+  if (!app.modals.tasks) {
+    const el = $("tasksModal");
+    if (el && el.parentElement !== document.body) document.body.appendChild(el);
+    app.modals.tasks = new bootstrap.Modal(el, { backdrop: true, keyboard: true });
+  }
+  return app.modals.tasks;
+}
+
+function getDeleteModal_() {
+  if (!app.modals.delete) {
+    const el = $("deleteModal");
+    if (el && el.parentElement !== document.body) document.body.appendChild(el);
+    app.modals.delete = new bootstrap.Modal(el, { backdrop: true, keyboard: true });
+  }
+  return app.modals.delete;
+}
+
+function getReminderModal_() {
+  if (!app.modals.reminder) {
+    const el = $("reminderModal");
+    if (el && el.parentElement !== document.body) document.body.appendChild(el);
+    app.modals.reminder = new bootstrap.Modal(el, { backdrop: true, keyboard: true });
+  }
+  return app.modals.reminder;
+}
+
+ 
+ function hideModal_(id) {
+  const el = $(id);
+  if (!el) return;
+
+  // Try the cached instance first, then fall back to Bootstrap's lookup.
+  let instance = null;
+  if (id === "tasksModal")    instance = app.modals.tasks;
+  if (id === "deleteModal")   instance = app.modals.delete;
+  if (id === "reminderModal") instance = app.modals.reminder;
+
+  try {
+    (instance || bootstrap.Modal.getInstance(el) || bootstrap.Modal.getOrCreateInstance(el)).hide();
+  } catch (e) {
+    console.error("hideModal_ failed:", e);
+  }
+}
+
+  /* ── Permissions ─────────────────────────────────────────────── */
+  function hasPagePermission_(k)   { return !!app.currentUser.permissions?.pages?.[normalizeKey_(k)]; }
+  function hasActionPermission_(k) { return !!app.currentUser.permissions?.actions?.[normalizeKey_(k)]; }
+
+  function resetPermissions_() {
+    app.permissions = { canView:false, canManage:false, canBulk:false, canSendReminders:false };
+    app.currentUser.permissions = { pages:{}, actions:{} };
+  }
+
+  async function initPermissions_() {
+    return new Promise(resolve => {
+      app.currentUser.email = getSessionUserEmail_();
+      if (!hasServer_()) { resetPermissions_(); syncPermissionUi_(); resolve(); return; }
+
+      google.script.run
+        .withSuccessHandler(perms => {
+          app.currentUser.permissions = perms || { pages:{}, actions:{} };
+          app.currentUser.role  = perms?.role  || "";
+          app.currentUser.email = perms?.email || app.currentUser.email || "";
+
+          app.permissions.canView    = hasPagePermission_(TASKS_PAGE_KEY);
+          app.permissions.canManage  = app.permissions.canView && hasActionPermission_(TASKS_MANAGE_ACTION);
+          app.permissions.canBulk    = app.permissions.canManage && hasActionPermission_(TASKS_BULK_ACTION);
+          app.permissions.canSendReminders = app.permissions.canManage && hasActionPermission_(TASKS_REMINDERS_ACTION);
+
+          syncPermissionUi_(); resolve();
+        })
+        .withFailureHandler(() => { resetPermissions_(); syncPermissionUi_(); resolve(); })
+        .getMyPermissions();
+    });
+  }
+
+  function syncPermissionUi_() {
+    setHidden_("btnAdd", !app.permissions.canManage);
+    setHidden_("thActions", !app.permissions.canManage);
+    setHidden_("btnSendReminders", !app.permissions.canSendReminders);
+    syncBulkUi_();
+    if (!app.permissions.canView) setHtml_("tasksBody", tableMsg_("You do not have permission to access Tasks.", true));
+  }
+
+  function syncBulkUi_() {
+    const wrap = $("bulkRadioWrap");
+    if (!app.permissions.canBulk) {
+      if (wrap) wrap.classList.add("hidden");
+      if ($("empSingle")) $("empSingle").checked = true;
+      if ($("empBulk")) $("empBulk").checked = false;
+      $("bulkEmployeeWrap")?.classList.add("hidden");
+      $("singleEmployeeWrap")?.classList.remove("hidden");
+      return;
+    }
+    if (wrap) wrap.classList.remove("hidden");
+    toggleEmployeeMode_();
+  }
+
+  function requireViewPermission_()    { if (app.permissions.canView) return true;    toast_("warn","Permission","No access to Tasks."); return false; }
+  function requireManagePermission_()  { if (app.permissions.canManage) return true;  toast_("warn","Permission","No manage permission."); return false; }
+  function requireBulkPermission_()    { if (app.permissions.canBulk) return true;    toast_("warn","Permission","No bulk permission."); return false; }
+  function requireReminderPermission_(){ if (app.permissions.canSendReminders) return true; toast_("warn","Permission","No reminder permission."); return false; }
+
+  /* ── Data ────────────────────────────────────────────────────── */
+  function loadTasks() {
+    const body = $("tasksBody");
+    if (!requireViewPermission_()) { if(body) body.innerHTML = tableMsg_("No access.",true); return; }
+    if (body) body.innerHTML = tableMsg_(`<i class="fas fa-circle-notch fa-spin"></i>&ensp;Loading…`);
+
+    if (!hasServer_()) { if(body) body.innerHTML = tableMsg_("Server unavailable.",true); return; }
+
+    google.script.run
+      .withSuccessHandler(rows => { 
+        if (!app.mounted) return;
+        app.tasks = Array.isArray(rows)?rows:[]; applyFilter(); })
+      .withFailureHandler(err => {
+        if(body) body.innerHTML = tableMsg_(`Error: ${eh(err?.message||err)}`,true);
+        toast_("error","Load failed", err?.message||String(err));
+      })
+      .getTasksData();
+  }
+
+  function applyFilter() {
+    if (!app.permissions.canView) return;
+    const q = String($("searchBox")?.value||"").trim().toLowerCase();
+    const filtered = q
+      ? app.tasks.filter(r => [r.employee,r.taskDescription,r.dateRequired,r.dateSubmitted,r.status,r.note].map(v=>String(v||"").toLowerCase()).join(" ").includes(q))
+      : app.tasks;
+    renderTasks_(filtered);
+  }
+
+  function renderTasks_(rows) {
+    const body = $("tasksBody");
+    if (!body) return;
+
+    if (!app.permissions.canView) { body.innerHTML = tableMsg_("No access.",true); return; }
+    if (!Array.isArray(rows)||!rows.length) { body.innerHTML = tableMsg_("No records found."); updateRowCount_(0); return; }
+
+    body.innerHTML = rows.map((row, i) => {
+      const taskId = Number(row.id);
+      const delay  = Math.min(i * 30, 300);
+      return `
+        <tr style="animation-delay:${delay}ms">
+          <td>${renderEmployeeChips_(row.employee)}</td>
+          <td><span class="task-desc">${eh(row.taskDescription)}</span></td>
+          <td><span class="date-cell">${eh(formatDateForUi_(row.dateRequired))}</span></td>
+          <td><span class="date-cell">${eh(formatDateForUi_(row.dateSubmitted))}</span></td>
+          <td>${renderStatusBadge_(row.status)}</td>
+          <td><span class="note-cell">${eh(row.note)}</span></td>
+          ${app.permissions.canManage ? `
+            <td>
+              <div class="row-actions">
+                <button class="act-btn act-edit" title="Edit" onclick="openEditModal(${taskId})"><i class="fas fa-pen-to-square"></i></button>
+                <button class="act-btn act-delete" title="Delete" onclick="openDeleteModal(${taskId})"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>` : ""}
+        </tr>`;
+    }).join("");
+
+    updateRowCount_(rows.length);
+  }
+
+  function updateRowCount_(n) {
+    const el = $("rowCount");
+    if (el) el.textContent = n > 0 ? `${n} record${n!==1?"s":""}` : "";
+  }
+
+  function renderStatusBadge_(status) {
+    const raw = String(status||"").trim();
+    const key = raw.toLowerCase();
+    let cls = "s-na";
+    if (key==="completed")   cls="s-completed";
+    else if (key==="in progress") cls="s-inprogress";
+    else if (key==="pending")     cls="s-pending";
+    else if (key==="overdue"||key==="blocked") cls="s-overdue";
+    return `<span class="status-badge ${cls}">${eh(raw||"Pending")}</span>`;
+  }
+
+  /* ── Employee chips ──────────────────────────────────────────── */
+  function splitEmployees_(v) {
+    return String(v||"").split(/,|\n/g).map(s=>s.trim()).filter(Boolean);
+  }
+
+  function renderEmployeeChips_(cell) {
+    const list = splitEmployees_(cell);
+    if (!list.length) return `<span style="color:var(--t-3);">—</span>`;
+
+    const visible   = list.slice(0, 3);
+    const remaining = list.length - visible.length;
+
+    const chips = visible.map(n=>`
+      <span class="emp-chip" title="${eh(n)}">
+        <span class="emp-chip-dot"></span>${eh(n)}
+      </span>`).join("");
+
+    const more = remaining > 0
+      ? `<button type="button" class="emp-chip emp-chip-more"
+           onclick="toast_('info','Employees',${JSON.stringify(list.join(', '))},{delay:6000})">+${remaining}</button>`
+      : "";
+
+    return `<div class="emp-chips">${chips}${more}</div>`;
+  }
+
+ function toggleEmployeeMode_() {
+  const isBulk = app.permissions.canBulk && !!$("empBulk")?.checked;
+  $("singleEmployeeWrap")?.classList.toggle("hidden",  isBulk);
+  $("bulkEmployeeWrap")  ?.classList.toggle("hidden", !isBulk);
+
+  // Fallback for :has() — manually style active radio chip
+  [$("empSingle"), $("empBulk")].forEach(radio => {
+    if (!radio) return;
+    const chip = radio.closest(".radio-chip");
+    if (!chip) return;
+    chip.style.borderColor = radio.checked
+      ? "rgba(59,130,246,.35)" : "";
+    chip.style.background  = radio.checked
+      ? "rgba(59,130,246,.14)" : "";
+    chip.style.color       = radio.checked
+      ? "#3b82f6" : "";
+  });
+}
+
+  function loadEmployeeDropdown_() {
+    return new Promise(resolve => {
+      if (!hasServer_()) { resolve([]); return; }
+      google.script.run
+        .withSuccessHandler(names => {
+  if (!app.mounted) { resolve([]); return; }
+          const list = Array.isArray(names)?names:[];
+          const opts = list.map(n=>`<option value="${eh(n)}">${eh(n)}</option>`).join("");
+          const single = $("employeeInput");
+          const bulk   = $("employeeBulkInput");
+          if (single) single.innerHTML = `<option value="">Select employee…</option>${opts}`;
+          if (bulk)   bulk.innerHTML   = opts;
+          resolve(list);
+        })
+        .withFailureHandler(()=>resolve([]))
+        .getUsernamesForDropdown();
+    });
+  }
+
+  function getSelectedEmployees_() {
+    const isBulk = !!$("empBulk")?.checked;
+    if (isBulk) {
+      const s = $("employeeBulkInput");
+      return s ? [...s.selectedOptions].map(o=>String(o.value||"").trim()).filter(Boolean) : [];
+    }
+    const v = String($("employeeInput")?.value||"").trim();
+    return v ? [v] : [];
+  }
+
+  /* ── Add / Edit ──────────────────────────────────────────────── */
+  function resetTaskForm_() {
+    if ($("tasksModalTitle")) $("tasksModalTitle").textContent = "New Task";
+    ["rowId","taskDescInput","dateRequiredInput","dateSubmittedInput","noteInput"].forEach(id => { const e=$(id); if(e) e.value=""; });
+    if ($("statusInput")) $("statusInput").value = "Pending";
+    if ($("saveBtn")) $("saveBtn").innerHTML = `<i class="fas fa-check"></i> Save`;
+    if ($("empSingle")) $("empSingle").checked = true;
+    if ($("empBulk"))   $("empBulk").checked   = false;
+    syncBulkUi_(); toggleEmployeeMode_();
+  }
+
+  async function openAddModal() {
+    if (!requireManagePermission_()) return;
+    resetTaskForm_();
+    await loadEmployeeDropdown_();
+    getTasksModal_().show();
+  }
+
+  async function openEditModal(taskId) {
+    if (!requireManagePermission_()) return;
+    const rec = app.tasks.find(t=>Number(t.id)===Number(taskId));
+    if (!rec) { toast_("error","Not found","Record not found."); return; }
+
+    if ($("tasksModalTitle")) $("tasksModalTitle").textContent = "Edit Task";
+    if ($("rowId")) $("rowId").value = String(rec.id||"");
+    await loadEmployeeDropdown_();
+
+    const empList    = splitEmployees_(rec.employee);
+    const useBulk    = app.permissions.canBulk && empList.length>1;
+    if ($("empSingle")) $("empSingle").checked = !useBulk;
+    if ($("empBulk"))   $("empBulk").checked   =  useBulk;
+    syncBulkUi_(); toggleEmployeeMode_();
+
+    if (useBulk) {
+      const sel = $("employeeBulkInput");
+      const set = new Set(empList.map(v=>String(v).trim()));
+      if (sel) [...sel.options].forEach(o=>{ o.selected = set.has(String(o.value).trim()); });
+    } else {
+      if ($("employeeInput")) $("employeeInput").value = rec.employee||"";
+    }
+
+    if ($("taskDescInput"))     $("taskDescInput").value     = rec.taskDescription||"";
+    if ($("dateRequiredInput")) $("dateRequiredInput").value = toDateInput_(rec.dateRequired);
+    if ($("dateSubmittedInput"))$("dateSubmittedInput").value= toDateInput_(rec.dateSubmitted);
+    if ($("statusInput"))       $("statusInput").value       = rec.status||"Pending";
+    if ($("noteInput"))         $("noteInput").value         = rec.note||"";
+    if ($("saveBtn")) $("saveBtn").innerHTML = `<i class="fas fa-check"></i> Update`;
+
+    getTasksModal_().show();
+  }
+
+  function saveTask() {
+    if (!requireManagePermission_()) return;
+    const btn  = $("saveBtn");
+    const orig = btn?.innerHTML||"";
+    setButtonBusy_(btn, true, "Saving…");
+
+    try {
+      const idRaw  = String($("rowId")?.value||"").trim();
+      const isEdit = !!idRaw;
+      const isBulk = !!$("empBulk")?.checked;
+
+      if (isBulk&&!requireBulkPermission_()) { setButtonBusy_(btn,false,"",orig); return; }
+
+      const employees = getSelectedEmployees_();
+      const payload   = {
+        taskDescription: String($("taskDescInput")?.value||"").trim(),
+        dateRequired:    String($("dateRequiredInput")?.value||"").trim(),
+        dateSubmitted:   String($("dateSubmittedInput")?.value||"").trim(),
+        status:          String($("statusInput")?.value||"").trim(),
+        note:            String($("noteInput")?.value||"").trim(),
+        actorEmail:      getSessionUserEmail_()
+      };
+
+      if (!employees.length||!payload.taskDescription||!payload.dateRequired||!payload.status) {
+        setButtonBusy_(btn,false,"",orig);
+        toast_("warn","Missing fields","Fill Employee, Task, Date Required and Status.");
+        return;
+      }
+
+      if (!hasServer_()) { setButtonBusy_(btn,false,"",orig); toast_("error","Connection","Server unavailable."); return; }
+
+      const runner = google.script.run
+        .withSuccessHandler(() => {
+          setButtonBusy_(btn,false,"",orig);
+          hideModal_("tasksModal");
+          toast_("success", isEdit?"Updated":"Created", "Task saved.");
+          loadTasks();
+        })
+        .withFailureHandler(err => {
+          setButtonBusy_(btn,false,"",orig);
+          toast_("error","Save failed",err?.message||String(err));
+        });
+
+      if (isEdit) {
+        const id = Number(idRaw);
+        isBulk
+          ? runner.updateTaskBulkOneRow({ id, employees, ...payload })
+          : runner.updateTask({ id, employee: employees[0], ...payload });
+        return;
+      }
+
+      runner.addTaskBulkOneRow({ id:null, employees, ...payload });
+
+    } catch(err) {
+      setButtonBusy_(btn,false,"","");
+      toast_("error","UI error",err?.message||String(err),{delay:6500});
+    }
+  }
+
+  /* ── Delete ──────────────────────────────────────────────────── */
+  function openDeleteModal(taskId) {
+  if (!requireManagePermission_()) return;
+  if ($("deleteRowId")) $("deleteRowId").value = String(taskId);
+  const btn = $("confirmDeleteBtn");
+  if (btn) {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="fas fa-trash"></i> Delete`;
+  }
+  getDeleteModal_().show();
+}
+
+function confirmDelete() {
+  if (!requireManagePermission_()) return;
+
+  const rowId = Number($("deleteRowId")?.value);
+  const btn   = $("confirmDeleteBtn");
+  const orig  = `<i class="fas fa-trash"></i> Delete`;
+
+  if (!Number.isFinite(rowId) || rowId < 2) {
+    toast_("error", "Invalid", "Could not identify the row to delete.");
+    return;
+  }
+
+  if (!hasServer_()) {
+    toast_("error", "Connection", "Server unavailable.");
+    return;
+  }
+
+  // Show spinner state
+  if (btn) {
+    btn.disabled  = true;
+    btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Deleting…`;
+  }
+
+  google.script.run
+    .withSuccessHandler(() => {
+      // Restore the button so the next open shows it ready
+      if (btn) {
+        btn.disabled  = false;
+        btn.innerHTML = orig;
+      }
+      // Close modal first, THEN show toast + refresh
+      hideModal_("deleteModal");
+      toast_("success", "Deleted", "Task deleted.");
+      loadTasks();
+    })
+    .withFailureHandler(err => {
+      if (btn) {
+        btn.disabled  = false;
+        btn.innerHTML = orig;
+      }
+      toast_("error", "Delete failed", err?.message || String(err));
+    })
+    .deleteTask(rowId, getSessionUserEmail_());
+}
+  /* ── Reminders ───────────────────────────────────────────────── */
+  function sendRemindersNow() {
+    if (!requireReminderPermission_()) return;
+    const sel = $("reminderTaskSelect");
+    if (sel) sel.innerHTML = `<option value="">Loading…</option>`;
+    if (!hasServer_()) { toast_("error","Connection","Server unavailable."); return; }
+
+    google.script.run
+      .withSuccessHandler(tasks => {
+        if (!sel) return;
+        const list = Array.isArray(tasks)?tasks:[];
+        sel.innerHTML = `<option value="">Select task…</option>` +
+          list.map(t=>`<option value="${t.id}">${eh(t.label)}</option>`).join("");
+        getReminderModal_().show();
+      })
+      .withFailureHandler(err => toast_("error","Load failed",err?.message||String(err)))
+      .getTaskReminderOptions(getSessionUserEmail_());
+  }
+
+  function confirmSendReminders() {
+    if (!requireReminderPermission_()) return;
+    const sel    = $("reminderTaskSelect");
+    const taskId = Number(sel?.value);
+    const btn    = $("reminderSendBtn");
+    const orig   = btn?.innerHTML||"";
+
+    if (!Number.isFinite(taskId)||taskId<2) { toast_("warn","Select task","Choose a valid task."); return; }
+    if (!hasServer_()) { toast_("error","Connection","Server unavailable."); return; }
+
+    setButtonBusy_(btn,true,"Sending…");
+
+    google.script.run
+      .withSuccessHandler(result => {
+        setButtonBusy_(btn,false,"",orig);
+        hideModal_("reminderModal");
+        toast_("success","Sent",`Emails sent: ${Number(result?.sentCount||0)}`,{delay:5000});
+        loadTasks();
+      })
+      .withFailureHandler(err => { setButtonBusy_(btn,false,"",orig); toast_("error","Send failed",err?.message||String(err),{delay:6500}); })
+      .sendTaskReminderForTask(taskId, getSessionUserEmail_());
+  }
+
+  /* ── Date helpers ────────────────────────────────────────────── */
+  function formatDateForUi_(v) {
+    if (!v) return "";
+    if (v instanceof Date&&!isNaN(v.getTime())) {
+      return `${String(v.getMonth()+1).padStart(2,"0")}/${String(v.getDate()).padStart(2,"0")}/${v.getFullYear()}`;
+    }
+    const t = String(v).trim();
+    if (!t) return "";
+    if (/^\d{4}-\d{2}-\d{2}$/.test(t)) { const [y,m,d]=t.split("-"); return `${m}/${d}/${y}`; }
+    const mdy = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (mdy) return `${mdy[1].padStart(2,"0")}/${mdy[2].padStart(2,"0")}/${mdy[3]}`;
+    return t;
+  }
+
+  function toDateInput_(v) {
+    if (v instanceof Date&&!isNaN(v.getTime())) {
+      return `${v.getFullYear()}-${String(v.getMonth()+1).padStart(2,"0")}-${String(v.getDate()).padStart(2,"0")}`;
+    }
+    const t = String(v||"").trim();
+    if (!t) return "";
+    if (/^\d{4}-\d{2}-\d{2}$/.test(t)) return t;
+    const mdy = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (mdy) return `${mdy[3]}-${mdy[1].padStart(2,"0")}-${mdy[2].padStart(2,"0")}`;
+    return "";
+  }
+
+  window.saveTask            = saveTask;
+window.confirmDelete       = confirmDelete;
+window.confirmSendReminders= confirmSendReminders;
+window.openEditModal       = openEditModal;
+window.openDeleteModal     = openDeleteModal;
+window.toast_              = toast_;
+window.removeToast_        = removeToast_;
+
+async function mount_() {
+  if (app.mounted) return;
+  app.mounted = true;
+  app.modals = { tasks: null, delete: null, reminder: null };
+
+  // Create controller so listeners can be cleaned up on unmount
+  app._ac = new AbortController();
+  const sig = { signal: app._ac.signal };
+
+  $("empSingle")?.addEventListener("change", toggleEmployeeMode_, sig);
+  $("empBulk")  ?.addEventListener("change", toggleEmployeeMode_, sig);
+  $("searchBox")?.addEventListener("input",  applyFilter, sig);
+
+  // Bind toolbar buttons via listeners instead of inline onclick
+  $("btnRefreshTasks") ?.addEventListener("click", loadTasks, sig);
+  $("btnAdd")          ?.addEventListener("click", openAddModal, sig);
+  $("btnSendReminders")?.addEventListener("click", sendRemindersNow, sig);
+
+  await initPermissions_();
+  if (!app.permissions.canView) { syncPermissionUi_(); return; }
+  await loadEmployeeDropdown_();
+  loadTasks();
+}
+
+function unmount_() {
+  app.mounted = false;
+  app._ac?.abort();
+  app._ac = null;
+
+  ['tasksModal', 'deleteModal', 'reminderModal'].forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    try { bootstrap.Modal.getInstance(el)?.hide(); } catch(_) {}
+    // Remove from body so it doesn't persist across page navigations
+    if (el.parentElement === document.body) el.remove();
+  });
+
+  app.modals = { tasks: null, delete: null, reminder: null };
+}
+
+function refresh_() {
+  if (!app.mounted || !app.permissions.canView) return;
+  loadTasks();
+}
+
+window.TasksPage = { mount: mount_, unmount: unmount_, refresh: refresh_ };
+
+window.__TASKS_CLEANUP__ = function() {
+  unmount_();
+  window.__TASKS_CLEANUP__ = null;
+};
+
+if (typeof window.registerPageModule === 'function') {
+  window.registerPageModule('tasks', { mount: mount_, unmount: unmount_, refresh: refresh_ });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', mount_, { once: true });
+} else {
+  mount_();
+}
+
+  </script>

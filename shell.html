@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <?!= HtmlService.createHtmlOutputFromFile('theme').getContent(); ?>
+
+  <title>Manila IT Inventory</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+  html, body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg-body, #f5f2ec);
+    color: var(--text-primary, #1a1814);
+  }
+
+  html[data-theme="dark"] body {
+    background: #161410;
+    color: #f0ece3;
+  }
+
+  body {
+    overflow-x: hidden;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #appShell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #pageContent {
+    min-height: 60vh;
+    background: transparent;
+  }
+
+  #pageContent.page-entering {
+    animation: shellPageIn .12s ease-out both;
+  }
+
+  @keyframes shellPageIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  #pageContent.page-stale {
+    opacity: .68;
+    pointer-events: none;
+    transition: opacity .15s ease;
+  }
+
+  /* ── Skeleton ── */
+  .skel-wrap {
+    padding: 80px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .skel {
+    border-radius: 6px;
+    background: linear-gradient(
+      90deg,
+      rgba(26,24,20,.07) 25%,
+      rgba(26,24,20,.13) 50%,
+      rgba(26,24,20,.07) 75%
+    );
+    background-size: 200% 100%;
+    animation: skelShimmer 1.6s infinite;
+  }
+
+  html[data-theme="dark"] .skel {
+    background: linear-gradient(
+      90deg,
+      rgba(240,236,227,.06) 25%,
+      rgba(240,236,227,.11) 50%,
+      rgba(240,236,227,.06) 75%
+    );
+    background-size: 200% 100%;
+    animation: skelShimmer 1.6s infinite;
+  }
+
+  @keyframes skelShimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .skel-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .10em;
+    text-transform: uppercase;
+    color: rgba(26,24,20,.40);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 4px;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+
+  html[data-theme="dark"] .skel-label {
+    color: rgba(240,236,227,.35);
+  }
+
+  .skel-label .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: dotPulse 1.3s ease-in-out infinite;
+  }
+
+  @keyframes dotPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: .25; transform: scale(.65); }
+  }
+
+  /* ── Stale indicator ── */
+  #staleIndicator {
+    position: fixed;
+    top: 64px;
+    right: 16px;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: rgba(40,87,164,.10);
+    border: 1px solid rgba(40,87,164,.24);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #2857a4;
+    pointer-events: none;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    animation: fadeInDown .16s ease both;
+  }
+
+  html[data-theme="dark"] #staleIndicator {
+    background: rgba(40,87,164,.15);
+    border-color: rgba(40,87,164,.32);
+    color: #5b85c8;
+  }
+
+  #staleIndicator.visible {
+    display: flex;
+  }
+
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Progress bar ── */
+  #shellBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99998;
+    height: 2px;
+    width: 0%;
+    opacity: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      #2857a4,
+      #5b85c8,
+      #2857a4
+    );
+    background-size: 200% 100%;
+    animation: barGlow 2s linear infinite;
+    transition: width .25s ease, opacity .3s ease;
+  }
+
+  #shellBar.active {
+    opacity: 1;
+  }
+
+  @keyframes barGlow {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>
+</head>
+
+<body>
+  <div id="shellBar"></div>
+
+  <div id="staleIndicator">
+    <i class="fa-solid fa-rotate fa-spin" style="font-size:10px;"></i>
+    Refreshing...
+  </div>
+
+  <div id="appShell">
+    <? var activePage = INITIAL_PAGE; ?>
+    <?!= include('navbar'); ?>
+
+    <main id="pageContent">
+      <div class="skel-wrap">
+        <div class="skel-label"><span class="dot"></span> Loading</div>
+        <div class="skel" style="width:44%;height:14px;"></div>
+        <div class="skel" style="width:62%;height:34px;margin-top:2px;"></div>
+        <div class="skel" style="width:38%;height:14px;"></div>
+        <div style="display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;">
+          <div class="skel" style="flex:1 1 220px;height:82px;border-radius:14px;"></div>
+          <div class="skel" style="flex:1 1 220px;height:82px;border-radius:14px;"></div>
+          <div class="skel" style="flex:1 1 220px;height:82px;border-radius:14px;"></div>
+          <div class="skel" style="flex:1 1 220px;height:82px;border-radius:14px;"></div>
+        </div>
+        <div class="skel" style="width:100%;height:48px;border-radius:12px;margin-top:4px;"></div>
+        <div class="skel" style="width:100%;height:54px;border-radius:10px;"></div>
+        <div class="skel" style="width:100%;height:54px;border-radius:10px;"></div>
+        <div class="skel" style="width:100%;height:54px;border-radius:10px;"></div>
+      </div>
+    </main>
+
+    <?!= HtmlService.createHtmlOutputFromFile('footer').getContent(); ?>
+  </div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const APP_URL       = "<?= ScriptApp.getService().getUrl() ?>";
+      const INITIAL_PAGE  = <?= JSON.stringify(INITIAL_PAGE || 'home') ?>;
+      const INITIAL_QUERY = <?= JSON.stringify(INITIAL_QUERY || {}) ?>;
+      const INITIAL_EMAIL = "<?= INITIAL_EMAIL || '' ?>";
+
+      window.__SHELL_EMAIL__ = INITIAL_EMAIL;
+      window.__SHELL_BOOTSTRAP__ = null;
+
+      const PAGE_CACHE        = new Map();
+      const STALE_CACHE       = new Map();
+      const IN_FLIGHT_FETCHES = new Map();
+      const CACHE_TTL_MS      = 5 * 60 * 1000; // 5 minutes
+
+      const NO_CLIENT_CACHE = new Set([
+        'masterlist', 'employees', 'users', 'reports',
+        'assetreport', 'signedaf', 'tasks', 'vendor',
+        'profile', 'rbac', 'publish', 'maintenance', 'topperformers'
+      ]);
+
+      const PREFETCH_MAP = {
+        home:       ['aboutus', 'schedule', 'events'],
+        events:     ['schedule'],
+        reports:    ['assetreport'],
+        schedule:   ['events'],
+        aboutus:    ['home'],
+        users:      ['rbac'],
+        rbac:       ['users'],
+        masterlist: ['employees', 'assetreport', 'cheatsheet'],
+        employees:  ['masterlist', 'cheatsheet']
+      };
+
+      let currentPage    = null;
+      let isNavigating   = false;
+      let queuedNav      = null;
+      let navTimeout     = null;
+      let barTimer       = null;
+      let navItems       = [];
+
+      // ── Hover prefetch: tracks pending timers so we can cancel on mouseleave ──
+      const hoverPrefetchTimers = new Map();
+
+      const staleEl = document.getElementById('staleIndicator');
+      const barEl   = document.getElementById('shellBar');
+
+      /* ============================================================
+         CACHE HELPERS
+      ============================================================ */
+      window.invalidatePageCache = function(page) {
+        if (page) {
+          PAGE_CACHE.delete(page);
+          STALE_CACHE.delete(page);
+          return;
+        }
+        PAGE_CACHE.clear();
+        STALE_CACHE.clear();
+      };
+
+      function normalizePage(page) {
+        return String(page || 'home').trim().toLowerCase();
+      }
+
+      function safeQuery(query) {
+        return query && typeof query === 'object' ? query : {};
+      }
+
+      function isEmptyQuery(query) {
+        return Object.keys(safeQuery(query)).length === 0;
+      }
+
+      function cacheGet(page) {
+        if (NO_CLIENT_CACHE.has(page)) return null;
+
+        const entry = PAGE_CACHE.get(page);
+        if (!entry) return null;
+
+        if ((Date.now() - entry.ts) > CACHE_TTL_MS) {
+          PAGE_CACHE.delete(page);
+          return null;
+        }
+
+        return entry;
+      }
+
+      function cacheSet(page, html, bootstrap) {
+        if (NO_CLIENT_CACHE.has(page)) return;
+        PAGE_CACHE.set(page, { html, bootstrap, ts: Date.now() });
+      }
+
+      /* ============================================================
+         PROGRESS BAR / STALE INDICATOR
+      ============================================================ */
+      function staleShow() { staleEl?.classList.add('visible'); }
+      function staleHide() { staleEl?.classList.remove('visible'); }
+
+      function barStart() {
+        clearTimeout(barTimer);
+        if (!barEl) return;
+
+        barEl.style.transition = 'none';
+        barEl.style.width      = '0%';
+        barEl.style.opacity    = '';
+        barEl.classList.add('active');
+
+        requestAnimationFrame(() => {
+          barEl.style.transition = 'width 12s cubic-bezier(.05,.6,.12,1)';
+          barEl.style.width      = '85%';
+        });
+      }
+
+      function barDone() {
+        if (!barEl) return;
+
+        barEl.style.transition = 'width .2s ease';
+        barEl.style.width      = '100%';
+
+        barTimer = setTimeout(() => {
+          barEl.style.opacity = '0';
+          setTimeout(() => {
+            barEl.style.width   = '0%';
+            barEl.style.opacity = '';
+            barEl.classList.remove('active');
+          }, 300);
+        }, 200);
+      }
+
+      /* ============================================================
+         NAV HELPERS
+      ============================================================ */
+      function clearNavTimeout() {
+        if (navTimeout) {
+          clearTimeout(navTimeout);
+          navTimeout = null;
+        }
+      }
+
+      function setNavActive(page) {
+        navItems.forEach(el => {
+          el.classList.toggle('active', el.dataset.page === page);
+        });
+      }
+
+      /* ============================================================
+         PREFETCH
+      ============================================================ */
+      function schedulePrefetch(page) {
+        const targets = PREFETCH_MAP[page] || [];
+        if (!targets.length) return;
+
+        setTimeout(() => {
+          targets.forEach(prefetch);
+        }, 1200);
+      }
+
+      function prefetch(page) {
+        page = normalizePage(page);
+
+        if (NO_CLIENT_CACHE.has(page)) return;
+        if (cacheGet(page)) return;
+        if (!(window.google && google.script && google.script.run)) return;
+
+        fetchPage(page, {})
+          .then(res => {
+            if (res && res.ok) {
+              cacheSet(page, res.html, res.bootstrap);
+            }
+          })
+          .catch(() => {});
+      }
+
+      /* ============================================================
+         HTML HELPERS
+      ============================================================ */
+      function skelHtml(label) {
+        return `
+          <div class="skel-wrap">
+            <div class="skel-label"><span class="dot"></span> Loading ${label || ''}</div>
+            <div class="skel" style="width:44%;height:14px;"></div>
+            <div class="skel" style="width:62%;height:34px;margin-top:2px;"></div>
+            <div class="skel" style="width:38%;height:14px;"></div>
+            <div style="display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;">
+              <div class="skel" style="flex:1 1 220px;height:82px;border-radius:14px;"></div>
+              <div class="skel" style="flex:1 1 220px;height:82px;border-radius:14px;"></div>
+              <div class="skel" style="flex:1 1 220px;height:82px;border-radius:14px;"></div>
+              <div class="skel" style="flex:1 1 220px;height:82px;border-radius:14px;"></div>
+            </div>
+            <div class="skel" style="width:100%;height:48px;border-radius:12px;margin-top:4px;"></div>
+            <div class="skel" style="width:100%;height:54px;border-radius:10px;"></div>
+            <div class="skel" style="width:100%;height:54px;border-radius:10px;"></div>
+            <div class="skel" style="width:100%;height:54px;border-radius:10px;"></div>
+          </div>
+        `;
+      }
+
+      function htmlDenied() {
+        return `
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:14px;text-align:center;padding:32px;">
+            <i class="fa-solid fa-lock" style="font-size:32px;opacity:.3;"></i>
+            <div style="font-size:16px;font-weight:700;">Access Denied</div>
+            <div style="font-size:13px;opacity:.55;">You don't have permission to view this page.</div>
+          </div>
+        `;
+      }
+
+      function htmlError(msg) {
+        return `
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:14px;text-align:center;padding:32px;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size:32px;color:#f87171;"></i>
+            <div style="font-size:16px;font-weight:700;">Something went wrong</div>
+            <div style="font-size:12px;opacity:.5;max-width:320px;">${escapeHtml(msg || 'Unknown error')}</div>
+            <button
+              onclick="navigateTo('${currentPage || 'home'}', {}, false)"
+              style="margin-top:6px;padding:8px 20px;border-radius:999px;border:1px solid rgba(255,255,255,.15);background:transparent;color:inherit;cursor:pointer;font-size:13px;">
+              Try again
+            </button>
+          </div>
+        `;
+      }
+
+      function escapeHtml(value) {
+        return String(value || '')
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#39;');
+      }
+
+      /* ============================================================
+         DOM HELPERS
+      ============================================================ */
+      function replaceContent(html) {
+        const oldEl  = document.getElementById('pageContent');
+        const freshEl = document.createElement('main');
+        freshEl.id   = 'pageContent';
+        freshEl.innerHTML = html || '';
+        oldEl.replaceWith(freshEl);
+        return freshEl;
+      }
+
+      function runScripts(container) {
+        container.querySelectorAll('script').forEach(oldScript => {
+          const newScript = document.createElement('script');
+
+          Array.from(oldScript.attributes).forEach(attr => {
+            if (attr.name === 'nonce') return;
+            newScript.setAttribute(attr.name, attr.value);
+          });
+
+          if (document.currentScript && document.currentScript.nonce) {
+            newScript.nonce = document.currentScript.nonce;
+          }
+
+          newScript.textContent = oldScript.textContent || '';
+          oldScript.parentNode.replaceChild(newScript, oldScript);
+        });
+      }
+
+      /* ============================================================
+         RENDER
+      ============================================================ */
+      function render(html, bootstrap, page, fromCache) {
+        clearNavTimeout();
+        isNavigating = false;
+        currentPage  = page;
+
+        barDone();
+        staleHide();
+        setNavActive(page);
+
+        // ── Run per-page cleanup hooks ──────────────────────────────
+        const PAGE_CLEANUP_HOOKS = [
+          '__MASTERLIST_CLEANUP__',
+          '__PROFILE_CLEANUP__',
+          '__REQUEST_CLEANUP__',
+          '__SCHEDULE_CLEANUP__',
+          '__EMPLOYEES_CLEANUP__',
+          '__EVENTS_CLEANUP__',
+          '__ASSETREPORT_CLEANUP__',
+          '__PUBLISH_CLEANUP__',
+          '__MAINTENANCE_CLEANUP__',
+          '__USERS_CLEANUP__',
+          '__RBAC_CLEANUP__',
+          '__TASKS_CLEANUP__',
+          '__VENDOR_CLEANUP__',
+          '__CHEATSHEET_CLEANUP__',
+          '__WARRANTYCONFIG_CLEANUP__',
+          '__TOPPERFORMERS_CLEANUP__'
+        ];
+
+        PAGE_CLEANUP_HOOKS.forEach(function(key) {
+          if (typeof window[key] === 'function') {
+            try { window[key](); } catch(_) {}
+            window[key] = null;
+          }
+        });
+
+        window.__SHELL_BOOTSTRAP__ = bootstrap || null;
+
+        const pageEl = replaceContent(html);
+        pageEl.classList.remove('page-stale');
+
+        if (!fromCache) {
+          pageEl.classList.add('page-entering');
+        }
+
+        runScripts(pageEl);
+        document.title = 'Manila IT Inventory';
+
+        // ── IMPROVEMENT 1: Seed STALE_CACHE for NO_CLIENT_CACHE pages ──
+        // So the second visit shows instantly (stale-while-revalidate)
+        // instead of re-showing the skeleton.
+        if (NO_CLIENT_CACHE.has(page)) {
+          STALE_CACHE.set(page, { html });
+        }
+
+        runQueue();
+        schedulePrefetch(page);
+      }
+
+      function renderError(msg) {
+        clearNavTimeout();
+        isNavigating = false;
+        barDone();
+        staleHide();
+
+        const pageEl = replaceContent(htmlError(msg));
+        pageEl.classList.add('page-entering');
+
+        runQueue();
+      }
+
+      /* ============================================================
+         FETCH
+      ============================================================ */
+      function fetchPage(page, query) {
+        const normalizedPage  = normalizePage(page);
+        const normalizedQuery = safeQuery(query);
+        const key = `${normalizedPage}::${JSON.stringify(normalizedQuery)}`;
+
+        if (IN_FLIGHT_FETCHES.has(key)) {
+          return IN_FLIGHT_FETCHES.get(key);
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          google.script.run
+            .withSuccessHandler(resolve)
+            .withFailureHandler(reject)
+            .getPageHtml(normalizedPage, normalizedQuery, '');
+        }).finally(() => {
+          IN_FLIGHT_FETCHES.delete(key);
+        });
+
+        IN_FLIGHT_FETCHES.set(key, promise);
+        return promise;
+      }
+
+      /* ============================================================
+         NAVIGATE
+      ============================================================ */
+      window.navigateTo = function(page, query = {}, pushState = true) {
+  page  = normalizePage(page);
+  query = safeQuery(query);
+
+  persistShellState(page, query);
+
+  // ── Run cleanup eagerly so body-appended overlays from the
+  //    previous page are removed before the new page loads ──
+  const PAGE_CLEANUP_HOOKS = [
+    '__MASTERLIST_CLEANUP__', '__PROFILE_CLEANUP__', '__REQUEST_CLEANUP__',
+    '__SCHEDULE_CLEANUP__', '__EMPLOYEES_CLEANUP__', '__EVENTS_CLEANUP__',
+    '__ASSETREPORT_CLEANUP__', '__PUBLISH_CLEANUP__', '__MAINTENANCE_CLEANUP__',
+    '__USERS_CLEANUP__', '__RBAC_CLEANUP__', '__TASKS_CLEANUP__',
+    '__VENDOR_CLEANUP__', '__CHEATSHEET_CLEANUP__', '__WARRANTYCONFIG_CLEANUP__',
+    '__TOPPERFORMERS_CLEANUP__'
+  ];
+  PAGE_CLEANUP_HOOKS.forEach(function(key) {
+    if (typeof window[key] === 'function') {
+      try { window[key](); } catch(_) {}
+      window[key] = null;
+    }
+  });
+
+  if (isNavigating) {
+          queuedNav = { page, query, pushState };
+          return;
+        }
+
+        const emptyQuery  = isEmptyQuery(query);
+        const cachedEntry = emptyQuery ? cacheGet(page) : null;
+
+        // Instant render from fresh cache
+        if (cachedEntry) {
+          currentPage = page;
+          setNavActive(page);
+          window.__SHELL_BOOTSTRAP__ = cachedEntry.bootstrap || null;
+
+          const pageEl = replaceContent(cachedEntry.html);
+          pageEl.classList.add('page-entering');
+          runScripts(pageEl);
+
+          if (pushState !== false) {
+            updateShellHistory(page, query, 'push');
+          }
+
+          schedulePrefetch(page);
+          return;
+        }
+
+        // Stale-while-revalidate — show old HTML instantly, fetch fresh in bg
+        const staleEntry = emptyQuery ? STALE_CACHE.get(page) : null;
+        if (staleEntry) {
+          currentPage = page;
+          setNavActive(page);
+
+          if (pushState !== false) {
+            updateShellHistory(page, query, 'push');
+          }
+
+          const pageEl = replaceContent(staleEntry.html);
+          pageEl.classList.add('page-stale');
+          runScripts(pageEl);
+
+          barStart();
+          staleShow();
+
+          fetchPage(page, query)
+            .then(res => {
+              if (res && res.ok) {
+                STALE_CACHE.set(page, { html: res.html });
+                if (!NO_CLIENT_CACHE.has(page)) {
+                  cacheSet(page, res.html, res.bootstrap);
+                }
+                render(res.html, res.bootstrap, page, false);
+                return;
+              }
+
+              STALE_CACHE.delete(page);
+              barDone();
+              staleHide();
+              const cur = document.getElementById('pageContent');
+              if (cur) cur.classList.remove('page-stale');
+            })
+            .catch(() => {
+              STALE_CACHE.delete(page);
+              barDone();
+              staleHide();
+              const cur = document.getElementById('pageContent');
+              if (cur) cur.classList.remove('page-stale');
+            });
+
+          return;
+        }
+
+        // Full fetch with skeleton
+        isNavigating = true;
+        queuedNav    = null;
+        barStart();
+
+        const pageLabel = page.charAt(0).toUpperCase() + page.slice(1);
+        document.getElementById('pageContent').innerHTML = skelHtml(pageLabel);
+
+        if (pushState !== false) {
+          updateShellHistory(page, query, 'push');
+        }
+
+        // ── IMPROVEMENT 2: Extended timeout — Apps Script cold starts
+        //    can take 6-8 s; 15 s prevents premature "timed out" errors.
+        navTimeout = setTimeout(() => {
+          if (!isNavigating) return;
+          renderError('Request timed out. Please try again.');
+        }, 15000); // ← was 8000
+
+        fetchPage(page, query)
+          .then(res => {
+            if (res && res.error === 'not_authenticated') {
+              window.location.href = APP_URL + '?page=home';
+              return;
+            }
+
+            if (!res || !res.ok) {
+              const pageEl = replaceContent(
+                res && res.error === 'access_denied'
+                  ? htmlDenied()
+                  : htmlError((res && res.error) || 'Unknown error')
+              );
+
+              pageEl.classList.add('page-entering');
+              clearNavTimeout();
+              isNavigating = false;
+              barDone();
+              runQueue();
+              return;
+            }
+
+            if (!NO_CLIENT_CACHE.has(page)) {
+              cacheSet(page, res.html, res.bootstrap);
+            } else {
+              STALE_CACHE.set(page, { html: res.html });
+            }
+
+            render(res.html, res.bootstrap, page, false);
+          })
+          .catch(err => {
+            renderError(err && err.message ? err.message : String(err));
+          });
+      };
+
+      function runQueue() {
+        if (!queuedNav) return;
+        const next = queuedNav;
+        queuedNav = null;
+        window.navigateTo(next.page, next.query, next.pushState);
+      }
+
+      /* ============================================================
+         HISTORY / STATE HELPERS
+      ============================================================ */
+      function buildShellUrl(page, query) {
+        const search = new URLSearchParams();
+        const p = normalizePage(page);
+        const q = safeQuery(query);
+
+        search.set('page', p);
+
+        Object.entries(q).forEach(([key, value]) => {
+          if (value == null || value === '') return;
+          search.set(key, String(value));
+        });
+
+        return window.location.pathname + '?' + search.toString();
+      }
+
+      function persistShellState(page, query) {
+        try {
+          sessionStorage.setItem('shell_page',  normalizePage(page));
+          sessionStorage.setItem('shell_query', JSON.stringify(safeQuery(query)));
+        } catch (_) {}
+      }
+
+      function readShellState() {
+        try {
+          const url          = new URL(window.location.href);
+          const pageFromUrl  = normalizePage(url.searchParams.get('page') || '');
+          const queryFromUrl = {};
+
+          url.searchParams.forEach((value, key) => {
+            if (key === 'page') return;
+            queryFromUrl[key] = value;
+          });
+
+          if (pageFromUrl && pageFromUrl !== 'home') {
+            return { page: pageFromUrl, query: queryFromUrl };
+          }
+
+          const savedPage  = sessionStorage.getItem('shell_page');
+          const savedQuery = JSON.parse(sessionStorage.getItem('shell_query') || '{}');
+
+          if (savedPage) {
+            return {
+              page:  normalizePage(savedPage),
+              query: safeQuery(savedQuery)
+            };
+          }
+        } catch (_) {}
+
+        return {
+          page:  normalizePage(INITIAL_PAGE || 'home'),
+          query: safeQuery(INITIAL_QUERY || {})
+        };
+      }
+
+      function updateShellHistory(page, query, mode) {
+        const normalizedPage  = normalizePage(page);
+        const normalizedQuery = safeQuery(query);
+        const url   = buildShellUrl(normalizedPage, normalizedQuery);
+        const state = { page: normalizedPage, query: normalizedQuery };
+
+        try {
+          if (mode === 'replace') {
+            history.replaceState(state, '', url);
+          } else {
+            history.pushState(state, '', url);
+          }
+        } catch (_) {}
+      }
+
+      /* ============================================================
+         BOOT
+      ============================================================ */
+      let _bootFired = false;
+
+      function waitForGas(attempts) {
+        const restored = readShellState();
+
+        if (!(window.google && google.script && google.script.run)) {
+          if (attempts <= 0) {
+            if (_bootFired) return;
+            _bootFired = true;
+            updateShellHistory(restored.page, restored.query, 'replace');
+            window.navigateTo(restored.page, restored.query, false);
+            return;
+          }
+          setTimeout(() => waitForGas(attempts - 1), 200);
+          return;
+        }
+
+        if (_bootFired) return;
+        _bootFired = true;
+
+        // Navigate immediately — don't wait for warmShellCache
+        updateShellHistory(restored.page, restored.query, 'replace');
+        window.navigateTo(restored.page, restored.query, false);
+
+        // Warm cache in background without blocking navigation
+        google.script.run
+          .withSuccessHandler(() => {})
+          .withFailureHandler(() => {})
+          .warmShellCache();
+      }
+
+      function boot() {
+        navItems = Array.from(document.querySelectorAll('[data-page]'));
+
+        // ── Click navigation ──────────────────────────────────────
+        document.addEventListener('click', e => {
+          const link = e.target.closest('[data-page]');
+          if (!link || !link.dataset.page) return;
+
+          e.preventDefault();
+
+          // Cancel any pending hover-prefetch timer for this link
+          const hoverPage = normalizePage(link.dataset.page);
+          if (hoverPrefetchTimers.has(hoverPage)) {
+            clearTimeout(hoverPrefetchTimers.get(hoverPage));
+            hoverPrefetchTimers.delete(hoverPage);
+          }
+
+          window.navigateTo(hoverPage, {}, true);
+        });
+
+        // ── IMPROVEMENT 3: Hover prefetch ────────────────────────
+        // Start prefetching ~120ms after the pointer enters a nav link.
+        // If the user moves away before 120ms, the timer is cancelled
+        // (avoids unnecessary fetches for casual mouse movement).
+        document.addEventListener('mouseenter', e => {
+          const link = e.target.closest('[data-page]');
+          if (!link || !link.dataset.page) return;
+
+          const page = normalizePage(link.dataset.page);
+
+          // Skip if already cached, no-cache page, or already in flight
+          if (NO_CLIENT_CACHE.has(page)) return;
+          if (cacheGet(page)) return;
+          if (hoverPrefetchTimers.has(page)) return;
+          if (!(window.google && google.script && google.script.run)) return;
+
+          const timer = setTimeout(() => {
+            hoverPrefetchTimers.delete(page);
+            prefetch(page);
+          }, 120);
+
+          hoverPrefetchTimers.set(page, timer);
+        }, true); // capture phase — catches events on child elements too
+
+        document.addEventListener('mouseleave', e => {
+          const link = e.target.closest('[data-page]');
+          if (!link || !link.dataset.page) return;
+
+          const page = normalizePage(link.dataset.page);
+          if (hoverPrefetchTimers.has(page)) {
+            clearTimeout(hoverPrefetchTimers.get(page));
+            hoverPrefetchTimers.delete(page);
+          }
+        }, true);
+
+        // ── Browser back/forward ──────────────────────────────────
+        window.addEventListener('popstate', ev => {
+          if (ev.state && ev.state.page) {
+            window.navigateTo(ev.state.page, ev.state.query || {}, false);
+            return;
+          }
+
+          const restored = readShellState();
+          window.navigateTo(restored.page, restored.query, false);
+        });
+
+        // ── Safety valve: unstick isNavigating if it gets stuck ───
+        setInterval(() => {
+          if (isNavigating && navTimeout === null) {
+            isNavigating = false;
+            runQueue();
+          }
+        }, 2000);
+
+        waitForGas(10);
+      }
+
+      boot();
+    })();
+  </script>
+</body>
+</html>

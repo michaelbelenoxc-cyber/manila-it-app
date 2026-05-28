@@ -1,0 +1,1777 @@
+<style>
+  /* ============================================================
+   * FONTS
+   * ============================================================ */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  /* ═══════════════════════════════════════════
+     TOKENS
+  ═══════════════════════════════════════════ */
+  :root {
+    --font-ui:   'Epilogue', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    /* surfaces — warm paper (light default) */
+    --bg-0: #f5f2ec;
+    --bg-1: #f5f2ec;
+    --bg-2: #ede9e1;
+    --bg-3: #e4ded4;
+    --bg-4: #ddd6ca;
+    --bg-5: #d4cbbe;
+
+    /* borders */
+    --b-0: rgba(26,24,20,.07);
+    --b-1: rgba(26,24,20,.12);
+    --b-2: rgba(26,24,20,.18);
+    --b-3: rgba(26,24,20,.28);
+
+    /* text */
+    --t-1: rgba(26,24,20,.95);
+    --t-2: rgba(74,71,64,.75);
+    --t-3: rgba(138,134,128,.60);
+
+    /* primary accent — editorial blue (replaces teal) */
+    --teal:    #2857a4;
+    --teal-2:  #4a74c0;
+    --teal-d:  rgba(40,87,164,.10);
+    --teal-b:  rgba(40,87,164,.30);
+    --teal-glow: 0 0 0 1px rgba(40,87,164,.22), 0 4px 16px rgba(40,87,164,.12);
+
+    /* secondary */
+    --blue:   #2857a4;
+    --blue-d: rgba(40,87,164,.10);
+    --green:  #16a34a;
+    --green-2:#22c55e;
+    --red:    #c94040;
+    --red-2:  #e05555;
+    --red-d:  rgba(201,64,64,.09);
+    --red-b:  rgba(201,64,64,.24);
+
+    /* geometry */
+    --r-xl:  16px;
+    --r-lg:  10px;
+    --r-md:   7px;
+    --r-sm:   5px;
+    --r-pill: 999px;
+
+    /* shadows */
+    --sh-1: 0 1px 4px rgba(26,24,20,.08);
+    --sh-2: 0 4px 16px rgba(26,24,20,.10);
+    --sh-3: 0 12px 40px rgba(26,24,20,.14);
+
+    --shell-nav-height: 84px;
+  }
+
+  /* ── Dark mode ───────────────────────────── */
+  html[data-theme="dark"] {
+    --bg-0: #161410; --bg-1: #1a1814; --bg-2: #1e1c18;
+    --bg-3: #252220; --bg-4: #2c2a26; --bg-5: #33302b;
+    --b-0: rgba(240,236,227,.06); --b-1: rgba(240,236,227,.10);
+    --b-2: rgba(240,236,227,.16); --b-3: rgba(240,236,227,.26);
+    --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.75); --t-3: rgba(106,100,92,.60);
+    --teal:   #2857a4; --teal-2:  #5b85c8;
+    --teal-d: rgba(40,87,164,.16); --teal-b: rgba(40,87,164,.40);
+    --teal-glow: 0 0 0 1px rgba(40,87,164,.32), 0 4px 16px rgba(40,87,164,.18);
+    --green:  #16a34a; --green-2: #4ade80;
+    --red:    #c94040; --red-2:   #f87171;
+    --red-d:  rgba(201,64,64,.12); --red-b: rgba(201,64,64,.30);
+    --sh-1: 0 1px 4px rgba(0,0,0,.35);
+    --sh-2: 0 4px 16px rgba(0,0,0,.45);
+    --sh-3: 0 12px 40px rgba(0,0,0,.55);
+  }
+
+  /* ═══════════════════════════════════════════
+     BASE
+  ═══════════════════════════════════════════ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    min-height: 100vh;
+    padding-top: var(--shell-nav-height);
+    font-family: var(--font-ui);
+    font-size: 14px;
+    color: var(--t-1);
+    background: var(--bg-0);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 55% 40% at 6% 0%,  rgba(40,87,164,.04) 0%, transparent 55%),
+      radial-gradient(ellipse 45% 35% at 94% 100%, rgba(40,87,164,.03) 0%, transparent 55%);
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  :focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+    border-radius: var(--r-sm);
+  }
+
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0);
+    white-space: nowrap; border: 0;
+  }
+
+  [hidden] { display: none !important; }
+
+  /* ═══════════════════════════════════════════
+     PAGE
+  ═══════════════════════════════════════════ */
+  .page {
+    width: min(100%, 1440px); margin: 0 auto;
+    padding: 36px 28px 68px;
+    animation: fadeUp .36s ease-out both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Hero ── */
+  .hero {
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 22px; align-items: end; margin-bottom: 24px;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 3px 11px; border-radius: var(--r-pill);
+    border: 1px solid var(--teal-b); background: var(--teal-d);
+    color: var(--teal); font-size: 10px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    font-family: var(--font-mono); margin-bottom: 11px;
+  }
+
+  html[data-theme="dark"] .hero-eyebrow { color: #5b85c8; }
+
+  .hero-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(26px, 3.5vw, 40px);
+    font-weight: 400; letter-spacing: -.02em;
+    line-height: 1.06; color: var(--t-1); margin-bottom: 8px;
+  }
+
+  .hero-sub {
+    font-size: 13px; font-family: var(--font-mono);
+    color: var(--t-3); line-height: 1.65;
+    max-width: 580px; letter-spacing: .01em;
+  }
+
+  /* ── Stat cards ── */
+  .stat-row {
+    display: flex; gap: 9px; flex-wrap: wrap;
+    justify-content: flex-end; align-self: flex-end;
+  }
+
+  .stat-card {
+    min-width: 136px; padding: 12px 16px 10px;
+    border-radius: var(--r-lg);
+    background: var(--bg-2); border: 1px solid var(--b-1);
+    box-shadow: var(--sh-1);
+    transition: transform .16s, border-color .16s;
+  }
+
+  .stat-card:hover { transform: translateY(-1px); border-color: var(--b-2); }
+
+  .stat-label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 9.5px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--t-3);
+    font-family: var(--font-mono); margin-bottom: 8px;
+  }
+
+  .stat-label i { color: var(--teal); }
+  html[data-theme="dark"] .stat-label i { color: #5b85c8; }
+
+  .stat-value {
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -.04em; line-height: 1;
+    color: var(--t-1); font-family: var(--font-mono);
+  }
+
+  /* ═══════════════════════════════════════════
+     MAIN CARD
+  ═══════════════════════════════════════════ */
+  .main-card {
+    background: var(--bg-1); border: 1px solid var(--b-1);
+    border-radius: var(--r-xl); box-shadow: var(--sh-1); overflow: hidden;
+  }
+
+  /* ── Top bar ── */
+  .top-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 14px; flex-wrap: wrap; padding: 14px 20px;
+    border-bottom: 1px solid var(--b-0);
+    background: var(--bg-0);
+  }
+
+  html[data-theme="dark"] .top-bar { background: rgba(0,0,0,.10); }
+
+  .top-bar-left  { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; flex: 1; min-width: 0; }
+  .top-bar-right { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+
+  .top-bar-identity { display: flex; align-items: center; gap: 11px; }
+
+  .top-bar-icon {
+    width: 38px; height: 38px; border-radius: var(--r-md);
+    display: flex; align-items: center; justify-content: center;
+    background: var(--teal-d); border: 1px solid var(--teal-b);
+    color: var(--teal); font-size: 14px; flex-shrink: 0;
+  }
+
+  html[data-theme="dark"] .top-bar-icon { color: #5b85c8; }
+
+  .top-bar-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 14px; font-weight: 400; color: var(--t-1);
+  }
+
+  .top-bar-sub { font-size: 11px; font-family: var(--font-mono); color: var(--t-3); margin-top: 2px; }
+
+  /* search */
+  .search-field { position: relative; margin-left: 7px; }
+
+  .search-field i {
+    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    color: var(--t-3); font-size: 10.5px; pointer-events: none; transition: color .13s;
+  }
+
+  .search-field:focus-within i { color: var(--teal); }
+
+  #searchBox {
+    width: 245px; height: 32px;
+    padding: 0 11px 0 30px;
+    border: 1px solid var(--b-1); border-radius: var(--r-md);
+    background: var(--bg-2); color: var(--t-1);
+    font-family: var(--font-mono); font-size: 11.5px; outline: none;
+    transition: border-color .13s, box-shadow .13s, background .13s;
+  }
+
+  #searchBox:focus {
+    border-color: var(--teal-b); background: var(--bg-1);
+    box-shadow: var(--teal-glow);
+  }
+
+  #searchBox::placeholder { color: var(--t-3); }
+
+  .bulk-bar { display: flex; align-items: center; gap: 7px; }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 32px; padding: 0 12px;
+    border-radius: var(--r-md);
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    letter-spacing: .04em; cursor: pointer; border: none;
+    white-space: nowrap;
+    transition: background .13s, border-color .13s, opacity .13s;
+  }
+
+  .btn:disabled { opacity: .38; cursor: not-allowed; }
+  .btn i { font-size: 10px; }
+
+  .btn-teal {
+    background: var(--teal-d); border: 1px solid var(--teal-b); color: var(--teal);
+  }
+  html[data-theme="dark"] .btn-teal { color: #5b85c8; }
+  .btn-teal:hover:not(:disabled) { background: rgba(40,87,164,.16); border-color: rgba(40,87,164,.44); }
+
+  .btn-ghost {
+    background: var(--bg-2); border: 1px solid var(--b-1); color: var(--t-2);
+  }
+  .btn-ghost:hover:not(:disabled) { background: var(--bg-3); border-color: var(--b-2); color: var(--t-1); }
+
+  .btn-danger {
+    background: var(--red-d); border: 1px solid var(--red-b); color: var(--red);
+  }
+  html[data-theme="dark"] .btn-danger { color: #f87171; }
+  .btn-danger:hover:not(:disabled) { background: rgba(201,64,64,.16); }
+
+  .btn-sm { height: 28px; padding: 0 9px; font-size: 10.5px; border-radius: var(--r-sm); }
+  .btn-xs { height: 26px; padding: 0 8px; font-size: 10px;   border-radius: var(--r-sm); }
+
+  /* ── Meta bar ── */
+  .meta-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 11px; flex-wrap: wrap; padding: 8px 20px;
+    border-bottom: 1px solid var(--b-0);
+    font-size: 11px; color: var(--t-3); font-family: var(--font-mono);
+  }
+
+  .meta-left, .meta-right { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+
+  .meta-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 9px; border-radius: var(--r-pill);
+    border: 1px solid var(--b-0); background: var(--bg-3);
+    color: var(--t-3); font-size: 10.5px; font-weight: 500;
+  }
+
+  .meta-pill i { font-size: 9.5px; }
+
+  .meta-pill.active {
+    border-color: var(--teal-b); color: var(--teal); background: var(--teal-d);
+  }
+  html[data-theme="dark"] .meta-pill.active { color: #5b85c8; }
+
+  /* ═══════════════════════════════════════════
+     TABLE
+  ═══════════════════════════════════════════ */
+  .table-scroll { width: 100%; overflow-x: auto; }
+  .table-scroll::-webkit-scrollbar { height: 3px; }
+  .table-scroll::-webkit-scrollbar-thumb { background: var(--b-2); border-radius: 4px; }
+
+  #userTable { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+
+  #userTable thead th {
+    padding: 9px 15px; text-align: left; white-space: nowrap;
+    font-size: 9px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--t-3);
+    border-bottom: 1px solid var(--b-1);
+    background: var(--bg-0);
+    font-family: var(--font-mono);
+  }
+
+  html[data-theme="dark"] #userTable thead th { background: rgba(0,0,0,.08); }
+
+  #userTable tbody td {
+    padding: 11px 15px; border-bottom: 1px solid var(--b-0);
+    vertical-align: middle; transition: background .11s;
+  }
+
+  #userTable tbody tr:last-child td { border-bottom: none; }
+  #userTable tbody tr:hover td { background: rgba(40,87,164,.03); }
+  html[data-theme="dark"] #userTable tbody tr:hover td { background: rgba(40,87,164,.06); }
+
+  .hide-admin-cols #thPick,
+  .hide-admin-cols #thGroup,
+  .hide-admin-cols #thRoleManage,
+  .hide-admin-cols #thActions,
+  .hide-admin-cols td.pick-cell,
+  .hide-admin-cols td.group-cell,
+  .hide-admin-cols td.role-manage-cell,
+  .hide-admin-cols td.actions-cell { display: none; }
+
+  /* ── User cell ── */
+  .user-cell { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+  .avatar {
+    width: 34px; height: 34px; border-radius: var(--r-sm);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    background: var(--teal-d); border: 1px solid var(--teal-b);
+    color: var(--teal);
+    font-size: 11.5px; font-weight: 700;
+    font-family: var(--font-mono); letter-spacing: .02em;
+  }
+
+  html[data-theme="dark"] .avatar { color: #5b85c8; }
+
+  .user-name {
+    font-size: 13px; font-weight: 700; color: var(--t-1);
+    line-height: 1.25; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis; max-width: 190px;
+  }
+
+  .user-role-sub {
+    font-size: 11px; color: var(--t-3); margin-top: 2px;
+    font-family: var(--font-mono);
+  }
+
+  .email-text { font-family: var(--font-mono); font-size: 12px; color: var(--t-2); }
+  .soft-text  { font-size: 12px; color: var(--t-3); font-family: var(--font-mono); }
+
+  /* ── Status pill ── */
+  .status-wrap { display: flex; align-items: center; gap: 9px; }
+
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px; border-radius: var(--r-pill);
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .06em;
+    font-family: var(--font-mono); white-space: nowrap;
+  }
+
+  .status-pill::before {
+    content: ''; width: 4px; height: 4px;
+    border-radius: 50%; flex-shrink: 0;
+  }
+
+  .status-active {
+    background: rgba(22,163,74,.09); border: 1px solid rgba(22,163,74,.22);
+    color: var(--green);
+  }
+  html[data-theme="dark"] .status-active { color: #4ade80; background: rgba(74,222,128,.10); border-color: rgba(74,222,128,.22); }
+  .status-active::before { background: var(--green); animation: pulse 2.2s infinite; }
+  html[data-theme="dark"] .status-active::before { background: #4ade80; }
+
+  .status-inactive {
+    background: var(--red-d); border: 1px solid var(--red-b); color: var(--red);
+  }
+  html[data-theme="dark"] .status-inactive { color: #f87171; }
+  .status-inactive::before { background: var(--red); }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.28} }
+
+  /* ── Role badge ── */
+  .role-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 9px; border-radius: var(--r-pill);
+    border: 1px solid var(--b-1); background: var(--bg-3);
+    font-size: 11px; font-weight: 600; color: var(--t-2);
+    white-space: nowrap; font-family: var(--font-mono);
+  }
+
+  .role-badge i { font-size: 9.5px; color: var(--teal); }
+  html[data-theme="dark"] .role-badge i { color: #5b85c8; }
+
+  /* ── Group badge ── */
+  .group-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 9px; border-radius: var(--r-pill);
+    border: 1px solid var(--b-0); background: var(--bg-3);
+    font-size: 11px; color: var(--t-3); white-space: nowrap;
+  }
+
+  /* ── Status toggle ── */
+  .status-switch {
+    position: relative; display: inline-block;
+    width: 36px; height: 20px; flex-shrink: 0;
+  }
+
+  .status-switch input { opacity: 0; width: 0; height: 0; }
+
+  .switch-track {
+    position: absolute; inset: 0;
+    border-radius: var(--r-pill);
+    background: var(--b-1); border: 1px solid var(--b-2);
+    cursor: pointer; transition: background .18s, border-color .18s;
+  }
+
+  .switch-track::after {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--t-3);
+    transition: transform .18s, background .18s;
+    box-shadow: 0 1px 3px rgba(26,24,20,.18);
+  }
+
+  html[data-theme="dark"] .switch-track::after { background: rgba(240,236,227,.35); }
+
+  .status-switch input:checked + .switch-track { background: var(--teal); border-color: transparent; }
+  .status-switch input:checked + .switch-track::after { transform: translateX(16px); background: #fff; }
+  .status-switch input:disabled + .switch-track { opacity: .38; cursor: not-allowed; }
+
+  .status-switch input:focus-visible + .switch-track {
+    outline: 2px solid var(--teal); outline-offset: 2px;
+  }
+
+  /* ── Inline role editor ── */
+  .role-editor { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+  .inline-role-select {
+    height: 28px; min-width: 130px; padding: 0 9px;
+    border-radius: var(--r-sm); border: 1px solid var(--b-1);
+    background: var(--bg-2); color: var(--t-1);
+    font-family: var(--font-mono); font-size: 11px; outline: none;
+    transition: border-color .13s;
+  }
+
+  .inline-role-select:focus { border-color: var(--teal-b); }
+  .inline-role-select option { background: var(--bg-2); color: var(--t-1); }
+
+  .action-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+
+  /* ── Empty/loading ── */
+  .empty-state {
+    padding: 48px 20px; text-align: center;
+    color: var(--t-3); font-size: 12.5px; font-family: var(--font-mono);
+  }
+
+  /* ── Pagination ── */
+  .pagination-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 11px; flex-wrap: wrap; padding: 12px 20px 16px;
+    border-top: 1px solid var(--b-0);
+  }
+
+  .pagination-info {
+    font-size: 11px; color: var(--t-3); font-family: var(--font-mono);
+  }
+
+  .pagination-controls { display: flex; align-items: center; gap: 7px; }
+
+  .page-badge {
+    min-width: 80px; text-align: center;
+    font-size: 11px; color: var(--t-3); font-family: var(--font-mono);
+  }
+
+  /* ═══════════════════════════════════════════
+     MODAL
+  ═══════════════════════════════════════════ */
+  .modal {
+    position: fixed; inset: 0; display: none;
+    align-items: center; justify-content: center;
+    padding: 20px;
+    background: rgba(26,24,20,.45);
+    backdrop-filter: blur(5px);
+    z-index: 2500;
+  }
+
+  html[data-theme="dark"] .modal { background: rgba(0,0,0,.60); backdrop-filter: blur(8px); }
+  .modal.is-open { display: flex; animation: fadeIn .16s ease-out; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal-card {
+    width: min(560px, 96vw);
+    max-height: calc(100vh - 40px);
+    display: flex; flex-direction: column;
+    background: var(--bg-1);
+    border: 1px solid var(--b-2);
+    border-radius: var(--r-xl);
+    box-shadow: var(--sh-3); overflow: hidden;
+    animation: modalIn .20s ease-out;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(7px) scale(.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .modal-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 11px; padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--b-0); flex-shrink: 0;
+    background: var(--bg-0);
+  }
+
+  html[data-theme="dark"] .modal-head { background: rgba(0,0,0,.08); }
+
+  .modal-identity { display: flex; align-items: flex-start; gap: 12px; }
+
+  .modal-icon {
+    width: 38px; height: 38px; border-radius: var(--r-md);
+    display: flex; align-items: center; justify-content: center;
+    background: var(--teal-d); border: 1px solid var(--teal-b);
+    color: var(--teal); font-size: 14px; flex-shrink: 0;
+  }
+
+  html[data-theme="dark"] .modal-icon { color: #5b85c8; }
+
+  .modal-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 15px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1);
+  }
+
+  .modal-sub {
+    font-size: 11px; font-family: var(--font-mono);
+    color: var(--t-3); margin-top: 4px; line-height: 1.55;
+  }
+
+  .modal-close {
+    width: 28px; height: 28px; border-radius: var(--r-sm);
+    border: 1px solid var(--b-1); background: var(--bg-2);
+    color: var(--t-3); display: flex; align-items: center;
+    justify-content: center; cursor: pointer; font-size: 12px;
+    transition: background .13s, color .13s; flex-shrink: 0;
+  }
+
+  .modal-close:hover { background: var(--bg-3); color: var(--t-1); }
+
+  .modal-body {
+    padding: 16px 20px; display: grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 12px; overflow-y: auto;
+  }
+
+  .field { min-width: 0; }
+  .field.span-2 { grid-column: 1 / -1; }
+
+  .field label {
+    display: block; margin-bottom: 5px;
+    font-size: 9.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .12em;
+    color: var(--t-3); font-family: var(--font-mono);
+  }
+
+  .required-marker { color: var(--red); font-weight: 900; margin-left: 3px; }
+  html[data-theme="dark"] .required-marker { color: #f87171; }
+
+  .field input,
+  .field select {
+    width: 100%; height: 36px; padding: 0 10px;
+    border-radius: var(--r-md); border: 1px solid var(--b-1);
+    background: var(--bg-2); color: var(--t-1);
+    font-family: var(--font-ui); font-size: 13px; font-weight: 500;
+    outline: none;
+    transition: border-color .13s, box-shadow .13s, background .13s;
+  }
+
+  .field input:focus,
+  .field select:focus {
+    border-color: var(--teal-b); background: var(--bg-1);
+    box-shadow: var(--teal-glow); color: var(--t-1);
+  }
+
+  .field input[aria-invalid="true"] {
+    border-color: var(--red-b);
+    box-shadow: 0 0 0 1px rgba(201,64,64,.18);
+  }
+
+  .field input::placeholder { color: var(--t-3); }
+  .field select option { background: var(--bg-2); color: var(--t-1); }
+
+  .field-error {
+    display: block; margin-top: 5px;
+    font-size: 11px; color: var(--red);
+    font-family: var(--font-mono);
+  }
+  html[data-theme="dark"] .field-error { color: #f87171; }
+
+  .modal-footer {
+    display: flex; justify-content: flex-end;
+    gap: 7px; flex-wrap: wrap;
+    padding: 12px 20px 16px;
+    border-top: 1px solid var(--b-0); flex-shrink: 0;
+  }
+
+  /* ═══════════════════════════════════════════
+     TOASTS
+  ═══════════════════════════════════════════ */
+  #toastContainer {
+    position: fixed; right: 18px; bottom: 18px;
+    z-index: 4000; display: flex; flex-direction: column;
+    gap: 7px; max-width: min(92vw, 360px); pointer-events: none;
+  }
+
+  .custom-toast {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 13px; border-radius: var(--r-lg);
+    background: var(--bg-2); border: 1px solid var(--b-2);
+    color: var(--t-1); font-size: 12px; font-weight: 600;
+    font-family: var(--font-mono); letter-spacing: .02em;
+    box-shadow: var(--sh-2); pointer-events: auto;
+    animation: toastIn .20s ease-out both;
+  }
+
+  html[data-theme="dark"] .custom-toast { background: var(--bg-3); }
+  .custom-toast--leaving { animation: toastOut .20s ease-in both; }
+
+  .custom-toast--success .toast-icon { color: var(--green); }
+  html[data-theme="dark"] .custom-toast--success .toast-icon { color: #4ade80; }
+  .custom-toast--danger  .toast-icon { color: var(--red); }
+  html[data-theme="dark"] .custom-toast--danger  .toast-icon { color: #f87171; }
+  .custom-toast--warning .toast-icon { color: var(--amber, #b45309); }
+  html[data-theme="dark"] .custom-toast--warning .toast-icon { color: #fbbf24; }
+  .custom-toast--info    .toast-icon { color: var(--teal); }
+  html[data-theme="dark"] .custom-toast--info    .toast-icon { color: #5b85c8; }
+
+  .toast-icon {
+    width: 20px; height: 20px; display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0; margin-top: 1px;
+  }
+
+  .toast-body { flex: 1; min-width: 0; line-height: 1.45; }
+
+  .toast-close {
+    background: transparent; border: none; color: var(--t-3);
+    cursor: pointer; padding: 2px 3px; font-size: 12px;
+    line-height: 1; border-radius: var(--r-sm);
+    transition: color .13s, background .13s; flex-shrink: 0;
+  }
+
+  .toast-close:hover { color: var(--t-1); background: var(--b-1); }
+
+  @keyframes toastIn  { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes toastOut { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(8px)} }
+
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateY(3px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  #userTable tbody tr { animation: rowIn .20s ease-out both; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fa-spin { animation: spin .85s linear infinite; }
+
+  /* ── Responsive ── */
+  @media (max-width: 1080px) {
+    .hero { grid-template-columns: 1fr; }
+    .stat-row { justify-content: flex-start; }
+  }
+
+  @media (max-width: 900px) {
+    .top-bar-left { flex-direction: column; align-items: stretch; }
+    .search-field { margin-left: 0; width: 100%; }
+    #searchBox { width: 100%; }
+  }
+
+  @media (max-width: 700px) {
+    .page { padding: 22px 13px 50px; }
+    .top-bar { flex-direction: column; align-items: stretch; }
+    .top-bar-left, .top-bar-right { width: 100%; }
+    .modal-body { grid-template-columns: 1fr; }
+    .field.span-2 { grid-column: auto; }
+    #toastContainer { left: 13px; right: 13px; }
+    .custom-toast { max-width: 100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+
+<div class="page">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div>
+      <div class="hero-eyebrow">
+        <i class="fas fa-shield-halved" aria-hidden="true"></i> Access &amp; Identity
+      </div>
+      <h1 class="hero-title">User Accounts</h1>
+      <p class="hero-sub">Manage access, roles, account status, and team assignment from one clean control panel.</p>
+    </div>
+
+    <div class="stat-row" aria-label="User account statistics">
+      <div class="stat-card">
+        <div class="stat-label"><i class="fas fa-users" aria-hidden="true"></i> Total</div>
+        <div class="stat-value" id="statTotalUsers" aria-live="polite">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><i class="fas fa-user-check" aria-hidden="true"></i> Active</div>
+        <div class="stat-value" id="statActiveUsers" aria-live="polite">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><i class="fas fa-user-slash" aria-hidden="true"></i> Inactive</div>
+        <div class="stat-value" id="statInactiveUsers" aria-live="polite">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main card ── -->
+  <div class="main-card">
+
+    <!-- Top bar -->
+    <div class="top-bar" role="toolbar" aria-label="User list controls">
+      <div class="top-bar-left">
+        <div class="top-bar-identity">
+          <div class="top-bar-icon" aria-hidden="true"><i class="fas fa-users-gear"></i></div>
+          <div>
+            <div class="top-bar-title">User Management</div>
+            <div class="top-bar-sub">Search, assign roles, and toggle account status.</div>
+          </div>
+        </div>
+
+        <div class="search-field" role="search">
+          <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
+          <label class="visually-hidden" for="searchBox">Search users</label>
+          <input type="text" id="searchBox"
+                 placeholder="Search name, email, role…"
+                 autocomplete="off"
+                 aria-label="Search users by name, email, or role">
+        </div>
+
+        <div class="bulk-bar" id="bulkRoleBar" hidden>
+          <label class="visually-hidden" for="bulkRoleSelect">Bulk role</label>
+          <select id="bulkRoleSelect" class="inline-role-select"
+                  style="height:36px; min-width:160px;"></select>
+          <button class="btn btn-ghost btn-sm" id="btnApplyBulkRole" type="button">
+            <i class="fas fa-user-shield" aria-hidden="true"></i> Assign to Selected
+          </button>
+        </div>
+      </div>
+
+      <div class="top-bar-right">
+        <button class="btn btn-ghost" id="btnRefresh" type="button"
+                title="Refresh user list" aria-label="Refresh user list">
+          <i class="fas fa-rotate" aria-hidden="true"></i> Refresh
+        </button>
+        <button class="btn btn-teal" id="btnAddUser" type="button" hidden>
+          <i class="fas fa-plus" aria-hidden="true"></i> Add User
+        </button>
+      </div>
+    </div>
+
+    <!-- Meta bar -->
+    <div class="meta-bar" role="status" aria-live="polite">
+      <div class="meta-left">
+        <span class="meta-pill" id="metaVisibleCount">
+          <i class="fas fa-eye" aria-hidden="true"></i> Showing —
+        </span>
+        <span class="meta-pill" id="metaUpdated">
+          <i class="fas fa-clock" aria-hidden="true"></i> Updated just now
+        </span>
+      </div>
+      <div class="meta-right">
+        <span class="meta-pill" id="metaMode">
+          <i class="fas fa-lock" aria-hidden="true"></i> View only
+        </span>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-scroll">
+      <table id="userTable">
+        <caption class="visually-hidden">
+          User accounts with role, status, and group assignment.
+        </caption>
+        <thead>
+          <tr>
+            <th id="thPick" scope="col"><span class="visually-hidden">Select</span></th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Created</th>
+            <th scope="col">Status</th>
+            <th scope="col">Role</th>
+            <th id="thRoleManage" scope="col">Assign Role</th>
+            <th id="thGroup" scope="col">Group</th>
+            <th id="thActions" scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="userBody">
+          <tr>
+            <td colspan="9" class="empty-state">
+              <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>&ensp;Loading users…
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" id="usersPagination"
+         role="status" aria-live="polite" aria-label="Pagination status">
+      <div class="pagination-info" id="paginationInfo">Showing 0–0 of 0</div>
+      <div class="pagination-controls">
+        <button type="button" class="btn btn-ghost btn-sm" id="pgPrev"
+                aria-label="Previous page" disabled>Prev</button>
+        <div class="page-badge" id="pageBadge">—</div>
+        <button type="button" class="btn btn-ghost btn-sm" id="pgNext"
+                aria-label="Next page" disabled>Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── User Modal ── -->
+<div id="userModal" class="modal" role="dialog" aria-modal="true"
+     aria-labelledby="modalTitle" aria-describedby="modalSub" aria-hidden="true">
+  <div class="modal-card">
+
+    <div class="modal-head">
+      <div class="modal-identity">
+        <div class="modal-icon" aria-hidden="true"><i class="fas fa-user-plus"></i></div>
+        <div>
+          <div class="modal-title" id="modalTitle">Add New User</div>
+          <div class="modal-sub" id="modalSub">Create a user account and assign access permissions.</div>
+        </div>
+      </div>
+      <button class="modal-close" type="button" id="modalCloseBtn" aria-label="Close dialog">
+        <i class="fas fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <form id="userForm" onsubmit="return false;" novalidate>
+      <div class="modal-body">
+        <div class="field span-2">
+          <label for="userName">
+            Name <span class="required-marker" aria-hidden="true">*</span>
+          </label>
+          <input id="userName"
+                 placeholder="e.g. Juan Dela Cruz"
+                 autocomplete="off"
+                 aria-required="true"
+                 aria-describedby="userNameError">
+          <span class="field-error" id="userNameError" hidden></span>
+        </div>
+
+        <div class="field span-2">
+          <label for="userEmail">
+            Email <span class="required-marker" aria-hidden="true">*</span>
+          </label>
+          <input id="userEmail" type="email"
+                 placeholder="name@company.com"
+                 autocomplete="off"
+                 aria-required="true"
+                 aria-describedby="userEmailError">
+          <span class="field-error" id="userEmailError" hidden></span>
+        </div>
+
+        <div class="field">
+          <label for="userRole">Role</label>
+          <select id="userRole"></select>
+        </div>
+
+        <div class="field">
+          <label for="userStatus">Status</label>
+          <select id="userStatus">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+
+        <div class="field span-2">
+          <label for="userGroup">Group</label>
+          <select id="userGroup">
+            <option value="Morning">Morning</option>
+            <option value="Graveyard">Graveyard</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" id="btnCancel">Cancel</button>
+        <button type="submit" class="btn btn-teal" id="saveBtn">
+          <span id="saveBtnText"><i class="fas fa-floppy-disk" aria-hidden="true"></i> Save</span>
+          <span id="saveBtnSpinner" hidden>
+            <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> Saving…
+          </span>
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<!-- Toast region -->
+<div id="toastContainer" role="region" aria-live="polite" aria-label="Notifications"></div>
+
+<script>
+    (() => {
+      const PAGE_SIZE = 25;
+      let ACTOR_EMAIL = "";
+
+      /* ── DOM ───────────────────────────────── */
+      const userModal      = document.getElementById("userModal");
+      const modalCard      = userModal.querySelector(".modal-card");
+      const userForm       = document.getElementById("userForm");
+      const btnAddUser     = document.getElementById("btnAddUser");
+      const btnRefresh     = document.getElementById("btnRefresh");
+      const btnClose       = document.getElementById("modalCloseBtn");
+      const btnCancel      = document.getElementById("btnCancel");
+      const btnSave        = document.getElementById("saveBtn");
+      const saveBtnText    = document.getElementById("saveBtnText");
+      const saveBtnSpinner = document.getElementById("saveBtnSpinner");
+
+      const userName   = document.getElementById("userName");
+      const userEmail  = document.getElementById("userEmail");
+      const userRole   = document.getElementById("userRole");
+      const userStatus = document.getElementById("userStatus");
+      const userGroup  = document.getElementById("userGroup");
+
+      const userNameError  = document.getElementById("userNameError");
+      const userEmailError = document.getElementById("userEmailError");
+
+      const modalTitle     = document.getElementById("modalTitle");
+      const modalSub       = document.getElementById("modalSub");
+      const userBody       = document.getElementById("userBody");
+      const searchBox      = document.getElementById("searchBox");
+      const bulkRoleBar    = document.getElementById("bulkRoleBar");
+      const bulkRoleSelect = document.getElementById("bulkRoleSelect");
+      const btnApplyBulkRole = document.getElementById("btnApplyBulkRole");
+
+      const statTotalUsers    = document.getElementById("statTotalUsers");
+      const statActiveUsers   = document.getElementById("statActiveUsers");
+      const statInactiveUsers = document.getElementById("statInactiveUsers");
+      const metaVisibleCount  = document.getElementById("metaVisibleCount");
+      const metaUpdated       = document.getElementById("metaUpdated");
+      const metaMode          = document.getElementById("metaMode");
+
+      const pgPrev     = document.getElementById("pgPrev");
+      const pgNext     = document.getElementById("pgNext");
+      const pageBadge  = document.getElementById("pageBadge");
+      const pagInfo    = document.getElementById("paginationInfo");
+
+      /* ── State ─────────────────────────────── */
+      let users = [], filteredUsers = [], roles = [];
+      let editIndex = null, CAN_ADMIN_USERS = false, BUSY = false;
+      let lastFocusEl = null, currentPage = 1;
+
+      /* ── Helpers ───────────────────────────── */
+      const eh = v => String(v ?? "")
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+      const nRole  = r => String(r || "").trim().toLowerCase();
+      const nEmail = e => String(e || "").trim().toLowerCase();
+      const hasBridge = () => !!(window.google && google.script && google.script.run);
+      const fmt = n => Number.isFinite(Number(n)) ? Number(n).toLocaleString() : "0";
+
+      function debounce(fn, w) {
+        let t;
+        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), w || 180); };
+      }
+
+      /* ── Stats ─────────────────────────────── */
+      function updateStats_() {
+        const total    = users.length;
+        const active   = users.filter(u => String(u.status || "").trim() === "Active").length;
+        const inactive = Math.max(0, total - active);
+        statTotalUsers.textContent    = fmt(total);
+        statActiveUsers.textContent   = fmt(active);
+        statInactiveUsers.textContent = fmt(inactive);
+      }
+
+      function updateVisibleMeta_() {
+        const total = filteredUsers.length;
+        const start = total ? ((currentPage - 1) * PAGE_SIZE) + 1 : 0;
+        const end   = Math.min(total, currentPage * PAGE_SIZE);
+        if (metaVisibleCount) {
+          metaVisibleCount.innerHTML =
+            `<i class="fas fa-eye" aria-hidden="true"></i> Showing ${fmt(start)}–${fmt(end)} of ${fmt(total)}`;
+        }
+        if (metaMode) {
+          metaMode.innerHTML = CAN_ADMIN_USERS
+            ? `<i class="fas fa-user-gear" aria-hidden="true"></i> Admin mode`
+            : `<i class="fas fa-lock" aria-hidden="true"></i> View only`;
+          metaMode.classList.toggle("active", CAN_ADMIN_USERS);
+        }
+      }
+
+      function updateMetaUpdated_() {
+        if (metaUpdated) {
+          metaUpdated.innerHTML =
+            `<i class="fas fa-clock" aria-hidden="true"></i> Updated ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+        }
+      }
+
+      /* ── Initials ──────────────────────────── */
+      function initials_(name) {
+        const p = String(name || "").trim().split(/\s+/).filter(Boolean);
+        if (!p.length) return "U";
+        if (p.length === 1) return p[0].slice(0, 2).toUpperCase();
+        return (p[0][0] + p[1][0]).toUpperCase();
+      }
+
+      /* ── Toast ─────────────────────────────── */
+      function showToast(msg, type) {
+        const c = document.getElementById("toastContainer");
+        if (!c) return;
+
+        const kind = type === "danger"  ? "danger"
+                   : type === "warning" ? "warning"
+                   : type === "info"    ? "info"
+                   : "success";
+
+        const iconMap = {
+          success: "fa-circle-check",
+          danger:  "fa-triangle-exclamation",
+          warning: "fa-triangle-exclamation",
+          info:    "fa-circle-info"
+        };
+
+        const t = document.createElement("div");
+        t.className = `custom-toast custom-toast--${kind}`;
+        t.setAttribute("role", kind === "danger" ? "alert" : "status");
+        t.innerHTML = `
+          <span class="toast-icon"><i class="fas ${iconMap[kind]}" aria-hidden="true"></i></span>
+          <div class="toast-body">${eh(msg)}</div>
+          <button type="button" class="toast-close" aria-label="Dismiss">
+            <i class="fas fa-xmark" aria-hidden="true"></i>
+          </button>
+        `;
+
+        let dismissed = false;
+        const dismiss = () => {
+          if (dismissed) return;
+          dismissed = true;
+          t.classList.add("custom-toast--leaving");
+          setTimeout(() => t.remove(), 240);
+        };
+
+        t.querySelector(".toast-close").addEventListener("click", dismiss);
+        c.appendChild(t);
+        setTimeout(dismiss, 3000);
+      }
+
+      /* ── Save loading ──────────────────────── */
+      function setSaveLoading_(on) {
+        btnSave.disabled = !!on;
+        saveBtnText.hidden    = !!on;
+        saveBtnSpinner.hidden = !on;
+      }
+
+      /* ── Role options ──────────────────────── */
+      function fillRoleOptions_(sel, selected) {
+        if (!sel) return;
+        sel.innerHTML = (roles || []).map(r =>
+          `<option value="${eh(r)}" ${nRole(selected) === nRole(r) ? "selected" : ""}>${eh(r)}</option>`
+        ).join("");
+      }
+
+      /* ── Admin UI ──────────────────────────── */
+      function colCount_() { return CAN_ADMIN_USERS ? 9 : 5; }
+
+      function applyAdminUI_() {
+        const tbl = document.getElementById("userTable");
+        btnAddUser.hidden  = !CAN_ADMIN_USERS;
+        bulkRoleBar.hidden = !CAN_ADMIN_USERS;
+        tbl?.classList.toggle("hide-admin-cols", !CAN_ADMIN_USERS);
+      }
+
+      function requireAdmin_() {
+        if (CAN_ADMIN_USERS) return true;
+        showToast("You don't have permission to manage users.", "danger");
+        return false;
+      }
+
+      function auditLog_(action, serialTag, field, oldValue, newValue, details) {
+        if (!hasBridge()) return;
+        google.script.run
+          .withFailureHandler(() => {})
+          .auditWrite({
+            action:    action,
+            serialTag: serialTag || "",
+            entity:    "Users",
+            field:     field     || "",
+            oldValue:  oldValue  || "",
+            newValue:  newValue  || "",
+            details:   details   || {}
+          });
+      }
+
+      /* ── Data helpers ──────────────────────── */
+      const validateEmail_ = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e || "").trim());
+      const sortUsers_ = arr => (Array.isArray(arr) ? arr : [])
+        .sort((a, b) => String(a?.username || "").localeCompare(String(b?.username || "")));
+      const findByIdx_   = idx => users.find(u => Number(u.index) === Number(idx)) || null;
+      const findByEmail_ = em  => { const k = nEmail(em); return users.find(u => nEmail(u.email) === k) || null; };
+
+      function updateLocal_(idx, patch) {
+        const n = Number(idx);
+        users         = users.map(u         => Number(u.index) === n ? { ...u, ...patch } : u);
+        filteredUsers = filteredUsers.map(u => Number(u.index) === n ? { ...u, ...patch } : u);
+        updateStats_(); updateVisibleMeta_(); updateMetaUpdated_();
+      }
+
+      function removeLocal_(idx) {
+        const n = Number(idx);
+        users         = users.filter(u         => Number(u.index) !== n);
+        filteredUsers = filteredUsers.filter(u => Number(u.index) !== n);
+        updateStats_(); updateVisibleMeta_(); updateMetaUpdated_();
+      }
+
+      /* ── Render table ──────────────────────── */
+      function renderUsers_(list) {
+        if (!Array.isArray(list) || !list.length) {
+          userBody.innerHTML = `<tr><td colspan="${colCount_()}" class="empty-state">No users found.</td></tr>`;
+          return;
+        }
+
+        userBody.innerHTML = list.map((r, i) => {
+          const name     = eh(r.username || "");
+          const email    = eh(r.email    || "");
+          const emailKey = eh(nEmail(r.email || ""));
+          const created  = eh(r.created  || "");
+          const roleText = eh(r.role     || "");
+          const group    = eh(r.group    || "");
+          const status   = String(r.status || "Inactive");
+          const isActive = status === "Active";
+          const idx      = Number(r.index);
+          const ini      = eh(initials_(r.username || r.email || "U"));
+          const delay    = Math.min(i * 18, 280);
+
+          return `
+            <tr data-index="${idx}" style="animation-delay:${delay}ms">
+              ${CAN_ADMIN_USERS ? `
+                <td class="pick-cell">
+                  <input type="checkbox" class="user-pick" value="${emailKey}"
+                         aria-label="Select ${name || email || 'user'}"
+                         style="accent-color:var(--teal);width:15px;height:15px;cursor:pointer;">
+                </td>` : ""}
+
+              <td>
+                <div class="user-cell">
+                  <div class="avatar" aria-hidden="true">${ini}</div>
+                  <div>
+                    <div class="user-name">${name || "—"}</div>
+                    <div class="user-role-sub">${roleText || "viewer"}</div>
+                  </div>
+                </div>
+              </td>
+
+              <td><span class="email-text">${email || "—"}</span></td>
+              <td><span class="soft-text">${created || "—"}</span></td>
+
+              <td>
+                <div class="status-wrap">
+                  <span class="status-pill ${isActive ? "status-active" : "status-inactive"}">${eh(status)}</span>
+                  ${CAN_ADMIN_USERS ? `
+                    <label class="status-switch" title="Toggle status">
+                      <span class="visually-hidden">Toggle status for ${name || email || 'user'}</span>
+                      <input type="checkbox" ${isActive ? "checked" : ""}
+                             data-action="toggle" data-index="${idx}"
+                             aria-label="Toggle status for ${name || email || 'user'}">
+                      <span class="switch-track"></span>
+                    </label>` : ""}
+                </div>
+              </td>
+
+              <td>
+                <span class="role-badge">
+                  <i class="fas fa-shield-halved" aria-hidden="true"></i>${roleText || "viewer"}
+                </span>
+              </td>
+
+              ${CAN_ADMIN_USERS ? `
+                <td class="role-manage-cell">
+                  <div class="role-editor">
+                    <label class="visually-hidden" for="role-${emailKey}">Assign role</label>
+                    <select id="role-${emailKey}" class="inline-role-select" data-email="${emailKey}">
+                      ${roles.map(ro => `<option value="${eh(ro)}" ${nRole(r.role) === nRole(ro) ? "selected" : ""}>${eh(ro)}</option>`).join("")}
+                    </select>
+                    <button class="btn btn-teal btn-xs" data-email="${emailKey}" data-action="saveRole" type="button">Save</button>
+                  </div>
+                </td>` : ""}
+
+              <td class="group-cell">
+                <span class="group-badge">
+                  <i class="fas fa-layer-group" aria-hidden="true" style="color:var(--t-3);font-size:11px;"></i>${group || "—"}
+                </span>
+              </td>
+
+              ${CAN_ADMIN_USERS ? `
+                <td class="actions-cell">
+                  <div class="action-row">
+                    <button class="btn btn-ghost btn-xs" type="button" data-action="edit" data-index="${idx}" aria-label="Edit ${name || 'user'}">
+                      <i class="fas fa-pen" aria-hidden="true"></i> Edit
+                    </button>
+                    <button class="btn btn-ghost btn-xs" type="button" data-action="refreshRow" data-index="${idx}" title="Refresh" aria-label="Refresh row">
+                      <i class="fas fa-rotate" aria-hidden="true"></i>
+                    </button>
+                    <button class="btn btn-danger btn-xs" type="button" data-action="delete" data-index="${idx}" aria-label="Delete ${name || 'user'}">
+                      <i class="fas fa-trash" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </td>` : ""}
+            </tr>`;
+        }).join("");
+      }
+
+      /* ── Pagination ────────────────────────── */
+      function renderPagination_() {
+        const total      = filteredUsers.length;
+        const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        const start = total ? ((currentPage - 1) * PAGE_SIZE) + 1 : 0;
+        const end   = Math.min(total, currentPage * PAGE_SIZE);
+
+        if (pagInfo)   pagInfo.textContent   = `Showing ${fmt(start)}–${fmt(end)} of ${fmt(total)}`;
+        if (pageBadge) pageBadge.textContent = `Page ${currentPage} / ${totalPages}`;
+        if (pgPrev)    pgPrev.disabled = currentPage <= 1;
+        if (pgNext)    pgNext.disabled = currentPage >= totalPages;
+      }
+
+      function getCurrentPageRows_() {
+        const s = (currentPage - 1) * PAGE_SIZE;
+        return filteredUsers.slice(s, s + PAGE_SIZE);
+      }
+
+      function renderCurrentPage_() {
+        renderUsers_(getCurrentPageRows_());
+        renderPagination_();
+        updateVisibleMeta_();
+      }
+
+      /* ── Filter ────────────────────────────── */
+      function applyFilter_(resetPage) {
+        const q = (searchBox.value || "").toLowerCase().trim();
+        filteredUsers = !q ? [...users] : users.filter(u =>
+          `${u.username || ""} ${u.email || ""} ${u.role || ""} ${u.group || ""}`
+            .toLowerCase().includes(q)
+        );
+        if (resetPage !== false) currentPage = 1;
+        renderCurrentPage_();
+      }
+
+      /* ── Modal ─────────────────────────────── */
+      function setTableLoading_(msg) {
+        userBody.innerHTML = `
+          <tr>
+            <td colspan="${colCount_()}" class="empty-state">
+              <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>&ensp;${eh(msg || "Loading…")}
+            </td>
+          </tr>`;
+      }
+
+      function clearFieldError_(input, errEl) {
+        if (input) input.removeAttribute("aria-invalid");
+        if (errEl) { errEl.textContent = ""; errEl.hidden = true; }
+      }
+
+      function showFieldError_(input, errEl, msg) {
+        if (input) input.setAttribute("aria-invalid", "true");
+        if (errEl) { errEl.textContent = msg; errEl.hidden = false; }
+      }
+
+      function clearFormErrors_() {
+        clearFieldError_(userName,  userNameError);
+        clearFieldError_(userEmail, userEmailError);
+      }
+
+      function openUserModal(edit, idx) {
+        if (!requireAdmin_()) return;
+        lastFocusEl = document.activeElement;
+        userModal.classList.add("is-open");
+        userModal.setAttribute("aria-hidden", "false");
+        clearFormErrors_();
+
+        if (edit) {
+          editIndex = idx;
+          const u = findByIdx_(idx);
+          if (!u) { showToast("User not found.", "danger"); closeModalDirect(); return; }
+          userName.value  = u.username || "";
+          userEmail.value = u.email    || "";
+          fillRoleOptions_(userRole, u.role || "viewer");
+          userStatus.value = u.status || "Active";
+          userGroup.value  = u.group  || "Morning";
+          modalTitle.textContent = "Edit User";
+          modalSub.textContent   = "Update user details, access level, and account state.";
+        } else {
+          editIndex = null;
+          userName.value = "";
+          userEmail.value = "";
+          fillRoleOptions_(userRole, roles[0] || "viewer");
+          userStatus.value = "Active";
+          userGroup.value  = "Morning";
+          modalTitle.textContent = "Add New User";
+          modalSub.textContent   = "Create a user account and assign access permissions.";
+        }
+
+        setTimeout(() => userName.focus(), 30);
+      }
+
+      function closeModalDirect() {
+        userModal.classList.remove("is-open");
+        userModal.setAttribute("aria-hidden", "true");
+        clearFormErrors_();
+        if (lastFocusEl && typeof lastFocusEl.focus === "function") {
+          setTimeout(() => lastFocusEl.focus(), 0);
+        }
+      }
+
+      function trapFocus(e) {
+        if (!userModal.classList.contains("is-open") || e.key !== "Tab") return;
+        const list = Array.from(modalCard.querySelectorAll(
+          'button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'
+        )).filter(el => !el.disabled && el.offsetParent !== null);
+        if (!list.length) return;
+        const first = list[0], last = list[list.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+
+      /* ── Bootstrap ─────────────────────────── */
+      function bootstrapPage_() {
+        return new Promise(resolve => {
+          if (!hasBridge()) {
+            CAN_ADMIN_USERS = false;
+            roles = ["viewer"];
+            users = [];
+            filteredUsers = [];
+            applyAdminUI_();
+            fillRoleOptions_(userRole, "viewer");
+            fillRoleOptions_(bulkRoleSelect, "viewer");
+            renderCurrentPage_();
+            updateStats_();
+            updateMetaUpdated_();
+            return resolve();
+          }
+
+          setTableLoading_("Loading users…");
+
+          const onReady = res => {
+            ACTOR_EMAIL     = String(res?.me?.email || window.__SHELL_EMAIL__ || "").trim().toLowerCase();
+            CAN_ADMIN_USERS = !!res?.perms?.actions?.["users.manage"];
+            roles           = Array.isArray(res?.roles) && res.roles.length ? res.roles : ["viewer"];
+            users           = sortUsers_(Array.isArray(res?.users) ? res.users : []);
+            filteredUsers   = [...users];
+
+            applyAdminUI_();
+            fillRoleOptions_(userRole,      roles[0] || "viewer");
+            fillRoleOptions_(bulkRoleSelect, roles[0] || "viewer");
+            renderCurrentPage_();
+            updateStats_();
+            updateMetaUpdated_();
+            resolve();
+          };
+
+          const shellBoot = window.__SHELL_BOOTSTRAP__;
+          if (shellBoot?.perms) {
+            google.script.run
+              .withSuccessHandler(onReady)
+              .withFailureHandler(() => {
+                Promise.all([
+                  new Promise(r => google.script.run
+                    .withSuccessHandler(d => r(Array.isArray(d) ? d : []))
+                    .withFailureHandler(() => r([]))
+                    .getDistinctRolesClient()),
+                  new Promise(r => google.script.run
+                    .withSuccessHandler(d => r(Array.isArray(d) ? d : []))
+                    .withFailureHandler(() => r([]))
+                    .getUsersData())
+                ]).then(([roleList, userList]) => {
+                  onReady({ me: shellBoot.me, perms: shellBoot.perms, roles: roleList, users: userList });
+                });
+              })
+              .getUsersPageBootstrap();
+          } else {
+            google.script.run
+              .withSuccessHandler(onReady)
+              .withFailureHandler(() => {
+                Promise.all([
+                  new Promise(r => google.script.run
+                    .withSuccessHandler(d => r({ perms: d }))
+                    .withFailureHandler(() => r({ perms: {} }))
+                    .getMyPermissions()),
+                  new Promise(r => google.script.run
+                    .withSuccessHandler(d => r(Array.isArray(d) ? d : []))
+                    .withFailureHandler(() => r([]))
+                    .getDistinctRolesClient()),
+                  new Promise(r => google.script.run
+                    .withSuccessHandler(d => r(Array.isArray(d) ? d : []))
+                    .withFailureHandler(() => r([]))
+                    .getUsersData())
+                ]).then(([permsRes, roleList, userList]) => {
+                  onReady({ me: { email: "" }, perms: permsRes.perms, roles: roleList, users: userList });
+                });
+              })
+              .getUsersPageBootstrap();
+          }
+        });
+      }
+
+      /* ── Refresh ───────────────────────────── */
+      function refreshPage_() {
+        if (btnRefresh) {
+          btnRefresh.disabled = true;
+          btnRefresh.innerHTML = `<i class="fas fa-rotate fa-spin" aria-hidden="true"></i> Refreshing…`;
+        }
+        bootstrapPage_().finally(() => {
+          if (btnRefresh) {
+            btnRefresh.disabled = false;
+            btnRefresh.innerHTML = `<i class="fas fa-rotate" aria-hidden="true"></i> Refresh`;
+          }
+        });
+      }
+
+      /* ── Save user ─────────────────────────── */
+      function saveUser() {
+        if (!requireAdmin_()) return;
+        if (!hasBridge()) { showToast("Server connection not available.", "danger"); return; }
+        if (BUSY) return;
+
+        clearFormErrors_();
+
+        const name   = userName.value.trim();
+        const email  = userEmail.value.trim();
+        const role   = nRole(userRole.value);
+        const status = userStatus.value;
+        const group  = userGroup.value;
+
+        let hasError = false;
+        if (!name) {
+          showFieldError_(userName, userNameError, "Name is required.");
+          hasError = true;
+        }
+        if (!email) {
+          showFieldError_(userEmail, userEmailError, "Email is required.");
+          hasError = true;
+        } else if (!validateEmail_(email)) {
+          showFieldError_(userEmail, userEmailError, "Enter a valid email address.");
+          hasError = true;
+        }
+
+        if (hasError) {
+          (userNameError && !userNameError.hidden ? userName : userEmail).focus();
+          return;
+        }
+
+        const isEdit  = editIndex !== null;
+        const oldUser = isEdit ? findByIdx_(editIndex) : null;
+        const snapIdx = editIndex;
+
+        BUSY = true;
+        setSaveLoading_(true);
+
+        const done = () => {
+          BUSY = false;
+          setSaveLoading_(false);
+          if (isEdit) {
+            auditLog_("Update User", "", "role",
+              oldUser?.role || "",
+              role,
+              { email, name, status, group,
+                oldName:   oldUser?.username || "",
+                oldStatus: oldUser?.status   || "",
+                oldGroup:  oldUser?.group    || "" }
+            );
+            updateLocal_(snapIdx, { username: name, email, role, status, group });
+          } else {
+            auditLog_("Create User", "", "role", "", role, { email, name, status, group });
+            bootstrapPage_();
+          }
+          closeModalDirect();
+          applyFilter_(false);
+          showToast("User changes saved successfully", "success");
+        };
+
+        const fail = err => {
+          BUSY = false;
+          setSaveLoading_(false);
+          showToast(err?.message || "Save failed", "danger");
+        };
+
+        if (isEdit) {
+          google.script.run
+            .withSuccessHandler(done)
+            .withFailureHandler(fail)
+            .updateUserInSheet(snapIdx, name, email, status, role, group);
+        } else {
+          // Password arg removed — server generates it securely via HMAC secret
+          google.script.run
+            .withSuccessHandler(done)
+            .withFailureHandler(fail)
+            .addUserToSheet(name, email, status, role, group);
+        }
+      }
+
+      /* ── Delete ────────────────────────────── */
+      function deleteUser(idx) {
+        if (!requireAdmin_()) return;
+        if (!hasBridge()) { showToast("Server connection not available.", "danger"); return; }
+        if (BUSY) return;
+
+        const u = findByIdx_(idx);
+        if (!u) { showToast("User not found.", "danger"); return; }
+        const confirmed = await new Promise(resolve => {
+  const ok = window.confirm("Delete this user permanently?\n\nThis cannot be undone.");
+  resolve(ok);
+});
+if (!confirmed) return;
+
+        BUSY = true;
+        google.script.run
+          .withSuccessHandler(() => {
+            BUSY = false;
+            removeLocal_(idx);
+            applyFilter_(false);
+            showToast("User deleted", "success");
+            auditLog_("Delete User", "", "status",
+              u.username || u.email || "",
+              "deleted",
+              { email: u.email, role: u.role, index: idx }
+            );
+          })
+          .withFailureHandler(err => {
+            BUSY = false;
+            showToast(err?.message || "Delete failed", "danger");
+          })
+          .deleteUserFromSheet(idx, ACTOR_EMAIL);
+      }
+
+      /* ── Toggle status ─────────────────────── */
+      function toggleUserStatus(idx, chk) {
+        const u = findByIdx_(idx);
+        if (!u) { showToast("User not found", "danger"); return; }
+        if (!requireAdmin_()) { chk.checked = String(u.status || "") === "Active"; return; }
+        if (!hasBridge())     { showToast("Server unavailable.", "danger"); chk.checked = String(u.status || "") === "Active"; return; }
+        if (BUSY)             { chk.checked = String(u.status || "") === "Active"; return; }
+
+        const prev = String(u.status || "Inactive");
+        const next = prev === "Active" ? "Inactive" : "Active";
+
+        const wrap = chk.closest(".status-wrap");
+        const pill = wrap?.querySelector(".status-pill");
+
+        BUSY = true;
+        chk.disabled = true;
+        chk.checked  = (next === "Active");
+        if (pill) {
+          pill.textContent = next;
+          pill.className   = `status-pill ${next === "Active" ? "status-active" : "status-inactive"}`;
+        }
+        updateLocal_(idx, { status: next });
+
+        google.script.run
+          .withSuccessHandler(() => {
+            BUSY = false;
+            chk.disabled = false;
+            showToast(`User set to ${next}`, "success");
+            auditLog_("Toggle Status", "", "status", prev, next, { email: u.email });
+          })
+          .withFailureHandler(err => {
+            BUSY = false;
+            chk.disabled = false;
+            chk.checked  = (prev === "Active");
+            if (pill) {
+              pill.textContent = prev;
+              pill.className   = `status-pill ${prev === "Active" ? "status-active" : "status-inactive"}`;
+            }
+            updateLocal_(idx, { status: prev });
+            showToast(err?.message || "Failed to update status", "danger");
+          })
+          .toggleUserStatusInSheet(idx, next, ACTOR_EMAIL);
+      }
+
+      /* ── Inline role save ──────────────────── */
+      function saveInlineRole(email) {
+        if (!requireAdmin_()) return;
+        if (!hasBridge())     { showToast("Server unavailable.", "danger"); return; }
+        if (BUSY) return;
+
+        const key = nEmail(email);
+        const sel = document.querySelector(`.inline-role-select[data-email="${CSS.escape(key)}"]`);
+        const btn = document.querySelector(`button[data-action="saveRole"][data-email="${CSS.escape(key)}"]`);
+        const u   = findByEmail_(key);
+        if (!sel || !btn || !u) return;
+
+        const oldRole = u.role || "";
+        const role    = nRole(sel.value);
+
+        BUSY = true;
+        sel.disabled = true;
+        btn.disabled = true;
+
+        google.script.run
+          .withSuccessHandler(() => {
+            BUSY = false;
+            sel.disabled = false;
+            btn.disabled = false;
+            updateLocal_(u.index, { role });
+            applyFilter_(false);
+            showToast("Role updated", "success");
+            auditLog_("Update Role", "", "role", oldRole, role, { email: key });
+          })
+          .withFailureHandler(err => {
+            BUSY = false;
+            sel.disabled = false;
+            btn.disabled = false;
+            showToast(err?.message || "Failed to update role", "danger");
+          })
+          .assignRoleToUser({ email: key, role });
+      }
+
+      /* ── Bulk role ─────────────────────────── */
+      function applyBulkRole() {
+        if (!requireAdmin_()) return;
+        if (!hasBridge())     { showToast("Server unavailable.", "danger"); return; }
+        if (BUSY) return;
+
+        const role   = nRole(bulkRoleSelect.value);
+        const emails = Array.from(document.querySelectorAll(".user-pick:checked"))
+          .map(el => nEmail(el.value)).filter(Boolean);
+        if (!emails.length) { showToast("Select at least one user", "danger"); return; }
+
+        const oldRoles = {};
+        emails.forEach(e => {
+          const u = findByEmail_(e);
+          if (u) oldRoles[e] = u.role || "";
+        });
+
+        BUSY = true;
+        btnApplyBulkRole.disabled = true;
+
+        google.script.run
+          .withSuccessHandler(res => {
+            BUSY = false;
+            btnApplyBulkRole.disabled = false;
+            const emailSet = new Set(emails);
+            users = users.map(u => emailSet.has(nEmail(u.email)) ? { ...u, role } : u);
+            applyFilter_(false);
+            updateStats_();
+            updateMetaUpdated_();
+            showToast(`Updated ${res?.updated || emails.length} user(s)`, "success");
+            auditLog_("Bulk Assign Role", "", "role",
+              JSON.stringify(oldRoles),
+              role,
+              { emails, count: res?.updated || emails.length }
+            );
+          })
+          .withFailureHandler(err => {
+            BUSY = false;
+            btnApplyBulkRole.disabled = false;
+            showToast(err?.message || "Bulk update failed", "danger");
+          })
+          .bulkAssignRoleToUsers({ emails, role });
+      }
+
+      /* ── Events ────────────────────────────── */
+      userBody.addEventListener("click", e => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+        const act = btn.dataset.action;
+        const idx = Number(btn.dataset.index);
+        if (act === "edit")       return openUserModal(true, idx);
+        if (act === "refreshRow") return refreshPage_();
+        if (act === "delete")     return deleteUser(idx);
+        if (act === "saveRole")   return saveInlineRole(btn.dataset.email || "");
+      });
+
+      userBody.addEventListener("change", e => {
+        const toggle = e.target.closest('input[type="checkbox"][data-action="toggle"]');
+        if (toggle) toggleUserStatus(Number(toggle.dataset.index), toggle);
+      });
+
+      btnAddUser.addEventListener("click",       () => openUserModal(false, null));
+      btnRefresh.addEventListener("click",       refreshPage_);
+      btnApplyBulkRole.addEventListener("click", applyBulkRole);
+      btnClose.addEventListener("click",         closeModalDirect);
+      btnCancel.addEventListener("click",        closeModalDirect);
+
+      // Form submit handles both click and Enter key naturally
+      userForm.addEventListener("submit", e => {
+        e.preventDefault();
+        saveUser();
+      });
+
+      // Clear validation errors as the user types
+      userName.addEventListener("input",  () => clearFieldError_(userName,  userNameError));
+      userEmail.addEventListener("input", () => clearFieldError_(userEmail, userEmailError));
+
+      // Pagination — bound once
+      pgPrev?.addEventListener("click", () => {
+        if (currentPage > 1) { currentPage--; renderCurrentPage_(); }
+      });
+      pgNext?.addEventListener("click", () => {
+        const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE));
+        if (currentPage < totalPages) { currentPage++; renderCurrentPage_(); }
+      });
+
+      // Modal dismiss: backdrop click
+      userModal.addEventListener("click", e => {
+        if (e.target === userModal) closeModalDirect();
+      });
+
+      // Escape closes modal, Tab traps focus
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape" && userModal.classList.contains("is-open")) closeModalDirect();
+        trapFocus(e);
+      });
+
+      searchBox.addEventListener("input", debounce(() => applyFilter_(true), 180));
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", bootstrapPage_);
+      } else {
+        bootstrapPage_();
+      }
+    })();
+</script>

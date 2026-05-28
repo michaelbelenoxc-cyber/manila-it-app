@@ -1,0 +1,1580 @@
+<style>
+  /* ═══════════════════════════════════════
+     FONTS
+  ═══════════════════════════════════════ */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  /* ═══════════════════════════════════════
+     TOKENS
+  ═══════════════════════════════════════ */
+  :root {
+    --font-ui:   'Epilogue', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    /* surfaces — warm paper (light default) */
+    --bg-base: #f5f2ec;
+    --bg-1:    #f5f2ec;
+    --bg-2:    #ede9e1;
+    --bg-3:    #e4ded4;
+    --bg-4:    #ddd6ca;
+    --bg-5:    #d4cbbe;
+
+    /* borders */
+    --b-0: rgba(26,24,20,.07);
+    --b-1: rgba(26,24,20,.12);
+    --b-2: rgba(26,24,20,.18);
+    --b-3: rgba(26,24,20,.28);
+
+    /* text */
+    --t-1: rgba(26,24,20,.95);
+    --t-2: rgba(74,71,64,.75);
+    --t-3: rgba(138,134,128,.60);
+
+    /* primary accent — editorial blue (replaces amber) */
+    --amber:      #2857a4;
+    --amber-d:    rgba(40,87,164,.10);
+    --amber-b:    rgba(40,87,164,.30);
+    --amber-glow: 0 0 0 1px rgba(40,87,164,.22), 0 4px 16px rgba(40,87,164,.12);
+
+    /* supporting accents */
+    --blue:    #2857a4;
+    --blue-d:  rgba(40,87,164,.10);
+    --blue-b:  rgba(40,87,164,.30);
+    --blue-glow: 0 0 0 1px rgba(40,87,164,.22), 0 4px 16px rgba(40,87,164,.10);
+
+    --green:   #16a34a;
+    --green-d: rgba(22,163,74,.09);
+    --green-b: rgba(22,163,74,.22);
+
+    --red:     #c94040;
+    --red-d:   rgba(201,64,64,.09);
+    --red-b:   rgba(201,64,64,.24);
+
+    --purple:   #6d28d9;
+    --purple-d: rgba(109,40,217,.09);
+    --purple-b: rgba(109,40,217,.22);
+
+    --cyan:    #0e7490;
+    --cyan-d:  rgba(14,116,144,.09);
+    --cyan-b:  rgba(14,116,144,.22);
+
+    /* geometry */
+    --r-xl:  14px;
+    --r-lg:  10px;
+    --r-md:   7px;
+    --r-sm:   5px;
+    --r-pill: 999px;
+
+    /* shadows */
+    --sh-1: 0 1px 4px rgba(26,24,20,.08);
+    --sh-2: 0 4px 16px rgba(26,24,20,.10);
+    --sh-3: 0 12px 40px rgba(26,24,20,.14);
+  }
+
+  /* ── Dark mode ───────────────────────────── */
+  html[data-theme="dark"] {
+    --bg-base: #161410; --bg-1: #1a1814; --bg-2: #1e1c18;
+    --bg-3: #252220; --bg-4: #2c2a26; --bg-5: #33302b;
+    --b-0: rgba(240,236,227,.06); --b-1: rgba(240,236,227,.10);
+    --b-2: rgba(240,236,227,.16); --b-3: rgba(240,236,227,.26);
+    --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.75); --t-3: rgba(106,100,92,.60);
+    --amber:    #2857a4; --amber-d: rgba(40,87,164,.16); --amber-b: rgba(40,87,164,.40);
+    --blue-d:   rgba(40,87,164,.16); --blue-b: rgba(40,87,164,.40);
+    --green:    #16a34a; --green-d: rgba(22,163,74,.12);  --green-b: rgba(22,163,74,.28);
+    --red:      #c94040; --red-d:   rgba(201,64,64,.12);  --red-b:   rgba(201,64,64,.30);
+    --purple:   #6d28d9; --purple-d: rgba(109,40,217,.12);--purple-b: rgba(109,40,217,.28);
+    --cyan:     #0e7490; --cyan-d:   rgba(14,116,144,.12);--cyan-b:   rgba(14,116,144,.28);
+    --sh-1: 0 1px 4px rgba(0,0,0,.35); --sh-2: 0 4px 16px rgba(0,0,0,.45); --sh-3: 0 12px 40px rgba(0,0,0,.55);
+  }
+
+  /* ═══════════════════════════════════════
+     BASE
+  ═══════════════════════════════════════ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    min-height: 100vh; padding-top: 84px;
+    overflow-x: hidden;
+    font-family: var(--font-ui); font-size: 14px;
+    color: var(--t-1); background: var(--bg-base);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 55% 40% at 10% 0%,  rgba(40,87,164,.04) 0%, transparent 55%),
+      radial-gradient(ellipse 45% 35% at 92% 100%, rgba(40,87,164,.03) 0%, transparent 55%);
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  /* ═══════════════════════════════════════
+     PAGE
+  ═══════════════════════════════════════ */
+  .page {
+    width: min(100%, 1480px); margin: 0 auto;
+    padding: 36px 28px 68px;
+    animation: fadeUp .36s ease-out both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Hero ── */
+  .hero {
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 22px; align-items: end; margin-bottom: 24px;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 3px 11px; border-radius: var(--r-pill);
+    border: 1px solid var(--amber-b); background: var(--amber-d);
+    color: var(--amber); font-size: 10px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    font-family: var(--font-mono); margin-bottom: 11px;
+  }
+
+  html[data-theme="dark"] .hero-eyebrow { color: #5b85c8; }
+
+  .hero-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400; letter-spacing: -.02em;
+    line-height: 1.06; color: var(--t-1); margin-bottom: 8px;
+  }
+
+  .hero-sub {
+    font-size: 13px; font-family: var(--font-mono);
+    color: var(--t-3); line-height: 1.65;
+    max-width: 620px; letter-spacing: .01em;
+  }
+
+  /* ── Stat cards ── */
+  .stat-row {
+    display: flex; gap: 9px; flex-wrap: wrap;
+    justify-content: flex-end; align-self: flex-end;
+  }
+
+  .stat-card {
+    min-width: 136px; padding: 13px 16px 11px;
+    border-radius: var(--r-lg);
+    background: var(--bg-2); border: 1px solid var(--b-1);
+    box-shadow: var(--sh-1);
+    transition: transform .16s, border-color .16s;
+  }
+
+  .stat-card:hover { transform: translateY(-1px); border-color: var(--b-2); }
+
+  .stat-label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 9.5px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--t-3);
+    font-family: var(--font-mono); margin-bottom: 8px;
+  }
+
+  .stat-label i { color: var(--amber); }
+  html[data-theme="dark"] .stat-label i { color: #5b85c8; }
+
+  .stat-value {
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -.04em; line-height: 1;
+    color: var(--t-1); font-family: var(--font-mono);
+  }
+
+  /* semantic value colours — light mode muted, dark vivid */
+  .stat-value.green { color: #16a34a; }
+  .stat-value.red   { color: #c94040; }
+  .stat-value.amber { color: #b45309; }
+  html[data-theme="dark"] .stat-value.green { color: #4ade80; }
+  html[data-theme="dark"] .stat-value.red   { color: #f87171; }
+  html[data-theme="dark"] .stat-value.amber { color: #fbbf24; }
+
+  /* ═══════════════════════════════════════
+     MAIN CARD
+  ═══════════════════════════════════════ */
+  .main-card {
+    background: var(--bg-1); border: 1px solid var(--b-1);
+    border-radius: var(--r-xl); box-shadow: var(--sh-1); overflow: hidden;
+  }
+
+  /* ── Command bar ── */
+  .cmd-bar {
+    padding: 18px 22px; border-bottom: 1px solid var(--b-0);
+    background: var(--bg-base);
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 18px; flex-wrap: wrap;
+  }
+
+  html[data-theme="dark"] .cmd-bar { background: rgba(0,0,0,.10); }
+
+  .cmd-left { flex: 1; min-width: 0; }
+
+  .cmd-identity { display: flex; align-items: center; gap: 12px; }
+
+  .cmd-icon {
+    width: 40px; height: 40px; border-radius: var(--r-md);
+    display: flex; align-items: center; justify-content: center;
+    background: var(--amber-d); border: 1px solid var(--amber-b);
+    color: var(--amber); font-size: 15px; flex-shrink: 0;
+  }
+
+  html[data-theme="dark"] .cmd-icon { color: #5b85c8; }
+
+  .cmd-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 15px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1);
+  }
+
+  .cmd-desc {
+    font-size: 11.5px; font-family: var(--font-mono);
+    color: var(--t-3); margin-top: 3px; line-height: 1.5; letter-spacing: .01em;
+  }
+
+  .cmd-right {
+    display: flex; align-items: center; gap: 7px; flex-wrap: wrap; padding-top: 4px;
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 33px; padding: 0 12px;
+    border-radius: var(--r-md);
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    letter-spacing: .04em;
+    cursor: pointer; border: none; white-space: nowrap;
+    transition: background .13s, border-color .13s, opacity .13s;
+  }
+
+  .btn:disabled { opacity: .40; cursor: not-allowed; }
+  .btn i { font-size: 10px; }
+
+  .btn-amber {
+    background: var(--amber-d); border: 1px solid var(--amber-b); color: var(--amber);
+  }
+  html[data-theme="dark"] .btn-amber { color: #5b85c8; }
+  .btn-amber:hover:not(:disabled) { background: rgba(40,87,164,.16); border-color: rgba(40,87,164,.44); }
+
+  .btn-ghost {
+    background: var(--bg-2); border: 1px solid var(--b-1); color: var(--t-2);
+  }
+  .btn-ghost:hover:not(:disabled) { background: var(--bg-3); border-color: var(--b-2); color: var(--t-1); }
+
+  .btn-danger {
+    background: var(--red-d); border: 1px solid var(--red-b); color: var(--red);
+  }
+  html[data-theme="dark"] .btn-danger { color: #f87171; }
+  .btn-danger:hover:not(:disabled) { background: rgba(201,64,64,.16); }
+
+  .btn-blue {
+    background: var(--blue-d); border: 1px solid var(--blue-b); color: var(--blue);
+  }
+  html[data-theme="dark"] .btn-blue { color: #5b85c8; }
+  .btn-blue:hover:not(:disabled) { background: rgba(40,87,164,.16); }
+
+  .btn-green {
+    background: var(--green-d); border: 1px solid var(--green-b); color: var(--green);
+  }
+  html[data-theme="dark"] .btn-green { color: #4ade80; }
+  .btn-green:hover:not(:disabled) { background: rgba(22,163,74,.16); }
+
+  .btn-sm { height: 29px; padding: 0 10px; font-size: 10.5px; border-radius: var(--r-sm); }
+
+  /* ═══════════════════════════════════════
+     SECTIONS
+  ═══════════════════════════════════════ */
+  .matrix { display: grid; gap: 13px; padding: 18px 22px 22px; }
+
+  .section-block {
+    border-radius: var(--r-lg); border: 1px solid var(--b-0);
+    background: var(--bg-2); overflow: hidden;
+  }
+
+  .section-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 11px; flex-wrap: wrap; padding: 11px 14px;
+    border-bottom: 1px solid var(--b-0);
+    background: var(--bg-base);
+  }
+
+  html[data-theme="dark"] .section-head { background: rgba(0,0,0,.08); }
+
+  .section-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 10px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--t-2);
+    font-family: var(--font-mono);
+  }
+
+  /* section icon colours — light muted, dark vivid */
+  .section-label i         { color: var(--amber); font-size: 11px; }
+  html[data-theme="dark"] .section-label i { color: #5b85c8; }
+
+  .section-label i.blue    { color: var(--blue); }
+  .section-label i.green   { color: var(--green); }
+  .section-label i.red     { color: var(--red); }
+  .section-label i.purple  { color: var(--purple); }
+  .section-label i.cyan    { color: var(--cyan); }
+
+  html[data-theme="dark"] .section-label i.green  { color: #4ade80; }
+  html[data-theme="dark"] .section-label i.red    { color: #f87171; }
+  html[data-theme="dark"] .section-label i.purple { color: #a78bfa; }
+  html[data-theme="dark"] .section-label i.cyan   { color: #22d3ee; }
+
+  .section-tools { display: flex; gap: 5px; flex-wrap: wrap; }
+
+  /* ═══════════════════════════════════════
+     ACTION CARDS GRID
+  ═══════════════════════════════════════ */
+  .action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+    gap: 9px; padding: 12px;
+  }
+
+  .action-card {
+    display: flex; flex-direction: column; gap: 9px;
+    padding: 14px; border-radius: var(--r-md);
+    background: var(--bg-3); border: 1px solid var(--b-0);
+    transition: background .13s, border-color .13s, transform .11s;
+  }
+
+  .action-card:hover { background: var(--bg-4); border-color: var(--b-1); transform: translateY(-1px); }
+
+  .action-card-head { display: flex; align-items: flex-start; gap: 11px; }
+
+  .action-icon {
+    width: 34px; height: 34px; border-radius: var(--r-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+  }
+
+  .action-icon.amber  { background: var(--amber-d);  border: 1px solid var(--amber-b);  color: var(--amber); }
+  .action-icon.blue   { background: var(--blue-d);   border: 1px solid var(--blue-b);   color: var(--blue); }
+  .action-icon.green  { background: var(--green-d);  border: 1px solid var(--green-b);  color: var(--green); }
+  .action-icon.red    { background: var(--red-d);    border: 1px solid var(--red-b);    color: var(--red); }
+  .action-icon.purple { background: var(--purple-d); border: 1px solid var(--purple-b); color: var(--purple); }
+  .action-icon.cyan   { background: var(--cyan-d);   border: 1px solid var(--cyan-b);   color: var(--cyan); }
+
+  html[data-theme="dark"] .action-icon.amber  { color: #5b85c8; }
+  html[data-theme="dark"] .action-icon.green  { color: #4ade80; }
+  html[data-theme="dark"] .action-icon.red    { color: #f87171; }
+  html[data-theme="dark"] .action-icon.purple { color: #a78bfa; }
+  html[data-theme="dark"] .action-icon.cyan   { color: #22d3ee; }
+
+  .action-info { min-width: 0; flex: 1; }
+
+  .action-name {
+    font-size: 13px; font-weight: 700; color: var(--t-1); line-height: 1.2;
+  }
+
+  .action-desc {
+    font-size: 11.5px; font-family: var(--font-mono);
+    color: var(--t-3); margin-top: 4px; line-height: 1.55; letter-spacing: .01em;
+  }
+
+  .action-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 7px; flex-wrap: wrap;
+  }
+
+  .action-last-run {
+    font-size: 10px; color: var(--t-3);
+    font-family: var(--font-mono); letter-spacing: .03em;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  .action-last-run i { font-size: 9.5px; }
+
+  /* ═══════════════════════════════════════
+     LOG PANEL
+  ═══════════════════════════════════════ */
+ .log-panel { padding: 12px; max-height: 360px; overflow: hidden; }
+
+  .log-entries {
+    display: flex; flex-direction: column; gap: 5px;
+    max-height: 300px; overflow-y: auto;
+  }
+
+  .log-entries::-webkit-scrollbar { width: 3px; }
+  .log-entries::-webkit-scrollbar-thumb { background: var(--b-2); border-radius: 4px; }
+
+  .log-entry {
+    display: flex; align-items: flex-start; gap: 9px;
+    padding: 9px 11px; border-radius: var(--r-sm);
+    background: var(--bg-3); border: 1px solid var(--b-0);
+    font-family: var(--font-mono); font-size: 11.5px; line-height: 1.5;
+  }
+
+  /* muted left borders on light; keep semantic meaning */
+  .log-entry.ok    { border-left: 3px solid #16a34a; }
+  .log-entry.warn  { border-left: 3px solid #b45309; }
+  .log-entry.error { border-left: 3px solid #c94040; }
+  .log-entry.info  { border-left: 3px solid #2857a4; }
+
+  html[data-theme="dark"] .log-entry.ok    { border-left-color: #4ade80; }
+  html[data-theme="dark"] .log-entry.warn  { border-left-color: #fbbf24; }
+  html[data-theme="dark"] .log-entry.error { border-left-color: #f87171; }
+  html[data-theme="dark"] .log-entry.info  { border-left-color: #5b85c8; }
+
+  .log-time { color: var(--t-3); white-space: nowrap; flex-shrink: 0; }
+
+  .log-badge {
+    padding: 1px 6px; border-radius: var(--r-pill);
+    font-size: 9.5px; font-weight: 700; letter-spacing: .06em; flex-shrink: 0;
+  }
+
+  .log-badge.ok    { background: var(--green-d); color: var(--green); }
+  .log-badge.warn  { background: rgba(180,83,9,.09); color: #b45309; }
+  .log-badge.error { background: var(--red-d); color: var(--red); }
+  .log-badge.info  { background: var(--blue-d); color: var(--blue); }
+
+  html[data-theme="dark"] .log-badge.ok   { color: #4ade80; }
+  html[data-theme="dark"] .log-badge.warn { background: rgba(245,158,11,.11); color: #fbbf24; }
+  html[data-theme="dark"] .log-badge.error{ color: #f87171; }
+  html[data-theme="dark"] .log-badge.info { color: #5b85c8; }
+
+  .log-msg { color: var(--t-2); flex: 1; }
+
+  /* ═══════════════════════════════════════
+     HEALTH INDICATORS
+  ═══════════════════════════════════════ */
+  .health-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(214px, 1fr));
+    gap: 9px; padding: 12px;
+  }
+
+  .health-item {
+    display: flex; align-items: center; gap: 11px;
+    padding: 10px 12px; border-radius: var(--r-md);
+    background: var(--bg-3); border: 1px solid var(--b-0);
+  }
+
+  .health-dot {
+    width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+  }
+
+  .health-dot.ok      { background: #16a34a; box-shadow: 0 0 5px rgba(22,163,74,.35); }
+  .health-dot.warn    { background: #b45309; box-shadow: 0 0 5px rgba(180,83,9,.35); }
+  .health-dot.error   { background: #c94040; box-shadow: 0 0 5px rgba(201,64,64,.35); }
+  .health-dot.pending { background: var(--t-3); animation: pulse-dot 1.3s ease-in-out infinite; }
+
+  html[data-theme="dark"] .health-dot.ok   { background: #4ade80; box-shadow: 0 0 5px rgba(74,222,128,.40); }
+  html[data-theme="dark"] .health-dot.warn { background: #fbbf24; box-shadow: 0 0 5px rgba(251,191,36,.40); }
+  html[data-theme="dark"] .health-dot.error{ background: #f87171; box-shadow: 0 0 5px rgba(248,113,113,.40); }
+
+  @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+  .health-info { min-width: 0; flex: 1; }
+
+  .health-name   { font-size: 12.5px; font-weight: 700; color: var(--t-1); line-height: 1.2; }
+  .health-detail { font-size: 10.5px; color: var(--t-3); margin-top: 3px; font-family: var(--font-mono); }
+
+  /* ═══════════════════════════════════════
+     TRIGGER STATUS
+  ═══════════════════════════════════════ */
+  .trigger-list { display: flex; flex-direction: column; gap: 7px; padding: 12px; }
+
+  .trigger-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 11px; padding: 12px 14px; border-radius: var(--r-md);
+    background: var(--bg-3); border: 1px solid var(--b-0);
+    flex-wrap: wrap; transition: background .13s;
+  }
+
+  .trigger-row:hover { background: var(--bg-4); }
+
+  .trigger-info { display: flex; align-items: center; gap: 11px; flex: 1; min-width: 0; }
+
+  .trigger-icon {
+    width: 34px; height: 34px; border-radius: var(--r-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+    background: var(--amber-d); border: 1px solid var(--amber-b); color: var(--amber);
+  }
+
+  html[data-theme="dark"] .trigger-icon { color: #5b85c8; }
+
+  .trigger-name     { font-size: 13px; font-weight: 700; color: var(--t-1); }
+  .trigger-schedule { font-size: 11px; color: var(--t-3); font-family: var(--font-mono); margin-top: 3px; }
+
+  .trigger-actions { display: flex; gap: 5px; align-items: center; }
+
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 9px; border-radius: var(--r-pill);
+    font-size: 10.5px; font-weight: 700;
+    font-family: var(--font-mono);
+  }
+
+  .status-pill.active   { background: var(--green-d); color: var(--green); border: 1px solid var(--green-b); }
+  .status-pill.inactive { background: var(--red-d);   color: var(--red);   border: 1px solid var(--red-b); }
+  .status-pill.pending  { background: var(--bg-4);    color: var(--t-3);   border: 1px solid var(--b-1); }
+
+  html[data-theme="dark"] .status-pill.active   { color: #4ade80; }
+  html[data-theme="dark"] .status-pill.inactive { color: #f87171; }
+
+  /* ═══════════════════════════════════════
+     TOAST
+  ═══════════════════════════════════════ */
+  #toast {
+    position: fixed; right: 18px; bottom: 18px;
+    padding: 10px 16px; border-radius: var(--r-lg);
+    background: var(--bg-2); border: 1px solid var(--b-2);
+    color: var(--t-1); font-size: 12.5px; font-weight: 600;
+    font-family: var(--font-mono); letter-spacing: .02em;
+    box-shadow: var(--sh-2); z-index: 9999; display: none;
+    max-width: min(92vw, 340px);
+    animation: toastIn .18s ease-out;
+  }
+
+  html[data-theme="dark"] #toast { background: var(--bg-3); }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ═══════════════════════════════════════
+     MODAL
+  ═══════════════════════════════════════ */
+  .modal {
+    position: fixed; inset: 0; display: none;
+    align-items: center; justify-content: center; padding: 20px;
+    background: rgba(26,24,20,.44);
+    backdrop-filter: blur(5px);
+    z-index: 5000;
+  }
+
+  html[data-theme="dark"] .modal { background: rgba(0,0,0,.60); backdrop-filter: blur(8px); }
+  .modal.open { display: flex; }
+
+  .modal-card {
+    width: min(440px, 96vw); display: flex; flex-direction: column;
+    background: var(--bg-1); border: 1px solid var(--b-2);
+    border-radius: var(--r-xl); box-shadow: var(--sh-3); overflow: hidden;
+  }
+
+  .modal-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 11px; padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--b-0);
+    background: var(--bg-base);
+  }
+
+  html[data-theme="dark"] .modal-head { background: rgba(0,0,0,.08); }
+
+  .modal-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 16px; font-weight: 400;
+    letter-spacing: -.01em; color: var(--t-1);
+  }
+
+  .modal-sub {
+    font-size: 11.5px; font-family: var(--font-mono);
+    color: var(--t-3); margin-top: 4px; line-height: 1.55;
+  }
+
+  .modal-close {
+    width: 28px; height: 28px; border-radius: var(--r-sm);
+    border: 1px solid var(--b-1); background: var(--bg-2);
+    color: var(--t-3); display: flex; align-items: center;
+    justify-content: center; cursor: pointer; font-size: 12px;
+    transition: background .13s, color .13s;
+  }
+
+  .modal-close:hover { background: var(--bg-3); color: var(--t-1); }
+
+  .modal-footer {
+    display: flex; justify-content: flex-end; gap: 7px;
+    padding: 12px 20px 16px;
+    border-top: 1px solid var(--b-0);
+  }
+
+  /* ═══════════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════════ */
+  @media (max-width: 1100px) {
+    .hero { grid-template-columns: 1fr; }
+    .stat-row { justify-content: flex-start; }
+  }
+
+  @media (max-width: 760px) {
+    .page { padding: 24px 14px 52px; }
+    .cmd-bar { flex-direction: column; }
+    .action-grid { grid-template-columns: 1fr; }
+    .health-grid { grid-template-columns: 1fr; }
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fa-spin { animation: spin .85s linear infinite; }
+</style>
+
+
+<div class="page">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div>
+      <div class="hero-eyebrow">
+        <i class="fas fa-wrench"></i> System Administration
+      </div>
+      <h1 class="hero-title">Maintenance</h1>
+      <p class="hero-sub">System health checks, cache management, data integrity tools, and scheduled task control — all from one place.</p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-label"><i class="fas fa-heart-pulse"></i> Health</div>
+        <div class="stat-value green" id="statHealth">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><i class="fas fa-triangle-exclamation"></i> Issues</div>
+        <div class="stat-value amber" id="statIssues">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><i class="fas fa-clock-rotate-left"></i> Last Run</div>
+        <div class="stat-value" id="statLastRun" style="font-size:20px;padding-top:6px;">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main Card ── -->
+  <div class="main-card">
+
+    <!-- Command bar -->
+    <div class="cmd-bar">
+      <div class="cmd-left">
+        <div class="cmd-identity">
+          <div class="cmd-icon"><i class="fas fa-screwdriver-wrench"></i></div>
+          <div>
+            <div class="cmd-title">System Control Panel</div>
+            <div class="cmd-desc">Run diagnostics, clear caches, fix data issues, and manage automation triggers.</div>
+          </div>
+        </div>
+      </div>
+      <div class="cmd-right">
+        <button class="btn btn-ghost" id="runHealthCheckBtn" type="button">
+          <i class="fas fa-stethoscope"></i> Run Health Check
+        </button>
+        <button class="btn btn-blue" id="clearLogBtn" type="button">
+          <i class="fas fa-eraser"></i> Clear Log
+        </button>
+        <button class="btn btn-amber" id="exportLogBtn" type="button">
+          <i class="fas fa-download"></i> Export Log
+        </button>
+      </div>
+    </div>
+
+    <div class="matrix">
+
+      <!-- ══ SYSTEM HEALTH ══ -->
+      <div class="section-block">
+        <div class="section-head">
+          <div class="section-label">
+            <i class="fas fa-heart-pulse green"></i> System Health
+          </div>
+          <div class="section-tools">
+            <button class="btn btn-ghost btn-sm" id="refreshHealthBtn" type="button">
+              <i class="fas fa-rotate"></i> Refresh
+            </button>
+          </div>
+        </div>
+        <div class="health-grid" id="healthGrid">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+
+      <!-- ══ CACHE & DATA ══ -->
+      <div class="section-block">
+        <div class="section-head">
+          <div class="section-label">
+            <i class="fas fa-database"></i> Cache &amp; Data
+          </div>
+        </div>
+        <div class="action-grid">
+
+          <div class="action-card">
+            <div class="action-card-head">
+              <div class="action-icon amber"><i class="fas fa-broom"></i></div>
+              <div class="action-info">
+                <div class="action-name">Clear Script Cache</div>
+                <div class="action-desc">Flush the Google Apps Script CacheService. Forces all pages to reload fresh data on next request.</div>
+              </div>
+            </div>
+            <div class="action-footer">
+              <span class="action-last-run" id="lastClearCache"><i class="fas fa-clock"></i> Never run</span>
+              <button class="btn btn-amber btn-sm" data-action="clearCache" type="button">
+                <i class="fas fa-broom"></i> Clear Cache
+              </button>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="action-card-head">
+              <div class="action-icon blue"><i class="fas fa-rotate"></i></div>
+              <div class="action-info">
+                <div class="action-name">Force Data Refresh</div>
+                <div class="action-desc">Re-read the Masterlist sheet and invalidate all computed report caches.</div>
+              </div>
+            </div>
+            <div class="action-footer">
+              <span class="action-last-run" id="lastForceRefresh"><i class="fas fa-clock"></i> Never run</span>
+              <button class="btn btn-blue btn-sm" data-action="forceRefresh" type="button">
+                <i class="fas fa-rotate"></i> Force Refresh
+              </button>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="action-card-head">
+              <div class="action-icon purple"><i class="fas fa-window-restore"></i></div>
+              <div class="action-info">
+                <div class="action-name">Reset Session Storage</div>
+                <div class="action-desc">Clear cached permissions and user data from browser sessions. Users will reload on next visit.</div>
+              </div>
+            </div>
+            <div class="action-footer">
+              <span class="action-last-run" id="lastResetSession"><i class="fas fa-clock"></i> Never run</span>
+              <button class="btn btn-sm" style="background:var(--purple-d);border:1px solid var(--purple-b);color:var(--purple);" data-action="resetSession" type="button">
+                <i class="fas fa-window-restore"></i> Reset Sessions
+              </button>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="action-card-head">
+              <div class="action-icon green"><i class="fas fa-file-export"></i></div>
+              <div class="action-info">
+                <div class="action-name">Export Masterlist Snapshot</div>
+                <div class="action-desc">Copy the full Masterlist to a new timestamped sheet for archiving or backup.</div>
+              </div>
+            </div>
+            <div class="action-footer">
+              <span class="action-last-run" id="lastExportSnapshot"><i class="fas fa-clock"></i> Never run</span>
+              <button class="btn btn-green btn-sm" data-action="exportSnapshot" type="button">
+                <i class="fas fa-file-export"></i> Export Snapshot
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══ DATA INTEGRITY ══ -->
+      <div class="section-block">
+        <div class="section-head">
+          <div class="section-label">
+            <i class="fas fa-shield-check" style="color:var(--cyan);"></i> Data Integrity
+          </div>
+          <div class="section-tools">
+            <button class="btn btn-ghost btn-sm" id="runAllScansBtn" type="button">
+              <i class="fas fa-magnifying-glass"></i> Run All Scans
+            </button>
+          </div>
+        </div>
+        <div class="action-grid">
+
+          <div class="action-card">
+            <div class="action-card-head">
+              <div class="action-icon amber"><i class="fas fa-copy"></i></div>
+              <div class="action-info">
+                <div class="action-name">Find Duplicate Serial Tags</div>
+                <div class="action-desc">Scan the Masterlist for duplicate serial tag or serial number values and report them.</div>
+              </div>
+            </div>
+            <div class="action-footer">
+              <span class="action-last-run" id="lastFindDupes"><i class="fas fa-clock"></i> Never run</span>
+              <button class="btn btn-amber btn-sm" data-action="findDuplicates" type="button">
+                <i class="fas fa-magnifying-glass"></i> Scan
+              </button>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="action-card-head">
+              <div class="action-icon red"><i class="fas fa-circle-exclamation"></i></div>
+              <div class="action-info">
+                <div class="action-name">Find Missing Required Fields</div>
+                <div class="action-desc">Identify rows missing Type, Status, or Assignee — the three fields required for all reports.</div>
+              </div>
+            </div>
+            <div class="action-footer">
+              <span class="action-last-run" id="lastFindMissing"><i class="fas fa-clock"></i> Never run</span>
+              <button class="btn btn-danger btn-sm" data-action="findMissingFields" type="button">
+                <i class="fas fa-magnifying-glass"></i> Scan
+              </button>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="action-card-head">
+              <div class="action-icon blue"><i class="fas fa-calendar-xmark"></i></div>
+              <div class="action-info">
+                <div class="action-name">Find Invalid Warranty Dates</div>
+                <div class="action-desc">Locate rows where the warranty date cannot be parsed, which breaks report calculations.</div>
+              </div>
+            </div>
+            <div class="action-footer">
+              <span class="action-last-run" id="lastFindDates"><i class="fas fa-clock"></i> Never run</span>
+              <button class="btn btn-blue btn-sm" data-action="findInvalidDates" type="button">
+                <i class="fas fa-magnifying-glass"></i> Scan
+              </button>
+            </div>
+          </div>
+
+          <div class="action-card">
+            <div class="action-card-head">
+              <div class="action-icon purple"><i class="fas fa-user-slash"></i></div>
+              <div class="action-info">
+                <div class="action-name">Find Orphaned Assignments</div>
+                <div class="action-desc">Detect assets assigned to employees who no longer exist in the system user list.</div>
+              </div>
+            </div>
+            <div class="action-footer">
+              <span class="action-last-run" id="lastFindOrphans"><i class="fas fa-clock"></i> Never run</span>
+              <button class="btn btn-sm" style="background:var(--purple-d);border:1px solid var(--purple-b);color:var(--purple);" data-action="findOrphans" type="button">
+                <i class="fas fa-magnifying-glass"></i> Scan
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ══ SCHEDULED TASKS ══ -->
+      <div class="section-block">
+        <div class="section-head">
+          <div class="section-label">
+            <i class="fas fa-calendar-check" style="color:var(--green);"></i> Scheduled Tasks
+          </div>
+          <div class="section-tools">
+            <button class="btn btn-ghost btn-sm" id="refreshTriggersBtn" type="button">
+              <i class="fas fa-rotate"></i> Refresh Triggers
+            </button>
+          </div>
+        </div>
+        <div class="trigger-list" id="triggerList">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+
+      <!-- ══ ACTIVITY LOG ══ -->
+      <div class="section-block">
+        <div class="section-head">
+          <div class="section-label">
+            <i class="fas fa-terminal blue"></i> Maintenance Log
+          </div>
+          <div class="section-tools">
+            <span id="logCount" style="font-size:11px;color:var(--t-3);font-family:var(--font-mono);">0 entries</span>
+          </div>
+        </div>
+        <div class="log-panel">
+          <div class="log-entries" id="logEntries">
+            <div style="padding:20px 0;text-align:center;color:var(--t-3);font-size:13px;font-family:var(--font-mono);">
+              No log entries yet. Run an action to start logging.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.matrix -->
+  </div><!-- /.main-card -->
+</div><!-- /.page -->
+
+<!-- ── Confirm Modal ── -->
+<div id="confirmModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="confirmTitle">Confirm Action</div>
+        <div class="modal-sub" id="confirmMessage"></div>
+      </div>
+      <button class="modal-close" id="confirmCloseBtn" type="button" aria-label="Close">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="confirmCancelBtn" type="button">Cancel</button>
+      <button class="btn btn-danger btn-sm" id="confirmOkBtn" type="button">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Results Modal ── -->
+<div id="resultsModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-card" style="max-width:560px;">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="resultsTitle">Scan Results</div>
+        <div class="modal-sub" id="resultsSubtitle"></div>
+      </div>
+      <button class="modal-close" id="resultsCloseBtn" type="button" aria-label="Close">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div style="padding:16px 22px;overflow-y:auto;max-height:400px;flex:1;">
+      <div id="resultsBody" style="font-family:var(--font-mono);font-size:12.5px;color:var(--t-2);line-height:1.7;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="resultsDismissBtn" type="button">Dismiss</button>
+      <button class="btn btn-ghost btn-sm" id="resultsCopyBtn" type="button" style="display:none;">
+        <i class="fas fa-copy"></i> Copy
+      </button>
+      <button class="btn btn-amber btn-sm" id="resultsExportBtn" type="button" style="display:none;">
+        <i class="fas fa-download"></i> Export to Sheet
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ── State ── */
+  const state = {
+    log: [],
+    health: [],
+    triggers: [],
+    lastResults: null
+  };
+
+  /* ── DOM Cache ── */
+  const el = {
+    toast:              document.getElementById('toast'),
+    statHealth:         document.getElementById('statHealth'),
+    statIssues:         document.getElementById('statIssues'),
+    statLastRun:        document.getElementById('statLastRun'),
+    healthGrid:         document.getElementById('healthGrid'),
+    triggerList:        document.getElementById('triggerList'),
+    logEntries:         document.getElementById('logEntries'),
+    logCount:           document.getElementById('logCount'),
+    runHealthCheckBtn:  document.getElementById('runHealthCheckBtn'),
+    clearLogBtn:        document.getElementById('clearLogBtn'),
+    exportLogBtn:       document.getElementById('exportLogBtn'),
+    refreshHealthBtn:   document.getElementById('refreshHealthBtn'),
+    refreshTriggersBtn: document.getElementById('refreshTriggersBtn'),
+    confirmModal:       document.getElementById('confirmModal'),
+    confirmTitle:       document.getElementById('confirmTitle'),
+    confirmMessage:     document.getElementById('confirmMessage'),
+    confirmCloseBtn:    document.getElementById('confirmCloseBtn'),
+    confirmCancelBtn:   document.getElementById('confirmCancelBtn'),
+    confirmOkBtn:       document.getElementById('confirmOkBtn'),
+    resultsModal:       document.getElementById('resultsModal'),
+    resultsTitle:       document.getElementById('resultsTitle'),
+    resultsSubtitle:    document.getElementById('resultsSubtitle'),
+    resultsBody:        document.getElementById('resultsBody'),
+    resultsCloseBtn:    document.getElementById('resultsCloseBtn'),
+    resultsDismissBtn:  document.getElementById('resultsDismissBtn'),
+    resultsExportBtn:   document.getElementById('resultsExportBtn'),
+    resultsCopyBtn:     document.getElementById('resultsCopyBtn'),
+  };
+
+  /* ── Helpers ── */
+  function escapeHtml(v) {
+    return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function now() {
+    return new Date().toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  }
+
+  function nowFull() {
+    return new Date().toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+  }
+
+  function showToast(msg) {
+    el.toast.textContent = msg;
+    el.toast.style.display = 'block';
+    clearTimeout(el.toast._t);
+    el.toast._t = setTimeout(() => { el.toast.style.display = 'none'; }, 2800);
+  }
+
+  function setBusy(btn, busy, label) {
+    if (!btn) return;
+    btn.disabled = !!busy;
+    if (!busy && label) btn.innerHTML = label;
+  }
+
+  function isGasAvailable() {
+    return !!(window.google && google.script && google.script.run);
+  }
+
+  function gsRun(method, payload) {
+    return new Promise((resolve, reject) => {
+      if (!isGasAvailable()) {
+        // Demo mode — simulate responses
+        setTimeout(() => resolve(simulateResponse(method, payload)), 900 + Math.random() * 600);
+        return;
+      }
+      const runner = google.script.run.withSuccessHandler(resolve).withFailureHandler(reject);
+      typeof payload === 'undefined' ? runner[method]() : runner[method](payload);
+    });
+  }
+
+  /* ── Demo mode simulator ── */
+  function simulateResponse(method) {
+    switch (method) {
+      case 'getSystemHealth': return [
+        { name: 'Masterlist Sheet',       status: 'ok',   detail: '1,284 rows · last modified 2h ago' },
+        { name: 'Script Cache Service',   status: 'ok',   detail: 'Operational' },
+        { name: 'Gmail Service',          status: 'ok',   detail: 'Connected' },
+        { name: 'Warranty Trigger',       status: 'ok',   detail: 'Active · fires 1st of month' },
+        { name: 'Users Sheet',            status: 'warn', detail: '3 users missing role assignment' },
+        { name: 'RBAC Rules Sheet',       status: 'ok',   detail: '42 rules across 6 roles' },
+        { name: 'Script Quota',           status: 'ok',   detail: '4.2 / 6 hrs used today' },
+        { name: 'Spreadsheet Quota',      status: 'ok',   detail: 'Under limit' },
+      ];
+      case 'getMaintenanceTriggers': return [
+        { name: 'Monthly Warranty Reminder', schedule: '1st of every month · 8:00 AM', active: true,  lastRun: 'Dec 1, 2024' },
+        { name: 'Weekly Data Backup',        schedule: 'Every Monday · 9:00 AM',       active: false, lastRun: 'Never' },
+        { name: 'Daily Integrity Scan',      schedule: 'Every day · 12:00 AM',         active: false, lastRun: 'Never' },
+      ];
+      case 'clearScriptCache': return { ok: true, message: 'Cache cleared successfully' };
+      case 'forceDataRefresh': return { ok: true, message: 'Masterlist refreshed — 1,284 rows processed' };
+      case 'resetSessionStorage': return { ok: true, message: 'Session tokens invalidated' };
+      case 'exportMasterlistSnapshot': return { ok: true, message: 'Snapshot created: Masterlist_2024-12-15_14-30', url: '#' };
+      case 'findDuplicateSerials': return { ok: true, count: 3, rows: ['Row 47 · TAG-00192 (duplicate of row 23)', 'Row 89 · TAG-00455 (duplicate of row 67)', 'Row 201 · SN-8849922 (duplicate of row 188)'] };
+      case 'findMissingRequiredFields': return { ok: true, count: 7, rows: ['Row 12 · Missing: Status, Assignee', 'Row 34 · Missing: Type', 'Row 56 · Missing: Assignee', 'Row 78 · Missing: Status', 'Row 102 · Missing: Type, Status', 'Row 140 · Missing: Assignee', 'Row 177 · Missing: Type'] };
+      case 'findInvalidWarrantyDates': return { ok: true, count: 2, rows: ['Row 29 · "N.A." is not a valid date', 'Row 115 · "2024/25" is not a valid date'] };
+      case 'findOrphanedAssignments': return { ok: true, count: 1, rows: ['Row 88 · Assigned to "Juan dela Cruz" — not found in Users sheet'] };
+      case 'triggerWarrantyEmail': return { ok: true, message: 'Warranty reminder email sent to manila-it@fbgphilippines.com' };
+      case 'createWeeklyBackupTrigger': return { ok: true, message: 'Weekly backup trigger installed' };
+      case 'deleteMaintenanceTrigger': return { ok: true, message: 'Trigger removed' };
+      default: return { ok: true };
+    }
+  }
+
+  /* ── Log ── */
+  function addLog(type, message) {
+    const entry = { type, message, time: now() };
+    state.log.unshift(entry);
+
+    const timeStr = nowFull();
+    if (el.statLastRun) el.statLastRun.textContent = timeStr.split(',')[1]?.trim() || timeStr;
+
+    renderLog();
+    return entry;
+  }
+
+  function renderLog() {
+    if (!el.logEntries) return;
+
+    if (!state.log.length) {
+      el.logEntries.innerHTML = `<div style="padding:20px 0;text-align:center;color:var(--t-3);font-size:13px;font-family:var(--font-mono);">No log entries yet.</div>`;
+      if (el.logCount) el.logCount.textContent = '0 entries';
+      return;
+    }
+
+    el.logEntries.innerHTML = state.log.slice(0, 80).map(e => `
+      <div class="log-entry ${escapeHtml(e.type)}">
+        <span class="log-time">${escapeHtml(e.time)}</span>
+        <span class="log-badge ${escapeHtml(e.type)}">${escapeHtml(e.type.toUpperCase())}</span>
+        <span class="log-msg">${escapeHtml(e.message)}</span>
+      </div>`).join('');
+
+    if (el.logCount) el.logCount.textContent = `${state.log.length} entries`;
+  }
+
+  /* ── Health ── */
+  async function runHealthCheck() {
+    const btn = el.runHealthCheckBtn || el.refreshHealthBtn;
+    const origHtml = btn?.innerHTML;
+    if (btn) { btn.disabled = true; btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Checking…`; }
+    if (el.healthGrid) el.healthGrid.innerHTML = renderHealthPending();
+
+    addLog('info', 'Running system health check…');
+
+    try {
+      const items = await gsRun('getSystemHealth');
+      state.health = Array.isArray(items) ? items : [];
+      renderHealth();
+
+      const issues = state.health.filter(h => h.status !== 'ok').length;
+      const passed = state.health.length - issues;
+      if (el.statHealth) el.statHealth.textContent = `${passed}/${state.health.length}`;
+      if (el.statHealth) el.statHealth.className   = `stat-value ${issues > 0 ? 'amber' : 'green'}`;
+      if (el.statIssues) el.statIssues.textContent = String(issues);
+      if (el.statIssues) el.statIssues.className   = `stat-value ${issues > 0 ? 'red' : 'green'}`;
+
+      addLog(issues > 0 ? 'warn' : 'ok', `Health check complete — ${issues} issue(s) found`);
+    } catch(err) {
+      addLog('error', 'Health check failed: ' + (err?.message || String(err)));
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerHTML = origHtml; }
+    }
+  }
+
+  function renderHealthPending() {
+    const names = ['Masterlist Sheet','Script Cache Service','Gmail Service','Warranty Trigger','Users Sheet','RBAC Rules Sheet','Script Quota','Spreadsheet Quota'];
+    return names.map(n => `
+      <div class="health-item">
+        <div class="health-dot pending"></div>
+        <div class="health-info">
+          <div class="health-name">${escapeHtml(n)}</div>
+          <div class="health-detail">Checking…</div>
+        </div>
+      </div>`).join('');
+  }
+
+  function renderHealth() {
+    if (!el.healthGrid) return;
+    if (!state.health.length) {
+      el.healthGrid.innerHTML = `<div style="padding:20px;color:var(--t-3);font-size:13px;text-align:center;grid-column:1/-1;">No health data available.</div>`;
+      return;
+    }
+    el.healthGrid.innerHTML = state.health.map(h => `
+      <div class="health-item">
+        <div class="health-dot ${escapeHtml(h.status || 'ok')}"></div>
+        <div class="health-info">
+          <div class="health-name">${escapeHtml(h.name)}</div>
+          <div class="health-detail">${escapeHtml(h.detail || '')}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ── Triggers ── */
+  async function loadTriggers() {
+    const btn = el.refreshTriggersBtn;
+    if (btn) { btn.disabled = true; btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Loading…`; }
+    if (el.triggerList) el.triggerList.innerHTML = `<div style="padding:16px;color:var(--t-3);font-size:13px;font-family:var(--font-mono);"><i class="fas fa-circle-notch fa-spin"></i> Loading triggers…</div>`;
+
+    try {
+      const triggers = await gsRun('getMaintenanceTriggers');
+      state.triggers = Array.isArray(triggers) ? triggers : [];
+      renderTriggers();
+    } catch(err) {
+      if (el.triggerList) el.triggerList.innerHTML = `<div style="padding:16px;color:var(--red);font-size:13px;">Failed to load triggers.</div>`;
+      addLog('error', 'Failed to load triggers: ' + (err?.message || String(err)));
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerHTML = `<i class="fas fa-rotate"></i> Refresh Triggers`; }
+    }
+  }
+
+  function renderTriggers() {
+    if (!el.triggerList) return;
+    if (!state.triggers.length) {
+      el.triggerList.innerHTML = `<div style="padding:16px;color:var(--t-3);font-size:13px;">No triggers found.</div>`;
+      return;
+    }
+
+    el.triggerList.innerHTML = state.triggers.map((t, i) => `
+      <div class="trigger-row">
+        <div class="trigger-info">
+          <div class="trigger-icon"><i class="fas fa-clock"></i></div>
+          <div>
+            <div class="trigger-name">${escapeHtml(t.name)}</div>
+            <div class="trigger-schedule">${escapeHtml(t.schedule)} &nbsp;·&nbsp; Last run: ${escapeHtml(t.lastRun || 'Never')}</div>
+          </div>
+        </div>
+        <div class="trigger-actions">
+          <span class="status-pill ${t.active ? 'active' : 'inactive'}">
+            <i class="fas ${t.active ? 'fa-circle-check' : 'fa-circle-xmark'}"></i>
+            ${t.active ? 'Active' : 'Inactive'}
+          </span>
+          ${t.active
+            ? `<button class="btn btn-ghost btn-sm" data-trigger-action="run" data-trigger-idx="${i}" type="button"><i class="fas fa-play"></i> Run Now</button>
+               <button class="btn btn-danger btn-sm" data-trigger-action="delete" data-trigger-idx="${i}" type="button"><i class="fas fa-trash"></i></button>`
+            : `<button class="btn btn-green btn-sm" data-trigger-action="install" data-trigger-idx="${i}" type="button"><i class="fas fa-plug"></i> Install</button>`
+          }
+        </div>
+      </div>`).join('');
+
+    el.triggerList.querySelectorAll('[data-trigger-action]').forEach(btn => {
+      btn.addEventListener('click', () => handleTriggerAction(btn.dataset.triggerAction, parseInt(btn.dataset.triggerIdx, 10)));
+    });
+  }
+
+  async function handleTriggerAction(action, idx) {
+  const trigger = state.triggers[idx];
+  if (!trigger) return;
+
+  const RUN_MAP = {
+    'Monthly Warranty Reminder': 'triggerWarrantyEmail',
+    'Weekly Data Backup':        'weeklyMasterlistBackup_manual',
+    'Daily Integrity Scan':      'dailyIntegrityScan_manual'
+  };
+
+  const INSTALL_MAP = {
+    'Monthly Warranty Reminder': 'createMonthlyWarrantyReminderTrigger',
+    'Weekly Data Backup':        'createWeeklyBackupTrigger',
+    'Daily Integrity Scan':      'createDailyIntegrityScanTrigger'
+  };
+
+  if (action === 'run') {
+    const ok = await showConfirm(
+      'Manually trigger "' + trigger.name + '" now?',
+      'Run Trigger', 'Run Now'
+    );
+    if (!ok) return;
+
+    const runMethod = RUN_MAP[trigger.name];
+    if (!runMethod) {
+      addLog('error', 'No run function mapped for: ' + trigger.name);
+      return;
+    }
+
+    addLog('info', 'Manually running: ' + trigger.name + '…');
+    try {
+      const res = await gsRun(runMethod);
+      addLog('ok', (res && res.message) ? res.message : trigger.name + ' executed successfully');
+      showToast('Trigger executed');
+    } catch(err) {
+      addLog('error', 'Trigger failed: ' + (err && err.message ? err.message : String(err)));
+      showToast('Trigger failed');
+    }
+
+  } else if (action === 'delete') {
+    const ok = await showConfirm(
+      'Remove the "' + trigger.name + '" trigger? You can reinstall it later.',
+      'Remove Trigger', 'Remove'
+    );
+    if (!ok) return;
+
+    addLog('info', 'Removing trigger: ' + trigger.name + '…');
+    try {
+      await gsRun('deleteMaintenanceTrigger', { name: trigger.name });
+      addLog('ok', 'Trigger removed: ' + trigger.name);
+      showToast('Trigger removed');
+      await loadTriggers();
+    } catch(err) {
+      addLog('error', 'Failed to remove trigger: ' + (err && err.message ? err.message : String(err)));
+      showToast('Trigger failed');
+    }
+
+  } else if (action === 'install') {
+    const installMethod = INSTALL_MAP[trigger.name];
+    if (!installMethod) {
+      addLog('error', 'No install function mapped for: ' + trigger.name);
+      return;
+    }
+
+    addLog('info', 'Installing trigger: ' + trigger.name + '…');
+    try {
+      const res = await gsRun(installMethod);
+      addLog('ok', (res && res.message) ? res.message : 'Trigger installed: ' + trigger.name);
+      showToast('Trigger installed');
+      await loadTriggers();
+    } catch(err) {
+      addLog('error', 'Failed to install trigger: ' + (err && err.message ? err.message : String(err)));
+      showToast('Trigger failed');
+    }
+  }
+}
+  /* ── Action handlers ── */
+  const ACTION_MAP = {
+    clearCache: {
+      label: 'Clear Script Cache',
+      confirm: 'Clear the Apps Script cache? All pages will reload fresh data on their next request.',
+      confirmLabel: 'Clear Cache',
+      method: 'clearScriptCache',
+      logKey: 'lastClearCache',
+      onSuccess(res) { addLog('ok', res?.message || 'Cache cleared'); showToast('Cache cleared'); }
+    },
+    forceRefresh: {
+      label: 'Force Data Refresh',
+      confirm: 'Force a full reload of the Masterlist and invalidate all computed caches?',
+      confirmLabel: 'Force Refresh',
+      method: 'forceDataRefresh',
+      logKey: 'lastForceRefresh',
+      onSuccess(res) { addLog('ok', res?.message || 'Data refreshed'); showToast('Data refreshed'); }
+    },
+    resetSession: {
+      label: 'Reset Session Storage',
+      confirm: 'Invalidate all active user sessions? Users will see fresh permissions on their next page load.',
+      confirmLabel: 'Reset Sessions',
+      method: 'resetSessionStorage',
+      logKey: 'lastResetSession',
+      onSuccess(res) { addLog('ok', res?.message || 'Sessions reset'); showToast('Sessions reset'); }
+    },
+    exportSnapshot: {
+      label: 'Export Masterlist Snapshot',
+      confirm: null,
+      method: 'exportMasterlistSnapshot',
+      logKey: 'lastExportSnapshot',
+      onSuccess(res) {
+        addLog('ok', res?.message || 'Snapshot exported');
+        showToast('Snapshot created');
+        if (res?.url && res.url !== '#') window.open(res.url, '_blank');
+      }
+    },
+    findDuplicates: {
+      label: 'Find Duplicate Serial Tags',
+      confirm: null,
+      method: 'findDuplicateSerials',
+      logKey: 'lastFindDupes',
+      onSuccess(res) {
+        addLog(res.count > 0 ? 'warn' : 'ok', `Duplicate scan: ${res.count} issue(s) found`);
+        showResults('Duplicate Serial Tags', `Found ${res.count} duplicate(s)`, res.rows || [], res.count === 0);
+      }
+    },
+    findMissingFields: {
+      label: 'Find Missing Required Fields',
+      confirm: null,
+      method: 'findMissingRequiredFields',
+      logKey: 'lastFindMissing',
+      onSuccess(res) {
+        addLog(res.count > 0 ? 'warn' : 'ok', `Missing fields scan: ${res.count} row(s) affected`);
+        showResults('Missing Required Fields', `Found ${res.count} row(s) with missing fields`, res.rows || [], res.count === 0);
+      }
+    },
+    findInvalidDates: {
+      label: 'Find Invalid Warranty Dates',
+      confirm: null,
+      method: 'findInvalidWarrantyDates',
+      logKey: 'lastFindDates',
+      onSuccess(res) {
+        addLog(res.count > 0 ? 'warn' : 'ok', `Date scan: ${res.count} unparseable date(s)`);
+        showResults('Invalid Warranty Dates', `Found ${res.count} row(s) with invalid dates`, res.rows || [], res.count === 0);
+      }
+    },
+    findOrphans: {
+      label: 'Find Orphaned Assignments',
+      confirm: null,
+      method: 'findOrphanedAssignments',
+      logKey: 'lastFindOrphans',
+      onSuccess(res) {
+        addLog(res.count > 0 ? 'warn' : 'ok', `Orphan scan: ${res.count} orphaned assignment(s)`);
+        showResults('Orphaned Assignments', `Found ${res.count} asset(s) assigned to missing users`, res.rows || [], res.count === 0);
+      }
+    }
+  };
+
+  async function runAction(actionKey) {
+    const action = ACTION_MAP[actionKey];
+    if (!action) return;
+
+    if (action.confirm) {
+      const ok = await showConfirm(action.confirm, action.label, action.confirmLabel || 'Confirm');
+      if (!ok) return;
+    }
+
+    const btn = document.querySelector(`[data-action="${actionKey}"]`);
+    const origHtml = btn?.innerHTML;
+    if (btn) { btn.disabled = true; btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Running…`; }
+    addLog('info', `Running: ${action.label}…`);
+
+    try {
+      const res = await gsRun(action.method);
+      const lastEl = document.getElementById(action.logKey);
+      const lastStr = `<i class="fas fa-clock"></i> ${nowFull()}`;
+      if (lastEl) lastEl.innerHTML = lastStr;
+      try { sessionStorage.setItem('maint_' + action.logKey, nowFull()); } catch(_) {}
+      action.onSuccess(res);
+    } catch(err) {
+      addLog('error', `${action.label} failed: ` + (err?.message || String(err)));
+      showToast('Action failed — see log');
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerHTML = origHtml; }
+    }
+  }
+
+  /* ── Results modal ── */
+  function showResults(title, subtitle, rows, allClear) {
+    state.lastResults = { title, rows };
+    el.resultsTitle.textContent    = title;
+    el.resultsSubtitle.textContent = subtitle;
+
+    if (allClear) {
+      el.resultsBody.innerHTML = `<span style="color:var(--green);">✓ All clear — no issues found.</span>`;
+      el.resultsExportBtn.style.display = 'none';
+      if (el.resultsCopyBtn) el.resultsCopyBtn.style.display = 'none';
+    } else {
+      el.resultsBody.innerHTML = rows.map(r => `<div style="padding:4px 0;border-bottom:1px solid var(--b-0);">${escapeHtml(r)}</div>`).join('');
+      el.resultsExportBtn.style.display = rows.length ? 'flex' : 'none';
+      if (el.resultsCopyBtn) el.resultsCopyBtn.style.display = rows.length ? 'flex' : 'none';
+    }
+
+    el.resultsModal.style.display = 'flex';
+    el.resultsModal.setAttribute('aria-hidden', 'false');
+    setTimeout(() => el.resultsCloseBtn?.focus(), 30);
+  }
+
+  function closeResultsModal() {
+    el.resultsModal.style.display = 'none';
+    el.resultsModal.setAttribute('aria-hidden', 'true');
+  }
+
+  /* ── Confirm modal ── */
+  let _confirmResolve = null;
+
+  function showConfirm(message, title = 'Confirm', confirmLabel = 'Confirm') {
+    return new Promise(resolve => {
+      _confirmResolve = resolve;
+      el.confirmTitle.textContent   = title;
+      el.confirmMessage.textContent = message;
+      el.confirmOkBtn.textContent   = confirmLabel;
+      el.confirmModal.style.display = 'flex';
+      el.confirmModal.setAttribute('aria-hidden', 'false');
+      setTimeout(() => el.confirmOkBtn.focus(), 30);
+    });
+  }
+
+  function closeConfirmModal(value) {
+    el.confirmModal.style.display = 'none';
+    el.confirmModal.setAttribute('aria-hidden', 'true');
+    const resolve = _confirmResolve;
+    _confirmResolve = null;
+    if (resolve) resolve(value);
+  }
+
+  /* ── Events ── */
+  function bindEvents() {
+    el.runHealthCheckBtn?.addEventListener('click', runHealthCheck);
+    el.refreshHealthBtn?.addEventListener('click', runHealthCheck);
+    el.refreshTriggersBtn?.addEventListener('click', loadTriggers);
+
+    el.clearLogBtn?.addEventListener('click', () => {
+      state.log = [];
+      renderLog();
+      showToast('Log cleared');
+    });
+
+    el.exportLogBtn?.addEventListener('click', () => {
+      if (!state.log.length) { showToast('No log entries to export'); return; }
+      const text = state.log.map(e => `[${e.time}] [${e.type.toUpperCase()}] ${e.message}`).join('\n');
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = `maintenance-log-${new Date().toISOString().slice(0,10)}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Log exported');
+    });
+
+    // Action card buttons
+    document.querySelectorAll('[data-action]').forEach(btn => {
+      btn.addEventListener('click', () => runAction(btn.dataset.action));
+    });
+
+    // Confirm modal
+    el.confirmOkBtn?.addEventListener('click',     () => closeConfirmModal(true));
+    el.confirmCancelBtn?.addEventListener('click', () => closeConfirmModal(false));
+    el.confirmCloseBtn?.addEventListener('click',  () => closeConfirmModal(false));
+    el.confirmModal?.addEventListener('click', e => { if (e.target === el.confirmModal) closeConfirmModal(false); });
+
+    // Results modal
+    el.resultsCloseBtn?.addEventListener('click',   closeResultsModal);
+    el.resultsDismissBtn?.addEventListener('click', closeResultsModal);
+    el.resultsCopyBtn?.addEventListener('click', () => {
+      if (!state.lastResults?.rows?.length) return;
+      const text = state.lastResults.rows.join('\n');
+      navigator.clipboard?.writeText(text).then(() => {
+        showToast('Copied to clipboard');
+      }).catch(() => showToast('Copy not supported in this browser'));
+    });
+    el.resultsModal?.addEventListener('click', e => { if (e.target === el.resultsModal) closeResultsModal(); });
+   el.resultsExportBtn?.addEventListener('click', async () => {
+  if (!state.lastResults || !state.lastResults.rows || !state.lastResults.rows.length) return;
+
+  const btn = el.resultsExportBtn;
+  const origHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Exporting…';
+
+  addLog('info', 'Exporting ' + state.lastResults.title + ' to Manila IT Exports folder…');
+
+  try {
+    const payload = {
+      title:   state.lastResults.title,
+      headers: ['Issue'],
+      rows:    state.lastResults.rows.map(function(r) { return [r]; })
+    };
+    const res = await gsRun('exportRowsToFolder', payload);
+
+    if (res && res.ok) {
+      addLog('ok', 'Exported: ' + (res.sheetName || 'file created'));
+      showToast('Exported to Manila IT Exports folder');
+      if (res.url) window.open(res.url, '_blank');
+    } else {
+      addLog('error', 'Export failed: ' + ((res && res.error) || 'Unknown error'));
+      showToast('Export failed');
+    }
+  } catch(err) {
+    addLog('error', 'Export failed: ' + (err && err.message ? err.message : String(err)));
+    showToast('Export failed');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = origHtml;
+  }
+});
+
+    document.getElementById('runAllScansBtn')?.addEventListener('click', async () => {
+      const btn = document.getElementById('runAllScansBtn');
+      const origHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Scanning…`;
+      addLog('info', 'Running all integrity scans…');
+
+      const scans = ['findDuplicates','findMissingFields','findInvalidDates','findOrphans'];
+      const allRows = [];
+      let totalIssues = 0;
+
+      for (const key of scans) {
+        const action = ACTION_MAP[key];
+        try {
+          const res = await gsRun(action.method);
+          if (res.count > 0) {
+            allRows.push(`── ${action.label} (${res.count}) ──`);
+            allRows.push(...(res.rows || []));
+            allRows.push('');
+            totalIssues += res.count;
+          }
+          const lastEl = document.getElementById(action.logKey);
+          if (lastEl) lastEl.innerHTML = `<i class="fas fa-clock"></i> ${nowFull()}`;
+          try { sessionStorage.setItem('maint_' + action.logKey, nowFull()); } catch(_) {}
+        } catch(err) {
+          addLog('error', `${action.label} failed: ` + (err?.message || err));
+        }
+      }
+
+      addLog(totalIssues > 0 ? 'warn' : 'ok', `All scans complete — ${totalIssues} total issue(s) found`);
+      showResults('Full Integrity Scan', `${totalIssues} total issue(s) across all checks`, allRows, totalIssues === 0);
+
+      btn.disabled = false;
+      btn.innerHTML = origHtml;
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        if (el.confirmModal?.style.display === 'flex') closeConfirmModal(false);
+        if (el.resultsModal?.style.display === 'flex') closeResultsModal();
+      }
+    });
+  }
+
+  /* ── Init ── */
+ function init() {
+    bindEvents();
+
+    // Restore last-run timestamps from session
+    Object.values(ACTION_MAP).forEach(a => {
+      const stored = sessionStorage.getItem('maint_' + a.logKey);
+      if (stored) {
+        const el2 = document.getElementById(a.logKey);
+        if (el2) el2.innerHTML = `<i class="fas fa-clock"></i> ${stored}`;
+      }
+    });
+
+    addLog('info', 'Maintenance panel loaded — running initial health check…');
+    runHealthCheck();
+    loadTriggers();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>

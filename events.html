@@ -1,0 +1,1680 @@
+ <style>
+  /* ============================================================
+   * FONTS
+   * ============================================================ */
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  /* ============================================================
+   * TOKENS
+   * ============================================================ */
+  :root {
+    --font-ui:   'Epilogue', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+    --board-max-width: 1480px;
+    --page-padding: 28px;
+    --column-min: 320px;
+    --column-gap: 16px;
+
+    /* surfaces — warm paper (light default) */
+    --bg-0: #f5f2ec;
+    --bg-1: #f5f2ec;
+    --bg-2: #ede9e1;
+    --bg-3: #e4ded4;
+    --bg-4: #ddd6ca;
+
+    /* borders */
+    --b-0: rgba(26,24,20,.07);
+    --b-1: rgba(26,24,20,.12);
+    --b-2: rgba(26,24,20,.18);
+    --b-3: rgba(26,24,20,.28);
+
+    /* text */
+    --t-1: rgba(26,24,20,.95);
+    --t-2: rgba(74,71,64,.75);
+    --t-3: rgba(138,134,128,.65);
+
+    /* status colours */
+    --upcoming-c: #6b7280;
+    --upcoming-g: rgba(107,114,128,.08);
+    --progress-c: #2857a4;
+    --progress-g: rgba(40,87,164,.08);
+    --done-c:     #16a34a;
+    --done-g:     rgba(22,163,74,.08);
+
+    /* tag palette */
+    --tag-blue-bg:   rgba(40,87,164,.09);  --tag-blue-c:   #2857a4;  --tag-blue-b:   rgba(40,87,164,.22);
+    --tag-purple-bg: rgba(126,34,206,.09); --tag-purple-c: #7c3aed;  --tag-purple-b: rgba(126,34,206,.22);
+    --tag-orange-bg: rgba(194,65,12,.09);  --tag-orange-c: #c2410c;  --tag-orange-b: rgba(194,65,12,.22);
+    --tag-green-bg:  rgba(22,163,74,.09);  --tag-green-c:  #16a34a;  --tag-green-b:  rgba(22,163,74,.20);
+
+    /* accent */
+    --blue:   #2857a4;
+    --blue-d: rgba(40,87,164,.10);
+    --blue-b: rgba(40,87,164,.32);
+
+    /* geometry */
+    --r-xl:  16px;
+    --r-lg:  10px;
+    --r-md:   7px;
+    --r-sm:   5px;
+    --r-pill: 999px;
+
+    /* shadows */
+    --sh-0: 0 1px 4px rgba(26,24,20,.08);
+    --sh-1: 0 4px 16px rgba(26,24,20,.10);
+    --sh-2: 0 8px 32px rgba(26,24,20,.12);
+    --sh-3: 0 16px 48px rgba(26,24,20,.15);
+
+    /* transitions */
+    --t-fast: .14s ease;
+    --t-med:  .22s ease;
+    --t-slow: .36s cubic-bezier(0.2,0.8,0.2,1);
+
+    /* legacy compat */
+    --radius-xl: var(--r-xl);
+    --radius-lg: var(--r-lg);
+    --radius-md: var(--r-md);
+    --radius-sm: var(--r-sm);
+    --glass-bg: var(--bg-2);
+    --glass-strong: var(--bg-3);
+    --glass-border: var(--b-1);
+    --glass-border-strong: var(--b-2);
+    --shadow-1: var(--sh-0);
+    --shadow-2: var(--sh-1);
+    --shadow-3: var(--sh-2);
+    --text-primary: var(--t-1);
+    --text-secondary: var(--t-2);
+    --accent-blue: var(--blue);
+    --accent-green: #16a34a;
+    --accent-red: #c94040;
+    --accent-purple: #7c3aed;
+    --accent-orange: #c2410c;
+    --accent-blue-dim:   var(--tag-blue-bg);
+    --accent-purple-dim: var(--tag-purple-bg);
+    --accent-orange-dim: var(--tag-orange-bg);
+    --accent-green-dim:  var(--tag-green-bg);
+    --accent-red-dim:    rgba(201,64,64,.10);
+  }
+
+  /* ── Dark mode ─────────────────────────────── */
+  html[data-theme="dark"] {
+    --bg-0: #161410; --bg-1: #1a1814; --bg-2: #1e1c18;
+    --bg-3: #252220; --bg-4: #2c2a26;
+    --b-0: rgba(240,236,227,.06); --b-1: rgba(240,236,227,.10);
+    --b-2: rgba(240,236,227,.16); --b-3: rgba(240,236,227,.26);
+    --t-1: rgba(240,236,227,.95); --t-2: rgba(176,169,158,.75); --t-3: rgba(106,100,92,.65);
+    --upcoming-c: #94a3b8;
+    --upcoming-g: rgba(148,163,184,.08);
+    --progress-c: #5b85c8;
+    --progress-g: rgba(40,87,164,.12);
+    --done-c:     #4ade80;
+    --done-g:     rgba(74,222,128,.09);
+    --tag-blue-bg:   rgba(40,87,164,.14); --tag-blue-c:   #5b85c8; --tag-blue-b:   rgba(40,87,164,.30);
+    --tag-purple-bg: rgba(126,34,206,.14);--tag-purple-c: #a78bfa; --tag-purple-b: rgba(126,34,206,.28);
+    --tag-orange-bg: rgba(194,65,12,.14); --tag-orange-c: #fb923c; --tag-orange-b: rgba(194,65,12,.28);
+    --tag-green-bg:  rgba(74,222,128,.11);--tag-green-c:  #4ade80; --tag-green-b:  rgba(74,222,128,.24);
+    --blue:   #2857a4;
+    --blue-d: rgba(40,87,164,.16);
+    --blue-b: rgba(40,87,164,.40);
+    --sh-0: 0 1px 4px rgba(0,0,0,.35);
+    --sh-1: 0 4px 16px rgba(0,0,0,.45);
+    --sh-2: 0 8px 32px rgba(0,0,0,.55);
+    --sh-3: 0 16px 48px rgba(0,0,0,.65);
+    --glass-bg: var(--bg-2);
+  }
+
+  /* ============================================================
+   * BASE
+   * ============================================================ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+
+  body {
+    font-family: var(--font-ui);
+    color: var(--t-1);
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    background: var(--bg-0);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 55% 40% at 15% 5%,  rgba(40,87,164,.04) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 35% at 85% 95%, rgba(40,87,164,.03) 0%, transparent 55%);
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  /* ============================================================
+   * LAYOUT
+   * ============================================================ */
+  .page-shell {
+    position: relative; z-index: 1;
+    width: 100%;
+    max-width: var(--board-max-width);
+    margin: 72px auto 0;
+    padding: 32px var(--page-padding) 52px;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px; margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .hero-left { min-width: 260px; }
+
+  .page-title {
+    margin: 0;
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.06;
+    font-weight: 400;
+    letter-spacing: -.02em;
+    color: var(--t-1);
+  }
+
+  .page-subtitle {
+    margin-top: 7px;
+    color: var(--t-3);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+    max-width: 520px;
+    letter-spacing: .01em;
+  }
+
+  .hero-actions {
+    display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+  }
+
+  /* ── Sync line ── */
+  .sync-line {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--t-3);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    margin-bottom: 20px;
+    letter-spacing: .04em;
+  }
+
+  .sync-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 0 3px rgba(40,87,164,.14);
+    flex-shrink: 0;
+    animation: syncPulse 2.5s ease-in-out infinite;
+  }
+
+  html[data-theme="dark"] .sync-dot {
+    background: #5b85c8;
+    box-shadow: 0 0 0 3px rgba(40,87,164,.22);
+  }
+
+  @keyframes syncPulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(40,87,164,.14); }
+    50%       { box-shadow: 0 0 0 5px rgba(40,87,164,.05); }
+  }
+
+  /* ============================================================
+   * BUTTONS
+   * ============================================================ */
+  .glass-btn {
+    height: 36px;
+    min-width: 36px;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--b-1);
+    background: var(--bg-2);
+    color: var(--t-2);
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: .04em;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 7px; padding: 0 13px;
+    cursor: pointer; text-decoration: none;
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+  }
+
+  .glass-btn:hover {
+    background: var(--bg-3); border-color: var(--b-2); color: var(--t-1);
+  }
+
+  .glass-btn:active { opacity: .85; }
+  .glass-btn:disabled { opacity: .40; cursor: not-allowed; }
+  .glass-btn i { font-size: 11px; }
+
+  .glass-btn.primary {
+    background: var(--blue-d);
+    border-color: var(--blue-b);
+    color: var(--blue);
+  }
+
+  html[data-theme="dark"] .glass-btn.primary { color: #5b85c8; }
+
+  .glass-btn.primary:hover {
+    background: rgba(40,87,164,.16);
+    box-shadow: 0 2px 12px rgba(40,87,164,.18);
+  }
+
+  /* ============================================================
+   * BOARD
+   * ============================================================ */
+  .board {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(var(--column-min), 1fr));
+    gap: var(--column-gap);
+    align-items: start;
+  }
+
+  /* ── Column ── */
+  .board-column {
+    display: flex; flex-direction: column;
+    min-height: 70vh;
+    border-radius: var(--r-xl);
+    padding: 14px;
+    background: var(--bg-1);
+    border: 1px solid var(--b-1);
+    box-shadow: var(--sh-0);
+    transition: background var(--t-fast), border-color var(--t-fast);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* top rule stripe per column status */
+  .board-column::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 16%; right: 16%;
+    height: 2px;
+    border-radius: 0 0 var(--r-pill) var(--r-pill);
+    background: var(--col-accent, transparent);
+    opacity: .55;
+    transition: opacity var(--t-med);
+  }
+
+  .board-column[data-status="Upcoming"]    { --col-accent: var(--upcoming-c); }
+  .board-column[data-status="In Progress"] { --col-accent: var(--progress-c); }
+  .board-column[data-status="Completed"]   { --col-accent: var(--done-c); }
+
+  .board-column:hover::before { opacity: .85; }
+
+  .board-column.drag-over {
+    background: rgba(40,87,164,.04);
+    border-color: rgba(40,87,164,.28);
+  }
+
+  /* ── Column header ── */
+  .column-top {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 12px;
+    margin-bottom: 12px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--b-0);
+  }
+
+  .column-title-wrap {
+    display: flex; align-items: center; gap: 8px; min-width: 0;
+  }
+
+  .column-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%; flex-shrink: 0;
+  }
+
+  .column-dot.upcoming  { background: var(--upcoming-c); box-shadow: 0 0 0 3px rgba(107,114,128,.12); }
+  .column-dot.progress  { background: var(--progress-c); box-shadow: 0 0 0 3px rgba(40,87,164,.14); }
+  .column-dot.completed { background: var(--done-c);     box-shadow: 0 0 0 3px rgba(22,163,74,.14); animation: dotGlow 2s ease-in-out infinite; }
+
+  @keyframes dotGlow {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(22,163,74,.14); }
+    50%       { box-shadow: 0 0 0 5px rgba(22,163,74,.05); }
+  }
+
+  .column-title {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--t-3);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+  }
+
+  .task-count {
+    min-width: 24px; height: 22px;
+    border-radius: var(--r-pill);
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0 8px;
+    background: var(--bg-3);
+    color: var(--t-3);
+    font-family: var(--font-mono);
+    font-size: 10px; font-weight: 600;
+    border: 1px solid var(--b-1);
+  }
+
+  .column-body {
+    display: flex; flex-direction: column;
+    gap: 10px; min-height: 100px; flex: 1;
+  }
+
+  .empty-column {
+    border: 1px dashed var(--b-1);
+    border-radius: var(--r-lg);
+    padding: 16px;
+    text-align: center;
+    color: var(--t-3);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .04em;
+    display: none;
+  }
+
+  .empty-column.show { display: block; }
+
+  .column-footer { margin-top: 10px; }
+
+  .add-card-btn {
+    width: 100%; height: 38px;
+    border-radius: var(--r-lg);
+    border: 1px dashed var(--b-1);
+    background: transparent;
+    color: var(--t-3);
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: .04em;
+    cursor: pointer;
+    transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+  }
+
+  .add-card-btn:hover {
+    color: var(--blue);
+    border-style: solid;
+    border-color: var(--blue-b);
+    background: var(--blue-d);
+  }
+
+  html[data-theme="dark"] .add-card-btn:hover { color: #5b85c8; }
+
+  /* ============================================================
+   * EVENT CARDS
+   * ============================================================ */
+  .event-card {
+    position: relative;
+    border-radius: var(--r-lg);
+    padding: 14px;
+    background: var(--bg-2);
+    border: 1px solid var(--b-1);
+    box-shadow: var(--sh-0);
+    cursor: grab;
+    user-select: none;
+    overflow: hidden;
+    transition: transform var(--t-med), box-shadow var(--t-med), border-color var(--t-fast);
+  }
+
+  .event-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(40,87,164,.22);
+    box-shadow: var(--sh-1);
+  }
+
+  .event-card.dragging { opacity: .45; transform: scale(.97) rotate(.3deg); cursor: grabbing; }
+
+  .event-card.completed {
+    opacity: .65;
+  }
+
+  .event-card-head {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  /* ── Tags ── */
+  .tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 8px;
+    border-radius: var(--r-sm);
+    font-family: var(--font-mono);
+    font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .08em;
+    border: 1px solid; max-width: 100%;
+    flex-shrink: 0;
+  }
+
+  .tag i { font-size: 7px; }
+
+  .tag-blue   { background: var(--tag-blue-bg);   color: var(--tag-blue-c);   border-color: var(--tag-blue-b); }
+  .tag-purple { background: var(--tag-purple-bg); color: var(--tag-purple-c); border-color: var(--tag-purple-b); }
+  .tag-orange { background: var(--tag-orange-bg); color: var(--tag-orange-c); border-color: var(--tag-orange-b); }
+  .tag-green  { background: var(--tag-green-bg);  color: var(--tag-green-c);  border-color: var(--tag-green-b); }
+
+  /* ── Card action buttons ── */
+  .card-actions {
+    display: flex; align-items: center; gap: 4px;
+    opacity: 0; transform: translateY(-2px);
+    transition: opacity var(--t-fast), transform var(--t-fast);
+  }
+
+  .event-card:hover .card-actions { opacity: 1; transform: translateY(0); }
+
+  .card-action-btn {
+    width: 25px; height: 25px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--b-1);
+    background: var(--bg-3);
+    color: var(--t-3);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 10px;
+    transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  }
+
+  .card-action-btn:hover { background: var(--bg-4); color: var(--t-1); border-color: var(--b-2); }
+  .card-action-btn.delete:hover {
+    background: rgba(201,64,64,.10);
+    color: #c94040;
+    border-color: rgba(201,64,64,.24);
+  }
+
+  html[data-theme="dark"] .card-action-btn.delete:hover { color: #f87171; }
+
+  /* ── Card content ── */
+  .event-name {
+    font-size: 14.5px; font-weight: 700;
+    line-height: 1.3; color: var(--t-1);
+    margin-bottom: 9px;
+    word-break: break-word;
+    letter-spacing: -.01em;
+  }
+
+  .event-notes {
+    color: var(--t-2);
+    font-size: 12px; line-height: 1.55;
+    margin-bottom: 10px;
+    white-space: pre-wrap; word-break: break-word;
+  }
+
+  .event-meta { display: grid; gap: 6px; }
+
+  .meta-row {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--t-2);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+
+  .meta-row i {
+    width: 13px; text-align: center;
+    color: var(--blue); flex-shrink: 0;
+    font-size: 10px;
+  }
+
+  html[data-theme="dark"] .meta-row i { color: #5b85c8; }
+
+  /* ── Card footer ── */
+  .card-footer {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 12px;
+    margin-top: 11px; padding-top: 10px;
+    border-top: 1px solid var(--b-0);
+  }
+
+  .assignee { display: flex; align-items: center; gap: 7px; min-width: 0; }
+
+  .mini-avatar {
+    width: 24px; height: 24px;
+    border-radius: var(--r-sm);
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 9px; font-weight: 700;
+    color: #fff;
+    background: var(--blue);
+    border: 1px solid rgba(40,87,164,.30);
+  }
+
+  .assignee-name {
+    min-width: 0; color: var(--t-2);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* status chip */
+  .status-chip {
+    padding: 3px 8px;
+    border-radius: var(--r-sm);
+    font-family: var(--font-mono);
+    font-size: 9px; font-weight: 600;
+    letter-spacing: .07em; text-transform: uppercase;
+    border: 1px solid; flex-shrink: 0;
+  }
+
+  .status-chip.upcoming  { color: var(--upcoming-c); background: var(--upcoming-g); border-color: rgba(107,114,128,.18); }
+  .status-chip.progress  { color: var(--progress-c); background: var(--progress-g); border-color: rgba(40,87,164,.20); }
+  .status-chip.completed { color: var(--done-c);     background: var(--done-g);     border-color: rgba(22,163,74,.20); }
+
+  html[data-theme="dark"] .status-chip.completed { border-color: rgba(74,222,128,.22); }
+
+  /* ============================================================
+   * MODAL
+   * ============================================================ */
+  .modal-shell {
+    position: fixed; inset: 0; z-index: 6000;
+    display: none; align-items: center; justify-content: center;
+    padding: 22px;
+    background: rgba(26,24,20,.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  html[data-theme="dark"] .modal-shell {
+    background: rgba(0,0,0,.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .modal-shell.show { display: flex; }
+
+  .modal-card {
+    width: 100%; max-width: 480px;
+    border-radius: var(--r-xl);
+    padding: 22px;
+    background: var(--bg-1);
+    border: 1px solid var(--b-2);
+    box-shadow: var(--sh-3);
+    color: var(--t-1);
+    animation: modalIn .20s cubic-bezier(0.34,1.4,0.64,1) both;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(.95) translateY(6px); }
+    to   { opacity: 1; transform: scale(1)   translateY(0); }
+  }
+
+  .modal-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 20px; font-weight: 400;
+    letter-spacing: -.01em; margin-bottom: 4px;
+    color: var(--t-1);
+  }
+
+  .modal-subtitle {
+    color: var(--t-3);
+    font-family: var(--font-mono);
+    font-size: 11.5px; margin-bottom: 16px;
+    line-height: 1.55; letter-spacing: .02em;
+  }
+
+  /* ── Form fields ── */
+  .field { margin-bottom: 12px; }
+
+  .field label {
+    display: block; margin-bottom: 5px;
+    font-family: var(--font-mono);
+    font-size: 9.5px; font-weight: 600;
+    letter-spacing: .10em; text-transform: uppercase;
+    color: var(--t-3);
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    border-radius: var(--r-md);
+    border: 1px solid var(--b-1);
+    background: var(--bg-2);
+    color: var(--t-1);
+    font-family: var(--font-ui);
+    padding: 9px 11px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder { color: var(--t-3); }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--blue-b);
+    background: var(--bg-1);
+    box-shadow: 0 0 0 1px var(--blue-b), 0 3px 10px rgba(40,87,164,.10);
+  }
+
+  .field select option { background: var(--bg-2); color: var(--t-1); }
+  .field textarea { min-height: 90px; resize: vertical; line-height: 1.55; }
+
+  .modal-actions {
+    display: flex; gap: 7px; margin-top: 14px;
+  }
+
+  .modal-actions .glass-btn {
+    flex: 1; justify-content: center;
+    height: 38px; border-radius: var(--r-md);
+  }
+
+  #confirmModal .modal-card { max-width: 380px; text-align: center; }
+
+  /* ============================================================
+   * LOADING OVERLAY
+   * ============================================================ */
+  .loading-overlay {
+    display: none; align-items: center; justify-content: center;
+    gap: 10px; min-height: 200px;
+    color: var(--t-3);
+    font-family: var(--font-mono);
+    font-size: 11.5px; letter-spacing: .05em;
+    border-radius: var(--r-xl);
+    border: 1px dashed var(--b-1);
+    background: var(--bg-1);
+  }
+
+  .loading-overlay.show { display: flex; }
+
+  .loading-spinner {
+    width: 14px; height: 14px;
+    border: 2px solid var(--b-2);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin .9s linear infinite;
+  }
+
+  html[data-theme="dark"] .loading-spinner { border-top-color: #5b85c8; }
+
+  /* ============================================================
+   * TOASTS
+   * ============================================================ */
+  #toastContainer {
+    position: fixed;
+    bottom: 22px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 7000;
+    display: flex; flex-direction: column;
+    gap: 7px; pointer-events: none;
+  }
+
+  .custom-toast {
+    min-width: 210px; max-width: 86vw;
+    padding: 11px 14px;
+    border-radius: var(--r-lg);
+    background: var(--bg-2);
+    border: 1px solid var(--b-2);
+    color: var(--t-1);
+    box-shadow: var(--sh-2);
+    display: flex; align-items: center; gap: 9px;
+    font-family: var(--font-mono);
+    font-size: 11.5px; font-weight: 600;
+    letter-spacing: .03em;
+    pointer-events: auto;
+    animation: toastIn .22s ease forwards;
+  }
+
+  html[data-theme="dark"] .custom-toast { background: var(--bg-3); }
+
+  .custom-toast.success i { color: #16a34a; }
+  html[data-theme="dark"] .custom-toast.success i { color: #4ade80; }
+  .custom-toast.danger  i { color: #c94040; }
+  html[data-theme="dark"] .custom-toast.danger i { color: #f87171; }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(12px) scale(.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes toastOut {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to   { opacity: 0; transform: translateY(12px) scale(.98); }
+  }
+
+  /* ============================================================
+   * UTILITIES
+   * ============================================================ */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinning { animation: spin 1s linear infinite; }
+  .fa-spin  { animation: spin .85s linear infinite; }
+
+  @media (max-width: 1100px) {
+    .board { grid-template-columns: 1fr; }
+    .board-column { min-height: auto; }
+  }
+
+  @media (max-width: 640px) {
+    .page-shell { padding: 20px 14px 36px; }
+    .hero { margin-bottom: 14px; }
+    .modal-card { padding: 16px; border-radius: var(--r-lg); }
+    .modal-actions { flex-direction: column; }
+  }
+</style>
+
+
+  <div class="page-shell">
+    <section class="hero">
+      <div class="hero-left">
+        <h1 class="page-title">Event Roadmap</h1>
+        <div class="page-subtitle">Plan, track, and move team events and IT milestones across each stage of execution.</div>
+      </div>
+      <div class="hero-actions">
+        <button class="glass-btn" id="refreshBtn" type="button" title="Refresh board">
+          <i class="fas fa-rotate-right" id="refreshIcon"></i>
+        </button>
+        <button class="glass-btn primary" type="button" id="addEventTopBtn">
+          <i class="fas fa-plus"></i>
+          <span>New Event</span>
+        </button>
+      </div>
+    </section>
+
+    <div class="sync-line">
+      <span class="sync-dot"></span>
+      <span id="lastSynced">Last synced: Never</span>
+    </div>
+
+    <div id="boardLoading" class="loading-overlay">
+      <span class="loading-spinner"></span>
+      <span>Loading event roadmap…</span>
+    </div>
+
+    <section class="board" id="kanbanBoard">
+
+      <!-- Upcoming -->
+      <div class="board-column" data-status="Upcoming">
+        <div class="column-top">
+          <div class="column-title-wrap">
+            <span class="column-dot upcoming"></span>
+            <div class="column-title">Upcoming</div>
+          </div>
+          <span class="task-count" id="count-upcoming">0</span>
+        </div>
+        <div class="column-body" id="col-upcoming"></div>
+        <div class="empty-column" id="empty-upcoming">No upcoming events yet.</div>
+        <div class="column-footer">
+          <button class="add-card-btn" type="button" data-add="1">
+            <i class="fas fa-plus" style="margin-right:6px;font-size:11px;"></i> Add Event
+          </button>
+        </div>
+      </div>
+
+      <!-- In Progress -->
+      <div class="board-column" data-status="In Progress">
+        <div class="column-top">
+          <div class="column-title-wrap">
+            <span class="column-dot progress"></span>
+            <div class="column-title">In Progress</div>
+          </div>
+          <span class="task-count" id="count-progress">0</span>
+        </div>
+        <div class="column-body" id="col-progress"></div>
+        <div class="empty-column" id="empty-progress">Nothing in progress right now.</div>
+      </div>
+
+      <!-- Completed -->
+      <div class="board-column" data-status="Completed">
+        <div class="column-top">
+          <div class="column-title-wrap">
+            <span class="column-dot completed"></span>
+            <div class="column-title">Completed</div>
+          </div>
+          <span class="task-count" id="count-completed">0</span>
+        </div>
+        <div class="column-body" id="col-completed"></div>
+        <div class="empty-column" id="empty-completed">No completed events yet.</div>
+      </div>
+
+    </section>
+  </div>
+
+  <!-- Create / Edit Event Modal -->
+  <div class="modal-shell" id="eventModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-title" id="modalTitle">Create New Event</div>
+      <div class="modal-subtitle">Add a milestone, activity, or team event to the roadmap.</div>
+
+      <input type="hidden" id="oldEvName">
+
+      <div class="field">
+        <label for="evName">Event Name</label>
+        <input type="text" id="evName" placeholder="e.g., Annual IT Audit">
+      </div>
+
+      <div class="field">
+        <label for="evDate">Date</label>
+        <input type="date" id="evDate">
+      </div>
+
+      <div class="field">
+        <label for="evCategory">Category</label>
+        <select id="evCategory">
+          <option value="tag-blue">Meeting / Deployment</option>
+          <option value="tag-purple">Holiday / Off-day</option>
+          <option value="tag-orange">Inventory / Audit</option>
+          <option value="tag-green">Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="evAssignee">Assigned To</label>
+        <select id="evAssignee">
+          <option value="">Loading users…</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="evNotes">Notes</label>
+        <textarea id="evNotes" placeholder="Additional details, reminders, or scope…"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="glass-btn" type="button" id="cancelEventBtn">Cancel</button>
+        <button class="glass-btn primary" type="button" id="saveEventBtn">
+          <span id="saveEventBtnText">Save Event</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirm Modal -->
+  <div class="modal-shell" id="confirmModal" aria-hidden="true">
+    <div class="modal-card" style="max-width:400px;">
+      <div style="width:52px;height:52px;border-radius:14px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.24);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <i class="fas fa-trash-can" style="font-size:18px;color:#f87171;"></i>
+      </div>
+      <div class="modal-title" style="text-align:center;font-size:20px;">Delete Event?</div>
+      <div class="modal-subtitle" style="text-align:center;" id="confirmMessage">This action cannot be undone.</div>
+      <div class="modal-actions">
+        <button class="glass-btn" type="button" id="cancelDeleteBtn">Cancel</button>
+        <button class="glass-btn" type="button" id="finalDeleteBtn"
+                style="background:rgba(239,68,68,.13);border-color:rgba(239,68,68,.26);color:#f87171;">
+          <i class="fas fa-trash-can" style="font-size:11px;"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  /* =========================================================
+     STATE / CONFIG
+  ========================================================= */
+  const state = {
+    users: [],
+    events: [],
+    loading: false,
+    saving: false,
+    initialized: false,
+
+    isEditMode: false,
+    eventToDelete: null,
+    cardToDelete: null,
+
+    refreshInFlight: false
+  };
+
+  const CATEGORY_LABELS = {
+    "tag-blue": "Meeting / Deployment",
+    "tag-purple": "Holiday / Off-day",
+    "tag-orange": "Inventory / Audit",
+    "tag-green": "Other"
+  };
+
+  const STATUS_KEY_MAP = {
+    upcoming: "Upcoming",
+    inprogress: "In Progress",
+    completed: "Completed"
+  };
+
+  const EL = {};
+
+  /* =========================================================
+     INIT
+  ========================================================= */
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initPage, { once: true });
+  } else {
+    initPage();
+  }
+
+ function initPage() {
+  if (state.initialized) return;
+  state.initialized = true;
+
+  const ac = new AbortController();
+
+  window.__EVENTS_CLEANUP__ = () => {
+    ac.abort();
+    // Close any open modals
+    EL.eventModal?.classList.remove("show");
+    EL.confirmModal?.classList.remove("show");
+    document.body.classList.remove("modal-open");
+    window.__EVENTS_CLEANUP__ = null;
+  };
+
+  cacheDom();
+  bindEvents(ac.signal);
+  setupDragAndDrop();
+  setBodyModalLock(false);
+  openLoading(true);
+  fetchUsers();
+  fetchEvents();
+}
+
+  function cacheDom() {
+    EL.refreshBtn = document.getElementById("refreshBtn");
+    EL.refreshIcon = document.getElementById("refreshIcon");
+    EL.lastSynced = document.getElementById("lastSynced");
+    EL.boardLoading = document.getElementById("boardLoading");
+
+    EL.kanbanBoard = document.getElementById("kanbanBoard");
+    EL.colUpcoming = document.getElementById("col-upcoming");
+    EL.colProgress = document.getElementById("col-progress");
+    EL.colCompleted = document.getElementById("col-completed");
+
+    EL.emptyUpcoming = document.getElementById("empty-upcoming");
+    EL.emptyProgress = document.getElementById("empty-progress");
+    EL.emptyCompleted = document.getElementById("empty-completed");
+
+    EL.countUpcoming = document.getElementById("count-upcoming");
+    EL.countProgress = document.getElementById("count-progress");
+    EL.countCompleted = document.getElementById("count-completed");
+
+    EL.eventModal = document.getElementById("eventModal");
+    EL.modalTitle = document.getElementById("modalTitle");
+    EL.oldEvName = document.getElementById("oldEvName");
+    EL.evName = document.getElementById("evName");
+    EL.evDate = document.getElementById("evDate");
+    EL.evCategory = document.getElementById("evCategory");
+    EL.evAssignee = document.getElementById("evAssignee");
+    EL.evNotes = document.getElementById("evNotes");
+    EL.saveEventBtn = document.getElementById("saveEventBtn");
+    EL.saveEventBtnText = document.getElementById("saveEventBtnText");
+    EL.cancelEventBtn = document.getElementById("cancelEventBtn");
+    EL.addEventTopBtn = document.getElementById("addEventTopBtn");
+
+    EL.confirmModal = document.getElementById("confirmModal");
+    EL.confirmMessage = document.getElementById("confirmMessage");
+    EL.cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+    EL.finalDeleteBtn = document.getElementById("finalDeleteBtn");
+
+    EL.toastContainer = document.getElementById("toastContainer");
+  }
+
+ function bindEvents(signal) {
+  const sig = { signal };
+
+  EL.refreshBtn?.addEventListener("click", refreshBoard, sig);
+  EL.addEventTopBtn?.addEventListener("click", () => openEventModal(), sig);
+  EL.cancelEventBtn?.addEventListener("click", closeEventModal, sig);
+  EL.saveEventBtn?.addEventListener("click", saveEvent, sig);
+  EL.cancelDeleteBtn?.addEventListener("click", closeConfirmModal, sig);
+  EL.finalDeleteBtn?.addEventListener("click", executeDelete, sig);
+
+  document.querySelectorAll("[data-add='1']").forEach((btn) => {
+    btn.addEventListener("click", () => openEventModal(), sig);
+  });
+
+  EL.eventModal?.addEventListener("click", (e) => {
+    if (e.target === EL.eventModal) closeEventModal();
+  }, sig);
+
+  EL.confirmModal?.addEventListener("click", (e) => {
+    if (e.target === EL.confirmModal) closeConfirmModal();
+  }, sig);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (isConfirmModalOpen()) { closeConfirmModal(); return; }
+    if (isEventModalOpen()) { closeEventModal(); }
+  }, sig);
+}
+
+
+  function setupDragAndDrop() {
+    document.querySelectorAll(".board-column").forEach((column) => {
+      column.addEventListener("dragover", handleColumnDragOver);
+      column.addEventListener("dragleave", handleColumnDragLeave);
+      column.addEventListener("drop", handleColumnDrop);
+    });
+  }
+
+  /* =========================================================
+     UI HELPERS
+  ========================================================= */
+  function isEventModalOpen() {
+    return !!EL.eventModal?.classList.contains("show");
+  }
+
+  function isConfirmModalOpen() {
+    return !!EL.confirmModal?.classList.contains("show");
+  }
+
+  function setBodyModalLock(locked) {
+    document.body.classList.toggle("modal-open", !!locked);
+  }
+
+  function showLastSyncedNow() {
+    if (!EL.lastSynced) return;
+
+    const now = new Date();
+    EL.lastSynced.textContent =
+      `Last synced: ${now.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      })}`;
+  }
+
+  function openLoading(show) {
+    state.loading = !!show;
+    EL.boardLoading?.classList.toggle("show", !!show);
+
+    if (EL.kanbanBoard) {
+      EL.kanbanBoard.style.display = show ? "none" : "grid";
+    }
+  }
+
+  function setRefreshBusy(isBusy) {
+    state.refreshInFlight = !!isBusy;
+    if (EL.refreshBtn) EL.refreshBtn.disabled = !!isBusy;
+    EL.refreshIcon?.classList.toggle("spinning", !!isBusy);
+  }
+
+  function setSaveBusy(isBusy, label = "Save Event") {
+    state.saving = !!isBusy;
+    if (EL.saveEventBtn) EL.saveEventBtn.disabled = !!isBusy;
+    if (EL.saveEventBtnText) EL.saveEventBtnText.textContent = label;
+  }
+
+  function showToast(message, type = "success") {
+    if (!EL.toastContainer) return;
+
+    const existing = EL.toastContainer.querySelectorAll(".custom-toast");
+    if (existing.length >= 4) existing[0]?.remove();
+
+    const toast = document.createElement("div");
+    toast.className = `custom-toast ${type}`;
+
+    const icon = type === "danger" ? "fa-circle-xmark" : "fa-circle-check";
+    toast.innerHTML = `
+      <i class="fas ${icon}"></i>
+      <span>${escapeHtml(String(message || ""))}</span>
+    `;
+
+    EL.toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.animation = "toastOut .22s ease forwards";
+      setTimeout(() => toast.remove(), 220);
+    }, 2800);
+  }
+
+  function setValue(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.value = value;
+  }
+
+  function getTrimmedValue(id) {
+    const el = document.getElementById(id);
+    return el ? String(el.value || "").trim() : "";
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  /* =========================================================
+     DATA HELPERS
+  ========================================================= */
+  function normalizeEventKey(name, date = "", assignee = "") {
+    return [
+      String(name || "").trim().toLowerCase(),
+      String(date || "").trim().toLowerCase(),
+      String(assignee || "").trim().toLowerCase()
+    ].join("||");
+  }
+
+  function getEventKey(data) {
+    if (!data) return "";
+    return normalizeEventKey(data.name, data.date, data.assignee);
+  }
+
+  function parseDateSafe(value) {
+    if (!value) return null;
+
+    if (value instanceof Date && !isNaN(value.getTime())) return value;
+
+    const s = String(value).trim();
+    if (!s) return null;
+
+    const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (iso) {
+      return new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]));
+    }
+
+    const mmddyyyy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+    if (mmddyyyy) {
+      let mm = Number(mmddyyyy[1]);
+      let dd = Number(mmddyyyy[2]);
+      let yy = Number(mmddyyyy[3]);
+      if (yy < 100) yy += 2000;
+      return new Date(yy, mm - 1, dd);
+    }
+
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function formatDisplayDate(value) {
+    const d = parseDateSafe(value);
+    if (!d) return value ? String(value) : "No date";
+
+    return d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    });
+  }
+
+  function formatInputDate(value) {
+    const d = parseDateSafe(value);
+    if (!d) return "";
+
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+
+    return `${y}-${m}-${day}`;
+  }
+
+  function getCanonicalStatus(value) {
+    const normalized = String(value || "")
+      .toLowerCase()
+      .replace(/\s+/g, "")
+      .trim();
+
+    return STATUS_KEY_MAP[normalized] || "Upcoming";
+  }
+
+  function statusClassName(status) {
+    const canonical = getCanonicalStatus(status);
+    if (canonical === "In Progress") return "progress";
+    if (canonical === "Completed") return "completed";
+    return "upcoming";
+  }
+
+  function getInitials(name) {
+    const parts = String(name || "")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if (!parts.length) return "?";
+    return parts.slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+  }
+
+  function getColumnBodyByStatus(status) {
+    const canonical = getCanonicalStatus(status);
+
+    if (canonical === "Upcoming") return EL.colUpcoming;
+    if (canonical === "In Progress") return EL.colProgress;
+    if (canonical === "Completed") return EL.colCompleted;
+
+    return EL.colUpcoming;
+  }
+
+  function recalculateCounters() {
+    const upcomingCount = EL.colUpcoming?.querySelectorAll(".event-card").length || 0;
+    const progressCount = EL.colProgress?.querySelectorAll(".event-card").length || 0;
+    const completedCount = EL.colCompleted?.querySelectorAll(".event-card").length || 0;
+
+    if (EL.countUpcoming) EL.countUpcoming.textContent = String(upcomingCount);
+    if (EL.countProgress) EL.countProgress.textContent = String(progressCount);
+    if (EL.countCompleted) EL.countCompleted.textContent = String(completedCount);
+
+    EL.emptyUpcoming?.classList.toggle("show", upcomingCount === 0);
+    EL.emptyProgress?.classList.toggle("show", progressCount === 0);
+    EL.emptyCompleted?.classList.toggle("show", completedCount === 0);
+
+    EL.colCompleted?.querySelectorAll(".event-card").forEach((card) => {
+      card.classList.add("completed");
+    });
+
+    [EL.colUpcoming, EL.colProgress].forEach((col) => {
+      col?.querySelectorAll(".event-card").forEach((card) => {
+        card.classList.remove("completed");
+      });
+    });
+  }
+
+  function syncCardVisualStatus(card, status) {
+    if (!card) return;
+
+    const canonical = getCanonicalStatus(status);
+    card.dataset.status = canonical;
+    card.classList.toggle("completed", canonical === "Completed");
+
+    const chip = card.querySelector(".status-chip");
+    if (chip) {
+      chip.className = `status-chip ${statusClassName(canonical)}`;
+      chip.textContent = canonical;
+    }
+  }
+
+  /* =========================================================
+     FETCH / RENDER
+  ========================================================= */
+  function refreshBoard() {
+    if (state.loading || state.refreshInFlight) return;
+    fetchEvents();
+  }
+
+  function fetchUsers() {
+    google.script.run
+      .withSuccessHandler((users) => {
+        const safeUsers = Array.isArray(users) ? users : [];
+
+        state.users = safeUsers
+          .map((u) => String(u || "").trim())
+          .filter(Boolean)
+          .sort((a, b) => a.localeCompare(b));
+
+        renderUserOptions(false);
+      })
+      .withFailureHandler((err) => {
+        console.error("Failed to fetch users:", err);
+        state.users = [];
+        renderUserOptions(true);
+      })
+      .getUserNames();
+  }
+
+  function fetchEvents() {
+    clearBoard();
+    openLoading(true);
+    setRefreshBusy(true);
+
+    google.script.run
+      .withSuccessHandler((events) => {
+        const safeEvents = Array.isArray(events) ? events : [];
+        state.events = safeEvents.map((ev) => ({
+          ...ev,
+          status: getCanonicalStatus(ev?.status || "Upcoming")
+        }));
+
+        state.events.forEach((event) => renderEventCard(event));
+        recalculateCounters();
+        openLoading(false);
+        setRefreshBusy(false);
+        showLastSyncedNow();
+      })
+      .withFailureHandler((err) => {
+        console.error("Fetch failed:", err);
+        state.events = [];
+        recalculateCounters();
+        openLoading(false);
+        setRefreshBusy(false);
+        showToast("Failed to load events", "danger");
+      })
+      .getEventsFromSheet();
+  }
+
+  function renderUserOptions(hasError = false) {
+    if (!EL.evAssignee) return;
+
+    if (hasError) {
+      EL.evAssignee.innerHTML = `<option value="">Unable to load users</option>`;
+      return;
+    }
+
+    if (!state.users.length) {
+      EL.evAssignee.innerHTML = `<option value="">No users found</option>`;
+      return;
+    }
+
+    const options = [`<option value="">Select Assignee</option>`].concat(
+      state.users.map((name) => {
+        const safe = escapeHtml(name);
+        return `<option value="${safe}">${safe}</option>`;
+      })
+    );
+
+    EL.evAssignee.innerHTML = options.join("");
+  }
+
+  function clearBoard() {
+    [EL.colUpcoming, EL.colProgress, EL.colCompleted].forEach((col) => {
+      if (col) col.innerHTML = "";
+    });
+  }
+
+  function renderEventCard(data) {
+    if (!data || !data.name) return;
+
+    const normalizedStatus = getCanonicalStatus(data.status || "Upcoming");
+    const categoryClass = String(data.category || "tag-green").trim();
+    const categoryLabel = String(data.categoryLabel || CATEGORY_LABELS[categoryClass] || "Other");
+    const displayDate = formatDisplayDate(data.date);
+    const assignee = String(data.assignee || "").trim();
+    const assigneeLabel = assignee || "Unassigned";
+    const initials = getInitials(assigneeLabel);
+    const eventKey = getEventKey(data);
+
+    const card = document.createElement("div");
+    card.className = "event-card";
+    card.draggable = true;
+    card.dataset.eventName = String(data.name || "");
+    card.dataset.eventKey = eventKey;
+    card.dataset.status = normalizedStatus;
+
+    if (normalizedStatus === "Completed") {
+      card.classList.add("completed");
+    }
+
+    const noteHtml = data.notes
+      ? `<div class="event-notes">${escapeHtml(String(data.notes || ""))}</div>`
+      : "";
+
+    card.innerHTML = `
+      <div class="event-card-head">
+        <span class="tag ${escapeHtml(categoryClass)}">
+          <i class="fas fa-circle"></i>
+          <span>${escapeHtml(categoryLabel)}</span>
+        </span>
+
+        <div class="card-actions">
+          <button class="card-action-btn edit" type="button" title="Edit event">
+            <i class="fas fa-pen"></i>
+          </button>
+          <button class="card-action-btn delete" type="button" title="Delete event">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="event-name">${escapeHtml(String(data.name || ""))}</div>
+
+      ${noteHtml}
+
+      <div class="event-meta">
+        <div class="meta-row">
+          <i class="far fa-calendar"></i>
+          <span>${escapeHtml(displayDate)}</span>
+        </div>
+        <div class="meta-row">
+          <i class="far fa-user"></i>
+          <span>${escapeHtml(assigneeLabel)}</span>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="assignee">
+          <div class="mini-avatar" title="${escapeHtml(assigneeLabel)}">${escapeHtml(initials)}</div>
+          <div class="assignee-name">${escapeHtml(assigneeLabel)}</div>
+        </div>
+        <div class="status-chip ${statusClassName(normalizedStatus)}">${escapeHtml(normalizedStatus)}</div>
+      </div>
+    `;
+
+    card.querySelector(".edit")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      editEvent(data);
+    });
+
+    card.querySelector(".delete")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deleteEvent(data, card);
+    });
+
+    card.addEventListener("dblclick", () => editEvent(data));
+    card.addEventListener("dragstart", () => card.classList.add("dragging"));
+    card.addEventListener("dragend", () => card.classList.remove("dragging"));
+
+    getColumnBodyByStatus(normalizedStatus)?.appendChild(card);
+  }
+
+  /* =========================================================
+     DRAG / DROP
+  ========================================================= */
+  function handleColumnDragOver(e) {
+    e.preventDefault();
+    e.currentTarget.classList.add("drag-over");
+  }
+
+  function handleColumnDragLeave(e) {
+    const col = e.currentTarget;
+    if (!col.contains(e.relatedTarget)) {
+      col.classList.remove("drag-over");
+    }
+  }
+
+  function handleColumnDrop(e) {
+    e.preventDefault();
+
+    const column = e.currentTarget;
+    column.classList.remove("drag-over");
+
+    const draggingCard = document.querySelector(".event-card.dragging");
+    if (!draggingCard) return;
+
+    const targetStatus = String(column.dataset.status || "Upcoming").trim();
+    const eventName = String(draggingCard.dataset.eventName || "").trim();
+    const eventKey = String(draggingCard.dataset.eventKey || "").trim();
+    if (!eventName) return;
+
+    const targetBody = column.querySelector(".column-body");
+    if (!targetBody) return;
+
+    const oldBody = draggingCard.parentElement;
+    const oldStatus = String(draggingCard.dataset.status || "Upcoming").trim();
+
+    if (getCanonicalStatus(targetStatus) === getCanonicalStatus(oldStatus)) return;
+
+    targetBody.appendChild(draggingCard);
+    syncCardVisualStatus(draggingCard, targetStatus);
+    recalculateCounters();
+
+    google.script.run
+      .withSuccessHandler(() => {
+        const found = state.events.find((ev) => getEventKey(ev) === eventKey) ||
+                      state.events.find((ev) => String(ev.name || "") === eventName);
+
+        if (found) found.status = getCanonicalStatus(targetStatus);
+        showLastSyncedNow();
+      })
+      .withFailureHandler((err) => {
+        console.error("Status update failed:", err);
+
+        if (oldBody) oldBody.appendChild(draggingCard);
+        syncCardVisualStatus(draggingCard, oldStatus);
+        recalculateCounters();
+
+        showToast("Failed to update status", "danger");
+      })
+      .updateEventStatus(eventName, getCanonicalStatus(targetStatus));
+  }
+
+  /* =========================================================
+     EVENT MODAL
+  ========================================================= */
+  function openEventModal() {
+    state.isEditMode = false;
+    clearEventForm();
+
+    if (EL.modalTitle) EL.modalTitle.textContent = "Create New Event";
+    EL.eventModal?.classList.add("show");
+    setBodyModalLock(true);
+
+    EL.evName?.focus();
+  }
+
+  function closeEventModal() {
+    EL.eventModal?.classList.remove("show");
+    clearEventForm();
+    state.isEditMode = false;
+
+    if (!isConfirmModalOpen()) {
+      setBodyModalLock(false);
+    }
+  }
+
+  function clearEventForm() {
+    setValue("oldEvName", "");
+    setValue("evName", "");
+    setValue("evDate", "");
+    setValue("evCategory", "tag-green");
+    setValue("evAssignee", "");
+    setValue("evNotes", "");
+    setSaveBusy(false, "Save Event");
+  }
+
+  function editEvent(data) {
+    if (!data) return;
+
+    state.isEditMode = true;
+
+    if (EL.modalTitle) EL.modalTitle.textContent = "Edit Event";
+
+    setValue("oldEvName", String(data.name || ""));
+    setValue("evName", String(data.name || ""));
+    setValue("evDate", formatInputDate(data.date));
+    setValue("evCategory", String(data.category || "tag-green"));
+    setValue("evAssignee", String(data.assignee || ""));
+    setValue("evNotes", String(data.notes || ""));
+
+    EL.eventModal?.classList.add("show");
+    setBodyModalLock(true);
+    EL.evName?.focus();
+  }
+
+  function saveEvent() {
+    if (state.saving) return;
+
+    const name = getTrimmedValue("evName");
+    const date = getTrimmedValue("evDate");
+    const category = getTrimmedValue("evCategory") || "tag-green";
+    const assignee = getTrimmedValue("evAssignee");
+    const notes = getTrimmedValue("evNotes");
+    const oldName = getTrimmedValue("oldEvName");
+
+    if (!name || !date) {
+      showToast("Please fill in the event name and date", "danger");
+      return;
+    }
+
+    const eventData = {
+      name,
+      date,
+      assignee,
+      category,
+      categoryLabel: CATEGORY_LABELS[category] || "Other",
+      notes,
+      oldName: state.isEditMode ? oldName : null
+    };
+
+    setSaveBusy(true, "Syncing...");
+
+    google.script.run
+      .withSuccessHandler(() => {
+        const wasEditMode = state.isEditMode;
+
+        closeEventModal();
+        fetchEvents();
+        showToast(wasEditMode ? "Event updated" : "Event created", "success");
+      })
+      .withFailureHandler((err) => {
+        console.error("Save failed:", err);
+        setSaveBusy(false, "Save Event");
+        showToast(err?.message || "Failed to save event", "danger");
+      })
+      .saveEventToSheet(eventData);
+  }
+
+  /* =========================================================
+     DELETE CONFIRM
+  ========================================================= */
+  function deleteEvent(data, cardElement) {
+    if (!data || !cardElement) return;
+
+    state.eventToDelete = {
+      name: String(data.name || ""),
+      key: getEventKey(data)
+    };
+    state.cardToDelete = cardElement;
+
+    if (EL.confirmMessage) {
+      EL.confirmMessage.textContent =
+        `Are you sure you want to delete "${String(data.name || "")}"? This action cannot be undone.`;
+    }
+
+    EL.confirmModal?.classList.add("show");
+    setBodyModalLock(true);
+  }
+
+  function closeConfirmModal() {
+    EL.confirmModal?.classList.remove("show");
+    state.eventToDelete = null;
+    state.cardToDelete = null;
+
+    if (!isEventModalOpen()) {
+      setBodyModalLock(false);
+    }
+  }
+
+  function executeDelete() {
+    const target = state.eventToDelete;
+    const targetCard = state.cardToDelete;
+
+    if (!target?.name || !targetCard) return;
+
+    targetCard.style.opacity = ".35";
+    targetCard.style.pointerEvents = "none";
+
+    EL.confirmModal?.classList.remove("show");
+
+    if (!isEventModalOpen()) {
+      setBodyModalLock(false);
+    }
+
+    google.script.run
+      .withSuccessHandler((success) => {
+        if (success) {
+          targetCard.remove();
+          state.events = state.events.filter((ev) => getEventKey(ev) !== target.key);
+          recalculateCounters();
+          showToast(`"${target.name}" removed`, "danger");
+          showLastSyncedNow();
+        } else {
+          targetCard.style.opacity = "1";
+          targetCard.style.pointerEvents = "auto";
+          showToast("Event not found in spreadsheet", "danger");
+        }
+
+        state.eventToDelete = null;
+        state.cardToDelete = null;
+      })
+      .withFailureHandler((err) => {
+        console.error("Delete failed:", err);
+        targetCard.style.opacity = "1";
+        targetCard.style.pointerEvents = "auto";
+        state.eventToDelete = null;
+        state.cardToDelete = null;
+        showToast(err?.message || "Deletion failed", "danger");
+      })
+      .deleteEventFromSheet(target.name);
+  }
+})();
+</script>
